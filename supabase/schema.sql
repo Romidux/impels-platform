@@ -9,6 +9,17 @@ CREATE SCHEMA public;
 GRANT ALL ON SCHEMA public TO postgres;
 GRANT ALL ON SCHEMA public TO public;
 
+-- Restore Supabase role permissions (lost after DROP SCHEMA)
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL TABLES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+GRANT ALL ON ALL ROUTINES IN SCHEMA public TO anon, authenticated, service_role;
+
+-- Make sure future tables/sequences/functions also get the right permissions
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO anon, authenticated, service_role;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON ROUTINES TO anon, authenticated, service_role;
+
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
@@ -250,52 +261,107 @@ ALTER TABLE product_option_values ENABLE ROW LEVEL SECURITY;
 ALTER TABLE product_variant_combinations ENABLE ROW LEVEL SECURITY;
 ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
 
+-- ================================================================
+-- SECURITY DEFINER HELPER FUNCTIONS
+-- These bypass RLS to break the stores <-> store_members recursion loop
+-- ================================================================
+
+CREATE OR REPLACE FUNCTION public.is_store_owner(_store_id uuid, _user_id uuid)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.stores
+    WHERE id = _store_id AND owner_id = _user_id
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_store_member(_store_id uuid, _user_id uuid)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.store_members
+    WHERE store_id = _store_id AND user_id = _user_id
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION public.has_store_access(_store_id uuid, _user_id uuid)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1 FROM public.stores WHERE id = _store_id AND owner_id = _user_id
+  )
+  OR EXISTS (
+    SELECT 1 FROM public.store_members WHERE store_id = _store_id AND user_id = _user_id
+  );
+$$;
+
 -- ── STORES ────────────────────────────────────────────────────────
--- Anyone can read active store info (for the public storefront)
+-- Anyone can read active stores (public storefront)
 CREATE POLICY "Public can view active stores"
   ON stores FOR SELECT
   USING (is_active = TRUE);
 
--- Owners can insert their own store
+-- Owners can manage their own store (direct column check = no recursion)
 CREATE POLICY "Owners can insert stores"
   ON stores FOR INSERT
   WITH CHECK (auth.uid() = owner_id);
 
--- Owners can update their own store
 CREATE POLICY "Owners can update stores"
   ON stores FOR UPDATE
   USING (auth.uid() = owner_id)
   WITH CHECK (auth.uid() = owner_id);
 
--- Owners can delete their own store
 CREATE POLICY "Owners can delete stores"
   ON stores FOR DELETE
   USING (auth.uid() = owner_id);
 
--- Members and Owners can view their store
-CREATE POLICY "Members and owners can view stores"
+-- Members can view stores they belong to (uses SECURITY DEFINER function)
+CREATE POLICY "Members can view their stores"
   ON stores FOR SELECT
   USING (
     auth.uid() = owner_id OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_members.store_id = stores.id AND store_members.user_id = auth.uid())
+    public.is_store_member(id, auth.uid())
+  );
+
+-- ── STORE MEMBERS ─────────────────────────────────────────────────
+-- Uses SECURITY DEFINER function to check ownership (no recursion)
+CREATE POLICY "Owners can manage team"
+  ON store_members FOR ALL
+  USING (
+    public.is_store_owner(store_id, auth.uid())
+  )
+  WITH CHECK (
+    public.is_store_owner(store_id, auth.uid())
+  );
+
+CREATE POLICY "Members can view team"
+  ON store_members FOR SELECT
+  USING (
+    user_id = auth.uid() OR
+    public.is_store_owner(store_id, auth.uid())
   );
 
 -- ── STORE SETTINGS ────────────────────────────────────────────────
--- Public can read settings (needed for storefront theming)
 CREATE POLICY "Public can view store settings"
   ON store_settings FOR SELECT
   USING (TRUE);
 
--- Owner/Admin can manage settings
 CREATE POLICY "Owner and admin manage settings"
   ON store_settings FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM stores WHERE id = store_settings.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = store_settings.store_id AND user_id = auth.uid() AND role IN ('owner','admin'))
+    public.has_store_access(store_id, auth.uid())
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM stores WHERE id = store_settings.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = store_settings.store_id AND user_id = auth.uid() AND role IN ('owner','admin'))
+    public.has_store_access(store_id, auth.uid())
   );
 
 -- ── STORE BRANDING ────────────────────────────────────────────────
@@ -305,12 +371,10 @@ CREATE POLICY "Public can view branding"
 CREATE POLICY "Owner admin manage branding"
   ON store_branding FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM stores WHERE id = store_branding.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = store_branding.store_id AND user_id = auth.uid() AND role IN ('owner','admin'))
+    public.has_store_access(store_id, auth.uid())
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM stores WHERE id = store_branding.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = store_branding.store_id AND user_id = auth.uid() AND role IN ('owner','admin'))
+    public.has_store_access(store_id, auth.uid())
   );
 
 -- ── STORE SECTIONS VISIBILITY ─────────────────────────────────────
@@ -320,12 +384,10 @@ CREATE POLICY "Public can view sections"
 CREATE POLICY "Owner admin manage sections"
   ON store_sections_visibility FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM stores WHERE id = store_sections_visibility.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = store_sections_visibility.store_id AND user_id = auth.uid() AND role IN ('owner','admin'))
+    public.has_store_access(store_id, auth.uid())
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM stores WHERE id = store_sections_visibility.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = store_sections_visibility.store_id AND user_id = auth.uid() AND role IN ('owner','admin'))
+    public.has_store_access(store_id, auth.uid())
   );
 
 -- ── CATEGORIES ────────────────────────────────────────────────────
@@ -335,12 +397,10 @@ CREATE POLICY "Public can view categories"
 CREATE POLICY "Store members can manage categories"
   ON categories FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM stores WHERE id = categories.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = categories.store_id AND user_id = auth.uid())
+    public.has_store_access(store_id, auth.uid())
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM stores WHERE id = categories.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = categories.store_id AND user_id = auth.uid())
+    public.has_store_access(store_id, auth.uid())
   );
 
 -- ── PRODUCTS ──────────────────────────────────────────────────────
@@ -351,12 +411,10 @@ CREATE POLICY "Public can view visible products"
 CREATE POLICY "Store members can manage products"
   ON products FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM stores WHERE id = products.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = products.store_id AND user_id = auth.uid())
+    public.has_store_access(store_id, auth.uid())
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM stores WHERE id = products.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = products.store_id AND user_id = auth.uid())
+    public.has_store_access(store_id, auth.uid())
   );
 
 -- ── PRODUCT IMAGES ────────────────────────────────────────────────
@@ -366,12 +424,10 @@ CREATE POLICY "Public can view product images"
 CREATE POLICY "Store members manage images"
   ON product_images FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM products p JOIN stores s ON p.store_id = s.id WHERE p.id = product_images.product_id AND s.owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM products p JOIN store_members sm ON p.store_id = sm.store_id WHERE p.id = product_images.product_id AND sm.user_id = auth.uid())
+    EXISTS (SELECT 1 FROM products p WHERE p.id = product_images.product_id AND public.has_store_access(p.store_id, auth.uid()))
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM products p JOIN stores s ON p.store_id = s.id WHERE p.id = product_images.product_id AND s.owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM products p JOIN store_members sm ON p.store_id = sm.store_id WHERE p.id = product_images.product_id AND sm.user_id = auth.uid())
+    EXISTS (SELECT 1 FROM products p WHERE p.id = product_images.product_id AND public.has_store_access(p.store_id, auth.uid()))
   );
 
 -- ── PRODUCT OPTIONS & VARIANTS ────────────────────────────────────
@@ -381,12 +437,10 @@ CREATE POLICY "Public can view option types"
 CREATE POLICY "Store members manage option types"
   ON product_option_types FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM stores WHERE id = product_option_types.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = product_option_types.store_id AND user_id = auth.uid())
+    public.has_store_access(store_id, auth.uid())
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM stores WHERE id = product_option_types.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = product_option_types.store_id AND user_id = auth.uid())
+    public.has_store_access(store_id, auth.uid())
   );
 
 CREATE POLICY "Public can view option values"
@@ -395,12 +449,10 @@ CREATE POLICY "Public can view option values"
 CREATE POLICY "Members manage option values"
   ON product_option_values FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM product_option_types ot JOIN stores s ON ot.store_id = s.id WHERE ot.id = product_option_values.option_type_id AND s.owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM product_option_types ot JOIN store_members sm ON ot.store_id = sm.store_id WHERE ot.id = product_option_values.option_type_id AND sm.user_id = auth.uid())
+    EXISTS (SELECT 1 FROM product_option_types ot WHERE ot.id = product_option_values.option_type_id AND public.has_store_access(ot.store_id, auth.uid()))
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM product_option_types ot JOIN stores s ON ot.store_id = s.id WHERE ot.id = product_option_values.option_type_id AND s.owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM product_option_types ot JOIN store_members sm ON ot.store_id = sm.store_id WHERE ot.id = product_option_values.option_type_id AND sm.user_id = auth.uid())
+    EXISTS (SELECT 1 FROM product_option_types ot WHERE ot.id = product_option_values.option_type_id AND public.has_store_access(ot.store_id, auth.uid()))
   );
 
 CREATE POLICY "Public can view variants"
@@ -409,56 +461,32 @@ CREATE POLICY "Public can view variants"
 CREATE POLICY "Members manage variants"
   ON product_variant_combinations FOR ALL
   USING (
-    EXISTS (SELECT 1 FROM products p JOIN stores s ON p.store_id = s.id WHERE p.id = product_variant_combinations.product_id AND s.owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM products p JOIN store_members sm ON p.store_id = sm.store_id WHERE p.id = product_variant_combinations.product_id AND sm.user_id = auth.uid())
+    EXISTS (SELECT 1 FROM products p WHERE p.id = product_variant_combinations.product_id AND public.has_store_access(p.store_id, auth.uid()))
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM products p JOIN stores s ON p.store_id = s.id WHERE p.id = product_variant_combinations.product_id AND s.owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM products p JOIN store_members sm ON p.store_id = sm.store_id WHERE p.id = product_variant_combinations.product_id AND sm.user_id = auth.uid())
+    EXISTS (SELECT 1 FROM products p WHERE p.id = product_variant_combinations.product_id AND public.has_store_access(p.store_id, auth.uid()))
   );
 
 -- ── ORDERS ────────────────────────────────────────────────────────
--- Anyone can INSERT (create order from storefront)
 CREATE POLICY "Anyone can create orders"
   ON orders FOR INSERT
   WITH CHECK (TRUE);
 
--- Store members can view their orders
 CREATE POLICY "Store members can view orders"
   ON orders FOR SELECT
   USING (
-    EXISTS (SELECT 1 FROM stores WHERE id = orders.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = orders.store_id AND user_id = auth.uid())
+    public.has_store_access(store_id, auth.uid())
   );
 
--- Store members can update order status
 CREATE POLICY "Store members can update orders"
   ON orders FOR UPDATE
   USING (
-    EXISTS (SELECT 1 FROM stores WHERE id = orders.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = orders.store_id AND user_id = auth.uid())
+    public.has_store_access(store_id, auth.uid())
   )
   WITH CHECK (
-    EXISTS (SELECT 1 FROM stores WHERE id = orders.store_id AND owner_id = auth.uid()) OR
-    EXISTS (SELECT 1 FROM store_members WHERE store_id = orders.store_id AND user_id = auth.uid())
+    public.has_store_access(store_id, auth.uid())
   );
 
--- ── STORE MEMBERS POLICIES ────────────────────────────────────────
-CREATE POLICY "Owners can manage team"
-  ON store_members FOR ALL
-  USING (
-    EXISTS (SELECT 1 FROM stores WHERE id = store_members.store_id AND owner_id = auth.uid())
-  )
-  WITH CHECK (
-    EXISTS (SELECT 1 FROM stores WHERE id = store_members.store_id AND owner_id = auth.uid())
-  );
-
-CREATE POLICY "Members can view team"
-  ON store_members FOR SELECT
-  USING (
-    user_id = auth.uid() OR
-    EXISTS (SELECT 1 FROM stores WHERE id = store_members.store_id AND owner_id = auth.uid())
-  );
 
 -- ================================================================
 -- STORAGE BUCKETS
