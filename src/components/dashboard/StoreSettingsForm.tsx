@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Store,
@@ -29,6 +29,7 @@ export default function StoreSettingsForm({
 }: StoreSettingsFormProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const [form, setForm] = useState({
     // Store
@@ -79,7 +80,9 @@ export default function StoreSettingsForm({
       if (settingsError) throw settingsError;
 
       toast.success("Configuración guardada ✓");
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     } catch {
       toast.error("Error al guardar la configuración");
     } finally {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Edit, Trash2, MoreHorizontal } from "lucide-react";
@@ -11,6 +11,8 @@ export default function ProductsActions({ productId }: { productId: string }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
+
+  const [isPending, startTransition] = useTransition();
 
   const handleDelete = async () => {
     if (!confirm("¿Seguro que quieres eliminar este producto?")) return;
@@ -23,7 +25,9 @@ export default function ProductsActions({ productId }: { productId: string }) {
         .eq("id", productId);
       if (error) throw error;
       toast.success("Producto eliminado");
-      router.refresh();
+      startTransition(() => {
+        router.refresh();
+      });
     } catch {
       toast.error("Error al eliminar el producto");
     } finally {

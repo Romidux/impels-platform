@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
   Upload,
@@ -49,6 +49,7 @@ export default function ProductForm({
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const [form, setForm] = useState({
     name: product?.name || "",
@@ -286,8 +287,10 @@ export default function ProductForm({
       toast.success(
         product ? "Producto actualizado ✓" : "Producto creado ✓"
       );
-      router.push("/dashboard/products");
-      router.refresh();
+      startTransition(() => {
+        router.push("/dashboard/products");
+        router.refresh();
+      });
     } catch (err: unknown) {
       const error = err as { message?: string };
       if (error?.message?.includes("duplicate")) {

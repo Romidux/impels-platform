@@ -66,7 +66,6 @@ export default function CategoriesManager({
       setNewName("");
       setAdding(false);
       setAddingSubOf(null);
-      router.refresh();
     } catch {
       toast.error("Error al crear categoría");
     } finally {
@@ -93,7 +92,6 @@ export default function CategoriesManager({
       );
       toast.success("Categoría actualizada");
       setEditingId(null);
-      router.refresh();
     } catch {
       toast.error("Error al actualizar");
     } finally {
@@ -117,7 +115,6 @@ export default function CategoriesManager({
       if (error) throw error;
       setCategories((prev) => prev.filter((c) => c.id !== id && c.parent_id !== id));
       toast.success("Categoría eliminada");
-      router.refresh();
     } catch {
       toast.error("Error al eliminar");
     }

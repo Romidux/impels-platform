@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
@@ -13,6 +13,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,8 +32,10 @@ export default function LoginPage() {
       }
 
       toast.success("¡Bienvenido de vuelta!");
-      router.push("/dashboard");
-      router.refresh();
+      startTransition(() => {
+        router.push("/dashboard");
+        router.refresh();
+      });
     } catch {
       toast.error("Error inesperado. Intenta de nuevo.");
     } finally {

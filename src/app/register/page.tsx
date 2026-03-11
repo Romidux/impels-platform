@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Zap, Mail, Lock, Eye, EyeOff, User, Store, ArrowRight, CheckCircle } from "lucide-react";
@@ -12,6 +12,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const [showPassword, setShowPassword] = useState(false);
 
   const [form, setForm] = useState({
@@ -71,16 +72,20 @@ export default function RegisterPage() {
       if (storeError) {
         // Slug might be taken
         if (storeError.code === "23505") {
-          toast.error("Ese nombre de tienda ya está en uso. Prueba otro.");
+          toast.error("Cuenta creada, pero el nombre de tienda ya está en uso. Elige otro.");
+          router.push("/onboarding");
           return;
         }
-        toast.error("Error al crear la tienda. Intenta de nuevo.");
+        toast.error("Cuenta creada, pero hubo un error con la tienda. Intenta configurarla de nuevo.");
+        router.push("/onboarding");
         return;
       }
 
       toast.success("¡Cuenta y tienda creadas! Redirigiendo...");
-      router.push("/dashboard");
-      router.refresh();
+      startTransition(() => {
+        router.push("/dashboard");
+        router.refresh();
+      });
     } catch {
       toast.error("Error inesperado. Intenta de nuevo.");
     } finally {

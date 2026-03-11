@@ -75,6 +75,19 @@ export default function OnboardingPage() {
     const supabase = createClient();
 
     try {
+      // Prevent duplicate stores
+      const { data: existingStore } = await supabase
+        .from("stores")
+        .select("id")
+        .eq("owner_id", userId)
+        .single();
+        
+      if (existingStore) {
+        toast.error("Ya tienes una tienda creada.");
+        router.push("/dashboard");
+        return;
+      }
+
       // Create the store
       const { data: store, error: storeError } = await supabase
         .from("stores")
