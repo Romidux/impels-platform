@@ -249,7 +249,7 @@ export default function OnboardingPage() {
                   </label>
                   <div className="flex rounded-xl overflow-hidden border border-white/15 focus-within:border-blue-400 transition-all">
                     <span className="bg-white/5 text-white/40 text-sm px-3 flex items-center border-r border-white/10 whitespace-nowrap flex-shrink-0">
-                      impels.com/store/
+                      impels-platform.vercel.app/store/
                     </span>
                     <input
                       type="text"
@@ -417,7 +417,7 @@ export default function OnboardingPage() {
                 </p>
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-white/10 rounded-xl px-3 py-2 text-sm text-blue-300 font-mono truncate">
-                    impels.com/store/{form.slug}
+                    impels-platform.vercel.app/store/{form.slug}
                   </div>
                 </div>
               </div>

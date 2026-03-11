@@ -238,7 +238,7 @@ export default function RegisterPage() {
                   </label>
                   <div className="flex rounded-xl overflow-hidden border border-white/10 focus-within:border-blue-500 transition-all">
                     <span className="bg-white/5 text-gray-400 text-sm px-3 flex items-center border-r border-white/10 whitespace-nowrap">
-                      impels.com/
+                      impels-platform.vercel.app/store/
                     </span>
                     <input
                       type="text"
@@ -252,7 +252,7 @@ export default function RegisterPage() {
                   {form.storeSlug && (
                     <p className="text-xs text-gray-500 mt-1.5">
                       Tu tienda estará en:{" "}
-                      <span className="text-blue-400">{form.storeSlug}.impels.com</span>
+                      <span className="text-blue-400">impels-platform.vercel.app/store/{form.storeSlug}</span>
                     </p>
                   )}
                 </div>

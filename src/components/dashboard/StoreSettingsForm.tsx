@@ -150,7 +150,7 @@ export default function StoreSettingsForm({
           </label>
           <div className="flex rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
             <span className="text-gray-400 text-sm px-4 flex items-center border-r border-gray-200">
-              impels.com/
+              impels-platform.vercel.app/store/
             </span>
             <span className="px-4 py-3 text-sm text-gray-500">
               {store.slug}

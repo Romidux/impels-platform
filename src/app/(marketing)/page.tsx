@@ -63,7 +63,7 @@ const features = [
     icon: Globe,
     title: "URL propia de tienda",
     description:
-      "Cada tienda tiene su propia URL: tunombre.impels.com. Compártela en tus redes y WhatsApp.",
+      "Cada tienda tiene su propia URL en la plataforma. Compártela en tus redes y WhatsApp.",
     color: "from-orange-500 to-orange-600",
   },
   {
@@ -110,7 +110,7 @@ const plans = [
     description: "Para empezar y probar la plataforma",
     features: [
       "Hasta 10 productos",
-      "Subdomain .impels.com",
+      "URL propia de la tienda",
       "Checkout WhatsApp",
       "1 usuario (owner)",
       "Categorías ilimitadas",
@@ -128,7 +128,7 @@ const plans = [
     description: "Para emprendedores que quieren escalar",
     features: [
       "Productos ilimitados",
-      "Subdomain .impels.com",
+      "URL propia de la tienda",
       "Checkout WhatsApp",
       "Hasta 5 usuarios con roles",
       "3 templates premium",
@@ -281,7 +281,7 @@ export default function HomePage() {
                   <div className="w-3 h-3 rounded-full bg-green-500/70" />
                 </div>
                 <div className="flex-1 bg-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-400">
-                  migeko.impels.com
+                  impels-platform.vercel.app/store/migeko
                 </div>
               </div>
               {/* Fake store preview */}

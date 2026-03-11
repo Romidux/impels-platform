@@ -36,7 +36,7 @@ export default function DashboardHeader({
           rel="noopener noreferrer"
           className="flex items-center gap-2 text-sm text-gray-500 hover:text-blue-600 transition-colors group"
         >
-          <span className="font-medium">{store.slug}.impels.com</span>
+          <span className="font-medium">{getStoreUrl(store.slug).replace(/^https?:\/\//, "")}</span>
           <ExternalLink className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />
         </a>
       </div>

@@ -84,7 +84,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
             <p className="font-semibold text-sm text-gray-900 truncate">
               {store.name}
             </p>
-            <p className="text-xs text-gray-400 truncate">{store.slug}.impels.com</p>
+            <p className="text-xs text-gray-400 truncate">{storeUrl.replace(/^https?:\/\//, "")}</p>
           </div>
         </div>
       </div>
