@@ -66,12 +66,7 @@ Dirección: ${customer.address}${customer.notes ? `\nNotas: ${customer.notes}` :
 
 export function getStoreUrl(slug: string): string {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  // In production use subdomain, in dev use query param
-  if (appUrl.includes("localhost")) {
-    return `${appUrl}/store/${slug}`;
-  }
-  const domain = process.env.NEXT_PUBLIC_APP_DOMAIN || "impels.com";
-  return `https://${slug}.${domain}`;
+  return `${appUrl}/store/${slug}`;
 }
 
 export function truncate(text: string, maxLength: number): string {
