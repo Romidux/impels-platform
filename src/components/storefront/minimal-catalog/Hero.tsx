@@ -7,7 +7,13 @@ interface HeroProps {
 }
 
 export default function Hero({ store, settings }: HeroProps) {
-  const heroTitle = settings?.hero_title || { store.name };
+  // Logic to prioritize store name and filter out unwanted default prefixes
+  let heroTitle = settings?.hero_title;
+  
+  if (!heroTitle || heroTitle.trim() === "" || heroTitle.startsWith("Colección")) {
+    heroTitle = store.name;
+  }
+
   const heroSubtitle = settings?.hero_subtitle || "Explora nuestros productos más recientes, diseñados para ti.";
 
   return (
