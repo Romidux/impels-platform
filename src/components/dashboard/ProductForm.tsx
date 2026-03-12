@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useTransition } from "react";
+import { useState, useRef, useTransition, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Upload,
@@ -37,6 +37,16 @@ interface OptionTypeLocal {
   name: string;
   values: string[];
   newValue: string;
+}
+
+
+interface VariantCombinationLocal {
+  id?: string;
+  option_values: string[];
+  stock: number;
+  price?: string;
+  sku?: string;
+  is_active: boolean;
 }
 
 export default function ProductForm({
@@ -88,6 +98,58 @@ export default function ProductForm({
       newValue: "",
     })) || []
   );
+
+  const [variantCombinations, setVariantCombinations] = useState<VariantCombinationLocal[]>(() => {
+    if (!product?.variant_combinations || !product?.option_types) return [];
+    
+    // Create a map of option_value_id -> string value
+    const valMap = new Map<string, string>();
+    product.option_types.forEach(ot => {
+      ot.values?.forEach(v => {
+        valMap.set(v.id, v.value);
+      });
+    });
+
+    return product.variant_combinations.map(comb => ({
+      id: comb.id,
+      option_values: comb.option_values.map(id => valMap.get(id) || id),
+      stock: comb.stock,
+      price: comb.price?.toString() || "",
+      sku: comb.sku || "",
+      is_active: comb.is_active,
+    }));
+  });
+
+  // Generate cartesian product of option values when optionTypes change
+  useEffect(() => {
+    const validTypes = optionTypes.filter(ot => ot.name.trim() !== "" && ot.values.length > 0);
+    if (validTypes.length === 0) {
+      if (variantCombinations.length > 0) setVariantCombinations([]);
+      return;
+    }
+
+    // Cartesian product function
+    const cartesian = (arrays: string[][]): string[][] => {
+      return arrays.reduce((a, b) => a.flatMap(d => b.map(e => [d, e].flat())), [[]] as string[][]);
+    };
+
+    const newCombosStrings = cartesian(validTypes.map(ot => ot.values));
+    
+    setVariantCombinations(prev => {
+      return newCombosStrings.map(comboArr => {
+        // Find existing match to preserve stock, price, sku
+        const existing = prev.find(p => p.option_values.length === comboArr.length && p.option_values.every((v: string, i: number) => v === comboArr[i]));
+        if (existing) return existing;
+        return {
+          option_values: comboArr,
+          stock: 0,
+          price: "",
+          sku: "",
+          is_active: true
+        };
+      });
+    });
+  }, [optionTypes]);
 
   const handleChange = (key: string, value: unknown) => {
     setForm((prev) => {
@@ -264,8 +326,11 @@ export default function ProductForm({
           );
         }
 
+
         // Save option types
         if (!product) {
+          const insertedOptionValues: Record<string, string> = {}; // value string -> id
+          
           for (const ot of optionTypes) {
             if (!ot.name) continue;
             const { data: otData } = await supabase
@@ -280,15 +345,60 @@ export default function ProductForm({
               .single();
 
             if (otData) {
-              await supabase.from("product_option_values").insert(
-                ot.values.map((val, vi) => ({
+              for (let vi = 0; vi < ot.values.length; vi++) {
+                const val = ot.values[vi];
+                const { data: valData } = await supabase.from("product_option_values").insert({
                   option_type_id: otData.id,
                   value: val,
                   sort_order: vi,
-                }))
-              );
+                }).select("id").single();
+                if (valData) {
+                  // Keep track of the inserted ID for this string value
+                  insertedOptionValues[`${ot.name}-${val}`] = valData.id;
+                }
+              }
             }
           }
+
+          // Insert combinations
+          if (variantCombinations.length > 0) {
+            const combosToInsert = variantCombinations.map(vc => {
+              // Map the string values back to the new IDs
+              // We need to know which optionType each value belongs to.
+              // Since vc.option_values has the same order as optionTypes:
+              const optionIds = vc.option_values.map((vStr: string, idx: number) => {
+                const otName = optionTypes[idx].name;
+                return insertedOptionValues[`${otName}-${vStr}`];
+              }).filter(Boolean);
+
+              return {
+                product_id: productId,
+                option_values: optionIds,
+                stock: vc.stock,
+                price: vc.price ? parseFloat(vc.price) : null,
+                sku: vc.sku || null,
+                is_active: vc.is_active
+              };
+            });
+            
+            await supabase.from("product_variant_combinations").insert(combosToInsert);
+          }
+        } else {
+           // Editing existing product variants logic handles here (out of scope for quick patch actually, wait:
+           // If it's an edit, we might just update stocks)
+           // If they want to edit existing... hmm for now let's just update the combinations that have an ID:
+           for (const vc of variantCombinations) {
+             if (vc.id) {
+               await supabase.from("product_variant_combinations")
+                 .update({
+                   stock: vc.stock,
+                   price: vc.price ? parseFloat(vc.price) : null,
+                   sku: vc.sku || null,
+                   is_active: vc.is_active
+                 })
+                 .eq("id", vc.id);
+             }
+           }
         }
       }
 
@@ -600,6 +710,77 @@ export default function ProductForm({
             )}
           </div>
           
+          
+                      {variantCombinations.length > 0 && (
+                        <div className="mt-6 border border-gray-200 rounded-xl overflow-hidden">
+                          <table className="w-full text-left text-sm">
+                            <thead className="bg-gray-50 border-b border-gray-200">
+                              <tr>
+                                <th className="px-4 py-3 font-semibold text-gray-700">Variante</th>
+                                <th className="px-4 py-3 font-semibold text-gray-700 w-24">Stock</th>
+                                <th className="px-4 py-3 font-semibold text-gray-700 w-32">Precio</th>
+                                <th className="px-4 py-3 font-semibold text-gray-700 w-32">SKU</th>
+                              </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-100">
+                              {variantCombinations.map((vc, idx) => (
+                                <tr key={idx} className="hover:bg-gray-50/50">
+                                  <td className="px-4 py-3">
+                                    <span className="font-medium text-gray-900">{vc.option_values.join(" / ")}</span>
+                                  </td>
+                                  <td className="px-4 py-3">
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={vc.stock}
+                                      onChange={(e) => {
+                                        setVariantCombinations(prev => {
+                                          const next = [...prev];
+                                          next[idx].stock = parseInt(e.target.value) || 0;
+                                          return next;
+                                        });
+                                      }}
+                                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 focus:border-blue-400 focus:outline-none"
+                                    />
+                                  </td>
+                                  <td className="px-4 py-3">
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      placeholder="Opcional"
+                                      value={vc.price || ""}
+                                      onChange={(e) => {
+                                        setVariantCombinations(prev => {
+                                          const next = [...prev];
+                                          next[idx].price = e.target.value;
+                                          return next;
+                                        });
+                                      }}
+                                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 focus:border-blue-400 focus:outline-none"
+                                    />
+                                  </td>
+                                  <td className="px-4 py-3">
+                                    <input
+                                      type="text"
+                                      placeholder="SKU"
+                                      value={vc.sku || ""}
+                                      onChange={(e) => {
+                                        setVariantCombinations(prev => {
+                                          const next = [...prev];
+                                          next[idx].sku = e.target.value;
+                                          return next;
+                                        });
+                                      }}
+                                      className="w-full border border-gray-200 rounded-lg px-2 py-1.5 focus:border-blue-400 focus:outline-none"
+                                    />
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      )}
+
           {/* Tags */}
           <div className="card-flat p-6 space-y-4">
             <h2 className="font-display text-lg font-bold text-gray-900">

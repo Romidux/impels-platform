@@ -17,6 +17,14 @@ import { useCartStore } from "@/lib/store";
 import { formatCurrency, buildWhatsAppMessage } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { z } from "zod";
+
+const checkoutSchema = z.object({
+  name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
+  phone: z.string().min(6, "Ingresa un teléfono válido"),
+  address: z.string().optional(),
+  notes: z.string().optional(),
+});
 
 interface CheckoutPageClientProps {
   storeId: string;
@@ -55,10 +63,14 @@ export default function CheckoutPageClient({
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.name || !form.phone) {
-      toast.error("Nombre y teléfono son requeridos");
+    
+    // Zod validation
+    const result = checkoutSchema.safeParse(form);
+    if (!result.success) {
+      toast.error(result.error.issues[0]?.message || "Datos inválidos");
       return;
     }
 
@@ -66,6 +78,46 @@ export default function CheckoutPageClient({
     const supabase = createClient();
 
     try {
+      // Validate stock before checkout (Frontend validation as requested)
+      for (const item of items) {
+        const { data: product } = await supabase
+          .from("products")
+          .select("track_inventory, allow_backorder, stock_quantity")
+          .eq("id", item.product_id)
+          .single();
+          
+        if (product?.track_inventory && !product.allow_backorder) {
+          if (item.variant_combination_id) {
+            const { data: variant } = await supabase
+              .from("product_variant_combinations")
+              .select("stock")
+              .eq("id", item.variant_combination_id)
+              .single();
+              
+            if (!variant || variant.stock < item.quantity) {
+              toast.error(`Stock insuficiente para ${item.product_name} (${item.variant_label || ""})`);
+              setSubmitting(false);
+              return;
+            }
+          } else {
+            if (product.stock_quantity < item.quantity) {
+              toast.error(`Stock insuficiente para ${item.product_name}`);
+              setSubmitting(false);
+              return;
+            }
+          }
+        }
+      }
+
+      // Solución provisoria: Generar número de orden en cliente
+      const timestamp = Date.now().toString().slice(-4);
+      const randomId = Math.random().toString(36).substring(2, 6).toUpperCase();
+      const orderNumber = `#ORD-${timestamp}${randomId}`;
+      
+      const combinedNotes = form.notes 
+        ? `Orden provisoria generada en cliente: ${orderNumber}\n\nNotas: ${form.notes}` 
+        : `Orden provisoria generada en cliente: ${orderNumber}`;
+
       // Create order in database using atomic RPC
       const { data: orderId, error } = await supabase.rpc(
         "create_order_and_deduct_stock",
@@ -74,12 +126,12 @@ export default function CheckoutPageClient({
           p_customer_name: form.name,
           p_customer_phone: form.phone,
           p_customer_address: form.address,
-          p_customer_notes: form.notes,
+          p_customer_notes: combinedNotes,
           p_items: items.map((item) => ({
             product_id: item.product_id,
             product_name: item.product_name,
             product_image: item.product_image,
-            variant_combination_id: item.variant_combination_id || null, // Ensure this maps properly
+            variant_combination_id: item.variant_combination_id || null,
             variant_label: item.variant_label || null,
             quantity: item.quantity,
             unit_price: item.price,
@@ -90,11 +142,16 @@ export default function CheckoutPageClient({
         }
       );
 
-      if (error) throw error;
+      if (error) {
+        console.error("Order error: ", error);
+        throw new Error(error.message || "Error al procesar el pedido");
+      }
 
       // Build WhatsApp message
       if (whatsappNumber) {
-        const message = buildWhatsAppMessage(items, form, total, currency);
+        // Mock a final form obj to include orderNumber in notes for WA
+        const formForWa = { ...form, notes: combinedNotes };
+        const message = buildWhatsAppMessage(items, formForWa, total, currency);
         window.open(
           `https://wa.me/${whatsappNumber}?text=${message}`,
           "_blank"
@@ -104,12 +161,13 @@ export default function CheckoutPageClient({
       setSubmitted(true);
       clearCart();
       toast.success("Pedido enviado exitosamente");
-    } catch {
-      toast.error("Error al procesar el pedido. Intenta de nuevo.");
+    } catch (err: any) {
+      toast.error(err.message || "Error al procesar el pedido. Intenta de nuevo.");
     } finally {
       setSubmitting(false);
     }
   };
+
 
   if (submitted) {
     return (

@@ -224,12 +224,12 @@ export default async function ProductsPage({
                         <span
                           className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
                             product.stock_status === "available"
-                              ? "bg-green-100 text-green-700"
+                              ? "bg-blue-100 text-blue-700"
                               : "bg-red-100 text-red-700"
                           }`}
                         >
                           {product.has_variants 
-                            ? "Variantes"
+                            ? "Stock en variantes"
                             : product.track_inventory 
                               ? `${product.stock_quantity} unids.` 
                               : product.stock_status === "available" 
