@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Product, StoreSettings, ProductVariantCombination } from "@/lib/types";
+import { Product, StoreSettings, ProductVariantCombination, ProductOptionType } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { useCartStore } from "@/lib/store";
 import { toast } from "sonner";
@@ -28,16 +28,61 @@ export default function MinimalProductDetailClient({
   const [activeImage, setActiveImage] = useState(primaryImage?.url || "");
 
   // Variant selection setup
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariantCombination | null>(
-    product.variant_combinations?.[0] || null
-  );
+  const optionTypes = (product.option_types || []) as ProductOptionType[];
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+
+  const selectedVariant = optionTypes.length > 0
+    ? product.variant_combinations?.find((vc) => {
+        const selectedValueIds = Object.values(selectedOptions);
+        return (
+          selectedValueIds.length === optionTypes.length &&
+          selectedValueIds.every((vid) => vc.option_values.includes(vid))
+        );
+      })
+    : undefined;
 
   const price = selectedVariant?.price ?? product.price ?? 0;
 
+  // Stock logic
+  let currentStock = product.stock_quantity || 0;
+  let isOutOfStock = product.stock_status === "out_of_stock";
+
+  if (product.track_inventory) {
+    if (product.has_variants) {
+      if (selectedVariant) {
+        currentStock = selectedVariant.stock || 0;
+        isOutOfStock = currentStock <= 0 && !product.allow_backorder;
+      } else {
+        isOutOfStock = true;
+      }
+    } else {
+      currentStock = product.stock_quantity || 0;
+      isOutOfStock = currentStock <= 0 && !product.allow_backorder;
+    }
+  }
+
+  const variantLabel = optionTypes
+    .map((ot) => {
+      const selectedValId = selectedOptions[ot.id];
+      const val = ot.values?.find((v) => v.id === selectedValId);
+      return val ? `${ot.name}: ${val.value}` : null;
+    })
+    .filter(Boolean)
+    .join(", ");
+
   const handleAddToCart = () => {
-    if (product.has_variants && !selectedVariant) {
-      toast.error("Por favor selecciona una variante");
-      return;
+    if (isOutOfStock && !product.allow_backorder) return;
+    
+    if (product.has_variants) {
+      const allSelected = optionTypes.every((ot) => selectedOptions[ot.id]);
+      if (!allSelected) {
+        toast.error("Por favor selecciona todas las variantes");
+        return;
+      }
+      if (!selectedVariant) {
+        toast.error("Variante no disponible");
+        return;
+      }
     }
     
     addItem({
@@ -45,7 +90,7 @@ export default function MinimalProductDetailClient({
       product_name: product.name,
       product_slug: product.slug,
       variant_combination_id: selectedVariant?.id,
-      variant_label: selectedVariant?.sku,
+      variant_label: variantLabel || undefined,
       price: price,
       quantity: 1,
       product_image: activeImage,
@@ -124,27 +169,35 @@ export default function MinimalProductDetailClient({
             )}
 
             {/* Options */}
-            {product.has_variants && product.variant_combinations && product.variant_combinations.length > 0 && (
-              <div className="mb-10 space-y-5">
-                <span className="text-sm font-medium text-gray-900 block">Variantes</span>
-                <div className="flex flex-wrap gap-2">
-                  {product.variant_combinations.map((variant) => (
-                    <button
-                      key={variant.id}
-                      onClick={() => setSelectedVariant(variant)}
-                      disabled={variant.stock === 0}
-                      className={`px-5 py-3 text-sm tracking-wide border transition-all ${
-                        selectedVariant?.id === variant.id
-                          ? "border-black bg-black text-white"
-                          : "border-gray-200 text-gray-900 hover:border-gray-400"
-                      } ${
-                        variant.stock === 0 ? "opacity-30 cursor-not-allowed border-gray-100" : ""
-                      }`}
-                    >
-                      {variant.sku || `Opción ${variant.price}`}
-                    </button>
-                  ))}
-                </div>
+            {product.has_variants && optionTypes.length > 0 && (
+              <div className="mb-10 space-y-7">
+                {optionTypes.map((ot) => (
+                  <div key={ot.id} className="space-y-3">
+                    <span className="text-sm font-medium text-gray-900 block">
+                      {ot.name}
+                      {selectedOptions[ot.id] && (
+                        <span className="font-normal text-gray-500 ml-2">
+                          ({ot.values?.find((v) => v.id === selectedOptions[ot.id])?.value})
+                        </span>
+                      )}
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {ot.values?.map((val) => (
+                        <button
+                          key={val.id}
+                          onClick={() => setSelectedOptions((prev) => ({ ...prev, [ot.id]: val.id }))}
+                          className={`px-5 py-3 text-sm tracking-wide border transition-all ${
+                            selectedOptions[ot.id] === val.id
+                              ? "border-black bg-black text-white"
+                              : "border-gray-200 text-gray-900 hover:border-gray-400"
+                          }`}
+                        >
+                          {val.value}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
@@ -152,10 +205,13 @@ export default function MinimalProductDetailClient({
             <div className="flex items-center gap-4">
               <button
                 onClick={handleAddToCart}
-                className="flex-1 bg-black text-white px-8 py-4 text-sm font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors"
+                disabled={isOutOfStock && !product.allow_backorder}
+                className={`flex-1 bg-black text-white px-8 py-4 text-sm font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors ${
+                  isOutOfStock && !product.allow_backorder ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed" : ""
+                }`}
               >
                 <ShoppingBag className="w-4 h-4" />
-                Agregar a la bolsa
+                {isOutOfStock && !product.allow_backorder ? "Agotado" : "Agregar a la bolsa"}
               </button>
               <button className="p-4 border border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors flex items-center justify-center">
                 <Heart className="w-5 h-5" />
