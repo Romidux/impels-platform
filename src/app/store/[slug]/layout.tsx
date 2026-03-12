@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import StorefrontLayout from "@/components/storefront/StorefrontLayout";
+import MinimalLayout from "@/components/storefront/minimal-catalog/MinimalLayout";
 
 export async function generateMetadata({
   params,
@@ -50,8 +51,18 @@ export default async function StoreLayout({
 
   if (!store) notFound();
 
+  const settings = store.store_settings?.[0];
+
+  if (settings?.template === "minimal") {
+    return (
+      <MinimalLayout store={store} settings={settings}>
+        {children}
+      </MinimalLayout>
+    );
+  }
+
   return (
-    <StorefrontLayout store={store} settings={store.store_settings?.[0]}>
+    <StorefrontLayout store={store} settings={settings}>
       {children}
     </StorefrontLayout>
   );

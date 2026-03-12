@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ProductDetailClient from "@/components/storefront/ProductDetailClient";
+import MinimalProductDetailClient from "@/components/storefront/minimal-catalog/MinimalProductDetailClient";
 import { Product } from "@/lib/types";
 
 export default async function ProductPage({
@@ -43,6 +44,17 @@ export default async function ProductPage({
     .eq("category_id", product.category_id || "")
     .neq("id", product.id)
     .limit(4);
+
+  if (settings?.template === "minimal") {
+    return (
+      <MinimalProductDetailClient
+        product={product as Product}
+        storeSlug={slug}
+        settings={settings}
+        relatedProducts={(related as Product[]) || []}
+      />
+    );
+  }
 
   return (
     <ProductDetailClient

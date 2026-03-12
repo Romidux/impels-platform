@@ -5,6 +5,7 @@ import { Package, ArrowRight, Tag } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Product, Category } from "@/lib/types";
 import ProductCard from "@/components/storefront/ProductCard";
+import MinimalHomePage from "@/components/storefront/minimal-catalog/MinimalHomePage";
 
 export default async function StorePage({
   params,
@@ -57,6 +58,18 @@ export default async function StorePage({
     .eq("visibility", "visible")
     .limit(12)
     .order("created_at", { ascending: false });
+
+  if (settings?.template === "minimal") {
+    return (
+      <MinimalHomePage
+        store={store}
+        settings={settings}
+        categories={(categories as Category[]) || []}
+        featuredProducts={(featuredProducts as Product[]) || []}
+        recentProducts={(recentProducts as Product[]) || []}
+      />
+    );
+  }
 
   const primaryColor = settings?.primary_color || "#2563eb";
   const heroTitle = settings?.hero_title || `Bienvenidos a ${store.name}`;
