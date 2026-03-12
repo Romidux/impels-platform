@@ -7,7 +7,7 @@ interface HeroProps {
 }
 
 export default function Hero({ store, settings }: HeroProps) {
-  const heroTitle = settings?.hero_title || `Colección ${store.name}`;
+  const heroTitle = settings?.hero_title || { store.name };
   const heroSubtitle = settings?.hero_subtitle || "Explora nuestros productos más recientes, diseñados para ti.";
 
   return (
@@ -24,7 +24,7 @@ export default function Hero({ store, settings }: HeroProps) {
             href={`/store/${store.slug}/catalog`}
             className="inline-block bg-black text-white px-8 py-4 text-sm font-medium tracking-wide rounded-full hover:bg-gray-800 transition-colors"
           >
-            Ver Colección
+            Ver Productos
           </Link>
         </div>
       </div>
