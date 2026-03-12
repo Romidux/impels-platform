@@ -98,6 +98,7 @@ export interface Product {
   has_variants: boolean;
   stock_quantity: number;
   track_inventory: boolean;
+  manage_stock_by_variant: boolean;
   allow_backorder: boolean;
   stock_status: ProductStockStatus;
   is_featured: boolean;

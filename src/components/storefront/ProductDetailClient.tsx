@@ -66,7 +66,7 @@ export default function ProductDetailClient({
   let isOutOfStock = product.stock_status === "out_of_stock";
 
   if (product.track_inventory) {
-    if (product.has_variants) {
+    if (product.has_variants && product.manage_stock_by_variant) {
       if (selectedVariant) {
         currentStock = selectedVariant.stock || 0;
         isOutOfStock = currentStock <= 0 && !product.allow_backorder;

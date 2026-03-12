@@ -39,6 +39,15 @@ interface OptionTypeLocal {
   newValue: string;
 }
 
+interface VariantCombinationLocal {
+  id?: string;
+  values: string[]; // array of option value names (e.g. ["Red", "XL"])
+  price: string;
+  stock: string;
+  sku: string;
+  is_active: boolean;
+}
+
 export default function ProductForm({
   storeId,
   storePlan,
@@ -63,6 +72,7 @@ export default function ProductForm({
     has_variants: product?.has_variants || false,
     stock_quantity: product?.stock_quantity?.toString() || "0",
     track_inventory: product?.track_inventory || false,
+    manage_stock_by_variant: (product as any)?.manage_stock_by_variant || false,
     allow_backorder: product?.allow_backorder || false,
     stock_status: product?.stock_status || "available",
     is_featured: product?.is_featured || false,
@@ -87,6 +97,28 @@ export default function ProductForm({
       values: ot.values?.map((v) => v.value) || [],
       newValue: "",
     })) || []
+  );
+
+  const [combinations, setCombinations] = useState<VariantCombinationLocal[]>(
+    product?.variant_combinations?.map((vc) => {
+      // Map option_value IDs back to names
+      const values = vc.option_values.map((vid) => {
+        for (const ot of product?.option_types || []) {
+          const val = ot.values?.find((v) => v.id === vid);
+          if (val) return val.value;
+        }
+        return "";
+      }).filter(Boolean);
+
+      return {
+        id: vc.id,
+        values,
+        price: vc.price?.toString() || "",
+        stock: vc.stock.toString(),
+        sku: vc.sku || "",
+        is_active: vc.is_active,
+      };
+    }) || []
   );
 
   const handleChange = (key: string, value: unknown) => {
@@ -177,6 +209,48 @@ export default function ProductForm({
     setOptionTypes((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const generateCombinations = () => {
+    const activeOptions = optionTypes.filter(ot => ot.name && ot.values.length > 0);
+    if (activeOptions.length === 0) {
+      setCombinations([]);
+      return;
+    }
+
+    let matrix: string[][] = [[]];
+    for (const ot of activeOptions) {
+      const nextMatrix: string[][] = [];
+      for (const row of matrix) {
+        for (const val of ot.values) {
+          nextMatrix.push([...row, val]);
+        }
+      }
+      matrix = nextMatrix;
+    }
+
+    const newCombinations: VariantCombinationLocal[] = matrix.map(row => {
+      // Preserve existing combination data if possible
+      const existing = combinations.find(c => 
+        c.values.length === row.length && 
+        c.values.every((v, i) => v === row[i])
+      );
+      
+      return existing || {
+        values: row,
+        price: form.price, // default to base price
+        stock: "0",
+        sku: "",
+        is_active: true,
+      };
+    });
+
+    setCombinations(newCombinations);
+    toast.success("Combinaciones actualizadas basándose en las variantes");
+  };
+
+  const updateCombination = (index: number, key: keyof VariantCombinationLocal, value: any) => {
+    setCombinations(prev => prev.map((c, i) => i === index ? { ...c, [key]: value } : c));
+  };
+
   const handleSave = async () => {
     if (!form.name) {
       toast.error("El nombre del producto es requerido");
@@ -219,6 +293,7 @@ export default function ProductForm({
         has_variants: form.has_variants,
         stock_quantity: parseInt(form.stock_quantity) || 0,
         track_inventory: form.track_inventory,
+        manage_stock_by_variant: form.manage_stock_by_variant,
         allow_backorder: form.allow_backorder,
         stock_status: form.stock_status,
         is_featured: form.is_featured,
@@ -245,7 +320,6 @@ export default function ProductForm({
 
       // Save images
       if (productId) {
-        // Delete old images if editing
         if (product) {
           await supabase
             .from("product_images")
@@ -264,11 +338,20 @@ export default function ProductForm({
           );
         }
 
-        // Save option types
-        if (!product) {
+        // Save options and variants
+        if (form.has_variants) {
+          // Delete old options and combinations if editing
+          if (product) {
+            await supabase.from("product_option_types").delete().eq("product_id", productId);
+            await supabase.from("product_variant_combinations").delete().eq("product_id", productId);
+          }
+
+          const valueMap: Record<string, Record<string, string>> = {};
+
           for (const ot of optionTypes) {
-            if (!ot.name) continue;
-            const { data: otData } = await supabase
+            if (!ot.name || ot.values.length === 0) continue;
+            
+            const { data: otData, error: otError } = await supabase
               .from("product_option_types")
               .insert({
                 product_id: productId,
@@ -279,15 +362,52 @@ export default function ProductForm({
               .select("id")
               .single();
 
+            if (otError) throw otError;
+
             if (otData) {
-              await supabase.from("product_option_values").insert(
-                ot.values.map((val, vi) => ({
-                  option_type_id: otData.id,
-                  value: val,
-                  sort_order: vi,
-                }))
-              );
+              const { data: valData, error: valError } = await supabase
+                .from("product_option_values")
+                .insert(
+                  ot.values.map((val, vi) => ({
+                    option_type_id: otData.id,
+                    value: val.trim(),
+                    sort_order: vi,
+                  }))
+                )
+                .select("id, value");
+              
+              if (valError) throw valError;
+
+              valueMap[ot.name] = {};
+              valData.forEach(v => {
+                valueMap[ot.name][v.value] = v.id;
+              });
             }
+          }
+
+          // Insert combinations
+          if (combinations.length > 0) {
+            const combinationsToInsert = combinations.map(c => {
+              const optionValueIds = c.values.map((valName, i) => {
+                const otName = optionTypes.filter(ot => ot.name && ot.values.length > 0)[i].name;
+                return valueMap[otName]?.[valName];
+              }).filter(Boolean);
+
+              return {
+                product_id: productId,
+                option_values: optionValueIds,
+                price: parseFloat(c.price) || parseFloat(form.price) || 0,
+                stock: parseInt(c.stock) || 0,
+                sku: c.sku || null,
+                is_active: c.is_active
+              };
+            });
+
+            const { error: comboError } = await supabase
+              .from("product_variant_combinations")
+              .insert(combinationsToInsert);
+            
+            if (comboError) throw comboError;
           }
         }
       }
@@ -505,6 +625,37 @@ export default function ProductForm({
 
             {form.has_variants && (
               <>
+                <div className="pt-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-bold text-gray-900">Control de Stock y Precios</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      onClick={() => handleChange("manage_stock_by_variant", false)}
+                      className={`p-3 rounded-xl border-2 text-left transition-all ${
+                        !form.manage_stock_by_variant 
+                          ? "border-blue-500 bg-blue-50" 
+                          : "border-gray-100 hover:border-gray-200"
+                      }`}
+                    >
+                      <span className="block text-sm font-bold">Stock General</span>
+                      <span className="text-xs text-gray-500">Un solo stock para todo el producto</span>
+                    </button>
+                    <button
+                      onClick={() => handleChange("manage_stock_by_variant", true)}
+                      className={`p-3 rounded-xl border-2 text-left transition-all ${
+                        form.manage_stock_by_variant 
+                          ? "border-blue-500 bg-blue-50" 
+                          : "border-gray-100 hover:border-gray-200"
+                      }`}
+                    >
+                      <span className="block text-sm font-bold">Stock por Variante</span>
+                      <span className="text-xs text-gray-500">Stock individual para cada combinación</span>
+                    </button>
+                  </div>
+                </div>
+
                 {optionTypes.length === 0 ? (
                   <div className="text-center py-6 text-gray-400 text-sm">
                     <p>Sin variantes. Agrega Color, Talla, etc.</p>
@@ -594,6 +745,66 @@ export default function ProductForm({
                         </div>
                       </div>
                     ))}
+
+                    <div className="pt-4">
+                      <button
+                        onClick={generateCombinations}
+                        className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+                      >
+                        {combinations.length > 0 ? "Actualizar matriz de combinaciones" : "Generar matriz de combinaciones"}
+                      </button>
+                    </div>
+
+                    {combinations.length > 0 && (
+                      <div className="mt-6 border border-gray-200 rounded-xl overflow-hidden overflow-x-auto no-scrollbar">
+                        <table className="w-full text-sm">
+                          <thead className="bg-gray-50 border-b border-gray-200">
+                            <tr>
+                              <th className="px-4 py-3 text-left font-bold text-gray-600">Variante</th>
+                              <th className="px-4 py-3 text-left font-bold text-gray-600">Stock</th>
+                              <th className="px-4 py-3 text-left font-bold text-gray-600">Precio (Opcional)</th>
+                              <th className="px-4 py-3 text-left font-bold text-gray-600">SKU</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-100">
+                            {combinations.map((c, idx) => (
+                              <tr key={idx} className="hover:bg-gray-50 transition-colors">
+                                <td className="px-4 py-3 font-medium text-gray-900">
+                                  {c.values.join(" / ")}
+                                </td>
+                                <td className="px-4 py-3">
+                                  <input
+                                    type="number"
+                                    value={c.stock}
+                                    onChange={(e) => updateCombination(idx, "stock", e.target.value)}
+                                    className="w-20 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:border-blue-400 disabled:opacity-50"
+                                    disabled={!form.manage_stock_by_variant}
+                                  />
+                                </td>
+                                <td className="px-4 py-3 text-xs text-gray-400">
+                                  <input
+                                    type="number"
+                                    value={c.price}
+                                    onChange={(e) => updateCombination(idx, "price", e.target.value)}
+                                    placeholder={form.price}
+                                    className="w-24 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:border-blue-400"
+                                  />
+                                </td>
+                                <td className="px-4 py-3">
+                                  <input
+                                    type="text"
+                                    value={c.sku}
+                                    onChange={(e) => updateCombination(idx, "sku", e.target.value)}
+                                    placeholder="SKU-001"
+                                    className="w-24 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:border-blue-400"
+                                  />
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
                   </div>
                 )}
               </>
@@ -768,7 +979,7 @@ export default function ProductForm({
                 </span>
               </label>
 
-              {form.track_inventory && !form.has_variants && (
+              {form.track_inventory && (!form.has_variants || !form.manage_stock_by_variant) && (
                 <div className="space-y-4 animate-fade-in pl-2 border-l-2 border-blue-100">
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">
