@@ -9,12 +9,12 @@ interface HeroProps {
 export default function Hero({ store, settings }: HeroProps) {
   // Logic to prioritize store name and filter out unwanted default prefixes
   let heroTitle = settings?.hero_title;
-  
+
   if (!heroTitle || heroTitle.trim() === "" || heroTitle.startsWith("Colección")) {
     heroTitle = store.name;
   }
 
-  const heroSubtitle = settings?.hero_subtitle || "Explora nuestros productos más recientes, diseñados para ti.";
+  const heroSubtitle = settings?.hero_subtitle || "Explora nuestra selección de productos.";
 
   return (
     <section className="relative w-full px-4 sm:px-8 py-12 md:py-24 bg-gray-50/50 flex flex-col items-center justify-center text-center">
