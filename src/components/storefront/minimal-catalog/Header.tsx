@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingBag, User, Menu, X } from "lucide-react";
+import { Search, ShoppingBag, User, Menu, X, ArrowRight } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
 import { Store as StoreType, StoreSettings } from "@/lib/types";
 import CartDrawer from "../CartDrawer";
 import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface HeaderProps {
   store: StoreType;
@@ -17,6 +18,7 @@ interface HeaderProps {
 export default function Header({ store, settings }: HeaderProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const totalItems = useCartStore((s) => s.getTotalItems());
@@ -33,11 +35,24 @@ export default function Header({ store, settings }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // Prevent scrolling when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen || mobileSearchOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen, mobileSearchOpen]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/store/${store.slug}/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
       setSearchQuery("");
+      setMobileSearchOpen(false);
       setMobileMenuOpen(false);
     }
   };
@@ -47,14 +62,21 @@ export default function Header({ store, settings }: HeaderProps) {
       <header
         className={cn(
           "sticky top-0 z-40 bg-white transition-all duration-300",
-          scrolled ? "border-b border-gray-200" : ""
+          scrolled || mobileMenuOpen || mobileSearchOpen ? "border-b border-gray-100 shadow-sm" : ""
         )}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 h-16 flex items-center justify-between">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 h-16 flex items-center justify-between relative bg-white z-50 flex-shrink-0">
           
           {/* Logo */}
-          <Link href={`/store/${store.slug}`} className="flex-shrink-0 flex items-center gap-3">
-            <span className="font-medium text-xl tracking-tight text-black">
+          <Link 
+            href={`/store/${store.slug}`} 
+            className="flex-shrink-0 flex items-center gap-3 z-50"
+            onClick={() => {
+              setMobileMenuOpen(false);
+              setMobileSearchOpen(false);
+            }}
+          >
+            <span className="font-medium text-xl tracking-tight text-black line-clamp-1 break-all">
               {store.name}
             </span>
           </Link>
@@ -70,7 +92,7 @@ export default function Header({ store, settings }: HeaderProps) {
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-5">
+          <div className="hidden md:flex items-center gap-5 flex-shrink-0">
             <form onSubmit={handleSearch} className="relative w-48 lg:w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
@@ -97,8 +119,17 @@ export default function Header({ store, settings }: HeaderProps) {
             </button>
           </div>
 
-          {/* Mobile Toggle & Actions */}
-          <div className="flex items-center gap-4 md:hidden">
+          {/* Mobile Actions */}
+          <div className="flex items-center gap-4 md:hidden z-50 flex-shrink-0">
+            <button
+              onClick={() => {
+                setMobileSearchOpen(!mobileSearchOpen);
+                setMobileMenuOpen(false);
+              }}
+              className="text-black"
+            >
+              <Search className="w-5 h-5" />
+            </button>
             <button
               onClick={() => setCartOpen(true)}
               className="relative text-black"
@@ -111,51 +142,84 @@ export default function Header({ store, settings }: HeaderProps) {
               )}
             </button>
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={() => {
+                setMobileMenuOpen(!mobileMenuOpen);
+                setMobileSearchOpen(false);
+              }}
               className="text-black"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen || mobileSearchOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu Expanded */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-100 bg-white px-4 py-6 space-y-6">
-            <form onSubmit={handleSearch}>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Buscar productos"
-                  className="w-full pl-10 pr-4 py-3 bg-gray-50 rounded-xl text-base focus:outline-none"
-                />
+        {/* Mobile Search Panel (Overlay) */}
+        <AnimatePresence>
+          {mobileSearchOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="absolute left-0 right-0 top-16 bg-white overflow-hidden shadow-xl z-40 md:hidden"
+            >
+              <div className="px-4 py-4 border-t border-gray-100 pb-6 border-b">
+                <form onSubmit={handleSearch} className="relative w-full">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="¿Qué estás buscando?"
+                    className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-full text-base focus:outline-none focus:bg-white focus:border-gray-300 transition-all font-medium placeholder:text-gray-400 shadow-sm"
+                    autoFocus
+                  />
+                </form>
               </div>
-            </form>
-            <nav className="flex flex-col gap-4">
-              <Link
-                href={`/store/${store.slug}`}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-medium text-black"
-              >
-                Inicio
-              </Link>
-              <Link
-                href={`/store/${store.slug}/catalog`}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-lg font-medium text-black"
-              >
-                Catálogo
-              </Link>
-            </nav>
-            <div className="pt-4 border-t border-gray-100 flex items-center gap-3 text-black">
-              <User className="w-5 h-5" />
-              <span className="font-medium text-base">Mi Cuenta</span>
-            </div>
-          </div>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
+        
+        {/* Mobile Navigation Menu (Overlay) */}
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
+              transition={{ duration: 0.2, ease: "easeOut" }}
+              className="fixed inset-0 top-16 bg-white z-40 md:hidden overflow-y-auto"
+            >
+              <nav className="flex flex-col px-6 py-8 gap-8 border-t border-gray-100 h-full">
+                <Link
+                  href={`/store/${store.slug}`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-2xl font-medium text-black tracking-tight flex items-center justify-between"
+                >
+                  Inicio
+                  <ArrowRight className="w-5 h-5 text-gray-300" />
+                </Link>
+                <Link
+                  href={`/store/${store.slug}/catalog`}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-2xl font-medium text-black tracking-tight flex items-center justify-between"
+                >
+                  Catálogo
+                  <ArrowRight className="w-5 h-5 text-gray-300" />
+                </Link>
+
+                <div className="flex-1" />
+
+                <div className="pb-8">
+                  <Link href="#" className="flex items-center justify-center gap-2 text-lg font-medium text-black group bg-gray-50 py-4 rounded-xl border border-gray-100 shadow-sm">
+                    <User className="w-5 h-5" /> Mi Cuenta
+                  </Link>
+                </div>
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
       </header>
       
       <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} store={store} settings={settings} />
