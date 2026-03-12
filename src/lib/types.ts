@@ -95,6 +95,10 @@ export interface Product {
   show_price: boolean;
   category_id?: string;
   visibility: ProductVisibility;
+  has_variants: boolean;
+  stock_quantity: number;
+  track_inventory: boolean;
+  allow_backorder: boolean;
   stock_status: ProductStockStatus;
   is_featured: boolean;
   tags: string[];

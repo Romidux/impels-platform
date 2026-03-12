@@ -228,9 +228,14 @@ export default async function ProductsPage({
                               : "bg-red-100 text-red-700"
                           }`}
                         >
-                          {product.stock_status === "available"
-                            ? "Disponible"
-                            : "Sin stock"}
+                          {product.has_variants 
+                            ? "Variantes"
+                            : product.track_inventory 
+                              ? `${product.stock_quantity} unids.` 
+                              : product.stock_status === "available" 
+                                ? "Disponible" 
+                                : "Sin stock"
+                          }
                         </span>
                       </td>
                       <td className="px-4 py-4">

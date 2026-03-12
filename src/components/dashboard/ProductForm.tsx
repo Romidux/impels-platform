@@ -60,6 +60,10 @@ export default function ProductForm({
     show_price: product?.show_price !== false,
     category_id: product?.category_id || "",
     visibility: product?.visibility || "visible",
+    has_variants: product?.has_variants || false,
+    stock_quantity: product?.stock_quantity?.toString() || "0",
+    track_inventory: product?.track_inventory || false,
+    allow_backorder: product?.allow_backorder || false,
     stock_status: product?.stock_status || "available",
     is_featured: product?.is_featured || false,
     tags: product?.tags || [] as string[],
@@ -212,6 +216,10 @@ export default function ProductForm({
         show_price: form.show_price,
         category_id: form.category_id || null,
         visibility: form.visibility,
+        has_variants: form.has_variants,
+        stock_quantity: parseInt(form.stock_quantity) || 0,
+        track_inventory: form.track_inventory,
+        allow_backorder: form.allow_backorder,
         stock_status: form.stock_status,
         is_featured: form.is_featured,
         tags: form.tags,
@@ -455,113 +463,143 @@ export default function ProductForm({
 
           {/* Variants */}
           <div className="card-flat p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
-                <Tag className="w-5 h-5 text-blue-500" />
-                Variantes
-              </h2>
-              <button
-                onClick={addOptionType}
-                className="text-sm text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
-              >
-                <Plus className="w-4 h-4" />
-                Agregar variante
-              </button>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
+                  <Tag className="w-5 h-5 text-blue-500" />
+                  Variantes
+                </h2>
+                <button
+                  onClick={addOptionType}
+                  className="text-sm text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
+                >
+                  <Plus className="w-4 h-4" />
+                  Agregar variante
+                </button>
+              </div>
+
+              {/* Toggle Has Variants */}
+              <label className="flex items-center gap-3 cursor-pointer mb-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
+                <div
+                  onClick={() => handleChange("has_variants", !form.has_variants)}
+                  className={`w-10 h-5 rounded-full transition-colors relative ${
+                    form.has_variants ? "bg-blue-500" : "bg-gray-300"
+                  }`}
+                >
+                  <div
+                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                      form.has_variants ? "translate-x-5" : ""
+                    }`}
+                  />
+                </div>
+                <div>
+                  <span className="text-sm font-bold text-gray-900 block">
+                    Este producto tiene múltiples opciones
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    Como diferentes tallas, colores o modelos. El stock se controlará por cada variante.
+                  </span>
+                </div>
+              </label>
             </div>
 
-            {optionTypes.length === 0 ? (
-              <div className="text-center py-6 text-gray-400 text-sm">
-                <p>Sin variantes. Agrega Color, Talla, etc.</p>
-                <div className="flex flex-wrap gap-2 justify-center mt-3">
-                  {["Color", "Talla", "Tamaño (ml)"].map((preset) => (
-                    <button
-                      key={preset}
-                      onClick={() =>
-                        setOptionTypes((prev) => [
-                          ...prev,
-                          { name: preset, values: [], newValue: "" },
-                        ])
-                      }
-                      className="text-xs border border-gray-200 px-3 py-1.5 rounded-full hover:border-blue-400 hover:text-blue-600 transition-colors"
-                    >
-                      + {preset}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {optionTypes.map((ot, i) => (
-                  <div
-                    key={i}
-                    className="border border-gray-200 rounded-xl p-4 space-y-3"
-                  >
-                    <div className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={ot.name}
-                        onChange={(e) =>
-                          updateOptionTypeName(i, e.target.value)
-                        }
-                        placeholder="Tipo de variante (ej: Color)"
-                        className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
-                      />
-                      <button
-                        onClick={() => removeOptionType(i)}
-                        className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {ot.values.map((val) => (
-                        <span
-                          key={val}
-                          className="flex items-center gap-1.5 bg-blue-50 text-blue-700 text-sm px-3 py-1 rounded-full"
+            {form.has_variants && (
+              <>
+                {optionTypes.length === 0 ? (
+                  <div className="text-center py-6 text-gray-400 text-sm">
+                    <p>Sin variantes. Agrega Color, Talla, etc.</p>
+                    <div className="flex flex-wrap gap-2 justify-center mt-3">
+                      {["Color", "Talla", "Tamaño (ml)"].map((preset) => (
+                        <button
+                          key={preset}
+                          onClick={() =>
+                            setOptionTypes((prev) => [
+                              ...prev,
+                              { name: preset, values: [], newValue: "" },
+                            ])
+                          }
+                          className="text-xs border border-gray-200 px-3 py-1.5 rounded-full hover:border-blue-400 hover:text-blue-600 transition-colors"
                         >
-                          {val}
-                          <button
-                            onClick={() => removeOptionValue(i, val)}
-                            className="hover:text-red-500"
-                          >
-                            <X className="w-3 h-3" />
-                          </button>
-                        </span>
+                          + {preset}
+                        </button>
                       ))}
                     </div>
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={ot.newValue}
-                        onChange={(e) =>
-                          setOptionTypes((prev) =>
-                            prev.map((o, j) =>
-                              j === i ? { ...o, newValue: e.target.value } : o
-                            )
-                          )
-                        }
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            addOptionValue(i);
-                          }
-                        }}
-                        placeholder="Agregar valor..."
-                        className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
-                      />
-                      <button
-                        onClick={() => addOptionValue(i)}
-                        className="px-3 py-2 gradient-brand text-white rounded-lg text-sm"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
                   </div>
-                ))}
-              </div>
+                ) : (
+                  <div className="space-y-4">
+                    {optionTypes.map((ot, i) => (
+                      <div
+                        key={i}
+                        className="border border-gray-200 rounded-xl p-4 space-y-3"
+                      >
+                        <div className="flex items-center gap-2">
+                          <input
+                            type="text"
+                            value={ot.name}
+                            onChange={(e) =>
+                              updateOptionTypeName(i, e.target.value)
+                            }
+                            placeholder="Tipo de variante (ej: Color)"
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                          />
+                          <button
+                            onClick={() => removeOptionType(i)}
+                            className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {ot.values.map((val) => (
+                            <span
+                              key={val}
+                              className="flex items-center gap-1.5 bg-blue-50 text-blue-700 text-sm px-3 py-1 rounded-full"
+                            >
+                              {val}
+                              <button
+                                onClick={() => removeOptionValue(i, val)}
+                                className="hover:text-red-500"
+                              >
+                                <X className="w-3 h-3" />
+                              </button>
+                            </span>
+                          ))}
+                        </div>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={ot.newValue}
+                            onChange={(e) =>
+                              setOptionTypes((prev) =>
+                                prev.map((o, j) =>
+                                  j === i ? { ...o, newValue: e.target.value } : o
+                                )
+                              )
+                            }
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                addOptionValue(i);
+                              }
+                            }}
+                            placeholder="Agregar valor..."
+                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
+                          />
+                          <button
+                            onClick={() => addOptionValue(i)}
+                            className="px-3 py-2 gradient-brand text-white rounded-lg text-sm"
+                          >
+                            <Plus className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
           </div>
-
+          
           {/* Tags */}
           <div className="card-flat p-6 space-y-4">
             <h2 className="font-display text-lg font-bold text-gray-900">
@@ -710,18 +748,72 @@ export default function ProductForm({
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Stock
+            {/* Detailed Inventory Tracking */}
+            <div className="pt-2 border-t border-gray-100 mt-4 space-y-4">
+              <label className="flex items-center gap-3 cursor-pointer">
+                <div
+                  onClick={() => handleChange("track_inventory", !form.track_inventory)}
+                  className={`w-10 h-5 rounded-full transition-colors relative ${
+                    form.track_inventory ? "bg-blue-500" : "bg-gray-300"
+                  }`}
+                >
+                  <div
+                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                      form.track_inventory ? "translate-x-5" : ""
+                    }`}
+                  />
+                </div>
+                <span className="text-sm font-medium text-gray-700">
+                  Controlar inventario EXACTO
+                </span>
               </label>
-              <select
-                value={form.stock_status}
-                onChange={(e) => handleChange("stock_status", e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 transition-all bg-white"
-              >
-                <option value="available">Disponible</option>
-                <option value="out_of_stock">Sin stock</option>
-              </select>
+
+              {form.track_inventory && !form.has_variants && (
+                <div className="space-y-4 animate-fade-in pl-2 border-l-2 border-blue-100">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                      Unidades disponibles
+                    </label>
+                    <input
+                      type="number"
+                      value={form.stock_quantity}
+                      onChange={(e) => handleChange("stock_quantity", e.target.value)}
+                      placeholder="Ej: 15"
+                      min="0"
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-400 transition-all bg-white"
+                    />
+                  </div>
+
+                  <label className="flex items-center gap-3 cursor-pointer">
+                    <div
+                      onClick={() => handleChange("allow_backorder", !form.allow_backorder)}
+                      className={`w-10 h-5 rounded-full transition-colors relative ${
+                        form.allow_backorder ? "bg-purple-500" : "bg-gray-300"
+                      }`}
+                    >
+                      <div
+                        className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                          form.allow_backorder ? "translate-x-5" : ""
+                        }`}
+                      />
+                    </div>
+                    <div>
+                      <span className="text-sm font-medium text-gray-700 block">
+                        Permitir ventas sin stock
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        Los clientes podrán comprar aunque el stock llegue a 0.
+                      </span>
+                    </div>
+                  </label>
+                </div>
+              )}
+
+              {form.has_variants && form.track_inventory && (
+                <div className="animate-fade-in p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-800 text-sm">
+                  <strong>Atención:</strong> Como este producto tiene variantes, la disponibilidad general se calculará basándose en el stock que tenga cada variante.
+                </div>
+              )}
             </div>
 
             <label className="flex items-center gap-3 cursor-pointer">

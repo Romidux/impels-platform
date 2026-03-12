@@ -45,7 +45,6 @@ export default function ProductDetailClient({
   const [added, setAdded] = useState(false);
 
   const images = product.images?.sort((a, b) => a.sort_order - b.sort_order) || [];
-  const isOutOfStock = product.stock_status === "out_of_stock";
   const optionTypes = (product.option_types || []) as ProductOptionType[];
 
   // Find matching variant
@@ -62,6 +61,26 @@ export default function ProductDetailClient({
 
   const price = selectedVariant?.price ?? product.price;
 
+  // Stock logic
+  let currentStock = product.stock_quantity || 0;
+  let isOutOfStock = product.stock_status === "out_of_stock";
+
+  if (product.track_inventory) {
+    if (product.has_variants) {
+      if (selectedVariant) {
+        currentStock = selectedVariant.stock || 0;
+        isOutOfStock = currentStock <= 0 && !product.allow_backorder;
+      } else {
+        // No fully selected variant yet, we can't be sure, but we prevent buying
+        isOutOfStock = true; 
+        currentStock = 0;
+      }
+    } else {
+      currentStock = product.stock_quantity || 0;
+      isOutOfStock = currentStock <= 0 && !product.allow_backorder;
+    }
+  }
+
   const variantLabel = optionTypes
     .map((ot) => {
       const selectedValId = selectedOptions[ot.id];
@@ -72,11 +91,15 @@ export default function ProductDetailClient({
     .join(", ");
 
   const handleAddToCart = () => {
-    if (isOutOfStock) return;
-    if (optionTypes.length > 0) {
+    if (isOutOfStock && !product.allow_backorder) return;
+    if (product.has_variants) {
       const allSelected = optionTypes.every((ot) => selectedOptions[ot.id]);
       if (!allSelected) {
         toast.error("Selecciona todas las variantes");
+        return;
+      }
+      if (!selectedVariant) {
+        toast.error("Variante no disponible");
         return;
       }
     }
@@ -226,12 +249,12 @@ export default function ProductDetailClient({
           {/* Stock status */}
           <div
             className={`inline-flex items-center gap-2 text-sm font-semibold px-3 py-1.5 rounded-full ${
-              isOutOfStock
+              isOutOfStock && !product.allow_backorder
                 ? "bg-red-100 text-red-700"
                 : "bg-green-100 text-green-700"
             }`}
           >
-            {isOutOfStock ? (
+            {isOutOfStock && !product.allow_backorder ? (
               <>
                 <AlertCircle className="w-4 h-4" />
                 Sin stock actualmente
@@ -239,7 +262,11 @@ export default function ProductDetailClient({
             ) : (
               <>
                 <Check className="w-4 h-4" />
-                Disponible
+                {product.track_inventory && (!product.has_variants || selectedVariant)
+                  ? `Disponible (${currentStock} unids.)`
+                  : product.allow_backorder && currentStock <= 0
+                    ? "Disponible (Bajo pedido)"
+                    : "Disponible"}
               </>
             )}
           </div>
@@ -299,8 +326,15 @@ export default function ProductDetailClient({
                 {quantity}
               </span>
               <button
-                onClick={() => setQuantity(quantity + 1)}
+                onClick={() => {
+                  if (product.track_inventory && !product.allow_backorder && quantity >= currentStock) {
+                    toast.error(`Solo hay ${currentStock} unidades disponibles`);
+                    return;
+                  }
+                  setQuantity(quantity + 1);
+                }}
                 className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:border-gray-400 transition-colors"
+                disabled={product.track_inventory && !product.allow_backorder && quantity >= currentStock}
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -311,16 +345,16 @@ export default function ProductDetailClient({
           <div className="flex flex-col gap-3 pt-2">
             <button
               onClick={handleAddToCart}
-              disabled={isOutOfStock}
+              disabled={isOutOfStock && !product.allow_backorder}
               className={`flex items-center justify-center gap-2 text-white font-bold py-4 rounded-2xl text-lg transition-all hover:scale-[1.02] shadow-md ${
-                isOutOfStock
+                isOutOfStock && !product.allow_backorder
                   ? "bg-gray-400 cursor-not-allowed"
                   : added
                     ? "bg-green-500"
                     : ""
               }`}
               style={
-                !isOutOfStock && !added ? { backgroundColor: primaryColor } : {}
+                (!isOutOfStock || product.allow_backorder) && !added ? { backgroundColor: primaryColor } : {}
               }
             >
               {added ? (
@@ -331,7 +365,7 @@ export default function ProductDetailClient({
               ) : (
                 <>
                   <ShoppingCart className="w-5 h-5" />
-                  {isOutOfStock ? "No disponible" : "Agregar al carrito"}
+                  {isOutOfStock && !product.allow_backorder ? "No disponible" : "Agregar al carrito"}
                 </>
               )}
             </button>

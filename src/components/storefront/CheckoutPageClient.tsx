@@ -66,30 +66,29 @@ export default function CheckoutPageClient({
     const supabase = createClient();
 
     try {
-      // Create order in database
-      const { data: order, error } = await supabase
-        .from("orders")
-        .insert({
-          store_id: storeId,
-          customer_name: form.name,
-          customer_phone: form.phone,
-          customer_address: form.address,
-          customer_notes: form.notes,
-          items: items.map((item) => ({
+      // Create order in database using atomic RPC
+      const { data: orderId, error } = await supabase.rpc(
+        "create_order_and_deduct_stock",
+        {
+          p_store_id: storeId,
+          p_customer_name: form.name,
+          p_customer_phone: form.phone,
+          p_customer_address: form.address,
+          p_customer_notes: form.notes,
+          p_items: items.map((item) => ({
             product_id: item.product_id,
             product_name: item.product_name,
             product_image: item.product_image,
-            variant_label: item.variant_label,
+            variant_combination_id: item.variant_combination_id || null, // Ensure this maps properly
+            variant_label: item.variant_label || null,
             quantity: item.quantity,
             unit_price: item.price,
             total_price: item.price * item.quantity,
           })),
-          subtotal: total,
-          total,
-          status: "new",
-        })
-        .select("id")
-        .single();
+          p_subtotal: total,
+          p_total: total,
+        }
+      );
 
       if (error) throw error;
 
