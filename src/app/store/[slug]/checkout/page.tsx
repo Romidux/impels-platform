@@ -19,7 +19,9 @@ export default async function CheckoutPage({
 
   if (!store) notFound();
 
-  const settings = store.store_settings?.[0];
+  const settings = Array.isArray(store.store_settings) 
+    ? store.store_settings[0] 
+    : store.store_settings;
 
   return (
     <CheckoutPageClient

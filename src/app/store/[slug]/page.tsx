@@ -24,7 +24,9 @@ export default async function StorePage({
 
   if (!store) notFound();
 
-  const settings = store.store_settings?.[0];
+  const settings = Array.isArray(store.store_settings) 
+    ? store.store_settings[0] 
+    : store.store_settings;
 
   // Fetch categories
   const { data: categories } = await supabase

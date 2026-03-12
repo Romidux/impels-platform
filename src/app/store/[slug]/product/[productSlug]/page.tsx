@@ -21,7 +21,9 @@ export default async function ProductPage({
 
   if (!store) notFound();
 
-  const settings = store.store_settings?.[0];
+  const settings = Array.isArray(store.store_settings) 
+    ? store.store_settings[0] 
+    : store.store_settings;
 
   const { data: product } = await supabase
     .from("products")

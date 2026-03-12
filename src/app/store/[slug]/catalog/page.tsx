@@ -25,7 +25,9 @@ export default async function CatalogPage({
 
   if (!store) notFound();
 
-  const settings = store.store_settings?.[0];
+  const settings = Array.isArray(store.store_settings) 
+    ? store.store_settings[0] 
+    : store.store_settings;
   const primaryColor = settings?.primary_color || "#2563eb";
   const currency = settings?.currency || "Gs";
 
