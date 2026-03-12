@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
 import { Store as StoreType, StoreSettings } from "@/lib/types";
-import CartDrawer from "../CartDrawer";
+import MinimalCartDrawer from "./MinimalCartDrawer";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -222,7 +222,7 @@ export default function Header({ store, settings }: HeaderProps) {
 
       </header>
       
-      <CartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} store={store} settings={settings} />
+      <MinimalCartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} store={store} settings={settings} />
     </>
   );
 }
