@@ -22,11 +22,19 @@ export default async function AppearancePage() {
     .eq("store_id", store.id)
     .order("sort_order");
 
+  const settings = Array.isArray(store.store_settings) 
+    ? store.store_settings[0] 
+    : store.store_settings;
+
+  const branding = Array.isArray(store.store_branding) 
+    ? store.store_branding[0] 
+    : store.store_branding;
+
   return (
     <AppearanceManager
       store={store}
-      settings={store.store_settings?.[0]}
-      branding={store.store_branding?.[0]}
+      settings={settings}
+      branding={branding}
       sections={sections || []}
     />
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Palette, Eye, EyeOff, Save, Layers, Type } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -52,14 +52,21 @@ export default function AppearanceManager({
 }: AppearanceManagerProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  
   const [template, setTemplate] = useState(settings?.template || "modern");
-  const [primaryColor, setPrimaryColor] = useState(
-    settings?.primary_color || "#2563eb"
-  );
+  const [primaryColor, setPrimaryColor] = useState(settings?.primary_color || "#2563eb");
   const [heroTitle, setHeroTitle] = useState(settings?.hero_title || "");
-  const [heroSubtitle, setHeroSubtitle] = useState(
-    settings?.hero_subtitle || ""
-  );
+  const [heroSubtitle, setHeroSubtitle] = useState(settings?.hero_subtitle || "");
+
+  // Sync state with server-provided settings (e.g., after router.refresh())
+  useEffect(() => {
+    if (settings) {
+      setTemplate(settings.template || "modern");
+      setPrimaryColor(settings.primary_color || "#2563eb");
+      setHeroTitle(settings.hero_title || "");
+      setHeroSubtitle(settings.hero_subtitle || "");
+    }
+  }, [settings]);
 
   // Build section visibility state from DB data
   const defaultVisibility = Object.fromEntries(
