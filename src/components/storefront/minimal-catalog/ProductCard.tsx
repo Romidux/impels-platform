@@ -12,13 +12,16 @@ export default function ProductCard({ product, storeSlug, currency }: ProductCar
   const primaryImage = product.images?.find((img) => img.is_primary) || product.images?.[0];
 
   return (
-    <Link href={`/store/${storeSlug}/product/${product.slug}`} className="group block w-full space-y-4">
-      <div className="relative aspect-[4/5] bg-gray-100 overflow-hidden w-full">
+    <Link 
+      href={`/store/${storeSlug}/product/${product.slug}`} 
+      className="group block w-full space-y-4 transition-all duration-500 ease-out hover:-translate-y-1"
+    >
+      <div className="relative aspect-[4/5] bg-gray-50 overflow-hidden w-full rounded-sm shadow-sm transition-shadow duration-500 group-hover:shadow-xl group-hover:shadow-black/5">
         {primaryImage ? (
           <img
             src={primaryImage.url}
             alt={product.name}
-            className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
+            className="w-full h-full object-cover object-center transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110"
             loading="lazy"
           />
         ) : (
@@ -27,16 +30,16 @@ export default function ProductCard({ product, storeSlug, currency }: ProductCar
           </div>
         )}
       </div>
-      <div className="flex flex-col gap-1 px-1">
+      <div className="flex flex-col gap-1.5 px-0.5">
         {product.category?.name && (
-          <span className="text-xs text-gray-500 font-medium tracking-wide uppercase">
+          <span className="text-[10px] text-gray-400 font-semibold tracking-[0.1em] uppercase">
             {product.category.name}
           </span>
         )}
-        <h3 className="text-base text-gray-900 font-medium tracking-tight line-clamp-1">
+        <h3 className="text-[15px] text-gray-900 font-medium tracking-tight line-clamp-2 leading-snug group-hover:text-black transition-colors">
           {product.name}
         </h3>
-        <p className="text-sm text-gray-600 mt-1">
+        <p className="text-sm text-gray-500 font-light mt-0.5">
           {formatCurrency(product.price, currency)}
         </p>
       </div>

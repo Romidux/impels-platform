@@ -21,11 +21,13 @@ export default function Header({ store, settings }: HeaderProps) {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
   const totalItems = useCartStore((s) => s.getTotalItems());
   const setStoreSlug = useCartStore((s) => s.setStore);
   const router = useRouter();
 
   useEffect(() => {
+    setMounted(true);
     setStoreSlug(store.slug);
   }, [store.slug, setStoreSlug]);
 
@@ -61,11 +63,16 @@ export default function Header({ store, settings }: HeaderProps) {
     <>
       <header
         className={cn(
-          "sticky top-0 z-40 bg-white transition-all duration-300",
-          scrolled || mobileMenuOpen || mobileSearchOpen ? "border-b border-gray-100 shadow-sm" : ""
+          "sticky top-0 z-40 w-full transition-all duration-300 ease-in-out",
+          scrolled 
+            ? "bg-white/80 backdrop-blur-md py-0 shadow-sm border-b border-gray-100/50" 
+            : "bg-white py-2"
         )}
       >
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 h-16 flex items-center justify-between relative bg-white z-50 flex-shrink-0">
+        <div className={cn(
+          "max-w-[1400px] mx-auto px-4 sm:px-8 flex items-center justify-between relative z-50 transition-all duration-300",
+          scrolled ? "h-14" : "h-16"
+        )}>
           
           {/* Logo */}
           <Link 
@@ -111,7 +118,7 @@ export default function Header({ store, settings }: HeaderProps) {
               className="relative text-black hover:opacity-70 transition-opacity"
             >
               <ShoppingBag className="w-5 h-5" />
-              {totalItems > 0 && (
+              {mounted && totalItems > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                   {totalItems}
                 </span>
@@ -135,7 +142,7 @@ export default function Header({ store, settings }: HeaderProps) {
               className="relative text-black"
             >
               <ShoppingBag className="w-5 h-5" />
-              {totalItems > 0 && (
+              {mounted && totalItems > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center">
                   {totalItems}
                 </span>

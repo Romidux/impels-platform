@@ -24,11 +24,13 @@ export default function StorefrontLayout({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [mounted, setMounted] = useState(false);
   const totalItems = useCartStore((s) => s.getTotalItems());
   const setStoreSlug = useCartStore((s) => s.setStore);
   const router = useRouter();
 
   useEffect(() => {
+    setMounted(true);
     setStoreSlug(store.slug);
   }, [store.slug, setStoreSlug]);
 
@@ -107,7 +109,7 @@ export default function StorefrontLayout({
               className="relative p-2.5 rounded-xl hover:bg-gray-50 transition-colors"
             >
               <ShoppingCart className="w-5 h-5 text-gray-700" />
-              {totalItems > 0 && (
+              {mounted && totalItems > 0 && (
                 <span
                   className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold"
                   style={{ backgroundColor: primaryColor }}

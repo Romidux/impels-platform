@@ -5,7 +5,7 @@ import { Product, StoreSettings, ProductVariantCombination, ProductOptionType } 
 import { formatCurrency } from "@/lib/utils";
 import { useCartStore } from "@/lib/store";
 import { toast } from "sonner";
-import { ShoppingBag, ChevronRight, Share, Heart } from "lucide-react";
+import { ShoppingBag, ChevronRight, Share, Heart, Plus, Minus } from "lucide-react";
 import ProductGrid from "./ProductGrid";
 
 interface MinimalProductDetailProps {
@@ -26,6 +26,7 @@ export default function MinimalProductDetailClient({
 
   const primaryImage = product.images?.find((img) => img.is_primary) || product.images?.[0];
   const [activeImage, setActiveImage] = useState(primaryImage?.url || "");
+  const [quantity, setQuantity] = useState(1);
 
   // Variant selection setup
   const optionTypes = (product.option_types || []) as ProductOptionType[];
@@ -92,7 +93,7 @@ export default function MinimalProductDetailClient({
       variant_combination_id: selectedVariant?.id,
       variant_label: variantLabel || undefined,
       price: price,
-      quantity: 1,
+      quantity: quantity,
       product_image: activeImage,
     });
     
@@ -131,12 +132,12 @@ export default function MinimalProductDetailClient({
               ))}
             </div>
             
-            <div className="aspect-[4/5] bg-gray-100 flex-1 relative overflow-hidden group">
+            <div className="aspect-square bg-gray-100 flex-1 relative overflow-hidden group">
               {activeImage ? (
                 <img
                   src={activeImage}
                   alt={product.name}
-                  className="w-full h-full object-cover object-center"
+                  className="w-full h-full object-contain object-center"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-300">
@@ -147,7 +148,7 @@ export default function MinimalProductDetailClient({
           </div>
 
           {/* Product Info Section */}
-          <div className="flex flex-col justify-start max-w-md pt-0 lg:pt-10">
+          <div className="flex flex-col justify-start max-w-[420px] pt-0 lg:pt-10">
             {product.category?.name && (
               <span className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3 block">
                 {product.category.name}
@@ -202,27 +203,75 @@ export default function MinimalProductDetailClient({
             )}
 
             {/* Actions */}
-            <div className="flex items-center gap-4">
-              <button
-                onClick={handleAddToCart}
-                disabled={isOutOfStock && !product.allow_backorder}
-                className={`flex-1 bg-black text-white px-8 py-4 text-sm font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors ${
-                  isOutOfStock && !product.allow_backorder ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed" : ""
-                }`}
-              >
-                <ShoppingBag className="w-4 h-4" />
-                {isOutOfStock && !product.allow_backorder ? "Agotado" : "Agregar a la bolsa"}
-              </button>
-              <button className="p-4 border border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors flex items-center justify-center">
-                <Heart className="w-5 h-5" />
-              </button>
+            <div className="flex flex-col gap-4">
+              {/* Row 1: Quantity & Add to cart */}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center border border-gray-200 h-[52px] px-2">
+                  <button 
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="p-2 text-gray-500 hover:text-black transition-colors"
+                  >
+                    <Minus className="w-4 h-4" />
+                  </button>
+                  <span className="w-10 text-center text-sm font-medium">{quantity}</span>
+                  <button 
+                    onClick={() => setQuantity(quantity + 1)}
+                    className="p-2 text-gray-500 hover:text-black transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </button>
+                </div>
+
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isOutOfStock && !product.allow_backorder}
+                  className={`flex-1 bg-black text-white h-[52px] text-sm font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-gray-800 transition-colors ${
+                    isOutOfStock && !product.allow_backorder ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed" : ""
+                  }`}
+                >
+                  <ShoppingBag className="w-4 h-4" />
+                  {isOutOfStock && !product.allow_backorder ? "Agotado" : "Agregar a la bolsa"}
+                </button>
+              </div>
+
+              {/* Row 2: WhatsApp */}
+              {settings?.whatsapp_number && (
+                <button
+                  onClick={() => {
+                    const message = encodeURIComponent(`Hola! quiero comprar el producto ${product.name}`);
+                    window.open(`https://wa.me/${settings.whatsapp_number}?text=${message}`, "_blank");
+                  }}
+                  className="w-full border border-gray-200 text-gray-900 h-[52px] text-sm font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-gray-50 transition-colors"
+                >
+                  Pedir por WhatsApp
+                </button>
+              )}
+
+              {/* Row 3: Save & Share */}
+              <div className="flex items-center justify-between w-full mt-2">
+                <button className="flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-black transition-colors uppercase tracking-widest">
+                  <Heart className="w-4 h-4" /> Guardar
+                </button>
+                <button 
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({
+                        title: product.name,
+                        url: window.location.href
+                      });
+                    } else {
+                      navigator.clipboard.writeText(window.location.href);
+                      toast.success("Enlace copiado al portapapeles");
+                    }
+                  }}
+                  className="flex items-center gap-2 text-xs font-medium text-gray-400 hover:text-black transition-colors uppercase tracking-widest"
+                >
+                  <Share className="w-4 h-4" /> Compartir
+                </button>
+              </div>
             </div>
             
             <div className="mt-8 pt-8 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
-              <span>Envío estándar y devoluciones 30 días</span>
-              <button className="flex items-center gap-2 hover:text-black transition-colors">
-                <Share className="w-4 h-4" /> Compartir
-              </button>
             </div>
           </div>
         </div>
