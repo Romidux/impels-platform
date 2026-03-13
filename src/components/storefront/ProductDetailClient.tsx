@@ -227,8 +227,8 @@ export default function ProductDetailClient({
             {product.show_price ? (
               <>
                 <span
-                  className="font-display text-4xl font-black"
-                  style={{ color: primaryColor }}
+                  className={`font-display text-4xl font-black ${primaryColor === "#000000" ? "text-black" : ""}`}
+                  style={primaryColor !== "#000000" ? { color: primaryColor } : {}}
                 >
                   {formatCurrency(price, currency)}
                 </span>

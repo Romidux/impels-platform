@@ -44,6 +44,7 @@ export interface StoreSettings {
   secondary_color: string;
   hero_title?: string;
   hero_subtitle?: string;
+  benefits_bar_items?: string[];
 }
 
 export interface StoreBranding {
@@ -57,6 +58,8 @@ export interface StoreBranding {
   promo_banner_subtitle?: string;
   promo_banner_cta?: string;
   promo_banner_url_link?: string;
+  footer_categories_label?: string;
+  footer_contact_label?: string;
 }
 
 export interface StoreSection {

@@ -5,7 +5,7 @@ import { ShoppingCart, Search, Zap, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
-import { Store as StoreType, StoreSettings } from "@/lib/types";
+import { Store as StoreType, StoreSettings, StoreBranding } from "@/lib/types";
 import CartDrawer from "./CartDrawer";
 import { cn } from "@/lib/utils";
 
@@ -13,12 +13,14 @@ interface StorefrontLayoutProps {
   children: React.ReactNode;
   store: StoreType;
   settings?: StoreSettings;
+  branding?: StoreBranding;
 }
 
 export default function StorefrontLayout({
   children,
   store,
   settings,
+  branding,
 }: StorefrontLayoutProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -166,51 +168,118 @@ export default function StorefrontLayout({
         )}
       </header>
 
+      {/* Benefits Bar (Marquee) - ONLY MINIMAL */}
+      {settings?.template === "minimal" && settings.benefits_bar_items && settings.benefits_bar_items.length > 0 && (
+        <div className="bg-black text-white h-[40px] flex items-center overflow-hidden whitespace-nowrap border-y border-white/10">
+          <div className="flex animate-marquee-fast md:animate-marquee-slow hover:[animation-play-state:paused]">
+            {[1, 2, 3, 4].map((i) => (
+              <span key={i} className="text-[11px] md:text-xs font-bold uppercase tracking-[0.15em] px-4">
+                {settings.benefits_bar_items!.filter(b => b.trim() !== "").join(" • ")}
+                {i < 4 && " • "}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Main content */}
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      <footer className="bg-gray-50 border-t border-gray-100 mt-8">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5">
-              <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: primaryColor }}
-              >
-                <span className="text-white font-bold text-sm">
-                  {store.name.charAt(0).toUpperCase()}
-                </span>
+      {settings?.template === "minimal" ? (
+        <footer className="bg-white border-t border-gray-100 mt-12 pt-12 pb-8">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-10 mb-12">
+              {/* Col 1: Store Name */}
+              <div className="space-y-4">
+                <Link href={`/store/${store.slug}`} className="font-display font-black text-xl tracking-tight text-black">
+                  {store.name}
+                </Link>
+                <p className="text-gray-400 text-sm max-w-[240px]">
+                  {settings.hero_subtitle || store.description}
+                </p>
               </div>
-              <span className="font-display font-bold text-gray-900">
-                {store.name}
-              </span>
+
+              {/* Col 2: Navigation */}
+              <div className="space-y-4">
+                <h4 className="font-bold text-xs uppercase tracking-widest text-gray-400">{branding?.footer_categories_label || "Explorar"}</h4>
+                <div className="flex flex-col gap-2.5">
+                  <Link href={`/store/${store.slug}/catalog`} className="text-sm font-medium hover:underline">Productos</Link>
+                  <Link href={`/store/${store.slug}/catalog`} className="text-sm font-medium hover:underline">Categorías</Link>
+                  <Link href={`/store/${store.slug}`} className="text-sm font-medium hover:underline">{branding?.footer_contact_label || "Contacto"}</Link>
+                </div>
+              </div>
+
+              {/* Col 3: Social */}
+              <div className="space-y-4">
+                <h4 className="font-bold text-xs uppercase tracking-widest text-gray-400">Social</h4>
+                <div className="flex flex-col gap-2.5">
+                  {settings.instagram_url && (
+                    <a href={settings.instagram_url} target="_blank" rel="noopener" className="text-sm font-medium hover:underline">
+                      Instagram
+                    </a>
+                  )}
+                  {settings.whatsapp_number && (
+                    <a href={`https://wa.me/${settings.whatsapp_number}`} target="_blank" rel="noopener" className="text-sm font-medium hover:underline">
+                      WhatsApp
+                    </a>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="text-xs text-gray-400 flex items-center gap-1.5">
-              Tienda creada con{" "}
-              <Link
-                href="/"
-                className="flex items-center gap-1 text-blue-500 hover:text-blue-600 font-semibold"
-              >
-                <Zap className="w-3 h-3" />
-                Impels Commerce
-              </Link>
+
+            <div className="pt-8 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-4 text-[11px] text-gray-400 font-medium">
+              <p>© 2026 {store.name} · Powered by <Link href="https://impels-platform.vercel.app" target="_blank" rel="noopener noreferrer" className="underline text-black">Impels</Link></p>
+              <div className="flex gap-6">
+                <span>POLÍTICA DE PRIVACIDAD</span>
+                <span>TÉRMINOS Y CONDICIONES</span>
+              </div>
             </div>
           </div>
-          {settings?.whatsapp_number && (
-            <div className="mt-4 text-center">
-              <a
-                href={`https://wa.me/${settings.whatsapp_number}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-green-600 hover:text-green-700 font-medium"
-              >
-                📞 Contactar por WhatsApp
-              </a>
+        </footer>
+      ) : (
+        <footer className="bg-gray-50 border-t border-gray-100 mt-8">
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-2.5">
+                <div
+                  className="w-7 h-7 rounded-lg flex items-center justify-center"
+                  style={{ backgroundColor: primaryColor }}
+                >
+                  <span className="text-white font-bold text-sm">
+                    {store.name.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <span className="font-display font-bold text-gray-900">
+                  {store.name}
+                </span>
+              </div>
+              <div className="text-xs text-gray-400 flex items-center gap-1.5">
+                Tienda creada con{" "}
+                <Link
+                  href="/"
+                  className="flex items-center gap-1 text-blue-500 hover:text-blue-600 font-semibold"
+                >
+                  <Zap className="w-3 h-3" />
+                  Impels Commerce
+                </Link>
+              </div>
             </div>
-          )}
-        </div>
-      </footer>
+            {settings?.whatsapp_number && (
+              <div className="mt-4 text-center">
+                <a
+                  href={`https://wa.me/${settings.whatsapp_number}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-green-600 hover:text-green-700 font-medium"
+                >
+                  📞 Contactar por WhatsApp
+                </a>
+              </div>
+            )}
+          </div>
+        </footer>
+      )}
 
       {/* Cart Drawer */}
       <CartDrawer

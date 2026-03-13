@@ -24,6 +24,8 @@ export default async function StorePage({
   if (!store) notFound();
 
   const settings = store.store_settings?.[0];
+  const template = settings?.template || "modern";
+  const isMinimal = template === "minimal";
 
   // Fetch categories
   const { data: categories } = await supabase
@@ -58,49 +60,69 @@ export default async function StorePage({
     .limit(12)
     .order("created_at", { ascending: false });
 
-  const primaryColor = settings?.primary_color || "#2563eb";
-  const heroTitle = settings?.hero_title || `Bienvenidos a ${store.name}`;
-  const heroSubtitle =
-    settings?.hero_subtitle || "Descubre nuestros productos";
+  const primaryColor = isMinimal ? "#000000" : (settings?.primary_color || "#2563eb");
+  const heroTitle = settings?.hero_title || store.name;
+  const heroSubtitle = settings?.hero_subtitle || "Bienvenidos a nuestra tienda";
   const currency = settings?.currency || "Gs";
 
   return (
     <div>
       {/* ── HERO ──────────────────────────────────────────────────── */}
-      <section
-        className="relative overflow-hidden py-20 px-6"
-        style={{
-          background: `linear-gradient(135deg, ${primaryColor}15 0%, ${primaryColor}08 100%)`,
-        }}
-      >
-        <div
-          className="absolute inset-0 opacity-5"
+      {isMinimal ? (
+        <section className="bg-white py-24 px-6 border-b border-gray-100">
+          <div className="max-w-3xl mx-auto text-center">
+            <h1 className="font-display text-5xl md:text-6xl font-black text-black mb-6 tracking-tight">
+              {heroTitle}
+            </h1>
+            {heroSubtitle && heroSubtitle.trim() !== "" && (
+              <p className="text-gray-500 text-lg md:text-xl mb-10 mx-auto max-w-xl line-clamp-2 leading-relaxed">
+                {heroSubtitle}
+              </p>
+            )}
+            <Link
+              href={`/store/${slug}/catalog`}
+              className="inline-flex items-center justify-center bg-black text-white font-bold px-10 py-4 rounded-full text-base tracking-wide hover:bg-gray-900 transition-all uppercase"
+            >
+              Ver productos
+            </Link>
+          </div>
+        </section>
+      ) : (
+        <section
+          className="relative overflow-hidden py-20 px-6"
           style={{
-            backgroundImage: `radial-gradient(${primaryColor} 1px, transparent 1px)`,
-            backgroundSize: "30px 30px",
+            background: `linear-gradient(135deg, ${primaryColor}15 0%, ${primaryColor}08 100%)`,
           }}
-        />
-        <div className="max-w-4xl mx-auto text-center relative">
-          <h1
-            className="font-display text-5xl md:text-7xl font-black mb-4"
-            style={{ color: primaryColor }}
-          >
-            {heroTitle}
-          </h1>
-          <p className="text-gray-600 text-xl mb-8">{heroSubtitle}</p>
-          <Link
-            href={`/store/${slug}/catalog`}
-            className="inline-flex items-center gap-2 text-white font-bold px-8 py-4 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all hover:scale-105"
-            style={{ backgroundColor: primaryColor }}
-          >
-            Ver catálogo completo
-            <ArrowRight className="w-5 h-5" />
-          </Link>
-        </div>
-      </section>
+        >
+          <div
+            className="absolute inset-0 opacity-5"
+            style={{
+              backgroundImage: `radial-gradient(${primaryColor} 1px, transparent 1px)`,
+              backgroundSize: "30px 30px",
+            }}
+          />
+          <div className="max-w-4xl mx-auto text-center relative">
+            <h1
+              className="font-display text-5xl md:text-7xl font-black mb-4"
+              style={{ color: primaryColor }}
+            >
+              {heroTitle}
+            </h1>
+            <p className="text-gray-600 text-xl mb-8">{heroSubtitle}</p>
+            <Link
+              href={`/store/${slug}/catalog`}
+              className="inline-flex items-center gap-2 text-white font-bold px-8 py-4 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all hover:scale-105"
+              style={{ backgroundColor: primaryColor }}
+            >
+              Ver catálogo completo
+              <ArrowRight className="w-5 h-5" />
+            </Link>
+          </div>
+        </section>
+      )}
 
-      {/* ── CATEGORIES ────────────────────────────────────────────── */}
-      {categories && categories.length > 0 && (
+      {/* ── CATEGORIES (Hidden in Minimal as requested focal point is products) ──────────────── */}
+      {!isMinimal && categories && categories.length > 0 && (
         <section className="py-16 px-6 max-w-7xl mx-auto">
           <div className="flex items-center justify-between mb-8">
             <h2 className="font-display text-3xl font-bold text-gray-900">
@@ -140,14 +162,14 @@ export default async function StorePage({
 
       {/* ── FEATURED PRODUCTS ─────────────────────────────────────── */}
       {featuredProducts && featuredProducts.length > 0 && (
-        <section className="py-16 px-6 bg-gray-50">
+        <section className={`py-16 px-6 ${isMinimal ? "bg-white" : "bg-gray-50"}`}>
           <div className="max-w-7xl mx-auto">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="font-display text-3xl font-bold text-gray-900">
-                ⭐ Destacados
+              <h2 className={`font-display text-2xl md:text-3xl font-bold text-gray-900 ${isMinimal ? "uppercase tracking-tighter" : ""}`}>
+                {isMinimal ? "Destacados" : "⭐ Destacados"}
               </h2>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
               {(featuredProducts as Product[]).map((product) => (
                 <ProductCard
                   key={product.id}
@@ -165,12 +187,12 @@ export default async function StorePage({
       {/* ── ALL PRODUCTS ──────────────────────────────────────────── */}
       <section className="py-16 px-6 max-w-7xl mx-auto">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="font-display text-3xl font-bold text-gray-900">
-            Todos los productos
+          <h2 className={`font-display text-2xl md:text-3xl font-bold text-gray-900 ${isMinimal ? "uppercase tracking-tighter" : ""}`}>
+            {isMinimal ? "Nuevos Ingresos" : "Todos los productos"}
           </h2>
           <Link
             href={`/store/${slug}/catalog`}
-            className="flex items-center gap-1 text-sm font-medium text-blue-600 hover:text-blue-700"
+            className={`flex items-center gap-1 text-sm font-medium ${isMinimal ? "text-black hover:underline" : "text-blue-600 hover:text-blue-700"}`}
           >
             Ver catálogo completo
             <ArrowRight className="w-4 h-4" />
@@ -185,7 +207,7 @@ export default async function StorePage({
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
             {(recentProducts as Product[]).map((product) => (
               <ProductCard
                 key={product.id}

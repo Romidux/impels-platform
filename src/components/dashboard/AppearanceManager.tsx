@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Palette, Eye, EyeOff, Save, Layers, Type } from "lucide-react";
+import { Palette, Eye, EyeOff, Save, Layers, Type, Zap, Instagram, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, StoreSettings, StoreBranding, StoreSection } from "@/lib/types";
@@ -10,9 +10,9 @@ import { Store, StoreSettings, StoreBranding, StoreSection } from "@/lib/types";
 const TEMPLATES = [
   {
     id: "minimal",
-    name: "Minimal Catalog",
-    description: "Limpio y ordenado. Catálogo con foco en los productos.",
-    preview: "bg-gradient-to-br from-gray-100 to-gray-200",
+    name: "Minimal Store",
+    description: "Estricto blanco y negro. Hero minimalista y elegante.",
+    preview: "bg-white border-gray-200",
   },
   {
     id: "modern",
@@ -60,6 +60,19 @@ export default function AppearanceManager({
   const [heroSubtitle, setHeroSubtitle] = useState(
     settings?.hero_subtitle || ""
   );
+  const [benefits, setBenefits] = useState<string[]>(
+    settings?.benefits_bar_items || [
+      "ENVÍOS A TODO EL PAÍS",
+      "ATENCIÓN POR WHATSAPP",
+      "PAGO SEGURO",
+      "PRODUCTOS ORIGINALES",
+    ]
+  );
+  
+  // Footer Labels
+  const [footerCategoriesLabel, setFooterCategoriesLabel] = useState(branding?.footer_categories_label || "Productos");
+  const [footerContactLabel, setFooterContactLabel] = useState(branding?.footer_contact_label || "Contacto");
+  const [instagramUrl, setInstagramUrl] = useState(settings?.instagram_url || "");
 
   // Build section visibility state from DB data
   const defaultVisibility = Object.fromEntries(
@@ -92,9 +105,21 @@ export default function AppearanceManager({
         {
           store_id: store.id,
           template,
-          primary_color: primaryColor,
+          primary_color: template === "minimal" ? "#000000" : primaryColor,
           hero_title: heroTitle,
           hero_subtitle: heroSubtitle,
+          benefits_bar_items: benefits,
+          instagram_url: instagramUrl,
+        },
+        { onConflict: "store_id" }
+      );
+
+      // Update branding (for footer labels)
+      await supabase.from("store_branding").upsert(
+        {
+          store_id: store.id,
+          footer_categories_label: footerCategoriesLabel,
+          footer_contact_label: footerContactLabel,
         },
         { onConflict: "store_id" }
       );
@@ -210,50 +235,55 @@ export default function AppearanceManager({
             <div className="flex items-center gap-3">
               <input
                 type="color"
-                value={primaryColor}
+                value={template === "minimal" ? "#000000" : primaryColor}
                 onChange={(e) => setPrimaryColor(e.target.value)}
-                className="w-12 h-12 rounded-xl border border-gray-200 cursor-pointer"
+                disabled={template === "minimal"}
+                className={`w-12 h-12 rounded-xl border border-gray-200 cursor-pointer ${
+                  template === "minimal" ? "opacity-50 cursor-not-allowed" : ""
+                }`}
               />
               <div>
                 <p className="text-sm font-mono text-gray-600">
-                  {primaryColor}
+                  {template === "minimal" ? "#000000" : primaryColor}
                 </p>
                 <p className="text-xs text-gray-400">
-                  Botones, links y acentos
+                  {template === "minimal"
+                    ? "El template minimal solo usa Blanco y Negro"
+                    : "Botones, links y acentos"}
                 </p>
               </div>
             </div>
           </div>
         </div>
         {/* Quick color presets */}
-        <div>
-          <p className="text-xs font-semibold text-gray-500 mb-2">
-            Colores rápidos
-          </p>
-          <div className="flex gap-2 flex-wrap">
-            {[
-              "#2563eb",
-              "#7c3aed",
-              "#dc2626",
-              "#16a34a",
-              "#ea580c",
-              "#0891b2",
-              "#db2777",
-              "#0f172a",
-            ].map((color) => (
-              <button
-                key={color}
-                onClick={() => setPrimaryColor(color)}
-                style={{ backgroundColor: color }}
-                className={`w-8 h-8 rounded-lg transition-all hover:scale-110 ${
-                  primaryColor === color
-                    ? "ring-2 ring-offset-2 ring-gray-400"
-                    : ""
-                }`}
-              />
-            ))}
+        {template !== "minimal" && (
+          <div>
+            <p className="text-xs font-semibold text-gray-500 mb-2">
+              Colores rápidos
+            </p>
+            <div className="flex gap-2 flex-wrap">
+              {[
+                "#2563eb",
+                "#7c3aed",
+                "#dc2626",
+                "#16a34a",
+                "#ea580c",
+                "#0891b2",
+                "#db2777",
+                "#0f172a",
+              ].map((color) => (
+                <button
+                  key={color}
+                  onClick={() => setPrimaryColor(color)}
+                  style={{ backgroundColor: color }}
+                  className={`w-8 h-8 rounded-lg transition-all hover:scale-110 ${
+                    primaryColor === color ? "ring-2 ring-offset-2 ring-gray-400" : ""
+                  }`}
+                />
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Hero text */}
@@ -275,16 +305,123 @@ export default function AppearanceManager({
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-            Subtítulo
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5 flex justify-between">
+            <span>Subtítulo / Descripción Hero</span>
+            <span className={`text-[10px] ${heroSubtitle.length > 120 ? "text-red-500" : "text-gray-400"}`}>
+              {heroSubtitle.length}/120
+            </span>
           </label>
           <input
             type="text"
+            maxLength={120}
             value={heroSubtitle}
             onChange={(e) => setHeroSubtitle(e.target.value)}
             placeholder="Los mejores productos al mejor precio"
+            className={`w-full border rounded-xl px-4 py-3 text-sm focus:outline-none transition-all ${
+               heroSubtitle.length > 120 ? "border-red-500 focus:border-red-500" : "border-gray-200 focus:border-blue-400"
+            }`}
+          />
+          <p className="text-[10px] text-gray-400 mt-1">
+            En el template Minimal se mostrarán máximo 2 líneas.
+          </p>
+        </div>
+      </div>
+
+      {/* Benefits Bar */}
+      <div className="card-flat p-6 space-y-4">
+        <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
+          <Zap className="w-5 h-5 text-yellow-500" />
+          Barra de beneficios (Marquee)
+        </h2>
+        <div className="space-y-3">
+          {benefits.map((benefit, index) => (
+            <div key={index} className="flex gap-2">
+              <input
+                type="text"
+                value={benefit}
+                onChange={(e) => {
+                  const newBenefits = [...benefits];
+                  newBenefits[index] = e.target.value;
+                  setBenefits(newBenefits);
+                }}
+                className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 transition-all"
+                placeholder="Ej: Envíos gratis"
+              />
+              <button
+                onClick={() => {
+                  setBenefits(benefits.filter((_, i) => i !== index));
+                }}
+                className="p-2.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+          ))}
+          <button
+            onClick={() => setBenefits([...benefits, ""])}
+            className="w-full py-2.5 border-2 border-dashed border-gray-200 rounded-xl text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-600 transition-all"
+          >
+            + Agregar beneficio
+          </button>
+        </div>
+      </div>
+
+      {/* Footer Labels (Minimal only) */}
+      {template === "minimal" && (
+        <div className="card-flat p-6 space-y-4">
+          <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
+            <Layers className="w-5 h-5 text-indigo-500" />
+            Personalización del Footer
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Etiqueta Categorías
+              </label>
+              <input
+                type="text"
+                value={footerCategoriesLabel}
+                onChange={(e) => setFooterCategoriesLabel(e.target.value)}
+                placeholder="Ej: Explorar o Colecciones"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 transition-all"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Etiqueta Contacto
+              </label>
+              <input
+                type="text"
+                value={footerContactLabel}
+                onChange={(e) => setFooterContactLabel(e.target.value)}
+                placeholder="Ej: Ayuda o Soporte"
+                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 transition-all"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Redes Sociales */}
+      <div className="card-flat p-6 space-y-4">
+        <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
+          <Instagram className="w-5 h-5 text-pink-500" />
+          Redes Sociales
+        </h2>
+        <div>
+          <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+            URL de Instagram
+          </label>
+          <input
+            type="text"
+            value={instagramUrl}
+            onChange={(e) => setInstagramUrl(e.target.value)}
+            placeholder="https://instagram.com/tu_usuario"
             className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 transition-all"
           />
+          <p className="text-[10px] text-gray-400 mt-1">
+            Ingresa el enlace completo a tu perfil de Instagram.
+          </p>
         </div>
       </div>
 

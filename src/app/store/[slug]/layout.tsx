@@ -51,7 +51,7 @@ export default async function StoreLayout({
   if (!store) notFound();
 
   return (
-    <StorefrontLayout store={store} settings={store.store_settings?.[0]}>
+    <StorefrontLayout store={store} settings={store.store_settings?.[0]} branding={store.store_branding?.[0]}>
       {children}
     </StorefrontLayout>
   );

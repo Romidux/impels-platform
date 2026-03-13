@@ -26,7 +26,8 @@ export default async function CatalogPage({
   if (!store) notFound();
 
   const settings = store.store_settings?.[0];
-  const primaryColor = settings?.primary_color || "#2563eb";
+  const isMinimal = settings?.template === "minimal";
+  const primaryColor = isMinimal ? "#000000" : (settings?.primary_color || "#2563eb");
   const currency = settings?.currency || "Gs";
 
   // Fetch categories for filter
@@ -90,7 +91,7 @@ export default async function CatalogPage({
                   !sp.category
                     ? "font-bold text-white"
                     : "text-gray-600 hover:bg-gray-100"
-                }`}
+                } ${primaryColor === "#000000" ? "uppercase tracking-widest text-[11px]" : ""}`}
                 style={!sp.category ? { backgroundColor: primaryColor } : {}}
               >
                 Todos
@@ -140,7 +141,7 @@ export default async function CatalogPage({
                     (sp.sort || "") === opt.value
                       ? "font-bold text-white"
                       : "text-gray-600 hover:bg-gray-100"
-                  }`}
+                  } ${primaryColor === "#000000" ? "uppercase tracking-widest text-[11px]" : ""}`}
                   style={
                     (sp.sort || "") === opt.value
                       ? { backgroundColor: primaryColor }

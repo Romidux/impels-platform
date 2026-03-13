@@ -110,7 +110,7 @@ export default function ProductCard({
 
         {/* Info */}
         <div className="p-3">
-          <p className="font-semibold text-sm text-gray-900 line-clamp-2 leading-snug mb-1.5">
+          <p className={`font-semibold text-sm text-gray-900 line-clamp-2 leading-snug mb-1.5 ${primaryColor === "#000000" ? "uppercase tracking-tight" : ""}`}>
             {product.name}
           </p>
           {product.category && (
@@ -122,8 +122,8 @@ export default function ProductCard({
             {product.show_price ? (
               <>
                 <span
-                  className="font-display font-black text-lg"
-                  style={{ color: primaryColor }}
+                  className={`font-display font-black text-lg ${primaryColor === "#000000" ? "text-black" : ""}`}
+                  style={primaryColor !== "#000000" ? { color: primaryColor } : {}}
                 >
                   {formatCurrency(product.price, currency)}
                 </span>
