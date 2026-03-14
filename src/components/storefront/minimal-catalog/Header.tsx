@@ -1,21 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { Search, ShoppingBag, User, Menu, X, ArrowRight } from "lucide-react";
+import { Search, ShoppingBag, User, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
-import { Store as StoreType, StoreSettings } from "@/lib/types";
+import { Store as StoreType, StoreSettings, Category } from "@/lib/types";
 import MinimalCartDrawer from "./MinimalCartDrawer";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import MinimalCategoryMenuDesktop from "./MinimalCategoryMenuDesktop";
+import MinimalCategoryMenuMobile from "./MinimalCategoryMenuMobile";
 
 interface HeaderProps {
   store: StoreType;
   settings?: StoreSettings;
+  categories?: Category[];
 }
 
-export default function Header({ store, settings }: HeaderProps) {
+export default function Header({ store, settings, categories = [] }: HeaderProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
@@ -32,7 +35,9 @@ export default function Header({ store, settings }: HeaderProps) {
   }, [store.slug, setStoreSlug]);
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 0);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 0);
+    };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -63,7 +68,7 @@ export default function Header({ store, settings }: HeaderProps) {
     <>
       <header
         className={cn(
-          "sticky top-0 z-40 w-full transition-all duration-300 ease-in-out",
+          "sticky top-0 z-[100] w-full transition-all duration-300 ease-in-out",
           scrolled 
             ? "bg-white/80 backdrop-blur-md py-0 shadow-sm border-b border-gray-100/50" 
             : "bg-white py-2"
@@ -93,9 +98,7 @@ export default function Header({ store, settings }: HeaderProps) {
             <Link href={`/store/${store.slug}`} className="text-sm font-medium text-gray-500 hover:text-black transition-colors">
               Inicio
             </Link>
-            <Link href={`/store/${store.slug}/catalog`} className="text-sm font-medium text-gray-500 hover:text-black transition-colors">
-              Catálogo
-            </Link>
+            <MinimalCategoryMenuDesktop categories={categories} storeSlug={store.slug} />
           </nav>
 
           {/* Desktop Actions */}
@@ -159,75 +162,59 @@ export default function Header({ store, settings }: HeaderProps) {
             </button>
           </div>
         </div>
-
-        {/* Mobile Search Panel (Overlay) */}
-        <AnimatePresence>
-          {mobileSearchOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="absolute left-0 right-0 top-16 bg-white overflow-hidden shadow-xl z-40 md:hidden"
-            >
-              <div className="px-4 py-4 border-t border-gray-100 pb-6 border-b">
-                <form onSubmit={handleSearch} className="relative w-full">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="¿Qué estás buscando?"
-                    className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-full text-base focus:outline-none focus:bg-white focus:border-gray-300 transition-all font-medium placeholder:text-gray-400 shadow-sm"
-                    autoFocus
-                  />
-                </form>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-        
-        {/* Mobile Navigation Menu (Overlay) */}
-        <AnimatePresence>
-          {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20, transition: { duration: 0.2 } }}
-              transition={{ duration: 0.2, ease: "easeOut" }}
-              className="fixed inset-0 top-16 bg-white z-40 md:hidden overflow-y-auto"
-            >
-              <nav className="flex flex-col px-6 py-8 gap-8 border-t border-gray-100 h-full">
-                <Link
-                  href={`/store/${store.slug}`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-2xl font-medium text-black tracking-tight flex items-center justify-between"
-                >
-                  Inicio
-                  <ArrowRight className="w-5 h-5 text-gray-300" />
-                </Link>
-                <Link
-                  href={`/store/${store.slug}/catalog`}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-2xl font-medium text-black tracking-tight flex items-center justify-between"
-                >
-                  Catálogo
-                  <ArrowRight className="w-5 h-5 text-gray-300" />
-                </Link>
-
-                <div className="flex-1" />
-
-                <div className="pb-8">
-                  <Link href="#" className="flex items-center justify-center gap-2 text-lg font-medium text-black group bg-gray-50 py-4 rounded-xl border border-gray-100 shadow-sm">
-                    <User className="w-5 h-5" /> Mi Cuenta
-                  </Link>
-                </div>
-              </nav>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
       </header>
+
+      {/* Mobile Search Panel (Overlay) */}
+      <AnimatePresence>
+        {mobileSearchOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className={cn(
+              "fixed left-0 right-0 bg-white overflow-hidden shadow-xl z-[110] md:hidden",
+              scrolled ? "top-14" : "top-16"
+            )}
+          >
+            <div className="px-4 py-4 border-t border-gray-100 pb-6 border-b">
+              <form onSubmit={handleSearch} className="relative w-full">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="¿Qué estás buscando?"
+                  className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-full text-base focus:outline-none focus:bg-white focus:border-gray-300 transition-all font-medium placeholder:text-gray-400 shadow-sm"
+                  autoFocus
+                />
+              </form>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
+      {/* Mobile Navigation Menu (Overlay) */}
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, x: "100%" }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: "100%", transition: { duration: 0.2 } }}
+            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
+            className={cn(
+              "fixed inset-0 bg-white z-[120] md:hidden",
+              scrolled ? "top-14" : "top-16"
+            )}
+          >
+            <MinimalCategoryMenuMobile 
+              categories={categories} 
+              storeSlug={store.slug} 
+              onClose={() => setMobileMenuOpen(false)} 
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       <MinimalCartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} store={store} settings={settings} />
     </>

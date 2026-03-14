@@ -50,7 +50,7 @@ export default function MinimalCartDrawer({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2, ease: "easeInOut" }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[200]"
           />
 
           {/* Drawer */}
@@ -59,7 +59,7 @@ export default function MinimalCartDrawer({
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 30, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 w-full max-w-[400px] bg-white shadow-2xl z-50 flex flex-col"
+            className="fixed right-0 top-0 bottom-0 w-full max-w-[400px] bg-white shadow-2xl z-[210] flex flex-col"
           >
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-6 border-b border-gray-100">

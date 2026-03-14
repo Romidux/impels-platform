@@ -56,8 +56,15 @@ export default async function StoreLayout({
     : store.store_settings;
 
   if (settings?.template === "minimal") {
+    const { data: categories } = await supabase
+      .from("categories")
+      .select("*")
+      .eq("store_id", store.id)
+      .eq("is_active", true)
+      .order("sort_order");
+
     return (
-      <MinimalLayout store={store} settings={settings}>
+      <MinimalLayout store={store} settings={settings} categories={categories || []}>
         {children}
       </MinimalLayout>
     );
