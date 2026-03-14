@@ -2,17 +2,23 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Search, X, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { Product } from "@/lib/types";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface MinimalSearchProps {
   storeSlug: string;
   storeId: string;
   isMobile?: boolean;
   onSearchComplete?: () => void;
+}
+
+interface Suggestion {
+  id: string;
+  name: string;
+  slug: string;
+  images?: { url: string }[];
 }
 
 export default function MinimalSearch({
@@ -22,55 +28,14 @@ export default function MinimalSearch({
   onSearchComplete,
 }: MinimalSearchProps) {
   const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [loading, setLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [focusedIndex, setFocusedIndex] = useState(-1);
-  const router = useRouter();
-  const supabase = createClient();
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
-  // Focus effect for mobile
-  useEffect(() => {
-    if (isMobile && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [isMobile]);
-
-  // Debounce and Fetch Suggestions
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (query.trim().length >= 2) {
-        setIsLoading(true);
-        try {
-          const { data, error } = await supabase
-            .from("products")
-            .select("*, images:product_images(url, is_primary)")
-            .eq("store_id", storeId)
-            .eq("visibility", "visible")
-            .ilike("name", `%${query.trim()}%`)
-            .limit(5);
-
-          if (!error && data) {
-            setSuggestions(data as Product[]);
-            setShowSuggestions(true);
-          }
-        } catch (err) {
-          console.error("Error fetching suggestions:", err);
-        } finally {
-          setIsLoading(false);
-        }
-      } else {
-        setSuggestions([]);
-        setShowSuggestions(false);
-      }
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [query, storeId, supabase]);
-
-  // Handle outside click to close suggestions
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -81,17 +46,51 @@ export default function MinimalSearch({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (isMobile && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isMobile]);
+
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (query.length < 2) {
+        setSuggestions([]);
+        return;
+      }
+
+      setLoading(true);
+      const supabase = createClient();
+      
+      const { data, error } = await supabase
+        .from("products")
+        .select("id, name, slug, images:product_images(url)")
+        .eq("store_id", storeId)
+        .eq("visibility", "visible")
+        .ilike("name", `%${query}%`)
+        .limit(5);
+
+      if (!error && data) {
+        setSuggestions(data as any);
+      }
+      setLoading(false);
+    };
+
+    const timer = setTimeout(fetchSuggestions, 300);
+    return () => clearTimeout(timer);
+  }, [query, storeId]);
+
   const handleSearch = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (query.trim()) {
-      router.push(`/store/${storeSlug}/catalog?search=${encodeURIComponent(query.trim())}`);
-      setShowSuggestions(false);
-      onSearchComplete?.();
-    }
+    if (!query.trim()) return;
+    
+    router.push(`/store/${storeSlug}/catalog?search=${encodeURIComponent(query.trim())}`);
+    setShowSuggestions(false);
+    onSearchComplete?.();
   };
 
-  const handleSuggestionClick = (productSlug: string) => {
-    router.push(`/store/${storeSlug}/product/${productSlug}`);
+  const handleSuggestionClick = (suggestion: Suggestion) => {
+    router.push(`/store/${storeSlug}/product/${suggestion.slug}`);
     setShowSuggestions(false);
     onSearchComplete?.();
   };
@@ -99,13 +98,13 @@ export default function MinimalSearch({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setFocusedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev));
+      setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : prev));
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setFocusedIndex((prev) => (prev > -1 ? prev - 1 : prev));
+      setSelectedIndex((prev) => (prev > -1 ? prev - 1 : prev));
     } else if (e.key === "Enter") {
-      if (focusedIndex >= 0 && suggestions[focusedIndex]) {
-        handleSuggestionClick(suggestions[focusedIndex].slug);
+      if (selectedIndex >= 0) {
+        handleSuggestionClick(suggestions[selectedIndex]);
       } else {
         handleSearch();
       }
@@ -114,135 +113,109 @@ export default function MinimalSearch({
     }
   };
 
-  const clearSearch = () => {
-    setQuery("");
-    setSuggestions([]);
-    setShowSuggestions(false);
-    inputRef.current?.focus();
-  };
-
   return (
-    <div ref={containerRef} className={cn("relative w-full", isMobile ? "px-2" : "max-w-md")}>
+    <div ref={containerRef} className="relative w-full">
       <form onSubmit={handleSearch} className="relative group">
-        <div className="relative flex items-center">
-          <Search className={cn(
-            "absolute left-4 w-4 h-4 transition-colors duration-200",
-            showSuggestions ? "text-black" : "text-gray-400 group-focus-within:text-black"
-          )} />
-          
-          <input
-            ref={inputRef}
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onKeyDown={handleKeyDown}
-            onFocus={() => query.length >= 2 && setShowSuggestions(true)}
-            placeholder="Buscar productos, categorías o marcas"
-            className={cn(
-              "w-full pl-11 pr-11 py-3 bg-gray-50 border border-gray-100 rounded-full text-sm font-medium",
-              "transition-all duration-300 focus:outline-none focus:bg-white focus:border-black/20 focus:ring-4 focus:ring-black/5",
-              isMobile ? "text-base py-4" : "text-sm",
-              "placeholder:text-gray-400 placeholder:font-normal"
-            )}
-          />
-
-          <div className="absolute right-3 flex items-center gap-1">
-            {isLoading && <Loader2 className="w-4 h-4 text-gray-400 animate-spin" />}
-            
-            <AnimatePresence>
-              {query && (
-                <motion.button
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  type="button"
-                  onClick={clearSearch}
-                  className="p-1.5 rounded-full hover:bg-gray-100 text-gray-400 hover:text-black transition-colors"
-                >
-                  <X className="w-4 h-4" />
-                </motion.button>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
+        <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40 group-focus-within:text-black transition-colors" />
+        <input
+          ref={inputRef}
+          type="text"
+          value={query}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setShowSuggestions(true);
+            setSelectedIndex(-1);
+          }}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setShowSuggestions(true)}
+          placeholder="Buscar productos, categorías o marcas"
+          className={cn(
+            "w-full bg-[#f8f8f8] border border-transparent rounded-full py-3.5 pl-11 pr-11 text-sm font-medium focus:outline-none focus:bg-white focus:border-black/10 focus:shadow-[0_0_0_4px_rgba(0,0,0,0.03)] transition-all placeholder:text-black/30",
+            isMobile && "py-4 text-base"
+          )}
+        />
+        <AnimatePresence>
+          {query && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              type="button"
+              onClick={() => {
+                setQuery("");
+                setSuggestions([]);
+                inputRef.current?.focus();
+              }}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 p-1.5 hover:bg-black/5 rounded-full transition-colors"
+            >
+              <X className="w-3.5 h-3.5 text-black/40" />
+            </motion.button>
+          )}
+        </AnimatePresence>
       </form>
 
       {/* Suggestions Panel */}
       <AnimatePresence>
-        {showSuggestions && (query.length >= 2) && (suggestions.length > 0 || isLoading) && (
+        {showSuggestions && (query.length >= 2 || (suggestions.length > 0)) && (
           <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
             className={cn(
-              "absolute z-50 left-0 right-0 mt-2 bg-white rounded-3xl border border-gray-100 shadow-2xl overflow-hidden",
-              isMobile ? "mx-2" : ""
+              "absolute top-full left-0 right-0 mt-2 bg-white border border-black/5 rounded-2xl shadow-2xl overflow-hidden z-50",
+              isMobile && "fixed inset-x-4 top-[80px] mt-0"
             )}
           >
-            <div className="py-2">
-              <p className="px-5 py-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 border-b border-gray-50 mb-1">
-                Sugerencias
-              </p>
-              
-              <div className="max-h-[350px] overflow-y-auto">
-                {suggestions.map((product, index) => {
-                  const primaryImage = product.images?.find(img => img.is_primary) || product.images?.[0];
-                  
-                  return (
+            <div className="p-2">
+              {loading && suggestions.length === 0 ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="w-5 h-5 animate-spin text-black/20" />
+                </div>
+              ) : suggestions.length > 0 ? (
+                <div className="space-y-1">
+                  <p className="px-3 py-2 text-[10px] font-black uppercase tracking-widest text-black/30">
+                    Sugerencias
+                  </p>
+                  {suggestions.map((item, index) => (
                     <button
-                      key={product.id}
-                      onClick={() => handleSuggestionClick(product.slug)}
-                      onMouseEnter={() => setFocusedIndex(index)}
+                      key={item.id}
+                      onClick={() => handleSuggestionClick(item)}
+                      onMouseEnter={() => setSelectedIndex(index)}
                       className={cn(
-                        "w-full flex items-center gap-4 px-5 py-3 transition-colors text-left",
-                        focusedIndex === index ? "bg-gray-50" : "hover:bg-gray-50/50"
+                        "w-full flex items-center gap-3 p-2.5 rounded-xl transition-all text-left",
+                        selectedIndex === index ? "bg-black/5" : "hover:bg-black/[0.02]"
                       )}
                     >
-                      <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gray-100 overflow-hidden border border-gray-50">
-                        {primaryImage ? (
-                          <img
-                            src={primaryImage.url}
-                            alt={product.name}
-                            className="w-full h-full object-cover"
+                      <div className="w-10 h-10 rounded-lg bg-gray-50 overflow-hidden border border-black/5 flex-shrink-0">
+                        {item.images && item.images[0] ? (
+                          <img 
+                            src={item.images[0].url} 
+                            alt={item.name} 
+                            className="w-full h-full object-cover" 
                           />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center">
-                            <Search className="w-5 h-5 text-gray-300" />
+                            <Search className="w-4 h-4 text-black/10" />
                           </div>
                         )}
                       </div>
-                      
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-black truncate uppercase tracking-tight">
-                          {product.name}
-                        </p>
-                        {product.category && (
-                          <p className="text-[11px] text-gray-400 font-medium truncate">
-                            {product.category.name}
-                          </p>
-                        )}
-                      </div>
-                      
-                      {focusedIndex === index && (
-                        <motion.div
-                          layoutId="active-indicator"
-                          className="w-1.5 h-1.5 rounded-full bg-black"
-                        />
-                      )}
+                      <span className="text-sm font-bold text-black truncate flex-1">
+                        {item.name}
+                      </span>
                     </button>
-                  );
-                })}
-              </div>
-
-              <div className="p-3 border-t border-gray-50 bg-gray-50/50">
-                <button
-                  onClick={() => handleSearch()}
-                  className="w-full py-2.5 text-xs font-bold text-center text-gray-500 hover:text-black transition-colors uppercase tracking-widest"
-                >
-                  Ver todos los resultados para "{query}"
-                </button>
-              </div>
+                  ))}
+                  <button 
+                    onClick={() => handleSearch()}
+                    className="w-full text-center py-3 text-[11px] font-black uppercase tracking-widest text-black/40 hover:text-black transition-colors border-t border-black/5 mt-2"
+                  >
+                    Ver todos los resultados para &quot;{query}&quot;
+                  </button>
+                </div>
+              ) : !loading && query.length >= 2 ? (
+                <div className="py-8 text-center">
+                  <p className="text-sm text-black/40 font-medium">No encontramos productos</p>
+                </div>
+              ) : null}
             </div>
           </motion.div>
         )}
