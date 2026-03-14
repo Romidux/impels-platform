@@ -8,6 +8,7 @@ import { useCartStore } from "@/lib/store";
 import { Store as StoreType, StoreSettings, StoreBranding } from "@/lib/types";
 import CartDrawer from "./CartDrawer";
 import { cn } from "@/lib/utils";
+import Header from "./minimal-catalog/Header";
 
 interface StorefrontLayoutProps {
   children: React.ReactNode;
@@ -45,128 +46,137 @@ export default function StorefrontLayout({
   return (
     <div className="min-h-screen bg-white flex flex-col">
       {/* Store Header */}
-      <header
-        className={cn(
-          "sticky top-0 z-40 bg-white transition-shadow",
-          scrolled ? "shadow-md" : "border-b border-gray-100"
-        )}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-          {/* Logo/Name */}
-          <Link
-            href={`/store/${store.slug}`}
-            className="flex items-center gap-2.5 flex-shrink-0"
-          >
-            <div
-              className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm"
-              style={{ backgroundColor: primaryColor }}
-            >
-              <span className="text-white font-bold text-lg">
-                {store.name.charAt(0).toUpperCase()}
-              </span>
-            </div>
-            <span className="font-display font-bold text-lg text-gray-900 hidden sm:block">
-              {store.name}
-            </span>
-          </Link>
-
-          {/* Search */}
-          <div className="flex-1 max-w-md hidden md:block">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (searchQuery.trim()) {
-                  router.push(`/store/${store.slug}/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
-                  setSearchQuery("");
-                }
-              }}
-            >
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Buscar productos..."
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-blue-400 focus:bg-white transition-all"
-                />
-              </div>
-            </form>
-          </div>
-
-          {/* Actions */}
-          <div className="flex items-center gap-2 flex-shrink-0">
+      {settings?.template === "minimal" ? (
+        <Header 
+          store={store} 
+          settings={settings} 
+          branding={branding} 
+          onCartOpen={() => setCartOpen(true)} 
+        />
+      ) : (
+        <header
+          className={cn(
+            "sticky top-0 z-40 bg-white transition-shadow",
+            scrolled ? "shadow-md" : "border-b border-gray-100"
+          )}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
+            {/* Logo/Name */}
             <Link
-              href={`/store/${store.slug}/catalog`}
-              className="hidden sm:flex text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-xl hover:bg-gray-50 transition-colors"
+              href={`/store/${store.slug}`}
+              className="flex items-center gap-2.5 flex-shrink-0"
             >
-              Catálogo
-            </Link>
-
-            {/* Cart button */}
-            <button
-              onClick={() => setCartOpen(true)}
-              className="relative p-2.5 rounded-xl hover:bg-gray-50 transition-colors"
-            >
-              <ShoppingCart className="w-5 h-5 text-gray-700" />
-              {totalItems > 0 && (
-                <span
-                  className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                  style={{ backgroundColor: primaryColor }}
-                >
-                  {totalItems}
+              <div
+                className="w-9 h-9 rounded-xl flex items-center justify-center shadow-sm"
+                style={{ backgroundColor: primaryColor }}
+              >
+                <span className="text-white font-bold text-lg">
+                  {store.name.charAt(0).toUpperCase()}
                 </span>
-              )}
-            </button>
-
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl hover:bg-gray-50 transition-colors"
-            >
-              {mobileMenuOpen ? (
-                <X className="w-5 h-5" />
-              ) : (
-                <Menu className="w-5 h-5" />
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile search */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-100 px-4 py-3">
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (searchQuery.trim()) {
-                  router.push(`/store/${store.slug}/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
-                  setSearchQuery("");
-                  setMobileMenuOpen(false);
-                }
-              }}
-              className="mb-3"
-            >
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Buscar productos..."
-                  className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none"
-                />
               </div>
-            </form>
-            <Link
-              href={`/store/${store.slug}/catalog`}
-              className="block text-sm font-medium text-gray-600 py-2"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Ver catálogo completo
+              <span className="font-display font-bold text-lg text-gray-900 hidden sm:block">
+                {store.name}
+              </span>
             </Link>
+
+            {/* Search */}
+            <div className="flex-1 max-w-md hidden md:block">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (searchQuery.trim()) {
+                    router.push(`/store/${store.slug}/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
+                    setSearchQuery("");
+                  }
+                }}
+              >
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar productos..."
+                    className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:border-blue-400 focus:bg-white transition-all"
+                  />
+                </div>
+              </form>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Link
+                href={`/store/${store.slug}/catalog`}
+                className="hidden sm:flex text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                Catálogo
+              </Link>
+
+              {/* Cart button */}
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative p-2.5 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                <ShoppingCart className="w-5 h-5 text-gray-700" />
+                {totalItems > 0 && (
+                  <span
+                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                    style={{ backgroundColor: primaryColor }}
+                  >
+                    {totalItems}
+                  </span>
+                )}
+              </button>
+
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="md:hidden p-2 rounded-xl hover:bg-gray-50 transition-colors"
+              >
+                {mobileMenuOpen ? (
+                  <X className="w-5 h-5" />
+                ) : (
+                  <Menu className="w-5 h-5" />
+                )}
+              </button>
+            </div>
           </div>
-        )}
-      </header>
+
+          {/* Mobile search */}
+          {mobileMenuOpen && (
+            <div className="md:hidden border-t border-gray-100 px-4 py-3">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (searchQuery.trim()) {
+                    router.push(`/store/${store.slug}/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
+                    setSearchQuery("");
+                    setMobileMenuOpen(false);
+                  }
+                }}
+                className="mb-3"
+              >
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Buscar productos..."
+                    className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-2xl text-sm focus:outline-none"
+                  />
+                </div>
+              </form>
+              <Link
+                href={`/store/${store.slug}/catalog`}
+                className="block text-sm font-medium text-gray-600 py-2"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Ver catálogo completo
+              </Link>
+            </div>
+          )}
+        </header>
+      )}
 
       {/* Benefits Bar (Marquee) - ONLY MINIMAL */}
       {settings?.template === "minimal" && settings.benefits_bar_items && settings.benefits_bar_items.length > 0 && (

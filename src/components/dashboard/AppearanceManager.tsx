@@ -101,8 +101,9 @@ export default function AppearanceManager({
 
     try {
       // Update settings
-      await supabase.from("store_settings").upsert(
+      const { error: settingsError } = await supabase.from("store_settings").upsert(
         {
+          id: settings?.id,
           store_id: store.id,
           template,
           primary_color: template === "minimal" ? "#000000" : primaryColor,
@@ -113,20 +114,23 @@ export default function AppearanceManager({
         },
         { onConflict: "store_id" }
       );
+      if (settingsError) throw settingsError;
 
       // Update branding (for footer labels)
-      await supabase.from("store_branding").upsert(
+      const { error: brandingError } = await supabase.from("store_branding").upsert(
         {
+          id: branding?.id,
           store_id: store.id,
           footer_categories_label: footerCategoriesLabel,
           footer_contact_label: footerContactLabel,
         },
         { onConflict: "store_id" }
       );
+      if (brandingError) throw brandingError;
 
       // Upsert section visibility
       for (const [key, visible] of Object.entries(sections)) {
-        await supabase.from("store_sections_visibility").upsert(
+        const { error: sectionError } = await supabase.from("store_sections_visibility").upsert(
           {
             store_id: store.id,
             section: key,
@@ -134,11 +138,13 @@ export default function AppearanceManager({
           },
           { onConflict: "store_id,section" }
         );
+        if (sectionError) throw sectionError;
       }
 
       toast.success("Apariencia guardada ✓");
       router.refresh();
-    } catch {
+    } catch (error) {
+      console.error("Error saving appearance:", error);
       toast.error("Error al guardar la apariencia");
     } finally {
       setSaving(false);

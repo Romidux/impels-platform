@@ -71,7 +71,9 @@ CREATE TABLE IF NOT EXISTS store_settings (
   primary_color    TEXT NOT NULL DEFAULT '#2563eb',
   secondary_color  TEXT NOT NULL DEFAULT '#7c3aed',
   hero_title       TEXT,
-  hero_subtitle    TEXT
+  hero_subtitle    TEXT,
+  benefits_bar_items TEXT[] DEFAULT '{}',
+  instagram_url    TEXT
 );
 
 -- ──────────────────────────────────────────────────────────────────
@@ -87,7 +89,9 @@ CREATE TABLE IF NOT EXISTS store_branding (
   promo_banner_title      TEXT,
   promo_banner_subtitle   TEXT,
   promo_banner_cta        TEXT,
-  promo_banner_url_link   TEXT
+  promo_banner_url_link   TEXT,
+  footer_categories_label TEXT,
+  footer_contact_label    TEXT
 );
 
 -- ──────────────────────────────────────────────────────────────────
