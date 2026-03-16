@@ -9,6 +9,8 @@ import { Store as StoreType, StoreSettings, StoreBranding } from "@/lib/types";
 import CartDrawer from "../shared/CartDrawer";
 import { cn } from "@/lib/utils";
 
+import { clearCheckoutSuccess } from "@/lib/hooks/useCheckoutLogic";
+
 interface ModernLayoutProps {
   children: React.ReactNode;
   store: StoreType;
@@ -57,6 +59,7 @@ export default function ModernLayout({
           {/* Logo/Name */}
           <Link
             href={`/store/${store.slug}`}
+            onClick={() => clearCheckoutSuccess(store.slug)}
             className="flex items-center gap-2.5 flex-shrink-0"
           >
             <div
@@ -100,6 +103,7 @@ export default function ModernLayout({
           <div className="flex items-center gap-2 flex-shrink-0">
             <Link
               href={`/store/${store.slug}/catalog`}
+              onClick={() => clearCheckoutSuccess(store.slug)}
               className="hidden sm:flex text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-xl hover:bg-gray-50 transition-colors"
             >
               Catálogo

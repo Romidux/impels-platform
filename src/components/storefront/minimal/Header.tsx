@@ -12,6 +12,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import MinimalCategoryMenuDesktop from "./MinimalCategoryMenuDesktop";
 import MinimalCategoryMenuMobile from "./MinimalCategoryMenuMobile";
 
+import { clearCheckoutSuccess } from "@/lib/hooks/useCheckoutLogic";
+
 interface HeaderProps {
   store: StoreType;
   settings?: StoreSettings;
@@ -86,6 +88,7 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
             onClick={() => {
               setMobileMenuOpen(false);
               setMobileSearchOpen(false);
+              clearCheckoutSuccess(store.slug);
             }}
           >
             <span className="font-medium text-xl tracking-tight text-black line-clamp-1 break-all">
@@ -95,7 +98,11 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
 
           {/* simple desktop navigation */}
           <nav className="hidden md:flex flex-1 items-center justify-center gap-8">
-            <Link href={`/store/${store.slug}`} className="text-sm font-medium text-gray-500 hover:text-black transition-colors">
+            <Link 
+              href={`/store/${store.slug}`} 
+              onClick={() => clearCheckoutSuccess(store.slug)}
+              className="text-sm font-medium text-gray-500 hover:text-black transition-colors"
+            >
               Inicio
             </Link>
             <MinimalCategoryMenuDesktop categories={categories} storeSlug={store.slug} />

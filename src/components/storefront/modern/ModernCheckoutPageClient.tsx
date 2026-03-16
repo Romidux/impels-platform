@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
+import { useCheckoutLogic } from "@/lib/hooks/useCheckoutLogic";
+import { formatCurrency } from "@/lib/utils";
 import {
   ArrowLeft,
   User,
@@ -13,10 +12,8 @@ import {
   ShoppingBag,
   CheckCircle,
 } from "lucide-react";
-import { useCartStore } from "@/lib/store";
-import { formatCurrency, buildWhatsAppMessage } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
-import { toast } from "sonner";
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface CheckoutPageClientProps {
   storeId: string;
@@ -33,122 +30,61 @@ export default function CheckoutPageClient({
   currency,
   primaryColor,
 }: CheckoutPageClientProps) {
-  const router = useRouter();
-  const { items, getTotalPrice, clearCart } = useCartStore();
-  const total = getTotalPrice();
-
-  const [form, setForm] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    address: "",
-    notes: "",
-  });
-  const [submitting, setSubmitting] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const {
+    items,
+    total,
+    form,
+    submitting,
+    submitted,
+    mounted,
+    handleChange,
+    handleSubmit,
+    clearSuccessSession,
+  } = useCheckoutLogic({ storeId, storeSlug, whatsappNumber, currency });
 
   if (!mounted) return null;
-
-  if (items.length === 0 && !submitted) {
-    router.push(`/store/${storeSlug}`);
-    return null;
-  }
-
-  const handleChange = (key: string, value: string) => {
-    setForm((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!form.name || !form.phone) {
-      toast.error("Nombre y teléfono son requeridos");
-      return;
-    }
-
-    setSubmitting(true);
-    const supabase = createClient();
-
-    try {
-      // Create order in database using atomic RPC
-      const { data: orderId, error } = await supabase.rpc(
-        "create_order_and_deduct_stock",
-        {
-          p_store_id: storeId,
-          p_customer_name: form.name,
-          p_customer_phone: form.phone,
-          p_customer_email: form.email,
-          p_customer_address: form.address,
-          p_customer_notes: form.notes,
-          p_items: items.map((item) => ({
-            product_id: item.product_id,
-            product_name: item.product_name,
-            product_image: item.product_image,
-            variant_combination_id: item.variant_combination_id || null, // Ensure this maps properly
-            variant_label: item.variant_label || null,
-            quantity: item.quantity,
-            unit_price: item.price,
-            total_price: item.price * item.quantity,
-          })),
-          p_subtotal: total,
-          p_total: total,
-        }
-      );
-
-      if (error) throw error;
-
-      // Build WhatsApp message
-      if (whatsappNumber) {
-        const message = buildWhatsAppMessage(items, form, total, currency);
-        window.open(
-          `https://wa.me/${whatsappNumber}?text=${message}`,
-          "_blank"
-        );
-      }
-
-      setSubmitted(true);
-      clearCart();
-      toast.success("Pedido enviado exitosamente");
-    } catch (error: any) {
-      toast.error(error.message || "Error al procesar el pedido. Intenta de nuevo.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   if (submitted) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center px-6">
-        <div className="text-center max-w-md">
-          <div
-            className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6"
-            style={{ backgroundColor: `${primaryColor}20` }}
+        <AnimatePresence mode="wait">
+          <motion.div 
+            key="modern-checkout-success"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-center max-w-md"
           >
-            <CheckCircle
-              className="w-10 h-10"
-              style={{ color: primaryColor }}
-            />
-          </div>
-          <h1 className="font-display text-3xl font-black text-gray-900 mb-3">
-            ¡Pedido enviado! 🎉
-          </h1>
-          <p className="text-gray-500 mb-8">
-            Tu pedido fue registrado y el mensaje de WhatsApp fue abierto. El
-            vendedor se pondrá en contacto contigo a la brevedad.
-          </p>
-          <Link
-            href={`/store/${storeSlug}`}
-            className="inline-flex items-center gap-2 font-bold py-3 px-8 rounded-2xl text-white transition-all hover:scale-105"
-            style={{ backgroundColor: primaryColor }}
-          >
-            <ShoppingBag className="w-5 h-5" />
-            Seguir comprando
-          </Link>
-        </div>
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5, type: "spring" }}
+              className="w-20 h-20 rounded-3xl flex items-center justify-center mx-auto mb-6"
+              style={{ backgroundColor: `${primaryColor}20` }}
+            >
+              <CheckCircle
+                className="w-10 h-10"
+                style={{ color: primaryColor }}
+              />
+            </motion.div>
+            <h1 className="font-display text-3xl font-black text-gray-900 mb-3">
+              ¡Pedido enviado! 🎉
+            </h1>
+            <p className="text-gray-500 mb-8">
+              Tu pedido fue registrado y el mensaje de WhatsApp fue abierto. El
+              vendedor se pondrá en contacto contigo a la brevedad.
+            </p>
+            <Link
+              href={`/store/${storeSlug}`}
+              onClick={() => clearSuccessSession()}
+              className="inline-flex items-center gap-2 font-bold py-3 px-8 rounded-2xl text-white transition-all hover:scale-105"
+              style={{ backgroundColor: primaryColor }}
+            >
+              <ShoppingBag className="w-5 h-5" />
+              Seguir comprando
+            </Link>
+          </motion.div>
+        </AnimatePresence>
       </div>
     );
   }
@@ -157,6 +93,7 @@ export default function CheckoutPageClient({
     <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
       <Link
         href={`/store/${storeSlug}`}
+        onClick={() => clearSuccessSession()}
         className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-gray-700 mb-6 transition-colors"
       >
         <ArrowLeft className="w-4 h-4" />

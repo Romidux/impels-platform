@@ -6,6 +6,7 @@ import { ChevronRight } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import { clearCheckoutSuccess } from "@/lib/hooks/useCheckoutLogic";
 
 interface MinimalCategoryMenuDesktopProps {
   categories: Category[];
@@ -70,6 +71,7 @@ export default function MinimalCategoryMenuDesktop({
               <div className="py-2 border-r border-gray-50 bg-white min-w-[220px]">
                 <Link
                   href={`/store/${storeSlug}/catalog`}
+                  onClick={() => clearCheckoutSuccess(storeSlug)}
                   className="flex items-center px-4 py-2.5 text-sm text-gray-900 hover:bg-gray-50 transition-colors font-medium border-b border-gray-50 mb-1"
                 >
                   Ver todos
@@ -97,6 +99,7 @@ export default function MinimalCategoryMenuDesktop({
                       ) : (
                         <Link
                           href={`/store/${storeSlug}/catalog?category=${category.id}`}
+                          onClick={() => clearCheckoutSuccess(storeSlug)}
                           className="block px-4 py-2.5 text-sm text-gray-600 hover:bg-gray-50 transition-colors"
                         >
                           {category.name}
@@ -120,6 +123,7 @@ export default function MinimalCategoryMenuDesktop({
                   >
                     <Link
                       href={`/store/${storeSlug}/catalog?category=${activeCategory}`}
+                      onClick={() => clearCheckoutSuccess(storeSlug)}
                       className="flex items-center px-6 py-2.5 text-sm text-gray-900 hover:bg-gray-100/50 transition-colors font-semibold mb-1"
                     >
                       Ver todos
@@ -128,6 +132,7 @@ export default function MinimalCategoryMenuDesktop({
                       <Link
                         key={sub.id}
                         href={`/store/${storeSlug}/catalog?category=${sub.id}`}
+                        onClick={() => clearCheckoutSuccess(storeSlug)}
                         className="block px-6 py-2.5 text-sm text-gray-600 hover:bg-gray-100/50 transition-colors"
                       >
                         {sub.name}

@@ -6,6 +6,7 @@ import { ChevronRight, ArrowLeft } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import { clearCheckoutSuccess } from "@/lib/hooks/useCheckoutLogic";
 
 interface MinimalCategoryMenuMobileProps {
   categories: Category[];
@@ -96,7 +97,10 @@ export default function MinimalCategoryMenuMobile({
                 <div className="space-y-1">
                   <Link
                     href={`/store/${storeSlug}`}
-                    onClick={onClose}
+                    onClick={() => {
+                      onClose();
+                      clearCheckoutSuccess(storeSlug);
+                    }}
                     className="flex items-center justify-between py-5 border-b border-gray-50 group"
                   >
                     <span className="text-xl font-medium text-black">Inicio</span>
@@ -121,7 +125,10 @@ export default function MinimalCategoryMenuMobile({
                         ? `/store/${storeSlug}/catalog?category=${activeCategoryId}`
                         : `/store/${storeSlug}/catalog`
                     }
-                    onClick={onClose}
+                    onClick={() => {
+                      onClose();
+                      clearCheckoutSuccess(storeSlug);
+                    }}
                     className="flex items-center justify-between py-5 border-b border-gray-50 group"
                   >
                     <span className="text-xl font-medium text-black italic opacity-60">
@@ -146,7 +153,10 @@ export default function MinimalCategoryMenuMobile({
                         ) : (
                           <Link
                             href={`/store/${storeSlug}/catalog?category=${category.id}`}
-                            onClick={onClose}
+                            onClick={() => {
+                              onClose();
+                              clearCheckoutSuccess(storeSlug);
+                            }}
                             className="flex items-center justify-between py-5 border-b border-gray-50 group"
                           >
                             <span className="text-xl font-medium text-black">
