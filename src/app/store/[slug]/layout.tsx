@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
-import StorefrontLayout from "@/components/storefront/StorefrontLayout";
-import MinimalLayout from "@/components/storefront/minimal-catalog/MinimalLayout";
+import TemplateDispatcher from "@/components/storefront/TemplateDispatcher";
 
 export async function generateMetadata({
   params,
@@ -55,24 +54,25 @@ export default async function StoreLayout({
     ? store.store_settings[0] 
     : store.store_settings;
 
-  if (settings?.template === "minimal") {
-    const { data: categories } = await supabase
-      .from("categories")
-      .select("*")
-      .eq("store_id", store.id)
-      .eq("is_active", true)
-      .order("sort_order");
+  const template = settings?.template || "modern";
 
-    return (
-      <MinimalLayout store={store} settings={settings} categories={categories || []}>
-        {children}
-      </MinimalLayout>
-    );
-  }
+  // Categories are needed for the minimal layout header
+  const { data: categories } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("store_id", store.id)
+    .eq("is_active", true)
+    .order("sort_order");
 
   return (
-    <StorefrontLayout store={store} settings={settings}>
+    <TemplateDispatcher 
+      type="layout"
+      template={template}
+      store={store}
+      settings={settings}
+      categories={categories || []}
+    >
       {children}
-    </StorefrontLayout>
+    </TemplateDispatcher>
   );
 }

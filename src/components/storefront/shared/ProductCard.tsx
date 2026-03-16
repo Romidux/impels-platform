@@ -7,6 +7,7 @@ import { Product } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface ProductCardProps {
   product: Product;
@@ -21,6 +22,7 @@ export default function ProductCard({
   primaryColor,
   currency,
 }: ProductCardProps) {
+  const router = useRouter();
   const addItem = useCartStore((s) => s.addItem);
   const [added, setAdded] = useState(false);
 
@@ -29,6 +31,13 @@ export default function ProductCard({
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();
+    e.stopPropagation();
+
+    if (product.has_variants) {
+      router.push(`/store/${storeSlug}/product/${product.slug}`);
+      return;
+    }
+
     if (isOutOfStock) return;
 
     addItem({
@@ -102,8 +111,17 @@ export default function ProductCard({
               }`}
               style={!isOutOfStock && !added ? { backgroundColor: primaryColor } : {}}
             >
-              <ShoppingCart className="w-3.5 h-3.5" />
-              {isOutOfStock ? "Sin stock" : added ? "¡Agregado!" : "Agregar"}
+              {product.has_variants ? (
+                <>
+                  <Eye className="w-3.5 h-3.5" />
+                  Ver opciones
+                </>
+              ) : (
+                <>
+                  <ShoppingCart className="w-3.5 h-3.5" />
+                  {isOutOfStock ? "Sin stock" : added ? "¡Agregado!" : "Agregar"}
+                </>
+              )}
             </button>
           </div>
         </div>

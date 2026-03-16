@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import CheckoutPageClient from "@/components/storefront/CheckoutPageClient";
+import CheckoutPageClient from "@/components/storefront/modern/ModernCheckoutPageClient";
 
 export default async function CheckoutPage({
   params,

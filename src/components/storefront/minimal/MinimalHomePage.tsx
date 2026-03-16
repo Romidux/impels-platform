@@ -1,6 +1,6 @@
 "use client";
 
-import { Store as StoreType, Category, Product, StoreSettings } from "@/lib/types";
+import { Store as StoreType, Category, Product, StoreSettings, StoreBranding } from "@/lib/types";
 import Hero from "./Hero";
 import CategoryStrip from "./CategoryStrip";
 import ProductGrid from "./ProductGrid";
@@ -8,6 +8,7 @@ import ProductGrid from "./ProductGrid";
 interface MinimalHomePageProps {
   store: StoreType;
   settings?: StoreSettings;
+  branding?: StoreBranding;
   categories: Category[];
   featuredProducts: Product[];
   recentProducts: Product[];
@@ -16,6 +17,7 @@ interface MinimalHomePageProps {
 export default function MinimalHomePage({
   store,
   settings,
+  branding,
   categories,
   featuredProducts,
   recentProducts,

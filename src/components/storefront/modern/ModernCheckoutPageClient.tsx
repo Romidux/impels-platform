@@ -40,6 +40,7 @@ export default function CheckoutPageClient({
   const [form, setForm] = useState({
     name: "",
     phone: "",
+    email: "",
     address: "",
     notes: "",
   });
@@ -80,6 +81,7 @@ export default function CheckoutPageClient({
           p_store_id: storeId,
           p_customer_name: form.name,
           p_customer_phone: form.phone,
+          p_customer_email: form.email,
           p_customer_address: form.address,
           p_customer_notes: form.notes,
           p_items: items.map((item) => ({
@@ -111,8 +113,8 @@ export default function CheckoutPageClient({
       setSubmitted(true);
       clearCart();
       toast.success("Pedido enviado exitosamente");
-    } catch {
-      toast.error("Error al procesar el pedido. Intenta de nuevo.");
+    } catch (error: any) {
+      toast.error(error.message || "Error al procesar el pedido. Intenta de nuevo.");
     } finally {
       setSubmitting(false);
     }
@@ -203,6 +205,21 @@ export default function CheckoutPageClient({
                   placeholder="+595 XXX XXXXXX"
                   required
                   className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-400 transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                Email (opcional)
+              </label>
+              <div className="relative">
+                <input
+                  type="email"
+                  value={form.email}
+                  onChange={(e) => handleChange("email", e.target.value)}
+                  placeholder="tu@email.com"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 transition-all"
                 />
               </div>
             </div>

@@ -5,21 +5,23 @@ import { ShoppingCart, Search, Zap, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
-import { Store as StoreType, StoreSettings } from "@/lib/types";
-import CartDrawer from "./CartDrawer";
+import { Store as StoreType, StoreSettings, StoreBranding } from "@/lib/types";
+import CartDrawer from "../shared/CartDrawer";
 import { cn } from "@/lib/utils";
 
-interface StorefrontLayoutProps {
+interface ModernLayoutProps {
   children: React.ReactNode;
   store: StoreType;
   settings?: StoreSettings;
+  branding?: StoreBranding;
 }
 
-export default function StorefrontLayout({
+export default function ModernLayout({
   children,
   store,
   settings,
-}: StorefrontLayoutProps) {
+  branding,
+}: ModernLayoutProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);

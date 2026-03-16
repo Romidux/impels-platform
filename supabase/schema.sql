@@ -538,3 +538,173 @@ CREATE POLICY "Users can delete own product images"
 --   (NEW.id, 'main_catalog', true, 4),
 --   (NEW.id, 'promo_banner', true, 5),
 --   (NEW.id, 'recommended_products', true, 6);
+-- ──────────────────────────────────────────────────────────────────
+-- STORE SETTINGS UPDATES (Branding labels)
+-- ──────────────────────────────────────────────────────────────────
+ALTER TABLE store_settings ADD COLUMN IF NOT EXISTS benefits_bar_items JSONB DEFAULT '[]';
+ALTER TABLE store_branding ADD COLUMN IF NOT EXISTS footer_categories_label TEXT;
+ALTER TABLE store_branding ADD COLUMN IF NOT EXISTS footer_contact_label TEXT;
+
+-- ──────────────────────────────────────────────────────────────────
+-- ATOMIC CHECKOUT & STOCK DEDUCTION
+-- ──────────────────────────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION create_order_and_deduct_stock(
+  p_store_id UUID,
+  p_customer_name TEXT,
+  p_customer_phone TEXT,
+  p_customer_email TEXT DEFAULT NULL,
+  p_customer_address TEXT DEFAULT NULL,
+  p_customer_notes TEXT DEFAULT NULL,
+  p_items JSONB DEFAULT '[]',
+  p_subtotal NUMERIC DEFAULT 0,
+  p_total NUMERIC DEFAULT 0
+) RETURNS UUID AS $$
+DECLARE
+  v_order_id UUID;
+  v_item RECORD;
+  v_track_inventory BOOLEAN;
+  v_manage_stock_by_variant BOOLEAN;
+  v_allow_backorder BOOLEAN;
+  v_current_stock INTEGER;
+BEGIN
+  -- 1. Crear el pedido
+  INSERT INTO orders (
+    store_id,
+    customer_name,
+    customer_phone,
+    customer_email,
+    customer_address,
+    customer_notes,
+    items,
+    subtotal,
+    total,
+    status
+  ) VALUES (
+    p_store_id,
+    p_customer_name,
+    p_customer_phone,
+    p_customer_email,
+    p_customer_address,
+    p_customer_notes,
+    p_items,
+    p_subtotal,
+    p_total,
+    'new'
+  ) RETURNING id INTO v_order_id;
+
+  -- 2. Procesar cada item y descontar stock
+  FOR v_item IN SELECT * FROM jsonb_to_recordset(p_items) AS x(
+    product_id UUID, 
+    quantity INTEGER, 
+    variant_combination_id UUID
+  ) LOOP
+    
+    -- Obtener configuración de inventario del producto
+    SELECT track_inventory, manage_stock_by_variant, allow_backorder, stock_quantity
+    INTO v_track_inventory, v_manage_stock_by_variant, v_allow_backorder, v_current_stock
+    FROM products
+    WHERE id = v_item.product_id;
+
+    -- Solo descontar si se trackea inventario
+    IF v_track_inventory THEN
+      
+      IF v_manage_stock_by_variant AND v_item.variant_combination_id IS NOT NULL THEN
+        -- MODO: Stock por variante
+        UPDATE product_variant_combinations
+        SET stock = stock - v_item.quantity
+        WHERE id = v_item.variant_combination_id
+        AND product_id = v_item.product_id
+        RETURNING stock INTO v_current_stock;
+
+        -- Validar si quedó stock negativo y no se permite backorder
+        IF v_current_stock < 0 AND NOT v_allow_backorder THEN
+          RAISE EXCEPTION 'Stock insuficiente para la variante seleccionada.';
+        END IF;
+
+      ELSE
+        -- MODO: Stock general del producto
+        UPDATE products
+        SET stock_quantity = stock_quantity - v_item.quantity
+        WHERE id = v_item.product_id
+        RETURNING stock_quantity INTO v_current_stock;
+
+        -- Validar si quedó stock negativo y no se permite backorder
+        IF v_current_stock < 0 AND NOT v_allow_backorder THEN
+          RAISE EXCEPTION 'Stock insuficiente para el producto: %', (SELECT name FROM products WHERE id = v_item.product_id);
+        END IF;
+
+      END IF;
+
+    END IF;
+  END LOOP;
+
+  RETURN v_order_id;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- ──────────────────────────────────────────────────────────────────
+-- TRIGGER: AUTO-ACTUALIZAR STATUS DE STOCK
+-- ──────────────────────────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION update_product_stock_status()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_has_stock BOOLEAN;
+BEGIN
+  -- Si no trackea inventario, siempre está disponible
+  IF NOT NEW.track_inventory THEN
+    NEW.stock_status := 'available';
+    RETURN NEW;
+  END IF;
+
+  -- Si permite backorder, siempre está disponible para venta
+  IF NEW.allow_backorder THEN
+    NEW.stock_status := 'available';
+    RETURN NEW;
+  END IF;
+
+  IF NEW.manage_stock_by_variant THEN
+    -- Está disponible si al menos una variante activa tiene stock > 0
+    SELECT EXISTS (
+      SELECT 1 FROM product_variant_combinations
+      WHERE product_id = NEW.id AND stock > 0 AND is_active = TRUE
+    ) INTO v_has_stock;
+    
+    IF v_has_stock THEN
+      NEW.stock_status := 'available';
+    ELSE
+      NEW.stock_status := 'out_of_stock';
+    END IF;
+  ELSE
+    -- Depende solo de stock_quantity
+    IF NEW.stock_quantity > 0 THEN
+      NEW.stock_status := 'available';
+    ELSE
+      NEW.stock_status := 'out_of_stock';
+    END IF;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger para cuando cambia el producto directamente
+DROP TRIGGER IF EXISTS trg_update_stock_status ON products;
+CREATE TRIGGER trg_update_stock_status
+  BEFORE INSERT OR UPDATE OF stock_quantity, track_inventory, allow_backorder, manage_stock_by_variant
+  ON products
+  FOR EACH ROW EXECUTE FUNCTION update_product_stock_status();
+
+-- Trigger para cuando cambia el stock de una variante
+CREATE OR REPLACE FUNCTION trigger_variant_update_product()
+RETURNS TRIGGER AS $$
+BEGIN
+  -- Simplemente disparamos un UPDATE en el producto para que su propio trigger recalcule el status
+  UPDATE products SET updated_at = NOW() WHERE id = NEW.product_id;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_variant_stock_change ON product_variant_combinations;
+CREATE TRIGGER trg_variant_stock_change
+  AFTER UPDATE OF stock, is_active ON product_variant_combinations
+  FOR EACH ROW EXECUTE FUNCTION trigger_variant_update_product();

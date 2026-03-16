@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useProductDetailLogic } from "@/lib/hooks/useProductDetailLogic";
 import {
   ShoppingCart,
   MessageCircle,
@@ -11,12 +12,13 @@ import {
   Package,
   Check,
   AlertCircle,
+  Tag,
 } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { Product, StoreSettings, ProductOptionType } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
-import ProductCard from "./ProductCard";
+import ProductCard from "../shared/ProductCard";
 
 interface ProductDetailClientProps {
   product: Product;
@@ -33,75 +35,37 @@ export default function ProductDetailClient({
   relatedProducts,
   whatsappNumber,
 }: ProductDetailClientProps) {
-  const addItem = useCartStore((s) => s.addItem);
+  const { items: cartItems, addItem } = useCartStore();
   const primaryColor = settings?.primary_color || "#2563eb";
   const currency = settings?.currency || "Gs";
 
   const [selectedImage, setSelectedImage] = useState(0);
-  const [quantity, setQuantity] = useState(1);
-  const [selectedOptions, setSelectedOptions] = useState<
-    Record<string, string>
-  >({});
   const [added, setAdded] = useState(false);
 
   const images = product.images?.sort((a, b) => a.sort_order - b.sort_order) || [];
-  const optionTypes = (product.option_types || []) as ProductOptionType[];
-
-  // Find matching variant
-  const selectedVariant =
-    optionTypes.length > 0
-      ? product.variant_combinations?.find((vc) => {
-          const selectedValueIds = Object.values(selectedOptions);
-          return (
-            selectedValueIds.length === optionTypes.length &&
-            selectedValueIds.every((vid) => vc.option_values.includes(vid))
-          );
-        })
-      : undefined;
-
-  const price = selectedVariant?.price ?? product.price;
-
-  // Stock logic
-  let currentStock = product.stock_quantity || 0;
-  let isOutOfStock = product.stock_status === "out_of_stock";
-
-  if (product.track_inventory) {
-    if (product.has_variants && product.manage_stock_by_variant) {
-      if (selectedVariant) {
-        currentStock = selectedVariant.stock || 0;
-        isOutOfStock = currentStock <= 0 && !product.allow_backorder;
-      } else {
-        // No fully selected variant yet, we can't be sure, but we prevent buying
-        isOutOfStock = true; 
-        currentStock = 0;
-      }
-    } else {
-      currentStock = product.stock_quantity || 0;
-      isOutOfStock = currentStock <= 0 && !product.allow_backorder;
-    }
-  }
-
-  const variantLabel = optionTypes
-    .map((ot) => {
-      const selectedValId = selectedOptions[ot.id];
-      const val = ot.values?.find((v) => v.id === selectedValId);
-      return val ? `${ot.name}: ${val.value}` : null;
-    })
-    .filter(Boolean)
-    .join(", ");
+  
+  const {
+    quantity,
+    selectedOptions,
+    selectedVariant,
+    currentPrice,
+    availableStock,
+    isOutOfStock,
+    buttonState,
+    variantLabel,
+    handleOptionChange,
+    incrementQuantity,
+    decrementQuantity,
+    optionTypes,
+    inCartQuantity
+  } = useProductDetailLogic({ product, cartItems });
 
   const handleAddToCart = () => {
-    if (isOutOfStock && !product.allow_backorder) return;
-    if (product.has_variants) {
-      const allSelected = optionTypes.every((ot) => selectedOptions[ot.id]);
-      if (!allSelected) {
-        toast.error("Selecciona todas las variantes");
-        return;
+    if (buttonState.disabled) {
+      if (buttonState.type === "selection_pending") {
+        toast.error("Por favor, selecciona una opción");
       }
-      if (!selectedVariant) {
-        toast.error("Variante no disponible");
-        return;
-      }
+      return;
     }
 
     addItem({
@@ -111,12 +75,16 @@ export default function ProductDetailClient({
       product_slug: product.slug,
       variant_combination_id: selectedVariant?.id,
       variant_label: variantLabel || undefined,
-      price,
+      price: currentPrice,
       quantity,
     });
 
     setAdded(true);
-    toast.success("Agregado al carrito ✓");
+    if (inCartQuantity > 0) {
+      toast.success("Cantidad actualizada en tu carrito");
+    } else {
+      toast.success("Producto agregado al carrito");
+    }
     setTimeout(() => setAdded(false), 2000);
   };
 
@@ -230,10 +198,10 @@ export default function ProductDetailClient({
                   className="font-display text-4xl font-black"
                   style={{ color: primaryColor }}
                 >
-                  {formatCurrency(price, currency)}
+                  {formatCurrency(currentPrice, currency)}
                 </span>
                 {product.compare_at_price &&
-                  product.compare_at_price > price && (
+                  product.compare_at_price > currentPrice && (
                     <span className="text-xl text-gray-400 line-through">
                       {formatCurrency(product.compare_at_price, currency)}
                     </span>
@@ -249,12 +217,19 @@ export default function ProductDetailClient({
           {/* Stock status */}
           <div
             className={`inline-flex items-center gap-2 text-sm font-semibold px-3 py-1.5 rounded-full ${
-              isOutOfStock && !product.allow_backorder
-                ? "bg-red-100 text-red-700"
-                : "bg-green-100 text-green-700"
+              buttonState.type === "selection_pending"
+                ? "bg-blue-50 text-blue-700"
+                : isOutOfStock
+                  ? "bg-red-100 text-red-700"
+                  : "bg-green-100 text-green-700"
             }`}
           >
-            {isOutOfStock && !product.allow_backorder ? (
+            {buttonState.type === "selection_pending" ? (
+              <>
+                <Tag className="w-4 h-4" />
+                Selecciona una variante para ver disponibilidad
+              </>
+            ) : isOutOfStock ? (
               <>
                 <AlertCircle className="w-4 h-4" />
                 Sin stock actualmente
@@ -262,11 +237,12 @@ export default function ProductDetailClient({
             ) : (
               <>
                 <Check className="w-4 h-4" />
-                {product.track_inventory && (!product.has_variants || selectedVariant)
-                  ? `Disponible (${currentStock} unids.)`
-                  : product.allow_backorder && currentStock <= 0
+                {product.track_inventory
+                  ? `Disponible (${availableStock} unids.)`
+                  : product.allow_backorder && availableStock <= 0
                     ? "Disponible (Bajo pedido)"
                     : "Disponible"}
+                {inCartQuantity > 0 && <span className="opacity-60 ml-1">({inCartQuantity} en carrito)</span>}
               </>
             )}
           </div>
@@ -286,12 +262,7 @@ export default function ProductDetailClient({
                 {ot.values?.map((val) => (
                   <button
                     key={val.id}
-                    onClick={() =>
-                      setSelectedOptions((prev) => ({
-                        ...prev,
-                        [ot.id]: val.id,
-                      }))
-                    }
+                    onClick={() => handleOptionChange(ot.id, val.id)}
                     className={`px-4 py-2 text-sm font-medium rounded-xl border-2 transition-all ${
                       selectedOptions[ot.id] === val.id
                         ? "border-transparent text-white"
@@ -317,8 +288,9 @@ export default function ProductDetailClient({
             </label>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                onClick={decrementQuantity}
                 className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:border-gray-400 transition-colors"
+                disabled={quantity <= 1}
               >
                 <Minus className="w-4 h-4" />
               </button>
@@ -326,15 +298,9 @@ export default function ProductDetailClient({
                 {quantity}
               </span>
               <button
-                onClick={() => {
-                  if (product.track_inventory && !product.allow_backorder && quantity >= currentStock) {
-                    toast.error(`Solo hay ${currentStock} unidades disponibles`);
-                    return;
-                  }
-                  setQuantity(quantity + 1);
-                }}
+                onClick={incrementQuantity}
                 className="w-10 h-10 rounded-xl border border-gray-200 flex items-center justify-center hover:border-gray-400 transition-colors"
-                disabled={product.track_inventory && !product.allow_backorder && quantity >= currentStock}
+                disabled={buttonState.disabled}
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -345,27 +311,27 @@ export default function ProductDetailClient({
           <div className="flex flex-col gap-3 pt-2">
             <button
               onClick={handleAddToCart}
-              disabled={isOutOfStock && !product.allow_backorder}
+              disabled={buttonState.disabled}
               className={`flex items-center justify-center gap-2 text-white font-bold py-4 rounded-2xl text-lg transition-all hover:scale-[1.02] shadow-md ${
-                isOutOfStock && !product.allow_backorder
-                  ? "bg-gray-400 cursor-not-allowed"
+                buttonState.disabled
+                  ? "bg-gray-400 cursor-not-allowed hover:scale-100"
                   : added
                     ? "bg-green-500"
                     : ""
               }`}
               style={
-                (!isOutOfStock || product.allow_backorder) && !added ? { backgroundColor: primaryColor } : {}
+                !buttonState.disabled && !added ? { backgroundColor: primaryColor } : {}
               }
             >
               {added ? (
                 <>
                   <Check className="w-5 h-5" />
-                  ¡Agregado al carrito!
+                  {inCartQuantity > quantity ? "¡Cantidad actualizada!" : "¡Agregado al carrito!"}
                 </>
               ) : (
                 <>
                   <ShoppingCart className="w-5 h-5" />
-                  {isOutOfStock && !product.allow_backorder ? "No disponible" : "Agregar al carrito"}
+                  {buttonState.text}
                 </>
               )}
             </button>
@@ -407,7 +373,7 @@ export default function ProductDetailClient({
 
       {/* Related products */}
       {relatedProducts && relatedProducts.length > 0 && (
-        <div>
+        <div className="mt-16 pt-8 border-t border-gray-100">
           <h2 className="font-display text-2xl font-bold text-gray-900 mb-6">
             Productos relacionados
           </h2>

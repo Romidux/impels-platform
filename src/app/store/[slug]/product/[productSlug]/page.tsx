@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import ProductDetailClient from "@/components/storefront/ProductDetailClient";
-import MinimalProductDetailClient from "@/components/storefront/minimal-catalog/MinimalProductDetailClient";
+import ProductDetailClient from "@/components/storefront/modern/ModernProductDetailClient";
+import MinimalProductDetailClient from "@/components/storefront/minimal/MinimalProductDetailClient";
 import { Product } from "@/lib/types";
 
 export default async function ProductPage({

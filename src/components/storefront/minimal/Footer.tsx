@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { Store as StoreType, StoreSettings } from "@/lib/types";
+import { Store as StoreType, StoreSettings, StoreBranding } from "@/lib/types";
 import { Zap, Instagram, Facebook } from "lucide-react";
 
 interface FooterProps {
   store: StoreType;
   settings?: StoreSettings;
+  branding?: StoreBranding;
 }
 
-export default function Footer({ store, settings }: FooterProps) {
+export default function Footer({ store, settings, branding }: FooterProps) {
   return (
     <footer className="w-full bg-gray-50 border-t border-gray-200 pt-16 pb-8 text-gray-500">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-gray-200 pb-16">
@@ -66,17 +67,19 @@ export default function Footer({ store, settings }: FooterProps) {
           <Link href="#" className="text-sm text-gray-400 hover:text-black transition-colors">Preguntas Frecuentes</Link>
         </div>
 
-        {/* Shop Navigation */}
         <div className="flex flex-col space-y-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-black mb-2">Tienda</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-black mb-2">
+            {branding?.footer_categories_label || "Tienda"}
+          </h3>
           <Link href={`/store/${store.slug}`} className="text-sm text-gray-400 hover:text-black transition-colors">Inicio</Link>
           <Link href={`/store/${store.slug}/catalog`} className="text-sm text-gray-400 hover:text-black transition-colors">Categorías</Link>
           <Link href={`/store/${store.slug}/catalog`} className="text-sm text-gray-400 hover:text-black transition-colors">Productos</Link>
         </div>
 
-        {/* Contact */}
         <div className="flex flex-col space-y-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-black mb-2">Contacto</h3>
+          <h3 className="text-xs font-semibold uppercase tracking-wider text-black mb-2">
+            {branding?.footer_contact_label || "Contacto"}
+          </h3>
           {settings?.whatsapp_number ? (
             <a
               href={`https://wa.me/${settings.whatsapp_number}`}

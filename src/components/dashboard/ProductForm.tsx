@@ -244,7 +244,7 @@ export default function ProductForm({
     });
 
     setCombinations(newCombinations);
-    toast.success("Combinaciones actualizadas basándose en las variantes");
+    toast.success("Combinaciones actualizadas");
   };
 
   const updateCombination = (index: number, key: keyof VariantCombinationLocal, value: any) => {
@@ -658,7 +658,7 @@ export default function ProductForm({
 
                 {optionTypes.length === 0 ? (
                   <div className="text-center py-6 text-gray-400 text-sm">
-                    <p>Sin variantes. Agrega Color, Talla, etc.</p>
+                    <p>Sin variantes cargadas. Agrega Color, Talla, etc.</p>
                     <div className="flex flex-wrap gap-2 justify-center mt-3">
                       {["Color", "Talla", "Tamaño (ml)"].map((preset) => (
                         <button
@@ -747,12 +747,12 @@ export default function ProductForm({
                     ))}
 
                     <div className="pt-4">
-                      <button
-                        onClick={generateCombinations}
-                        className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
-                      >
-                        {combinations.length > 0 ? "Actualizar matriz de combinaciones" : "Generar matriz de combinaciones"}
-                      </button>
+                        <button
+                          onClick={generateCombinations}
+                          className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+                        >
+                          {combinations.length > 0 ? "Actualizar combinaciones" : "Generar combinaciones"}
+                        </button>
                     </div>
 
                     {combinations.length > 0 && (
@@ -760,7 +760,7 @@ export default function ProductForm({
                         <table className="w-full text-sm">
                           <thead className="bg-gray-50 border-b border-gray-200">
                             <tr>
-                              <th className="px-4 py-3 text-left font-bold text-gray-600">Variante</th>
+                              <th className="px-4 py-3 text-left font-bold text-gray-600">Combinación</th>
                               <th className="px-4 py-3 text-left font-bold text-gray-600">Stock</th>
                               <th className="px-4 py-3 text-left font-bold text-gray-600">Precio (Opcional)</th>
                               <th className="px-4 py-3 text-left font-bold text-gray-600">SKU</th>

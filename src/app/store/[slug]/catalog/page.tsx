@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import ProductCard from "@/components/storefront/ProductCard";
+import ProductCard from "@/components/storefront/shared/ProductCard";
 import { Package, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { Product, Category } from "@/lib/types";

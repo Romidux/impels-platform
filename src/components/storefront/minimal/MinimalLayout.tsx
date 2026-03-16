@@ -1,6 +1,6 @@
 "use client";
 
-import { Store as StoreType, StoreSettings, Category } from "@/lib/types";
+import { Store as StoreType, StoreSettings, StoreBranding, Category } from "@/lib/types";
 import Header from "./Header";
 import Footer from "./Footer";
 
@@ -8,6 +8,7 @@ interface MinimalLayoutProps {
   children: React.ReactNode;
   store: StoreType;
   settings?: StoreSettings;
+  branding?: StoreBranding;
   categories?: Category[];
 }
 
@@ -15,6 +16,7 @@ export default function MinimalLayout({
   children,
   store,
   settings,
+  branding,
   categories = [],
 }: MinimalLayoutProps) {
   return (
@@ -27,7 +29,7 @@ export default function MinimalLayout({
         </div>
       </main>
 
-      <Footer store={store} settings={settings} />
+      <Footer store={store} settings={settings} branding={branding} />
     </div>
   );
 }
