@@ -5,8 +5,6 @@ import { Search, SlidersHorizontal, ChevronDown } from "lucide-react";
 interface MinimalCatalogToolbarProps {
   totalCount: number;
   onOpenFilters: () => void;
-  search: string;
-  onSearchChange: (val: string) => void;
   sort: string;
   onSortChange: (val: string) => void;
   activeCategoryName: string;
@@ -15,8 +13,6 @@ interface MinimalCatalogToolbarProps {
 export default function MinimalCatalogToolbar({
   totalCount,
   onOpenFilters,
-  search,
-  onSearchChange,
   sort,
   onSortChange,
   activeCategoryName,
@@ -33,19 +29,8 @@ export default function MinimalCatalogToolbar({
              Mostrando {totalCount} {totalCount === 1 ? 'producto' : 'productos'}
            </p>
         </div>
-
-        {/* Search Input - Refined */}
-        <div className="relative w-full md:w-72">
-          <input
-            type="text"
-            placeholder="Buscar productos..."
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-0 pr-10 py-3 border-b border-neutral-200 bg-transparent text-sm font-light focus:outline-none focus:border-neutral-900 transition-colors placeholder:text-neutral-300"
-          />
-          <Search className="absolute right-0 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-300 pointer-events-none stroke-[1.5]" />
-        </div>
       </div>
+
 
       {/* Filter / Sort Bar */}
       <div className="flex items-center justify-between border-y border-neutral-100 py-5">

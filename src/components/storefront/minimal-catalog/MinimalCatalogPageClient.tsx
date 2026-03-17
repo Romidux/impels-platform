@@ -29,8 +29,6 @@ export default function MinimalCatalogPageClient({
 
   // State
   const [isFilterDrawerOpen, setIsFilterDrawerOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
-  const [isSearching, setIsSearching] = useState(false);
 
   // Get current filters from searchParams
   const activeCategoryId = searchParams.get("category");
@@ -41,9 +39,10 @@ export default function MinimalCatalogPageClient({
   const currency = settings?.currency || "Gs";
 
   const activeCategoryName = useMemo(() => {
+    if (activeSearch) return `Resultados para "${activeSearch}"`;
     if (!activeCategoryId) return "Colección Completa";
     return categories.find((c) => c.id === activeCategoryId)?.name || "Categoría";
-  }, [activeCategoryId, categories]);
+  }, [activeCategoryId, categories, activeSearch]);
 
   // Handle URL updates
   const updateParams = (updates: Record<string, string | null>) => {
@@ -60,17 +59,6 @@ export default function MinimalCatalogPageClient({
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
-  // Debounced search effect
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (searchQuery !== activeSearch) {
-        updateParams({ search: searchQuery || null });
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
-
   return (
     <div className="w-full bg-white min-h-screen">
       <div className="max-w-7xl mx-auto px-6 sm:px-10 py-12 sm:py-20 flex flex-col items-center">
@@ -79,8 +67,6 @@ export default function MinimalCatalogPageClient({
         <MinimalCatalogToolbar
           totalCount={initialProducts.length}
           onOpenFilters={() => setIsFilterDrawerOpen(true)}
-          search={searchQuery}
-          onSearchChange={setSearchQuery}
           sort={activeSort}
           onSortChange={(val) => updateParams({ sort: val || null })}
           activeCategoryName={activeCategoryName}

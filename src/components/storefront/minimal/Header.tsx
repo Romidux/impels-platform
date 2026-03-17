@@ -1,12 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { Search, ShoppingBag, User, Menu, X } from "lucide-react";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Search, ShoppingBag, User, Menu, X } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { Store as StoreType, StoreSettings, Category } from "@/lib/types";
 import MinimalCartDrawer from "./MinimalCartDrawer";
+import MinimalSearchOverlay from "./MinimalSearchOverlay";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import MinimalCategoryMenuDesktop from "./MinimalCategoryMenuDesktop";
@@ -23,9 +24,8 @@ interface HeaderProps {
 export default function Header({ store, settings, categories = [] }: HeaderProps) {
   const [cartOpen, setCartOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const totalItems = useCartStore((s) => s.getTotalItems());
   const setStoreSlug = useCartStore((s) => s.setStore);
@@ -44,27 +44,16 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Prevent scrolling when mobile menu is open
+  // Prevent scrolling when mobile menu or search is open
   useEffect(() => {
-    if (mobileMenuOpen || mobileSearchOpen) {
+    if (mobileMenuOpen || searchOpen) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
     }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [mobileMenuOpen, mobileSearchOpen]);
+  }, [mobileMenuOpen, searchOpen]);
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      router.push(`/store/${store.slug}/catalog?search=${encodeURIComponent(searchQuery.trim())}`);
-      setSearchQuery("");
-      setMobileSearchOpen(false);
-      setMobileMenuOpen(false);
-    }
-  };
+  const currency = settings?.currency || "Gs";
 
   return (
     <>
@@ -87,7 +76,7 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
             className="flex-shrink-0 flex items-center gap-3 z-50"
             onClick={() => {
               setMobileMenuOpen(false);
-              setMobileSearchOpen(false);
+              setSearchOpen(false);
               clearCheckoutSuccess(store.slug);
             }}
           >
@@ -96,7 +85,7 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
             </span>
           </Link>
 
-          {/* simple desktop navigation */}
+          {/* desktop navigation */}
           <nav className="hidden md:flex flex-1 items-center justify-center gap-8">
             <Link 
               href={`/store/${store.slug}`} 
@@ -109,27 +98,24 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
           </nav>
 
           {/* Desktop Actions */}
-          <div className="hidden md:flex items-center gap-5 flex-shrink-0">
-            <form onSubmit={handleSearch} className="relative w-48 lg:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Buscar"
-                className="w-full pl-9 pr-4 py-2 bg-gray-50 rounded-full text-sm focus:outline-none focus:ring-1 focus:ring-gray-300 transition-shadow"
-              />
-            </form>
-            <button className="text-black hover:opacity-70 transition-opacity">
-              <User className="w-5 h-5" />
+          <div className="hidden md:flex items-center gap-6 flex-shrink-0">
+            <button 
+              onClick={() => setSearchOpen(true)}
+              className="text-gray-500 hover:text-black transition-colors p-2"
+              aria-label="Buscar"
+            >
+              <Search className="w-5 h-5 stroke-[1.5]" />
+            </button>
+            <button className="text-gray-500 hover:text-black transition-colors p-2">
+              <User className="w-5 h-5 stroke-[1.5]" />
             </button>
             <button
               onClick={() => setCartOpen(true)}
-              className="relative text-black hover:opacity-70 transition-opacity"
+              className="relative text-gray-500 hover:text-black transition-colors p-2"
             >
-              <ShoppingBag className="w-5 h-5" />
+              <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
               {mounted && totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                   {totalItems}
                 </span>
               )}
@@ -140,20 +126,20 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
           <div className="flex items-center gap-4 md:hidden z-50 flex-shrink-0">
             <button
               onClick={() => {
-                setMobileSearchOpen(!mobileSearchOpen);
+                setSearchOpen(true);
                 setMobileMenuOpen(false);
               }}
-              className="text-black"
+              className="text-black p-2"
             >
-              <Search className="w-5 h-5" />
+              <Search className="w-5 h-5 stroke-[1.5]" />
             </button>
             <button
               onClick={() => setCartOpen(true)}
-              className="relative text-black"
+              className="relative text-black p-2"
             >
-              <ShoppingBag className="w-5 h-5" />
+              <ShoppingBag className="w-5 h-5 stroke-[1.5]" />
               {mounted && totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-black text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+                <span className="absolute top-1.5 right-1.5 w-4 h-4 bg-black text-white text-[9px] font-bold rounded-full flex items-center justify-center">
                   {totalItems}
                 </span>
               )}
@@ -161,45 +147,15 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
             <button
               onClick={() => {
                 setMobileMenuOpen(!mobileMenuOpen);
-                setMobileSearchOpen(false);
+                setSearchOpen(false);
               }}
-              className="text-black"
+              className="text-black p-2"
             >
-              {mobileMenuOpen || mobileSearchOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {mobileMenuOpen ? <X className="w-6 h-6 stroke-[1.5]" /> : <Menu className="w-6 h-6 stroke-[1.5]" />}
             </button>
           </div>
         </div>
       </header>
-
-      {/* Mobile Search Panel (Overlay) */}
-      <AnimatePresence>
-        {mobileSearchOpen && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            className={cn(
-              "fixed left-0 right-0 bg-white overflow-hidden shadow-xl z-[110] md:hidden",
-              scrolled ? "top-14" : "top-16"
-            )}
-          >
-            <div className="px-4 py-4 border-t border-gray-100 pb-6 border-b">
-              <form onSubmit={handleSearch} className="relative w-full">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="¿Qué estás buscando?"
-                  className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-100 rounded-full text-base focus:outline-none focus:bg-white focus:border-gray-300 transition-all font-medium placeholder:text-gray-400 shadow-sm"
-                  autoFocus
-                />
-              </form>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
       
       {/* Mobile Navigation Menu (Overlay) */}
       <AnimatePresence>
@@ -223,7 +179,15 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
         )}
       </AnimatePresence>
       
+      <MinimalSearchOverlay 
+        isOpen={searchOpen} 
+        onClose={() => setSearchOpen(false)} 
+        storeSlug={store.slug} 
+        currency={currency}
+      />
+
       <MinimalCartDrawer isOpen={cartOpen} onClose={() => setCartOpen(false)} store={store} settings={settings} />
     </>
   );
 }
+

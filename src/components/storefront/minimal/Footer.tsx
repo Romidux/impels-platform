@@ -10,15 +10,15 @@ interface FooterProps {
 
 export default function Footer({ store, settings, branding }: FooterProps) {
   return (
-    <footer className="w-full bg-gray-50 border-t border-gray-200 pt-16 pb-8 text-gray-500">
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 grid grid-cols-1 md:grid-cols-4 gap-12 border-b border-gray-200 pb-16">
+    <footer className="w-full bg-gray-50 border-t border-gray-200 pt-10 sm:pt-16 pb-8 text-gray-500">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 grid grid-cols-2 lg:grid-cols-4 gap-y-8 sm:gap-12 border-b border-gray-200 pb-10 sm:pb-16">
         
         {/* Brand Info */}
-        <div className="col-span-1 md:col-span-1">
+        <div>
           <Link href={`/store/${store.slug}`} className="inline-block hover:opacity-70 transition-opacity">
             <h2 className="text-xl font-medium tracking-tight text-black mb-4">{store.name}</h2>
           </Link>
-          <p className="text-sm text-gray-400 leading-relaxed max-w-xs mb-6">
+          <p className="text-sm text-gray-400 leading-relaxed max-w-xs mb-4 sm:mb-6">
             {store.description || "Descubre nuestra selección exclusiva. Calidad y diseño en un solo lugar."}
           </p>
 
