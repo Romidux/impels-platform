@@ -3,7 +3,8 @@ import { createClient } from "@/lib/supabase/server";
 import ProductCard from "@/components/storefront/shared/ProductCard";
 import { Package, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
-import { Product, Category } from "@/lib/types";
+import { Product } from "@/lib/types";
+import TemplateDispatcher from "@/components/storefront/TemplateDispatcher";
 
 export default async function CatalogPage({
   params,
@@ -18,7 +19,7 @@ export default async function CatalogPage({
 
   const { data: store } = await supabase
     .from("stores")
-    .select("id, name, slug, store_settings(*)")
+    .select("*, store_settings(*)")
     .eq("slug", slug)
     .eq("is_active", true)
     .single();
@@ -30,11 +31,12 @@ export default async function CatalogPage({
     : store.store_settings;
   const primaryColor = settings?.primary_color || "#2563eb";
   const currency = settings?.currency || "Gs";
+  const template = settings?.template || "modern";
 
-  // Fetch categories for filter
+  // Fetch categories for layout/filters
   const { data: categories } = await supabase
     .from("categories")
-    .select("id, name, slug")
+    .select("*")
     .eq("store_id", store.id)
     .is("parent_id", null)
     .eq("is_active", true)
@@ -56,7 +58,7 @@ export default async function CatalogPage({
     query = query.ilike("name", `%${sp.search}%`);
   }
 
-  // Sort
+  // Sort logic for server-side initial load
   switch (sp.sort) {
     case "price_asc":
       query = query.order("price", { ascending: true });
@@ -64,12 +66,31 @@ export default async function CatalogPage({
     case "price_desc":
       query = query.order("price", { ascending: false });
       break;
+    case "name_asc":
+      query = query.order("name", { ascending: true });
+      break;
     default:
       query = query.order("created_at", { ascending: false });
   }
 
   const { data: products } = await query;
 
+  // Use TemplateDispatcher to render the correct UI
+  // If dispatcher returns null, we use the shared/legacy UI as fallback
+  if (template === "minimal") {
+    return (
+      <TemplateDispatcher
+        type="catalog"
+        template={template}
+        store={store}
+        settings={settings}
+        categories={categories || []}
+        allProducts={(products as Product[]) || []}
+      />
+    );
+  }
+
+  // Fallback / Shared UI for other templates
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
       <div className="flex flex-col md:flex-row gap-6">
@@ -203,3 +224,4 @@ export default async function CatalogPage({
     </div>
   );
 }
+

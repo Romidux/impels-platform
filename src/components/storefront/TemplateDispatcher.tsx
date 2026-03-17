@@ -3,6 +3,7 @@ import MinimalLayout from "./minimal/MinimalLayout";
 import MinimalHomePage from "./minimal/MinimalHomePage";
 import ModernLayout from "./modern/ModernLayout";
 import ModernHomePage from "./modern/ModernHomePage";
+import MinimalCatalogPageClient from "./minimal-catalog/MinimalCatalogPageClient";
 
 type TemplateType = "minimal" | "modern" | "brand";
 
@@ -14,8 +15,9 @@ interface TemplateDispatcherProps {
   categories?: Category[];
   featuredProducts?: Product[];
   recentProducts?: Product[];
+  allProducts?: Product[]; // For catalog page
   children?: React.ReactNode;
-  type: "layout" | "page";
+  type: "layout" | "page" | "catalog";
 }
 
 export default function TemplateDispatcher({
@@ -26,6 +28,7 @@ export default function TemplateDispatcher({
   categories = [],
   featuredProducts = [],
   recentProducts = [],
+  allProducts = [],
   children,
   type,
 }: TemplateDispatcherProps) {
@@ -93,5 +96,26 @@ export default function TemplateDispatcher({
     }
   }
 
+  if (type === "catalog") {
+    switch (template) {
+      case "minimal":
+        return (
+          <MinimalCatalogPageClient
+            store={store}
+            settings={settings}
+            categories={categories}
+            initialProducts={allProducts}
+          />
+        );
+      // Other templates can still use the generic version for now
+      // or we can implement their specific views here.
+      // Since they were rendering in the page.tsx before,
+      // we'll need to define a fallback or use the existing page.tsx logic.
+      default:
+        return null; // The page.tsx will handle the default if dispatcher returns null
+    }
+  }
+
   return null;
 }
+

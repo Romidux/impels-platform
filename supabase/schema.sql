@@ -708,3 +708,296 @@ DROP TRIGGER IF EXISTS trg_variant_stock_change ON product_variant_combinations;
 CREATE TRIGGER trg_variant_stock_change
   AFTER UPDATE OF stock, is_active ON product_variant_combinations
   FOR EACH ROW EXECUTE FUNCTION trigger_variant_update_product();
+
+-- =========================================================
+-- PATCH 3: Restric Direct Orders Inserts
+-- =========================================================
+
+DROP POLICY IF EXISTS "Anyone can create orders" ON public.orders;
+
+-- No permitir inserts directos públicos.
+-- Las órdenes públicas deben entrar por la RPC create_order_and_deduct_stock.
+CREATE POLICY "Service role can create orders directly"
+ON public.orders
+FOR INSERT
+WITH CHECK (auth.role() = 'service_role');    -- =========================================================
+-- PATCH 2: Restrict Public read access to store-related data
+-- =========================================================
+
+DROP POLICY IF EXISTS "Public can view store settings" ON public.store_settings;
+CREATE POLICY "Public can view store settings"
+ON public.store_settings
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.stores s
+    WHERE s.id = store_settings.store_id
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Public can view branding" ON public.store_branding;
+CREATE POLICY "Public can view branding"
+ON public.store_branding
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.stores s
+    WHERE s.id = store_branding.store_id
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Public can view sections" ON public.store_sections_visibility;
+CREATE POLICY "Public can view sections"
+ON public.store_sections_visibility
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.stores s
+    WHERE s.id = store_sections_visibility.store_id
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Public can view product images" ON public.product_images;
+CREATE POLICY "Public can view product images"
+ON public.product_images
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    JOIN public.stores s ON s.id = p.store_id
+    WHERE p.id = product_images.product_id
+      AND p.visibility = 'visible'
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Public can view option types" ON public.product_option_types;
+CREATE POLICY "Public can view option types"
+ON public.product_option_types
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    JOIN public.stores s ON s.id = p.store_id
+    WHERE p.id = product_option_types.product_id
+      AND p.visibility = 'visible'
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Public can view option values" ON public.product_option_values;
+CREATE POLICY "Public can view option values"
+ON public.product_option_values
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.product_option_types pot
+    JOIN public.products p ON p.id = pot.product_id
+    JOIN public.stores s ON s.id = p.store_id
+    WHERE pot.id = product_option_values.option_type_id
+      AND p.visibility = 'visible'
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Public can view variants" ON public.product_variant_combinations;
+CREATE POLICY "Public can view variants"
+ON public.product_variant_combinations
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    JOIN public.stores s ON s.id = p.store_id
+    WHERE p.id = product_variant_combinations.product_id
+      AND p.visibility = 'visible'
+      AND s.is_active = TRUE
+  )
+);  -- =========================================================
+-- PATCH 1: endurecer función de checkout
+-- =========================================================
+
+CREATE OR REPLACE FUNCTION public.create_order_and_deduct_stock(
+  p_store_id UUID,
+  p_customer_name TEXT,
+  p_customer_phone TEXT,
+  p_customer_email TEXT,
+  p_customer_address TEXT,
+  p_customer_notes TEXT,
+  p_items JSONB,
+  p_subtotal NUMERIC,
+  p_total NUMERIC
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_order_id UUID;
+  v_item JSONB;
+
+  v_product_id UUID;
+  v_variant_id UUID;
+  v_variant_id_str TEXT;
+  v_quantity INT;
+
+  v_product_store_id UUID;
+  v_has_variants BOOLEAN;
+  v_track_inventory BOOLEAN;
+  v_allow_backorder BOOLEAN;
+  v_stock_quantity INT;
+
+  v_variant_product_id UUID;
+  v_variant_stock INT;
+BEGIN
+  -- validar tienda activa
+  IF NOT EXISTS (
+    SELECT 1
+    FROM public.stores s
+    WHERE s.id = p_store_id
+      AND s.is_active = TRUE
+  ) THEN
+    RAISE EXCEPTION 'La tienda no existe o no está activa';
+  END IF;
+
+  -- validar items
+  IF p_items IS NULL OR jsonb_typeof(p_items) <> 'array' OR jsonb_array_length(p_items) = 0 THEN
+    RAISE EXCEPTION 'El pedido no tiene items válidos';
+  END IF;
+
+  -- crear orden en processing
+  INSERT INTO public.orders (
+    store_id,
+    customer_name,
+    customer_phone,
+    customer_email,
+    customer_address,
+    customer_notes,
+    items,
+    subtotal,
+    total,
+    status
+  )
+  VALUES (
+    p_store_id,
+    p_customer_name,
+    p_customer_phone,
+    p_customer_email,
+    p_customer_address,
+    p_customer_notes,
+    p_items,
+    p_subtotal,
+    p_total,
+    'processing'
+  )
+  RETURNING id INTO v_order_id;
+
+  -- recorrer items
+  FOR v_item IN
+    SELECT * FROM jsonb_array_elements(p_items)
+  LOOP
+    v_product_id := (v_item->>'product_id')::UUID;
+    v_quantity := (v_item->>'quantity')::INT;
+    v_variant_id_str := v_item->>'variant_combination_id';
+    v_variant_id := NULL;
+
+    IF COALESCE(v_variant_id_str, '') NOT IN ('', 'null') THEN
+      v_variant_id := v_variant_id_str::UUID;
+    END IF;
+
+    IF v_product_id IS NULL OR v_quantity IS NULL OR v_quantity <= 0 THEN
+      RAISE EXCEPTION 'Item inválido en el pedido';
+    END IF;
+
+    -- producto debe pertenecer a la tienda del pedido
+    SELECT
+      p.store_id,
+      p.has_variants,
+      p.track_inventory,
+      p.allow_backorder,
+      p.stock_quantity
+    INTO
+      v_product_store_id,
+      v_has_variants,
+      v_track_inventory,
+      v_allow_backorder,
+      v_stock_quantity
+    FROM public.products p
+    WHERE p.id = v_product_id
+      AND p.store_id = p_store_id
+      AND p.visibility = 'visible'
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Producto no encontrado para esta tienda';
+    END IF;
+
+    -- si tiene variantes, la variante debe existir y pertenecer a ese producto
+    IF v_has_variants THEN
+      IF v_variant_id IS NULL THEN
+        RAISE EXCEPTION 'Debe elegir una variante para este producto';
+      END IF;
+
+      SELECT
+        pvc.product_id,
+        pvc.stock
+      INTO
+        v_variant_product_id,
+        v_variant_stock
+      FROM public.product_variant_combinations pvc
+      WHERE pvc.id = v_variant_id
+        AND pvc.product_id = v_product_id
+        AND pvc.is_active = TRUE
+      FOR UPDATE;
+
+      IF NOT FOUND THEN
+        RAISE EXCEPTION 'Variante inválida para este producto';
+      END IF;
+    ELSE
+      -- si no tiene variantes, no debe venir variant id
+      IF v_variant_id IS NOT NULL THEN
+        RAISE EXCEPTION 'Este producto no usa variantes';
+      END IF;
+    END IF;
+
+    -- descontar stock solo si corresponde
+    IF v_track_inventory THEN
+      IF v_has_variants THEN
+        IF v_variant_stock < v_quantity AND v_allow_backorder = FALSE THEN
+          RAISE EXCEPTION 'Stock insuficiente para la variante';
+        END IF;
+
+        UPDATE public.product_variant_combinations
+        SET stock = stock - v_quantity
+        WHERE id = v_variant_id;
+      ELSE
+        IF v_stock_quantity < v_quantity AND v_allow_backorder = FALSE THEN
+          RAISE EXCEPTION 'Stock insuficiente para el producto';
+        END IF;
+
+        UPDATE public.products
+        SET stock_quantity = stock_quantity - v_quantity
+        WHERE id = v_product_id
+          AND store_id = p_store_id;
+      END IF;
+    END IF;
+  END LOOP;
+
+  UPDATE public.orders
+  SET status = 'new'
+  WHERE id = v_order_id;
+
+  RETURN v_order_id;
+END;
+$$;
+

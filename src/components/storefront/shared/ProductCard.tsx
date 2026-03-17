@@ -75,26 +75,28 @@ export default function ProductCard({
           )}
 
           {/* Badges */}
-          <div className="absolute top-2 left-2 flex flex-col gap-1">
+          <div className="absolute top-2.5 left-2.5 flex flex-col gap-1.5 z-10">
             {isOutOfStock && (
-              <span className="bg-white/90 backdrop-blur-sm text-gray-600 text-xs font-semibold px-2 py-1 rounded-full shadow-sm">
-                Sin stock
+              <span className="bg-neutral-50/90 backdrop-blur-sm text-neutral-400 text-[9px] font-medium px-2 py-0.5 rounded-md uppercase tracking-[0.12em] border border-neutral-100/50 shadow-none">
+                Agotado
               </span>
             )}
             {product.is_featured && !isOutOfStock && (
               <span
-                className="text-white text-xs font-bold px-2 py-1 rounded-full shadow-sm"
+                className="text-white text-[9px] font-medium px-2 py-0.5 rounded-md uppercase tracking-[0.12em] shadow-sm"
                 style={{ backgroundColor: primaryColor }}
               >
                 Destacado
               </span>
             )}
             {product.compare_at_price && product.compare_at_price > product.price && (
-              <span className="bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+              <span className="bg-rose-50/95 backdrop-blur-sm text-rose-700 text-[9px] font-semibold px-2 py-0.5 rounded-md uppercase tracking-[0.12em] border border-rose-100 shadow-none">
                 Oferta
               </span>
             )}
           </div>
+
+
 
           {/* Hover actions */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
