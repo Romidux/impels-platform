@@ -146,7 +146,7 @@ export default function FooterSocialManager({
 
       {/* Footer Content */}
       <DashCard
-          icon: <Globe className="w-5 h-5 text-purple-500" />,
+        header={{ title: "Contenido del footer", icon: <Globe className="w-5 h-5 text-purple-500" /> }}
       >
         <div className="space-y-4">
           <DashInput

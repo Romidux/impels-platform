@@ -83,7 +83,7 @@ export default function StoreSettingsForm({
   return (
     <div className="space-y-5 max-w-2xl">
       {/* Store info */}
-      <DashCard header={{ title: "Información de la tienda", icon: Store }}>
+      <DashCard header={{ title: "Información de la tienda", icon: <Store className="w-5 h-5 text-green-600" /> }}>
         <div className="space-y-4">
           <DashInput
             label="Nombre de la tienda"
@@ -120,8 +120,7 @@ export default function StoreSettingsForm({
       <DashCard
         header={{
           title: "Contacto y pedidos",
-          icon: Phone,
-          iconColor: "text-green-600",
+          icon: <Phone className="w-5 h-5 text-green-600" />,
         }}
       >
         <div className="space-y-4">
@@ -148,8 +147,7 @@ export default function StoreSettingsForm({
       <DashCard
         header={{
           title: "Moneda",
-          icon: DollarSign,
-          iconColor: "text-amber-500",
+          icon: <DollarSign className="w-5 h-5 text-amber-500" />,
         }}
       >
         <DashSelect
@@ -170,7 +168,7 @@ export default function StoreSettingsForm({
       <DashButton
         onClick={handleSave}
         loading={saving}
-        icon={Save}
+        icon={<Save className="w-4 h-4" />}
         size="lg"
         className="w-full"
       >

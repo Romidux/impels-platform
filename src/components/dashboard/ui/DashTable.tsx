@@ -124,7 +124,7 @@ export function DashTable<T>({
             <DashButton
               variant="ghost"
               size="sm"
-              icon={ChevronLeft}
+              icon={<ChevronLeft className="w-4 h-4" />}
               disabled={pagination.page <= 1}
               onClick={() => pagination.onPageChange(pagination.page - 1)}
             >
@@ -136,7 +136,7 @@ export function DashTable<T>({
             <DashButton
               variant="ghost"
               size="sm"
-              icon={ChevronRight}
+              icon={<ChevronRight className="w-4 h-4" />}
               disabled={pagination.page >= totalPages}
               onClick={() => pagination.onPageChange(pagination.page + 1)}
             >

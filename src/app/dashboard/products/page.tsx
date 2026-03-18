@@ -117,9 +117,6 @@ export default async function ProductsPage({
             defaultValue={search}
             placeholder="Buscar productos..."
             className="dash-input pl-9"
-            onChange={(e) => {
-              // Server-side search via URL
-            }}
           />
         </div>
         <select
