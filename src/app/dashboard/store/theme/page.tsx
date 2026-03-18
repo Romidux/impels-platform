@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import StoreSettingsForm from "@/components/dashboard/StoreSettingsForm";
+import ThemeManager from "@/components/dashboard/store/ThemeManager";
 import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
 
-export default async function SettingsPage() {
+export default async function ThemePage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -24,10 +24,10 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-5 animate-fade-in">
       <DashPageHeader
-        title="Configuración"
-        subtitle="Administra los datos principales de tu tienda"
+        title="Tema"
+        subtitle="Elige el template y colores de tu tienda"
       />
-      <StoreSettingsForm store={store} settings={settings} />
+      <ThemeManager store={store} settings={settings} />
     </div>
   );
 }

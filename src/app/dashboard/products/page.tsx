@@ -8,16 +8,19 @@ import {
   Eye,
   EyeOff,
   Edit,
-  Trash2,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Product } from "@/lib/types";
 import ProductsActions from "@/components/dashboard/ProductsActions";
+import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
+import { DashButton } from "@/components/dashboard/ui/DashButton";
+import { DashBadge } from "@/components/dashboard/ui/DashBadge";
+import { DashEmptyState } from "@/components/dashboard/ui/DashEmptyState";
 
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; category?: string; visibility?: string }>;
+  searchParams: Promise<{ search?: string; category?: string; visibility?: string; page?: string }>;
 }) {
   const supabase = await createClient();
   const {
@@ -34,15 +37,19 @@ export default async function ProductsPage({
 
   const params = await searchParams;
   const { search, category, visibility } = params;
+  const page = parseInt(params.page || "1");
+  const pageSize = 15;
 
   // Build query
   let query = supabase
     .from("products")
     .select(
-      "*, category:categories(id, name), images:product_images(id, url, is_primary)"
+      "*, category:categories(id, name), images:product_images(id, url, is_primary)",
+      { count: "exact" }
     )
     .eq("store_id", store.id)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range((page - 1) * pageSize, page * pageSize - 1);
 
   if (search) {
     query = query.ilike("name", `%${search}%`);
@@ -54,7 +61,7 @@ export default async function ProductsPage({
     query = query.eq("visibility", visibility);
   }
 
-  const { data: products } = await query;
+  const { data: products, count: totalCount } = await query;
   const { data: categories } = await supabase
     .from("categories")
     .select("id, name")
@@ -65,53 +72,59 @@ export default async function ProductsPage({
   const isPro = store.plan === "pro";
   const MAX_FREE_PRODUCTS = 10;
   const atLimit =
-    !isPro && (products?.length || 0) >= MAX_FREE_PRODUCTS;
+    !isPro && (totalCount || 0) >= MAX_FREE_PRODUCTS;
+  const totalPages = Math.ceil((totalCount || 0) / pageSize);
+
+  // Build query string helper
+  const buildUrl = (newParams: Record<string, string>) => {
+    const merged = { search: search || "", category: category || "", visibility: visibility || "", page: "1", ...newParams };
+    const qs = Object.entries(merged)
+      .filter(([, v]) => v)
+      .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
+      .join("&");
+    return `/dashboard/products${qs ? `?${qs}` : ""}`;
+  };
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-bold text-gray-900">
-            Productos
-          </h1>
-          <p className="text-gray-500 mt-1">
-            {products?.length || 0} productos
-            {!isPro && ` / ${MAX_FREE_PRODUCTS} en plan gratis`}
-          </p>
-        </div>
+    <div className="space-y-5 animate-fade-in">
+      <DashPageHeader
+        title="Productos"
+        subtitle={`${totalCount || 0} productos${!isPro ? ` / ${MAX_FREE_PRODUCTS} en plan gratis` : ""}`}
+      >
         {atLimit ? (
-          <Link
-            href="/dashboard/settings"
-            className="flex items-center gap-2 bg-yellow-500 text-white font-semibold px-5 py-2.5 rounded-xl hover:bg-yellow-600 transition-colors text-sm"
-          >
-            ⚡ Upgrade para más productos
+          <Link href="/dashboard/plan">
+            <DashButton variant="secondary">
+              <Package className="w-4 h-4" />
+              ⚡ Upgrade para más
+            </DashButton>
           </Link>
         ) : (
-          <Link
-            href="/dashboard/products/new"
-            className="flex items-center gap-2 gradient-brand text-white font-semibold px-5 py-2.5 rounded-xl hover:shadow-glow transition-all hover:scale-105 text-sm"
-          >
-            <Plus className="w-4 h-4" />
-            Nuevo producto
+          <Link href="/dashboard/products/new">
+            <DashButton>
+              <Plus className="w-4 h-4" />
+              Nuevo producto
+            </DashButton>
           </Link>
         )}
-      </div>
+      </DashPageHeader>
 
       {/* Filters */}
-      <div className="card-flat p-4 flex flex-col sm:flex-row gap-3">
+      <div className="dash-card p-4 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             defaultValue={search}
             placeholder="Buscar productos..."
-            className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-gray-200 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+            className="dash-input pl-9"
+            onChange={(e) => {
+              // Server-side search via URL
+            }}
           />
         </div>
         <select
           defaultValue={category}
-          className="text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-400 transition-all bg-white"
+          className="dash-input bg-white w-auto min-w-[180px]"
         >
           <option value="">Todas las categorías</option>
           {categories?.map((c) => (
@@ -122,7 +135,7 @@ export default async function ProductsPage({
         </select>
         <select
           defaultValue={visibility}
-          className="text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:border-blue-400 transition-all bg-white"
+          className="dash-input bg-white w-auto min-w-[140px]"
         >
           <option value="">Visibilidad</option>
           <option value="visible">Visible</option>
@@ -132,46 +145,40 @@ export default async function ProductsPage({
 
       {/* Products table */}
       {!products || products.length === 0 ? (
-        <div className="card-flat p-16 text-center">
-          <div className="w-20 h-20 rounded-3xl bg-gray-100 flex items-center justify-center mx-auto mb-5">
-            <Package className="w-9 h-9 text-gray-400" />
-          </div>
-          <h3 className="font-display text-xl font-bold text-gray-900 mb-2">
-            Sin productos todavía
-          </h3>
-          <p className="text-gray-400 mb-6 max-w-sm mx-auto">
-            Agrega tu primer producto para empezar a construir tu catálogo
-          </p>
-          <Link
-            href="/dashboard/products/new"
-            className="inline-flex items-center gap-2 gradient-brand text-white font-semibold px-6 py-3 rounded-xl hover:shadow-glow transition-all"
-          >
-            <Plus className="w-4 h-4" />
-            Agregar primer producto
-          </Link>
+        <div className="dash-card">
+          <DashEmptyState
+            icon={<Package className="w-7 h-7 text-green-600" />}
+            title="Sin productos todavía"
+            description="Agrega tu primer producto para empezar a construir tu catálogo"
+            action={{
+              label: "Agregar primer producto",
+              href: "/dashboard/products/new",
+              icon: <Plus className="w-4 h-4" />,
+            }}
+          />
         </div>
       ) : (
-        <div className="card-flat overflow-hidden">
+        <div className="dash-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-gray-100">
-                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-5 py-3">
                     Producto
                   </th>
-                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
                     Categoría
                   </th>
-                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
                     Precio
                   </th>
-                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">
-                    Estado
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                    Stock
                   </th>
-                  <th className="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider px-4 py-3">
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
                     Visibilidad
                   </th>
-                  <th className="text-right text-xs font-semibold text-gray-500 uppercase tracking-wider px-6 py-3">
+                  <th className="text-right text-xs font-semibold text-slate-500 uppercase tracking-wider px-5 py-3">
                     Acciones
                   </th>
                 </tr>
@@ -182,10 +189,10 @@ export default async function ProductsPage({
                     (img) => img.is_primary
                   );
                   return (
-                    <tr key={product.id} className="hover:bg-gray-50 transition-colors group">
-                      <td className="px-6 py-4">
+                    <tr key={product.id} className="hover:bg-slate-50/60 transition-colors group">
+                      <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
+                          <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
                             {primaryImage ? (
                               <img
                                 src={primaryImage.url}
@@ -194,57 +201,57 @@ export default async function ProductsPage({
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center">
-                                <Package className="w-5 h-5 text-gray-300" />
+                                <Package className="w-4 h-4 text-slate-300" />
                               </div>
                             )}
                           </div>
                           <div>
-                            <p className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors">
+                            <p className="font-semibold text-sm text-slate-900 group-hover:text-green-700 transition-colors">
                               {product.name}
                             </p>
-                            <p className="text-xs text-gray-400 mt-0.5">
+                            <p className="text-xs text-slate-400 mt-0.5">
                               /{product.slug}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4">
-                        <span className="text-sm text-gray-500">
+                      <td className="px-4 py-3.5">
+                        <span className="text-sm text-slate-500">
                           {product.category?.name || "—"}
                         </span>
                       </td>
-                      <td className="px-4 py-4">
-                        <span className="text-sm font-semibold text-gray-900">
+                      <td className="px-4 py-3.5">
+                        <span className="text-sm font-semibold text-slate-900">
                           {product.show_price
                             ? formatCurrency(product.price, currency)
                             : "Consultar"}
                         </span>
                       </td>
-                      <td className="px-4 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
+                      <td className="px-4 py-3.5">
+                        <DashBadge
+                          variant={
                             product.stock_status === "available"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
-                          }`}
-                        >
-                          {product.has_variants 
-                            ? "Variantes"
-                            : product.track_inventory 
-                              ? `${product.stock_quantity} unids.` 
-                              : product.stock_status === "available" 
-                                ? "Disponible" 
-                                : "Sin stock"
+                              ? "success"
+                              : "error"
                           }
-                        </span>
+                          dot
+                        >
+                          {product.has_variants
+                            ? "Variantes"
+                            : product.track_inventory
+                              ? `${product.stock_quantity} unids.`
+                              : product.stock_status === "available"
+                                ? "Disponible"
+                                : "Sin stock"}
+                        </DashBadge>
                       </td>
-                      <td className="px-4 py-4">
-                        <span
-                          className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${
+                      <td className="px-4 py-3.5">
+                        <DashBadge
+                          variant={
                             product.visibility === "visible"
-                              ? "bg-blue-50 text-blue-600"
-                              : "bg-gray-100 text-gray-500"
-                          }`}
+                              ? "info"
+                              : "neutral"
+                          }
                         >
                           {product.visibility === "visible" ? (
                             <Eye className="w-3 h-3" />
@@ -252,9 +259,9 @@ export default async function ProductsPage({
                             <EyeOff className="w-3 h-3" />
                           )}
                           {product.visibility === "visible" ? "Visible" : "Oculto"}
-                        </span>
+                        </DashBadge>
                       </td>
-                      <td className="px-6 py-4">
+                      <td className="px-5 py-3.5">
                         <ProductsActions productId={product.id} />
                       </td>
                     </tr>
@@ -263,6 +270,33 @@ export default async function ProductsPage({
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100 text-sm text-slate-500">
+              <span>
+                Página {page} de {totalPages} ({totalCount} productos)
+              </span>
+              <div className="flex items-center gap-2">
+                {page > 1 && (
+                  <Link
+                    href={buildUrl({ page: String(page - 1) })}
+                    className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    ← Anterior
+                  </Link>
+                )}
+                {page < totalPages && (
+                  <Link
+                    href={buildUrl({ page: String(page + 1) })}
+                    className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium hover:bg-gray-50 transition-colors"
+                  >
+                    Siguiente →
+                  </Link>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

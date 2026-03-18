@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import StoreSettingsForm from "@/components/dashboard/StoreSettingsForm";
+import SectionsManager from "@/components/dashboard/store/SectionsManager";
 import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
 
-export default async function SettingsPage() {
+export default async function SectionsPage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -12,22 +12,24 @@ export default async function SettingsPage() {
 
   const { data: store } = await supabase
     .from("stores")
-    .select("*, store_settings(*)")
+    .select("*")
     .eq("owner_id", user.id)
     .single();
   if (!store) redirect("/onboarding");
 
-  const settings = Array.isArray(store.store_settings)
-    ? store.store_settings[0]
-    : store.store_settings;
+  const { data: sections } = await supabase
+    .from("store_sections_visibility")
+    .select("*")
+    .eq("store_id", store.id)
+    .order("sort_order");
 
   return (
     <div className="space-y-5 animate-fade-in">
       <DashPageHeader
-        title="Configuración"
-        subtitle="Administra los datos principales de tu tienda"
+        title="Secciones"
+        subtitle="Activa, desactiva y reordena las secciones de tu tienda"
       />
-      <StoreSettingsForm store={store} settings={settings} />
+      <SectionsManager store={store} sections={sections || []} />
     </div>
   );
 }

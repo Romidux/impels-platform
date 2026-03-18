@@ -51,7 +51,7 @@ export default async function DashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="min-h-screen bg-[#F8FAFC] flex">
       <DashboardSidebar store={activeStore as import('@/lib/types').Store} />
       <div className="flex-1 flex flex-col min-w-0 md:ml-64">
         <DashboardHeader user={authUser} store={activeStore as import('@/lib/types').Store} />

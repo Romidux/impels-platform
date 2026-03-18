@@ -36,6 +36,16 @@ const config: Config = {
           900: "#171717",
           950: "#0a0a0a",
         },
+        dashboard: {
+          primary: "#166534",
+          hover: "#16A34A",
+          accent: "#22C55E",
+          bg: "#F8FAFC",
+          card: "#FFFFFF",
+          border: "#E5E7EB",
+          text: "#0F172A",
+          muted: "#64748B",
+        },
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
@@ -88,6 +98,7 @@ const config: Config = {
       boxShadow: {
         glow: "0 0 20px rgba(59, 130, 246, 0.3)",
         "glow-lg": "0 0 40px rgba(59, 130, 246, 0.4)",
+        "dash-glow": "0 0 20px rgba(22, 101, 52, 0.2)",
         glass: "0 8px 32px rgba(0, 0, 0, 0.12)",
         "card-hover": "0 20px 60px rgba(0, 0, 0, 0.15)",
       },

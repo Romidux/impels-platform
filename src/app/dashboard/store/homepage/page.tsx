@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import StoreSettingsForm from "@/components/dashboard/StoreSettingsForm";
+import HomepageManager from "@/components/dashboard/store/HomepageManager";
 import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
 
-export default async function SettingsPage() {
+export default async function HomepagePage() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -12,7 +12,7 @@ export default async function SettingsPage() {
 
   const { data: store } = await supabase
     .from("stores")
-    .select("*, store_settings(*)")
+    .select("*, store_settings(*), store_branding(*)")
     .eq("owner_id", user.id)
     .single();
   if (!store) redirect("/onboarding");
@@ -20,14 +20,17 @@ export default async function SettingsPage() {
   const settings = Array.isArray(store.store_settings)
     ? store.store_settings[0]
     : store.store_settings;
+  const branding = Array.isArray(store.store_branding)
+    ? store.store_branding[0]
+    : store.store_branding;
 
   return (
     <div className="space-y-5 animate-fade-in">
       <DashPageHeader
-        title="Configuración"
-        subtitle="Administra los datos principales de tu tienda"
+        title="Página de inicio"
+        subtitle="Configura el contenido del hero y banners promocionales"
       />
-      <StoreSettingsForm store={store} settings={settings} />
+      <HomepageManager store={store} settings={settings} branding={branding} />
     </div>
   );
 }

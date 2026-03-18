@@ -4,22 +4,31 @@ import {
   Package,
   ShoppingCart,
   TrendingUp,
-  Plus,
+  DollarSign,
   ArrowRight,
   Eye,
   Clock,
+  AlertTriangle,
+  CheckCircle2,
+  Palette,
+  Phone,
+  Layers,
+  Store,
 } from "lucide-react";
 import Link from "next/link";
 import { formatCurrency } from "@/lib/utils";
 import { Order } from "@/lib/types";
-import { getStoreUrl } from "@/lib/utils";
+import { DashKpiCard } from "@/components/dashboard/ui/DashKpiCard";
+import { DashCard } from "@/components/dashboard/ui/DashCard";
+import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
+import { DashBadge } from "@/components/dashboard/ui/DashBadge";
 
-const STATUS_MAP: Record<string, { label: string; color: string }> = {
-  new: { label: "Nuevo", color: "bg-blue-100 text-blue-700" },
-  confirmed: { label: "Confirmado", color: "bg-indigo-100 text-indigo-700" },
-  processing: { label: "En proceso", color: "bg-yellow-100 text-yellow-700" },
-  delivered: { label: "Entregado", color: "bg-green-100 text-green-700" },
-  cancelled: { label: "Cancelado", color: "bg-red-100 text-red-700" },
+const STATUS_MAP: Record<string, { label: string; variant: "info" | "warning" | "success" | "error" | "neutral" }> = {
+  new: { label: "Nuevo", variant: "info" },
+  confirmed: { label: "Confirmado", variant: "info" },
+  processing: { label: "En proceso", variant: "warning" },
+  delivered: { label: "Entregado", variant: "success" },
+  cancelled: { label: "Cancelado", variant: "error" },
 };
 
 export default async function DashboardPage() {
@@ -43,7 +52,8 @@ export default async function DashboardPage() {
     { count: totalProducts },
     { count: totalOrders },
     { data: recentOrders },
-    { data: orders },
+    { data: allOrders },
+    { data: lowStockProducts },
   ] = await Promise.all([
     supabase
       .from("products")
@@ -64,187 +74,313 @@ export default async function DashboardPage() {
       .select("total, status")
       .eq("store_id", store.id)
       .neq("status", "cancelled"),
+    supabase
+      .from("products")
+      .select("id, name, stock_quantity, stock_status, track_inventory")
+      .eq("store_id", store.id)
+      .eq("track_inventory", true)
+      .lte("stock_quantity", 5)
+      .limit(5),
   ]);
 
   const totalRevenue =
-    orders?.reduce((sum, o) => sum + (o.total || 0), 0) || 0;
-  const newOrders = orders?.filter((o) => o.status === "new").length || 0;
+    allOrders?.reduce((sum, o) => sum + (o.total || 0), 0) || 0;
+  const newOrders = allOrders?.filter((o) => o.status === "new").length || 0;
+  const pendingOrders =
+    allOrders?.filter((o) => o.status === "processing").length || 0;
   const currency = store.store_settings?.[0]?.currency || "Gs";
 
-  const stats = [
-    {
-      label: "Productos",
-      value: totalProducts || 0,
-      icon: Package,
-      color: "from-blue-500 to-blue-600",
-      href: "/dashboard/products",
-      hint: "Ver todos",
-    },
-    {
-      label: "Pedidos totales",
-      value: totalOrders || 0,
-      icon: ShoppingCart,
-      color: "from-purple-500 to-purple-600",
-      href: "/dashboard/orders",
-      hint: `${newOrders} nuevos`,
-    },
-    {
-      label: "Ingresos totales",
-      value: formatCurrency(totalRevenue, currency),
-      icon: TrendingUp,
-      color: "from-green-500 to-green-600",
-      href: "/dashboard/orders",
-      hint: "Total histórico",
-    },
-  ];
+  // Onboarding checklist
+  const hasProducts = (totalProducts || 0) > 0;
+  const hasWhatsApp = !!store.store_settings?.[0]?.whatsapp_number;
+  const hasTemplate = !!store.store_settings?.[0]?.template;
+  const hasOrders = (totalOrders || 0) > 0;
+  const onboardingComplete = hasProducts && hasWhatsApp && hasTemplate;
+
+  // Alerts
+  const alerts: { message: string; type: "warning" | "info"; href: string }[] = [];
+  if (newOrders > 0) {
+    alerts.push({
+      message: `${newOrders} pedido${newOrders > 1 ? "s" : ""} nuevo${newOrders > 1 ? "s" : ""} sin confirmar`,
+      type: "warning",
+      href: "/dashboard/orders?status=new",
+    });
+  }
+  if (pendingOrders > 0) {
+    alerts.push({
+      message: `${pendingOrders} pedido${pendingOrders > 1 ? "s" : ""} en proceso`,
+      type: "info",
+      href: "/dashboard/orders?status=processing",
+    });
+  }
+  if (lowStockProducts && lowStockProducts.length > 0) {
+    alerts.push({
+      message: `${lowStockProducts.length} producto${lowStockProducts.length > 1 ? "s" : ""} con stock bajo`,
+      type: "warning",
+      href: "/dashboard/inventory",
+    });
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-bold text-gray-900">
-            Dashboard
-          </h1>
-          <p className="text-gray-500 mt-1">
-            Bienvenido a <span className="font-semibold">{store.name}</span>
-          </p>
-        </div>
-        <Link
-          href="/dashboard/products/new"
-          className="flex items-center gap-2 gradient-brand text-white font-semibold px-5 py-2.5 rounded-xl hover:shadow-glow transition-all hover:scale-105 text-sm"
-        >
-          <Plus className="w-4 h-4" />
-          Nuevo producto
-        </Link>
+      <DashPageHeader
+        title={`Hola, bienvenido 👋`}
+        subtitle={`Panel de ${store.name}`}
+      />
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <DashKpiCard
+          icon={<DollarSign className="w-5 h-5 text-green-700" />}
+          label="Ingresos totales"
+          value={formatCurrency(totalRevenue, currency)}
+          href="/dashboard/orders"
+        />
+        <DashKpiCard
+          icon={<ShoppingCart className="w-5 h-5 text-green-700" />}
+          label="Pedidos totales"
+          value={totalOrders || 0}
+          trend={newOrders > 0 ? { value: `${newOrders} nuevos`, positive: true } : undefined}
+          href="/dashboard/orders"
+        />
+        <DashKpiCard
+          icon={<Package className="w-5 h-5 text-green-700" />}
+          label="Productos"
+          value={totalProducts || 0}
+          href="/dashboard/products"
+        />
+        <DashKpiCard
+          icon={<TrendingUp className="w-5 h-5 text-green-700" />}
+          label="Tasa de completado"
+          value={
+            (totalOrders || 0) > 0
+              ? `${Math.round(((allOrders?.filter((o) => o.status === "delivered").length || 0) / (totalOrders || 1)) * 100)}%`
+              : "—"
+          }
+        />
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {stats.map((stat) => (
-          <Link key={stat.label} href={stat.href} className="card p-6 group">
-            <div className="flex items-center justify-between mb-4">
-              <div
-                className={`w-11 h-11 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center group-hover:scale-110 transition-transform`}
+      {/* Alerts */}
+      {alerts.length > 0 && (
+        <DashCard padding={false}>
+          <div className="divide-y divide-gray-100">
+            {alerts.map((alert, i) => (
+              <Link
+                key={i}
+                href={alert.href}
+                className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors group"
               >
-                <stat.icon className="w-5 h-5 text-white" />
-              </div>
-              <ArrowRight className="w-4 h-4 text-gray-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
-            </div>
-            <div className="font-display text-3xl font-black text-gray-900 mb-1">
-              {stat.value}
-            </div>
-            <div className="text-sm text-gray-500">{stat.label}</div>
-            <div className="text-xs text-gray-400 mt-0.5">{stat.hint}</div>
-          </Link>
-        ))}
-      </div>
-
-      {/* Quick Actions */}
-      <div className="card-flat p-6">
-        <h2 className="font-display text-lg font-bold text-gray-900 mb-4">
-          Acciones rápidas
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            {
-              label: "Agregar producto",
-              href: "/dashboard/products/new",
-              icon: Package,
-              color: "bg-blue-50 text-blue-600 hover:bg-blue-100",
-            },
-            {
-              label: "Ver pedidos",
-              href: "/dashboard/orders",
-              icon: ShoppingCart,
-              color: "bg-purple-50 text-purple-600 hover:bg-purple-100",
-            },
-            {
-              label: "Ver mi tienda",
-              href: `/store/${store.slug}`,
-              icon: Eye,
-              color: "bg-green-50 text-green-600 hover:bg-green-100",
-            },
-            {
-              label: "Apariencia",
-              href: "/dashboard/appearance",
-              icon: TrendingUp,
-              color: "bg-pink-50 text-pink-600 hover:bg-pink-100",
-            },
-          ].map((action) => (
-            <Link
-              key={action.label}
-              href={action.href}
-              className={`flex flex-col items-center gap-2 p-4 rounded-xl ${action.color} transition-colors text-center`}
-            >
-              <action.icon className="w-5 h-5" />
-              <span className="text-xs font-semibold">{action.label}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-
-      {/* Recent Orders */}
-      <div className="card-flat">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="font-display text-lg font-bold text-gray-900">
-            Pedidos recientes
-          </h2>
-          <Link
-            href="/dashboard/orders"
-            className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
-          >
-            Ver todos
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-
-        {!recentOrders || recentOrders.length === 0 ? (
-          <div className="p-12 text-center">
-            <div className="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mx-auto mb-4">
-              <ShoppingCart className="w-7 h-7 text-gray-400" />
-            </div>
-            <p className="text-gray-400 font-medium">Sin pedidos todavía</p>
-            <p className="text-gray-300 text-sm mt-1">
-              Comparte el link de tu tienda para empezar a recibir pedidos.
-            </p>
-          </div>
-        ) : (
-          <div className="divide-y divide-gray-50">
-            {(recentOrders as Order[]).map((order) => {
-              const status = STATUS_MAP[order.status] || STATUS_MAP.new;
-              return (
                 <div
-                  key={order.id}
-                  className="flex items-center gap-4 px-6 py-4 hover:bg-gray-50 transition-colors group"
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 ${
+                    alert.type === "warning"
+                      ? "bg-amber-50"
+                      : "bg-blue-50"
+                  }`}
                 >
-                  <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center flex-shrink-0">
-                    <ShoppingCart className="w-4 h-4 text-gray-500" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-sm text-gray-900 truncate">
-                      {order.customer_name}
-                    </p>
-                    <p className="text-xs text-gray-400 flex items-center gap-1 mt-0.5">
-                      <Clock className="w-3 h-3" />
-                      {new Date(order.created_at).toLocaleDateString("es-PY")}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold text-sm text-gray-900">
-                      {formatCurrency(order.total, currency)}
-                    </p>
-                    <span
-                      className={`inline-block text-xs font-semibold px-2 py-0.5 rounded-full mt-0.5 ${status.color}`}
-                    >
-                      {status.label}
-                    </span>
-                  </div>
+                  <AlertTriangle
+                    className={`w-4 h-4 ${
+                      alert.type === "warning"
+                        ? "text-amber-600"
+                        : "text-blue-500"
+                    }`}
+                  />
                 </div>
-              );
-            })}
+                <span className="text-sm text-slate-700 flex-1">
+                  {alert.message}
+                </span>
+                <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-green-600 group-hover:translate-x-0.5 transition-all" />
+              </Link>
+            ))}
           </div>
-        )}
+        </DashCard>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Recent Orders */}
+        <div className="lg:col-span-2">
+          <DashCard
+            padding={false}
+            header={{
+              title: "Pedidos recientes",
+              icon: <ShoppingCart className="w-5 h-5 text-green-600" />,
+              action: (
+                <Link
+                  href="/dashboard/orders"
+                  className="text-xs text-green-700 hover:text-green-600 font-semibold flex items-center gap-1"
+                >
+                  Ver todos
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </Link>
+              ),
+            }}
+          >
+            {!recentOrders || recentOrders.length === 0 ? (
+              <div className="p-10 text-center">
+                <div className="w-12 h-12 rounded-xl bg-slate-100 flex items-center justify-center mx-auto mb-3">
+                  <ShoppingCart className="w-5 h-5 text-slate-400" />
+                </div>
+                <p className="text-sm text-slate-400 font-medium">
+                  Sin pedidos todavía
+                </p>
+                <p className="text-xs text-slate-300 mt-1">
+                  Comparte el link de tu tienda para empezar
+                </p>
+              </div>
+            ) : (
+              <div className="divide-y divide-gray-50">
+                {(recentOrders as Order[]).map((order) => {
+                  const status = STATUS_MAP[order.status] || STATUS_MAP.new;
+                  return (
+                    <div
+                      key={order.id}
+                      className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50/50 transition-colors"
+                    >
+                      <div className="w-9 h-9 rounded-lg bg-slate-100 flex items-center justify-center flex-shrink-0">
+                        <ShoppingCart className="w-4 h-4 text-slate-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-semibold text-sm text-slate-900 truncate">
+                          {order.customer_name}
+                        </p>
+                        <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                          <Clock className="w-3 h-3" />
+                          {new Date(order.created_at).toLocaleDateString(
+                            "es-PY"
+                          )}
+                        </p>
+                      </div>
+                      <div className="text-right flex-shrink-0">
+                        <p className="font-bold text-sm text-slate-900">
+                          {formatCurrency(order.total, currency)}
+                        </p>
+                        <DashBadge variant={status.variant}>
+                          {status.label}
+                        </DashBadge>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </DashCard>
+        </div>
+
+        {/* Quick Actions + Onboarding */}
+        <div className="space-y-5">
+          {/* Quick Actions */}
+          <DashCard header={{ title: "Acciones rápidas", icon: <Layers className="w-5 h-5 text-green-600" /> }}>
+            <div className="grid grid-cols-2 gap-2.5">
+              <Link
+                href="/dashboard/products/new"
+                className="flex flex-col items-center gap-2 p-3.5 rounded-xl bg-green-50 text-green-700 hover:bg-green-100 transition-colors text-center"
+              >
+                <Package className="w-5 h-5" />
+                <span className="text-xs font-semibold">Agregar producto</span>
+              </Link>
+              <Link
+                href="/dashboard/orders"
+                className="flex flex-col items-center gap-2 p-3.5 rounded-xl bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors text-center"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                <span className="text-xs font-semibold">Ver pedidos</span>
+              </Link>
+              <Link
+                href={`/store/${store.slug}`}
+                className="flex flex-col items-center gap-2 p-3.5 rounded-xl bg-slate-50 text-slate-600 hover:bg-slate-100 transition-colors text-center"
+              >
+                <Eye className="w-5 h-5" />
+                <span className="text-xs font-semibold">Ver tienda</span>
+              </Link>
+              <Link
+                href="/dashboard/store/theme"
+                className="flex flex-col items-center gap-2 p-3.5 rounded-xl bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors text-center"
+              >
+                <Palette className="w-5 h-5" />
+                <span className="text-xs font-semibold">Editar tema</span>
+              </Link>
+            </div>
+          </DashCard>
+
+          {/* Onboarding Checklist */}
+          {!onboardingComplete && (
+            <DashCard
+              header={{
+                title: "Configura tu tienda",
+                icon: <Store className="w-5 h-5 text-amber-500" />,
+              }}
+            >
+              <div className="space-y-2">
+                <Link
+                  href="/dashboard/products/new"
+                  className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
+                    hasProducts ? "bg-green-50/50" : "hover:bg-slate-50"
+                  }`}
+                >
+                  {hasProducts ? (
+                    <CheckCircle2 className="w-[18px] h-[18px] text-green-500 flex-shrink-0" />
+                  ) : (
+                    <div className="w-[18px] h-[18px] rounded-full border-2 border-slate-300 flex-shrink-0" />
+                  )}
+                  <span className={`text-sm ${hasProducts ? "text-slate-400 line-through" : "text-slate-700 font-medium"}`}>
+                    Agregar tu primer producto
+                  </span>
+                  {!hasProducts && <ArrowRight className="w-3.5 h-3.5 text-slate-300 ml-auto" />}
+                </Link>
+
+                <Link
+                  href="/dashboard/settings"
+                  className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
+                    hasWhatsApp ? "bg-green-50/50" : "hover:bg-slate-50"
+                  }`}
+                >
+                  {hasWhatsApp ? (
+                    <CheckCircle2 className="w-[18px] h-[18px] text-green-500 flex-shrink-0" />
+                  ) : (
+                    <div className="w-[18px] h-[18px] rounded-full border-2 border-slate-300 flex-shrink-0" />
+                  )}
+                  <span className={`text-sm ${hasWhatsApp ? "text-slate-400 line-through" : "text-slate-700 font-medium"}`}>
+                    Configurar WhatsApp
+                  </span>
+                  {!hasWhatsApp && <ArrowRight className="w-3.5 h-3.5 text-slate-300 ml-auto" />}
+                </Link>
+
+                <Link
+                  href="/dashboard/store/theme"
+                  className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
+                    hasTemplate ? "bg-green-50/50" : "hover:bg-slate-50"
+                  }`}
+                >
+                  {hasTemplate ? (
+                    <CheckCircle2 className="w-[18px] h-[18px] text-green-500 flex-shrink-0" />
+                  ) : (
+                    <div className="w-[18px] h-[18px] rounded-full border-2 border-slate-300 flex-shrink-0" />
+                  )}
+                  <span className={`text-sm ${hasTemplate ? "text-slate-400 line-through" : "text-slate-700 font-medium"}`}>
+                    Elegir un template
+                  </span>
+                  {!hasTemplate && <ArrowRight className="w-3.5 h-3.5 text-slate-300 ml-auto" />}
+                </Link>
+
+                <Link
+                  href="/dashboard/orders"
+                  className={`flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
+                    hasOrders ? "bg-green-50/50" : "hover:bg-slate-50"
+                  }`}
+                >
+                  {hasOrders ? (
+                    <CheckCircle2 className="w-[18px] h-[18px] text-green-500 flex-shrink-0" />
+                  ) : (
+                    <div className="w-[18px] h-[18px] rounded-full border-2 border-slate-300 flex-shrink-0" />
+                  )}
+                  <span className={`text-sm ${hasOrders ? "text-slate-400 line-through" : "text-slate-700 font-medium"}`}>
+                    Recibir tu primer pedido
+                  </span>
+                  {!hasOrders && <ArrowRight className="w-3.5 h-3.5 text-slate-300 ml-auto" />}
+                </Link>
+              </div>
+            </DashCard>
+          )}
+        </div>
       </div>
     </div>
   );
