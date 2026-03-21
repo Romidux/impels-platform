@@ -1,18 +1,10 @@
-"use client";
-
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 interface DashEmptyStateProps {
   icon: React.ReactNode;
   title: string;
   description: string;
-  action?: {
-    label: string;
-    href?: string;
-    onClick?: () => void;
-    icon?: React.ReactNode;
-  };
+  action?: React.ReactNode;
   className?: string;
 }
 
@@ -24,34 +16,21 @@ export function DashEmptyState({
   className,
 }: DashEmptyStateProps) {
   return (
-    <div className={cn("p-16 text-center", className)}>
-      <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-4">
+    <div className={cn("p-16 text-center flex flex-col items-center justify-center", className)}>
+      <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center mb-4">
         {icon}
       </div>
       <h3 className="font-display text-lg font-bold text-slate-900 mb-1.5">
         {title}
       </h3>
-      <p className="text-sm text-slate-400 mb-6 max-w-sm mx-auto">
+      <p className="text-sm text-slate-400 mb-6 max-w-sm">
         {description}
       </p>
-      {action &&
-        (action.href ? (
-          <Link
-            href={action.href}
-            className="dash-btn-primary inline-flex items-center gap-2"
-          >
-            {action.icon}
-            {action.label}
-          </Link>
-        ) : (
-          <button
-            onClick={action.onClick}
-            className="dash-btn-primary inline-flex items-center gap-2"
-          >
-            {action.icon}
-            {action.label}
-          </button>
-        ))}
+      {action && (
+        <div className="flex justify-center mt-2">
+          {action}
+        </div>
+      )}
     </div>
   );
 }

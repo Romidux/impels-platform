@@ -20,6 +20,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { SetupWizard } from "@/components/dashboard/SetupWizard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MerchantAnnouncements } from "@/components/dashboard/MerchantAnnouncements";
+import { CopyLinkButton } from "@/components/dashboard/ui/CopyLinkButton";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -145,11 +146,10 @@ export default async function DashboardPage() {
                 heading="Aún no hay pedidos"
                 description="Comparte el link de tu tienda en tus redes sociales para recibir tu primer pedido."
                 action={
-                  <Button asChild onClick={() => {
-                    navigator.clipboard.writeText(`https://${store.slug}.impels.com`);
-                  }}>
-                    Copiar link
-                  </Button>
+                  <CopyLinkButton 
+                    url={`https://${store.slug}.impels.com`}
+                    className="h-10 px-4 py-2 bg-slate-900 text-slate-50 hover:bg-slate-900/90 inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+                  />
                 }
               />
             ) : (
@@ -217,15 +217,10 @@ export default async function DashboardPage() {
               >
                 Abrir tienda
               </a>
-              <button
+              <CopyLinkButton
+                url={getStoreUrl(store.slug)}
                 className="w-full text-center px-4 py-2 bg-white text-brand-700 border border-brand-200 rounded-xl text-sm font-semibold hover:bg-brand-50 transition-colors"
-                onClick={() => {
-                  /* Copy to clipboard logic */
-                  navigator.clipboard.writeText(getStoreUrl(store.slug));
-                }}
-              >
-                Copiar link
-              </button>
+              />
             </div>
           </div>
 
