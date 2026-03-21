@@ -17,7 +17,7 @@ export function DashEmptyState({
 }: DashEmptyStateProps) {
   return (
     <div className={cn("p-16 text-center flex flex-col items-center justify-center", className)}>
-      <div className="w-16 h-16 rounded-2xl bg-green-50 flex items-center justify-center mb-4">
+      <div className="w-16 h-16 rounded-2xl bg-brand-100 flex items-center justify-center mb-4 [&>svg]:text-brand-600">
         {icon}
       </div>
       <h3 className="font-display text-lg font-bold text-slate-900 mb-1.5">

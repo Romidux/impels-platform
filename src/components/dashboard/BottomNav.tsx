@@ -6,16 +6,11 @@ import {
   LayoutDashboard,
   Package,
   ShoppingCart,
-  Palette,
   MoreHorizontal,
-  Settings,
   Users,
   CreditCard,
   Tags,
   Warehouse,
-  Layers,
-  Globe,
-  Home,
   UserCog,
   X,
   Store as StoreIcon,
@@ -82,7 +77,7 @@ export default function BottomNav() {
                   href={item.href}
                   onClick={() => setMoreOpen(false)}
                   className={cn(
-                    "flex flex-col items-center gap-2 p-3 rounded-xl transition-colors text-center",
+                    "flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-200 text-center",
                     isActive(item.href)
                       ? "bg-brand-50 text-brand-700"
                       : "text-slate-500 hover:bg-slate-50"
@@ -100,7 +95,7 @@ export default function BottomNav() {
       )}
 
       {/* Bottom navigation bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white border-t border-slate-200 px-2 pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 pb-[env(safe-area-inset-bottom)]">
         <div className="flex items-center justify-around h-16">
           {mainItems.map((item) => {
             const active = isActive(item.href, item.exact);
@@ -109,7 +104,7 @@ export default function BottomNav() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all min-w-[60px]",
+                  "flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 min-w-[60px] relative",
                   active
                     ? "text-brand-600"
                     : "text-slate-400"
@@ -140,7 +135,7 @@ export default function BottomNav() {
           <button
             onClick={() => setMoreOpen(true)}
             className={cn(
-              "flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all min-w-[60px]",
+              "flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 min-w-[60px]",
               isMoreActive ? "text-brand-600" : "text-slate-400"
             )}
           >

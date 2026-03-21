@@ -63,7 +63,7 @@ export function SetupWizard({
   const activeStepIdx = steps.findIndex((s) => !s.isDone);
 
   return (
-    <div className="dash-card overflow-hidden border-brand-100 mb-8 relative">
+    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-8 relative">
       <div className="absolute top-0 left-0 w-full h-1 bg-slate-100">
         <div 
           className="h-full bg-brand-500 transition-all duration-1000" 
@@ -78,10 +78,10 @@ export function SetupWizard({
             <ProgressRing progress={progressPercent} size={56} />
             <div>
               <h2 className="font-display text-xl font-bold text-slate-900">
-                ¡Bienvenido a Impels Commerce!
+                Tu tienda está {progressPercent}% lista
               </h2>
               <p className="text-sm text-slate-500 mt-1">
-                Completa estos pasos básicos para que tu tienda esté lista para vender.
+                Completa estos pasos básicos para empezar a vender.
               </p>
             </div>
           </div>
@@ -90,7 +90,7 @@ export function SetupWizard({
             {steps.map((step, idx) => (
               <div 
                 key={step.id} 
-                className={`flex gap-4 p-4 rounded-xl border transition-all ${
+                className={`flex gap-4 p-4 rounded-xl border transition-all duration-200 ${
                   step.isDone 
                     ? "border-green-100 bg-green-50/50" 
                     : idx === activeStepIdx 
@@ -98,7 +98,7 @@ export function SetupWizard({
                     : "border-slate-100 opacity-60 grayscale"
                 }`}
               >
-                <div className={`mt-0.5 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                <div className={`mt-0.5 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
                   step.isDone 
                     ? "bg-green-500 text-white" 
                     : idx === activeStepIdx 
@@ -130,8 +130,8 @@ export function SetupWizard({
         </div>
 
         {/* Right side: Illustration (Motivational) */}
-        <div className="hidden lg:flex flex-col justify-center items-center w-64 bg-slate-50 rounded-2xl p-6 text-center border border-dashed border-slate-200">
-          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+        <div className="hidden lg:flex flex-col justify-center items-center w-64 bg-brand-50 rounded-2xl p-6 text-center border border-dashed border-brand-200">
+          <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md mb-4">
             <Rocket className="w-8 h-8 text-brand-500" />
           </div>
           <h4 className="font-bold text-slate-900 mb-2">Ya casi publicas</h4>

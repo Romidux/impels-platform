@@ -17,7 +17,7 @@ interface DashButtonProps
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-green-800 text-white hover:bg-green-600 disabled:opacity-50 shadow-sm",
+    "bg-brand-600 text-white hover:bg-brand-700 disabled:opacity-50 shadow-sm shadow-brand-600/20",
   secondary:
     "bg-white text-slate-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300",
   danger: "bg-red-600 text-white hover:bg-red-700",

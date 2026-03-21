@@ -25,13 +25,13 @@ export function DashKpiCard({
   const content = (
     <>
       <div className="flex items-center justify-between mb-4">
-        <div className="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center group-hover:scale-105 transition-transform">
+        <div className="w-12 h-12 rounded-2xl bg-brand-100 flex items-center justify-center group-hover:scale-105 transition-transform duration-200 [&>svg]:text-brand-600">
           {icon}
         </div>
         {trend && (
           <div
             className={cn(
-              "flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full",
+              "flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full",
               trend.positive
                 ? "bg-green-50 text-green-700"
                 : "bg-red-50 text-red-600"
@@ -57,7 +57,7 @@ export function DashKpiCard({
     return (
       <Link
         href={href}
-        className={cn("dash-card-hover p-5 group block", className)}
+        className={cn("bg-white border border-slate-200 rounded-2xl p-5 shadow-sm hover:shadow-lg transition-all duration-200 group block", className)}
       >
         {content}
       </Link>
@@ -65,6 +65,6 @@ export function DashKpiCard({
   }
 
   return (
-    <div className={cn("dash-card p-5 group", className)}>{content}</div>
+    <div className={cn("bg-white border border-slate-200 rounded-2xl p-5 shadow-sm group", className)}>{content}</div>
   );
 }
