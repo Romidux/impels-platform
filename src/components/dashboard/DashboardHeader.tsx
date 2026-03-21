@@ -17,14 +17,9 @@ const ROUTE_LABELS: Record<string, string> = {
   "/dashboard/inventory": "Inventario",
   "/dashboard/orders": "Pedidos",
   "/dashboard/customers": "Clientes",
-  "/dashboard/store/theme": "Tema",
-  "/dashboard/store/homepage": "Página de inicio",
-  "/dashboard/store/sections": "Secciones",
-  "/dashboard/store/footer": "Footer y Redes",
+  "/dashboard/store": "Mi Tienda",
   "/dashboard/team": "Equipo",
-  "/dashboard/settings": "Configuración",
   "/dashboard/plan": "Plan",
-  "/dashboard/appearance": "Apariencia",
 };
 
 export default function DashboardHeader({
@@ -85,7 +80,7 @@ export default function DashboardHeader({
           href={getStoreUrl(store.slug)}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 hover:text-green-700 transition-colors"
+          className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 hover:text-brand-600 transition-colors"
         >
           <ExternalLink className="w-3.5 h-3.5" />
           <span>{getStoreUrl(store.slug).replace(/^https?:\/\//, "")}</span>
@@ -100,7 +95,7 @@ export default function DashboardHeader({
             onClick={() => setMenuOpen(!menuOpen)}
             className="flex items-center gap-2 hover:bg-gray-50 pl-2 pr-3 py-1.5 rounded-lg transition-colors"
           >
-            <div className="w-7 h-7 rounded-full bg-green-800 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full gradient-brand flex items-center justify-center">
               <span className="text-white text-xs font-bold">
                 {user.email?.charAt(0).toUpperCase()}
               </span>
@@ -129,7 +124,7 @@ export default function DashboardHeader({
                   <button
                     onClick={() => {
                       setMenuOpen(false);
-                      router.push("/dashboard/settings");
+                      router.push("/dashboard/store");
                     }}
                     className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-slate-700 hover:bg-gray-50 rounded-lg transition-colors"
                   >

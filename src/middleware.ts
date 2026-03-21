@@ -38,6 +38,17 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Protect admin routes
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    if (!user) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+    // Additional super admin check can be done via user_metadata
+    // For now, any authenticated user can access (layout does the real check)
+  }
+
   // Redirect logged-in users away from auth pages
   if (
     user &&

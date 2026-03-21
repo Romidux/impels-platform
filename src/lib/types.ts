@@ -214,3 +214,34 @@ export interface DashboardStats {
   new_orders: number;
   recent_orders: Order[];
 }
+
+// ─── Super Admin ─────────────────────────────────────────────────────────────
+export interface StoreWithStats extends Store {
+  product_count?: number;
+  order_count?: number;
+  total_revenue?: number;
+  owner_email?: string;
+  last_order_at?: string;
+}
+
+export interface SuperAdminStats {
+  total_stores: number;
+  active_stores: number;
+  new_stores_this_month: number;
+  total_orders_platform: number;
+  total_gmv: number;
+  total_products_platform: number;
+  free_plan_stores: number;
+  pro_plan_stores: number;
+  activation_rate: number; // % of stores with products + WhatsApp + template
+}
+
+export interface AuditLogEntry {
+  id: string;
+  admin_id: string;
+  action: string;
+  entity_type: "store" | "user" | "system";
+  entity_id?: string;
+  metadata?: Record<string, unknown>;
+  created_at: string;
+}

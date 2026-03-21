@@ -2,7 +2,8 @@
 
 import { cn } from "@/lib/utils";
 import { Search, ChevronLeft, ChevronRight } from "lucide-react";
-import { DashButton } from "./DashButton";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 /* ─── Column Definition ─── */
 export interface DashColumn<T> {
@@ -51,14 +52,13 @@ export function DashTable<T>({
       {(onSearchChange || filters) && (
         <div className="px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row gap-3">
           {onSearchChange && (
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
+            <div className="relative flex-1 max-w-md">
+              <Input
                 type="text"
                 value={searchValue}
-                onChange={(e) => onSearchChange(e.target.value)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange(e.target.value)}
                 placeholder={searchPlaceholder}
-                className="dash-input pl-9"
+                icon={<Search className="w-4 h-4" />}
               />
             </div>
           )}
@@ -121,7 +121,7 @@ export function DashTable<T>({
             {pagination.total}
           </span>
           <div className="flex items-center gap-1">
-            <DashButton
+            <Button
               variant="ghost"
               size="sm"
               icon={<ChevronLeft className="w-4 h-4" />}
@@ -129,11 +129,11 @@ export function DashTable<T>({
               onClick={() => pagination.onPageChange(pagination.page - 1)}
             >
               Ant.
-            </DashButton>
+            </Button>
             <span className="px-3 py-1 text-xs font-semibold text-slate-700">
               {pagination.page} / {totalPages}
             </span>
-            <DashButton
+            <Button
               variant="ghost"
               size="sm"
               icon={<ChevronRight className="w-4 h-4" />}
@@ -141,7 +141,7 @@ export function DashTable<T>({
               onClick={() => pagination.onPageChange(pagination.page + 1)}
             >
               Sig.
-            </DashButton>
+            </Button>
           </div>
         </div>
       )}

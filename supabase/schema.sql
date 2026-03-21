@@ -24,204 +24,1041 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON ROUTINES TO anon, authent
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- ──────────────────────────────────────────────────────────────────
+-- STORE_NAVIGATION
+-- ──────────────────────────────────────────────────────────────────
+create table public.store_navigation (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  store_id uuid not null,
+  label text not null,
+  url text not null,
+  sort_order integer not null default 0,
+  is_active boolean not null default true,
+  constraint store_navigation_pkey primary key (id),
+  constraint store_navigation_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create index IF not exists idx_store_navigation_store on public.store_navigation using btree (store_id) TABLESPACE pg_default;
+
+-- ──────────────────────────────────────────────────────────────────
+-- COSTUMERS
+-- ──────────────────────────────────────────────────────────────────
+create table public.customers (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  store_id uuid not null,
+  name text not null,
+  email text null,
+  phone text null,
+  notes text null,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint customers_pkey primary key (id),
+  constraint customers_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE
+) TABLESPACE pg_default;
+
+create index IF not exists idx_customers_store on public.customers using btree (store_id) TABLESPACE pg_default;
+-- ──────────────────────────────────────────────────────────────────
 -- STORES
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS stores (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  name        TEXT NOT NULL,
-  slug        TEXT NOT NULL UNIQUE,
-  description TEXT,
-  logo_url    TEXT,
-  owner_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  plan        TEXT NOT NULL DEFAULT 'free' CHECK (plan IN ('free', 'pro')),
-  is_active   BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at  TIMESTAMPTZ NOT NULL DEFAULT NOW()
-);
+create table public.stores (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  name text not null,
+  slug text not null,
+  description text null,
+  logo_url text null,
+  owner_id uuid not null,
+  plan text not null default 'free'::text,
+  is_active boolean not null default true,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  constraint stores_pkey primary key (id),
+  constraint stores_slug_key unique (slug),
+  constraint stores_owner_id_fkey foreign KEY (owner_id) references auth.users (id) on delete CASCADE,
+  constraint stores_plan_check check ((plan = any (array['free'::text, 'pro'::text])))
+) TABLESPACE pg_default;
 
-CREATE INDEX IF NOT EXISTS idx_stores_slug ON stores(slug);
-CREATE INDEX IF NOT EXISTS idx_stores_owner ON stores(owner_id);
+create index IF not exists idx_stores_slug on public.stores using btree (slug) TABLESPACE pg_default;
+
+create index IF not exists idx_stores_owner on public.stores using btree (owner_id) TABLESPACE pg_default;
+
+create trigger trg_stores_updated_at BEFORE
+update on stores for EACH row
+execute FUNCTION update_updated_at_column ();
 
 -- ──────────────────────────────────────────────────────────────────
 -- STORE MEMBERS (roles)
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS store_members (
-  id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  store_id   UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
-  user_id    UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-  role       TEXT NOT NULL DEFAULT 'editor' CHECK (role IN ('owner', 'admin', 'editor')),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE(store_id, user_id)
-);
+create table public.store_members (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  store_id uuid not null,
+  user_id uuid not null,
+  role text not null default 'editor'::text,
+  created_at timestamp with time zone not null default now(),
+  constraint store_members_pkey primary key (id),
+  constraint store_members_store_id_user_id_key unique (store_id, user_id),
+  constraint store_members_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE,
+  constraint store_members_user_id_fkey foreign KEY (user_id) references auth.users (id) on delete CASCADE,
+  constraint store_members_role_check check (
+    (
+      role = any (
+        array['owner'::text, 'admin'::text, 'editor'::text]
+      )
+    )
+  )
+) TABLESPACE pg_default;
 
 -- ──────────────────────────────────────────────────────────────────
 -- STORE SETTINGS
 -- ──────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS store_settings (
-  id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  store_id         UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE UNIQUE,
-  currency         TEXT NOT NULL DEFAULT 'Gs',
-  whatsapp_number  TEXT,
-  contact_email    TEXT,
-  instagram_url    TEXT,
-  facebook_url     TEXT,
-  tiktok_url       TEXT,
-  twitter_url      TEXT,
-  template         TEXT NOT NULL DEFAULT 'modern' CHECK (template IN ('minimal', 'modern', 'brand')),
-  primary_color    TEXT NOT NULL DEFAULT '#2563eb',
-  secondary_color  TEXT NOT NULL DEFAULT '#7c3aed',
-  hero_title       TEXT,
-  hero_subtitle    TEXT
-);
+create table public.store_settings (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  store_id uuid not null,
+  currency text not null default 'Gs'::text,
+  whatsapp_number text null,
+  contact_email text null,
+  instagram_url text null,
+  facebook_url text null,
+  tiktok_url text null,
+  twitter_url text null,
+  template text not null default 'modern'::text,
+  primary_color text not null default '#2563eb'::text,
+  secondary_color text not null default '#7c3aed'::text,
+  hero_title text null,
+  hero_subtitle text null,
+  benefits_bar_items text[] null default '{}'::text[],
+  constraint store_settings_pkey primary key (id),
+  constraint store_settings_store_id_key unique (store_id),
+  constraint store_settings_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE,
+  constraint store_settings_template_check check (
+    (
+      template = any (
+        array['minimal'::text, 'modern'::text, 'brand'::text]
+      )
+    )
+  )
+) TABLESPACE pg_default;
 
 -- ──────────────────────────────────────────────────────────────────
 -- STORE BRANDING
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS store_branding (
-  id                      UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  store_id                UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE UNIQUE,
-  logo_url                TEXT,
-  favicon_url             TEXT,
-  hero_banner_url         TEXT,
-  promo_banner_url        TEXT,
-  promo_banner_title      TEXT,
-  promo_banner_subtitle   TEXT,
-  promo_banner_cta        TEXT,
-  promo_banner_url_link   TEXT
-);
+create table public.store_branding (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  store_id uuid not null,
+  logo_url text null,
+  favicon_url text null,
+  hero_banner_url text null,
+  promo_banner_url text null,
+  promo_banner_title text null,
+  promo_banner_subtitle text null,
+  promo_banner_cta text null,
+  promo_banner_url_link text null,
+  footer_categories_label text null default 'Productos'::text,
+  footer_contact_label text null default 'Contacto'::text,
+  constraint store_branding_pkey primary key (id),
+  constraint store_branding_store_id_key unique (store_id),
+  constraint store_branding_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE
+) TABLESPACE pg_default;
 
 -- ──────────────────────────────────────────────────────────────────
 -- STORE SECTIONS VISIBILITY
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS store_sections_visibility (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  store_id    UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
-  section     TEXT NOT NULL,
-  is_visible  BOOLEAN NOT NULL DEFAULT TRUE,
-  sort_order  INTEGER NOT NULL DEFAULT 0,
-  UNIQUE(store_id, section)
-);
+create table public.store_sections_visibility (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  store_id uuid not null,
+  section text not null,
+  is_visible boolean not null default true,
+  sort_order integer not null default 0,
+  constraint store_sections_visibility_pkey primary key (id),
+  constraint store_sections_visibility_store_id_section_key unique (store_id, section),
+  constraint store_sections_visibility_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE
+) TABLESPACE pg_default;
 
 -- ──────────────────────────────────────────────────────────────────
 -- CATEGORIES
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS categories (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  store_id    UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
-  parent_id   UUID REFERENCES categories(id) ON DELETE SET NULL,
-  name        TEXT NOT NULL,
-  slug        TEXT NOT NULL,
-  image_url   TEXT,
-  sort_order  INTEGER NOT NULL DEFAULT 0,
-  is_active   BOOLEAN NOT NULL DEFAULT TRUE,
-  created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE(store_id, slug)
-);
+create table public.categories (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  store_id uuid not null,
+  parent_id uuid null,
+  name text not null,
+  slug text not null,
+  image_url text null,
+  sort_order integer not null default 0,
+  is_active boolean not null default true,
+  created_at timestamp with time zone not null default now(),
+  constraint categories_pkey primary key (id),
+  constraint categories_store_id_slug_key unique (store_id, slug),
+  constraint categories_parent_id_fkey foreign KEY (parent_id) references categories (id) on delete set null,
+  constraint categories_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE
+) TABLESPACE pg_default;
 
-CREATE INDEX IF NOT EXISTS idx_categories_store ON categories(store_id);
-CREATE INDEX IF NOT EXISTS idx_categories_parent ON categories(parent_id);
+create index IF not exists idx_categories_store on public.categories using btree (store_id) TABLESPACE pg_default;
 
+create index IF not exists idx_categories_parent on public.categories using btree (parent_id) TABLESPACE pg_default;
 -- ──────────────────────────────────────────────────────────────────
 -- PRODUCTS
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS products (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  store_id          UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
-  category_id       UUID REFERENCES categories(id) ON DELETE SET NULL,
-  name              TEXT NOT NULL,
-  slug              TEXT NOT NULL,
-  description       TEXT,
-  price             NUMERIC(12,2) NOT NULL DEFAULT 0,
-  compare_at_price  NUMERIC(12,2),
-  show_price        BOOLEAN NOT NULL DEFAULT TRUE,
-  visibility        TEXT NOT NULL DEFAULT 'visible' CHECK (visibility IN ('visible', 'hidden')),
-  track_inventory   BOOLEAN NOT NULL DEFAULT FALSE,
-  manage_stock_by_variant BOOLEAN NOT NULL DEFAULT FALSE,
-  allow_backorder   BOOLEAN NOT NULL DEFAULT FALSE,
-  stock_status      TEXT NOT NULL DEFAULT 'available' CHECK (stock_status IN ('available', 'out_of_stock')),
-  is_featured       BOOLEAN NOT NULL DEFAULT FALSE,
-  tags              TEXT[] NOT NULL DEFAULT '{}',
-  created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE(store_id, slug)
-);
+create table public.products (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  store_id uuid not null,
+  category_id uuid null,
+  name text not null,
+  slug text not null,
+  description text null,
+  price numeric(12, 2) not null default 0,
+  compare_at_price numeric(12, 2) null,
+  show_price boolean not null default true,
+  visibility text not null default 'visible'::text,
+  stock_status text not null default 'available'::text,
+  is_featured boolean not null default false,
+  tags text[] not null default '{}'::text[],
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  has_variants boolean not null default false,
+  stock_quantity integer not null default 0,
+  track_inventory boolean not null default false,
+  allow_backorder boolean not null default false,
+  manage_stock_by_variant boolean not null default false,
+  constraint products_pkey primary key (id),
+  constraint products_store_id_slug_key unique (store_id, slug),
+  constraint products_category_id_fkey foreign KEY (category_id) references categories (id) on delete set null,
+  constraint products_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE,
+  constraint products_stock_status_check check (
+    (
+      stock_status = any (array['available'::text, 'out_of_stock'::text])
+    )
+  ),
+  constraint products_visibility_check check (
+    (
+      visibility = any (array['visible'::text, 'hidden'::text])
+    )
+  )
+) TABLESPACE pg_default;
 
-CREATE INDEX IF NOT EXISTS idx_products_store ON products(store_id);
-CREATE INDEX IF NOT EXISTS idx_products_category ON products(category_id);
-CREATE INDEX IF NOT EXISTS idx_products_visibility ON products(visibility);
-CREATE INDEX IF NOT EXISTS idx_products_featured ON products(is_featured);
+create index IF not exists idx_products_store on public.products using btree (store_id) TABLESPACE pg_default;
 
+create index IF not exists idx_products_category on public.products using btree (category_id) TABLESPACE pg_default;
+
+create index IF not exists idx_products_visibility on public.products using btree (visibility) TABLESPACE pg_default;
+
+create index IF not exists idx_products_featured on public.products using btree (is_featured) TABLESPACE pg_default;
+
+create trigger trg_products_stock_status BEFORE INSERT
+or
+update OF stock_quantity,
+track_inventory,
+allow_backorder,
+has_variants on products for EACH row
+execute FUNCTION update_product_stock_status ();
+
+create trigger trg_products_updated_at BEFORE
+update on products for EACH row
+execute FUNCTION update_updated_at_column ();
 -- ──────────────────────────────────────────────────────────────────
 -- PRODUCT IMAGES
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS product_images (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  product_id  UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-  url         TEXT NOT NULL,
-  alt         TEXT,
-  sort_order  INTEGER NOT NULL DEFAULT 0,
-  is_primary  BOOLEAN NOT NULL DEFAULT FALSE
-);
+create table public.product_images (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  product_id uuid not null,
+  url text not null,
+  alt text null,
+  sort_order integer not null default 0,
+  is_primary boolean not null default false,
+  constraint product_images_pkey primary key (id),
+  constraint product_images_product_id_fkey foreign KEY (product_id) references products (id) on delete CASCADE
+) TABLESPACE pg_default;
 
-CREATE INDEX IF NOT EXISTS idx_product_images_product ON product_images(product_id);
-
+create index IF not exists idx_product_images_product on public.product_images using btree (product_id) TABLESPACE pg_default;
 -- ──────────────────────────────────────────────────────────────────
 -- PRODUCT OPTION TYPES (Color, Size, ML, etc.)
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS product_option_types (
-  id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  product_id  UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-  store_id    UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
-  name        TEXT NOT NULL,
-  sort_order  INTEGER NOT NULL DEFAULT 0
-);
-
+create table public.product_option_types (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  product_id uuid not null,
+  store_id uuid not null,
+  name text not null,
+  sort_order integer not null default 0,
+  constraint product_option_types_pkey primary key (id),
+  constraint product_option_types_product_id_fkey foreign KEY (product_id) references products (id) on delete CASCADE,
+  constraint product_option_types_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE
+) TABLESPACE pg_default;
 -- ──────────────────────────────────────────────────────────────────
 -- PRODUCT OPTION VALUES (Red, XL, 100ml, etc.)
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS product_option_values (
-  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  option_type_id UUID NOT NULL REFERENCES product_option_types(id) ON DELETE CASCADE,
-  value          TEXT NOT NULL,
-  sort_order     INTEGER NOT NULL DEFAULT 0
-);
+create table public.product_option_values (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  option_type_id uuid not null,
+  value text not null,
+  sort_order integer not null default 0,
+  constraint product_option_values_pkey primary key (id),
+  constraint product_option_values_option_type_id_fkey foreign KEY (option_type_id) references product_option_types (id) on delete CASCADE
+) TABLESPACE pg_default;
 
 -- ──────────────────────────────────────────────────────────────────
 -- PRODUCT VARIANT COMBINATIONS
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS product_variant_combinations (
-  id             UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  product_id     UUID NOT NULL REFERENCES products(id) ON DELETE CASCADE,
-  option_values  UUID[] NOT NULL DEFAULT '{}',  -- array of product_option_value IDs
-  price          NUMERIC(12,2),
-  stock          INTEGER NOT NULL DEFAULT 0,
-  sku            TEXT,
-  is_active      BOOLEAN NOT NULL DEFAULT TRUE
-);
-
+create table public.product_variant_combinations (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  product_id uuid not null,
+  option_values uuid[] not null default '{}'::uuid[],
+  price numeric(12, 2) null,
+  stock integer not null default 0,
+  sku text null,
+  is_active boolean not null default true,
+  constraint product_variant_combinations_pkey primary key (id),
+  constraint product_variant_combinations_product_id_fkey foreign KEY (product_id) references products (id) on delete CASCADE
+) TABLESPACE pg_default;
 -- ──────────────────────────────────────────────────────────────────
 -- ORDERS
 -- ──────────────────────────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS orders (
-  id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  store_id          UUID NOT NULL REFERENCES stores(id) ON DELETE CASCADE,
-  customer_name     TEXT NOT NULL,
-  customer_phone    TEXT NOT NULL,
-  customer_email    TEXT,
-  customer_address  TEXT,
-  customer_notes    TEXT,
-  items             JSONB NOT NULL DEFAULT '[]',
-  subtotal          NUMERIC(12,2) NOT NULL DEFAULT 0,
-  total             NUMERIC(12,2) NOT NULL DEFAULT 0,
-  status            TEXT NOT NULL DEFAULT 'new'
-                      CHECK (status IN ('new','confirmed','processing','delivered','cancelled')),
-  created_at        TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at        TIMESTAMPTZ NOT NULL DEFAULT NOW()
+create table public.orders (
+  id uuid not null default extensions.uuid_generate_v4 (),
+  store_id uuid not null,
+  customer_name text not null,
+  customer_phone text not null,
+  customer_email text null,
+  customer_address text null,
+  customer_notes text null,
+  items jsonb not null default '[]'::jsonb,
+  subtotal numeric(12, 2) not null default 0,
+  total numeric(12, 2) not null default 0,
+  status text not null default 'new'::text,
+  created_at timestamp with time zone not null default now(),
+  updated_at timestamp with time zone not null default now(),
+  customer_id uuid null,
+  constraint orders_pkey primary key (id),
+  constraint orders_customer_id_fkey foreign KEY (customer_id) references customers (id) on delete set null,
+  constraint orders_store_id_fkey foreign KEY (store_id) references stores (id) on delete CASCADE,
+  constraint orders_status_check check (
+    (
+      status = any (
+        array[
+          'new'::text,
+          'confirmed'::text,
+          'processing'::text,
+          'delivered'::text,
+          'cancelled'::text
+        ]
+      )
+    )
+  )
+) TABLESPACE pg_default;
+
+create index IF not exists idx_orders_store on public.orders using btree (store_id) TABLESPACE pg_default;
+
+create index IF not exists idx_orders_status on public.orders using btree (status) TABLESPACE pg_default;
+
+create index IF not exists idx_orders_created on public.orders using btree (created_at desc) TABLESPACE pg_default;
+
+create trigger trg_orders_updated_at BEFORE
+update on orders for EACH row
+execute FUNCTION update_updated_at_column ();
+
+
+-- ──────────────────────────────────────────────────────────────────
+-- UPDATED_AT FUNCTION & TRIGGERS
+-- ──────────────────────────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_stores_updated_at ON stores;
+CREATE TRIGGER trg_stores_updated_at
+  BEFORE UPDATE ON stores
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS trg_products_updated_at ON products;
+CREATE TRIGGER trg_products_updated_at
+  BEFORE UPDATE ON products
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+DROP TRIGGER IF EXISTS trg_orders_updated_at ON orders;
+CREATE TRIGGER trg_orders_updated_at
+  BEFORE UPDATE ON orders
+  FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- ──────────────────────────────────────────────────────────────────
+-- STOCK STATUS FUNCTION & TRIGGERS
+-- ──────────────────────────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION update_product_stock_status()
+RETURNS TRIGGER AS $$
+DECLARE
+  v_has_stock BOOLEAN;
+BEGIN
+  IF NOT NEW.track_inventory THEN
+    NEW.stock_status := 'available';
+    RETURN NEW;
+  END IF;
+
+  IF NEW.allow_backorder THEN
+    NEW.stock_status := 'available';
+    RETURN NEW;
+  END IF;
+
+  IF NEW.manage_stock_by_variant THEN
+    SELECT EXISTS (
+      SELECT 1
+      FROM product_variant_combinations
+      WHERE product_id = NEW.id
+        AND stock > 0
+        AND is_active = TRUE
+    ) INTO v_has_stock;
+
+    IF v_has_stock THEN
+      NEW.stock_status := 'available';
+    ELSE
+      NEW.stock_status := 'out_of_stock';
+    END IF;
+  ELSE
+    IF NEW.stock_quantity > 0 THEN
+      NEW.stock_status := 'available';
+    ELSE
+      NEW.stock_status := 'out_of_stock';
+    END IF;
+  END IF;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_products_stock_status ON products;
+CREATE TRIGGER trg_products_stock_status
+  BEFORE INSERT OR UPDATE OF stock_quantity, track_inventory, allow_backorder, has_variants
+  ON products
+  FOR EACH ROW EXECUTE FUNCTION update_product_stock_status();
+
+CREATE OR REPLACE FUNCTION trigger_variant_update_product()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE products
+  SET updated_at = NOW()
+  WHERE id = NEW.product_id;
+
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS trg_variant_stock_change ON product_variant_combinations;
+CREATE TRIGGER trg_variant_stock_change
+  AFTER UPDATE OF stock, is_active ON product_variant_combinations
+  FOR EACH ROW EXECUTE FUNCTION trigger_variant_update_product();
+
+-- ================================================================
+-- ROW LEVEL SECURITY (RLS)
+-- ================================================================
+ALTER TABLE stores ENABLE ROW LEVEL SECURITY;
+ALTER TABLE store_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE store_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE store_branding ENABLE ROW LEVEL SECURITY;
+ALTER TABLE store_sections_visibility ENABLE ROW LEVEL SECURITY;
+ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_images ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_option_types ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_option_values ENABLE ROW LEVEL SECURITY;
+ALTER TABLE product_variant_combinations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+
+-- ================================================================
+-- SECURITY DEFINER HELPER FUNCTIONS
+-- ================================================================
+CREATE OR REPLACE FUNCTION public.is_store_owner(_store_id uuid, _user_id uuid)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.stores
+    WHERE id = _store_id
+      AND owner_id = _user_id
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION public.is_store_member(_store_id uuid, _user_id uuid)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.store_members
+    WHERE store_id = _store_id
+      AND user_id = _user_id
+  );
+$$;
+
+CREATE OR REPLACE FUNCTION public.has_store_access(_store_id uuid, _user_id uuid)
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.stores
+    WHERE id = _store_id
+      AND owner_id = _user_id
+  )
+  OR EXISTS (
+    SELECT 1
+    FROM public.store_members
+    WHERE store_id = _store_id
+      AND user_id = _user_id
+  );
+$$;
+
+-- ── STORES ────────────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Public can view active stores" ON public.stores;
+CREATE POLICY "Public can view active stores"
+ON public.stores
+FOR SELECT
+USING (is_active = TRUE);
+
+DROP POLICY IF EXISTS "Owners can insert stores" ON public.stores;
+CREATE POLICY "Owners can insert stores"
+ON public.stores
+FOR INSERT
+WITH CHECK (auth.uid() = owner_id);
+
+DROP POLICY IF EXISTS "Owners can update stores" ON public.stores;
+CREATE POLICY "Owners can update stores"
+ON public.stores
+FOR UPDATE
+USING (auth.uid() = owner_id)
+WITH CHECK (auth.uid() = owner_id);
+
+DROP POLICY IF EXISTS "Owners can delete stores" ON public.stores;
+CREATE POLICY "Owners can delete stores"
+ON public.stores
+FOR DELETE
+USING (auth.uid() = owner_id);
+
+DROP POLICY IF EXISTS "Members can view their stores" ON public.stores;
+CREATE POLICY "Members can view their stores"
+ON public.stores
+FOR SELECT
+USING (
+  auth.uid() = owner_id
+  OR public.is_store_member(id, auth.uid())
 );
 
-CREATE INDEX IF NOT EXISTS idx_orders_store ON orders(store_id);
-CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status);
-CREATE INDEX IF NOT EXISTS idx_orders_created ON orders(created_at DESC);
+-- ── STORE MEMBERS ─────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Owners can manage team" ON public.store_members;
+CREATE POLICY "Owners can manage team"
+ON public.store_members
+FOR ALL
+USING (
+  public.is_store_owner(store_id, auth.uid())
+)
+WITH CHECK (
+  public.is_store_owner(store_id, auth.uid())
+);
+
+DROP POLICY IF EXISTS "Members can view team" ON public.store_members;
+CREATE POLICY "Members can view team"
+ON public.store_members
+FOR SELECT
+USING (
+  user_id = auth.uid()
+  OR public.is_store_owner(store_id, auth.uid())
+);
+
+-- ── STORE SETTINGS ────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Public can view store settings" ON public.store_settings;
+CREATE POLICY "Public can view store settings"
+ON public.store_settings
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.stores s
+    WHERE s.id = store_settings.store_id
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Owner and admin manage settings" ON public.store_settings;
+CREATE POLICY "Owner and admin manage settings"
+ON public.store_settings
+FOR ALL
+USING (
+  public.has_store_access(store_id, auth.uid())
+)
+WITH CHECK (
+  public.has_store_access(store_id, auth.uid())
+);
+
+-- ── STORE BRANDING ────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Public can view branding" ON public.store_branding;
+CREATE POLICY "Public can view branding"
+ON public.store_branding
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.stores s
+    WHERE s.id = store_branding.store_id
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Owner admin manage branding" ON public.store_branding;
+CREATE POLICY "Owner admin manage branding"
+ON public.store_branding
+FOR ALL
+USING (
+  public.has_store_access(store_id, auth.uid())
+)
+WITH CHECK (
+  public.has_store_access(store_id, auth.uid())
+);
+
+-- ── STORE SECTIONS VISIBILITY ─────────────────────────────────────
+DROP POLICY IF EXISTS "Public can view sections" ON public.store_sections_visibility;
+CREATE POLICY "Public can view sections"
+ON public.store_sections_visibility
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.stores s
+    WHERE s.id = store_sections_visibility.store_id
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Owner admin manage sections" ON public.store_sections_visibility;
+CREATE POLICY "Owner admin manage sections"
+ON public.store_sections_visibility
+FOR ALL
+USING (
+  public.has_store_access(store_id, auth.uid())
+)
+WITH CHECK (
+  public.has_store_access(store_id, auth.uid())
+);
+
+-- ── CATEGORIES ────────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Public can view categories" ON public.categories;
+CREATE POLICY "Public can view categories"
+ON public.categories
+FOR SELECT
+USING (is_active = TRUE);
+
+DROP POLICY IF EXISTS "Store members can manage categories" ON public.categories;
+CREATE POLICY "Store members can manage categories"
+ON public.categories
+FOR ALL
+USING (
+  public.has_store_access(store_id, auth.uid())
+)
+WITH CHECK (
+  public.has_store_access(store_id, auth.uid())
+);
+
+-- ── PRODUCTS ──────────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Public can view visible products" ON public.products;
+CREATE POLICY "Public can view visible products"
+ON public.products
+FOR SELECT
+USING (visibility = 'visible');
+
+DROP POLICY IF EXISTS "Store members can manage products" ON public.products;
+CREATE POLICY "Store members can manage products"
+ON public.products
+FOR ALL
+USING (
+  public.has_store_access(store_id, auth.uid())
+)
+WITH CHECK (
+  public.has_store_access(store_id, auth.uid())
+);
+
+-- ── PRODUCT IMAGES ────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Public can view product images" ON public.product_images;
+CREATE POLICY "Public can view product images"
+ON public.product_images
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    JOIN public.stores s ON s.id = p.store_id
+    WHERE p.id = product_images.product_id
+      AND p.visibility = 'visible'
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Store members manage images" ON public.product_images;
+CREATE POLICY "Store members manage images"
+ON public.product_images
+FOR ALL
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    WHERE p.id = product_images.product_id
+      AND public.has_store_access(p.store_id, auth.uid())
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    WHERE p.id = product_images.product_id
+      AND public.has_store_access(p.store_id, auth.uid())
+  )
+);
+
+-- ── PRODUCT OPTION TYPES ──────────────────────────────────────────
+DROP POLICY IF EXISTS "Public can view option types" ON public.product_option_types;
+CREATE POLICY "Public can view option types"
+ON public.product_option_types
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    JOIN public.stores s ON s.id = p.store_id
+    WHERE p.id = product_option_types.product_id
+      AND p.visibility = 'visible'
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Store members manage option types" ON public.product_option_types;
+CREATE POLICY "Store members manage option types"
+ON public.product_option_types
+FOR ALL
+USING (
+  public.has_store_access(store_id, auth.uid())
+)
+WITH CHECK (
+  public.has_store_access(store_id, auth.uid())
+);
+
+-- ── PRODUCT OPTION VALUES ─────────────────────────────────────────
+DROP POLICY IF EXISTS "Public can view option values" ON public.product_option_values;
+CREATE POLICY "Public can view option values"
+ON public.product_option_values
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.product_option_types pot
+    JOIN public.products p ON p.id = pot.product_id
+    JOIN public.stores s ON s.id = p.store_id
+    WHERE pot.id = product_option_values.option_type_id
+      AND p.visibility = 'visible'
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Members manage option values" ON public.product_option_values;
+CREATE POLICY "Members manage option values"
+ON public.product_option_values
+FOR ALL
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.product_option_types ot
+    WHERE ot.id = product_option_values.option_type_id
+      AND public.has_store_access(ot.store_id, auth.uid())
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1
+    FROM public.product_option_types ot
+    WHERE ot.id = product_option_values.option_type_id
+      AND public.has_store_access(ot.store_id, auth.uid())
+  )
+);
+
+-- ── PRODUCT VARIANT COMBINATIONS ─────────────────────────────────
+DROP POLICY IF EXISTS "Public can view variants" ON public.product_variant_combinations;
+CREATE POLICY "Public can view variants"
+ON public.product_variant_combinations
+FOR SELECT
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    JOIN public.stores s ON s.id = p.store_id
+    WHERE p.id = product_variant_combinations.product_id
+      AND p.visibility = 'visible'
+      AND s.is_active = TRUE
+  )
+);
+
+DROP POLICY IF EXISTS "Members manage variants" ON public.product_variant_combinations;
+CREATE POLICY "Members manage variants"
+ON public.product_variant_combinations
+FOR ALL
+USING (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    WHERE p.id = product_variant_combinations.product_id
+      AND public.has_store_access(p.store_id, auth.uid())
+  )
+)
+WITH CHECK (
+  EXISTS (
+    SELECT 1
+    FROM public.products p
+    WHERE p.id = product_variant_combinations.product_id
+      AND public.has_store_access(p.store_id, auth.uid())
+  )
+);
+
+-- ── ORDERS ────────────────────────────────────────────────────────
+DROP POLICY IF EXISTS "Service role can create orders directly" ON public.orders;
+CREATE POLICY "Service role can create orders directly"
+ON public.orders
+FOR INSERT
+WITH CHECK (auth.role() = 'service_role');
+
+DROP POLICY IF EXISTS "Store members can view orders" ON public.orders;
+CREATE POLICY "Store members can view orders"
+ON public.orders
+FOR SELECT
+USING (
+  public.has_store_access(store_id, auth.uid())
+);
+
+DROP POLICY IF EXISTS "Store members can update orders" ON public.orders;
+CREATE POLICY "Store members can update orders"
+ON public.orders
+FOR UPDATE
+USING (
+  public.has_store_access(store_id, auth.uid())
+)
+WITH CHECK (
+  public.has_store_access(store_id, auth.uid())
+);
+
+-- ──────────────────────────────────────────────────────────────────
+-- STORAGE BUCKETS
+-- ──────────────────────────────────────────────────────────────────
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('product-images', 'product-images', TRUE)
+ON CONFLICT (id) DO NOTHING;
+
+DROP POLICY IF EXISTS "Public can view product images" ON storage.objects;
+CREATE POLICY "Public can view product images"
+ON storage.objects
+FOR SELECT
+USING (bucket_id = 'product-images');
+
+DROP POLICY IF EXISTS "Authenticated users can upload product images" ON storage.objects;
+CREATE POLICY "Authenticated users can upload product images"
+ON storage.objects
+FOR INSERT
+WITH CHECK (
+  bucket_id = 'product-images'
+  AND auth.role() = 'authenticated'
+);
+
+DROP POLICY IF EXISTS "Users can delete own product images" ON storage.objects;
+CREATE POLICY "Users can delete own product images"
+ON storage.objects
+FOR DELETE
+USING (
+  bucket_id = 'product-images'
+  AND auth.uid() IS NOT NULL
+);
+
+-- ──────────────────────────────────────────────────────────────────
+-- CHECKOUT RPC (FINAL VERSION)
+-- ──────────────────────────────────────────────────────────────────
+CREATE OR REPLACE FUNCTION public.create_order_and_deduct_stock(
+  p_store_id UUID,
+  p_customer_name TEXT,
+  p_customer_phone TEXT,
+  p_customer_email TEXT,
+  p_customer_address TEXT,
+  p_customer_notes TEXT,
+  p_items JSONB,
+  p_subtotal NUMERIC,
+  p_total NUMERIC
+)
+RETURNS UUID
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  v_order_id UUID;
+  v_item JSONB;
+
+  v_product_id UUID;
+  v_variant_id UUID;
+  v_variant_id_str TEXT;
+  v_quantity INT;
+
+  v_product_store_id UUID;
+  v_has_variants BOOLEAN;
+  v_track_inventory BOOLEAN;
+  v_allow_backorder BOOLEAN;
+  v_stock_quantity INT;
+
+  v_variant_product_id UUID;
+  v_variant_stock INT;
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM public.stores s
+    WHERE s.id = p_store_id
+      AND s.is_active = TRUE
+  ) THEN
+    RAISE EXCEPTION 'La tienda no existe o no está activa';
+  END IF;
+
+  IF p_items IS NULL OR jsonb_typeof(p_items) <> 'array' OR jsonb_array_length(p_items) = 0 THEN
+    RAISE EXCEPTION 'El pedido no tiene items válidos';
+  END IF;
+
+  INSERT INTO public.orders (
+    store_id,
+    customer_name,
+    customer_phone,
+    customer_email,
+    customer_address,
+    customer_notes,
+    items,
+    subtotal,
+    total,
+    status
+  )
+  VALUES (
+    p_store_id,
+    p_customer_name,
+    p_customer_phone,
+    p_customer_email,
+    p_customer_address,
+    p_customer_notes,
+    p_items,
+    p_subtotal,
+    p_total,
+    'processing'
+  )
+  RETURNING id INTO v_order_id;
+
+  FOR v_item IN
+    SELECT * FROM jsonb_array_elements(p_items)
+  LOOP
+    v_product_id := (v_item->>'product_id')::UUID;
+    v_quantity := (v_item->>'quantity')::INT;
+    v_variant_id_str := v_item->>'variant_combination_id';
+    v_variant_id := NULL;
+
+    IF COALESCE(v_variant_id_str, '') NOT IN ('', 'null') THEN
+      v_variant_id := v_variant_id_str::UUID;
+    END IF;
+
+    IF v_product_id IS NULL OR v_quantity IS NULL OR v_quantity <= 0 THEN
+      RAISE EXCEPTION 'Item inválido en el pedido';
+    END IF;
+
+    SELECT
+      p.store_id,
+      p.has_variants,
+      p.track_inventory,
+      p.allow_backorder,
+      p.stock_quantity
+    INTO
+      v_product_store_id,
+      v_has_variants,
+      v_track_inventory,
+      v_allow_backorder,
+      v_stock_quantity
+    FROM public.products p
+    WHERE p.id = v_product_id
+      AND p.store_id = p_store_id
+      AND p.visibility = 'visible'
+    FOR UPDATE;
+
+    IF NOT FOUND THEN
+      RAISE EXCEPTION 'Producto no encontrado para esta tienda';
+    END IF;
+
+    IF v_has_variants THEN
+      IF v_variant_id IS NULL THEN
+        RAISE EXCEPTION 'Debe elegir una variante para este producto';
+      END IF;
+
+      SELECT
+        pvc.product_id,
+        pvc.stock
+      INTO
+        v_variant_product_id,
+        v_variant_stock
+      FROM public.product_variant_combinations pvc
+      WHERE pvc.id = v_variant_id
+        AND pvc.product_id = v_product_id
+        AND pvc.is_active = TRUE
+      FOR UPDATE;
+
+      IF NOT FOUND THEN
+        RAISE EXCEPTION 'Variante inválida para este producto';
+      END IF;
+    ELSE
+      IF v_variant_id IS NOT NULL THEN
+        RAISE EXCEPTION 'Este producto no usa variantes';
+      END IF;
+    END IF;
+
+    IF v_track_inventory THEN
+      IF v_has_variants THEN
+        IF v_variant_stock < v_quantity AND v_allow_backorder = FALSE THEN
+          RAISE EXCEPTION 'Stock insuficiente para la variante';
+        END IF;
+
+        UPDATE public.product_variant_combinations
+        SET stock = stock - v_quantity
+        WHERE id = v_variant_id;
+      ELSE
+        IF v_stock_quantity < v_quantity AND v_allow_backorder = FALSE THEN
+          RAISE EXCEPTION 'Stock insuficiente para el producto';
+        END IF;
+
+        UPDATE public.products
+        SET stock_quantity = stock_quantity - v_quantity
+        WHERE id = v_product_id
+          AND store_id = p_store_id;
+      END IF;
+    END IF;
+  END LOOP;
+
+  UPDATE public.orders
+  SET status = 'new'
+  WHERE id = v_order_id;
+
+  RETURN v_order_id;
+END;
+$$;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 -- ──────────────────────────────────────────────────────────────────
 -- UPDATED_AT TRIGGER

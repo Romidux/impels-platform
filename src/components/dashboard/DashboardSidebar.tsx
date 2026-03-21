@@ -19,6 +19,9 @@ import {
   ExternalLink,
   ChevronRight,
   Zap,
+  Store as StoreIcon, // Use alias to avoid type collision
+  Puzzle,
+  HelpCircle,
 } from "lucide-react";
 import { cn, getStoreUrl } from "@/lib/utils";
 import { Store } from "@/lib/types";
@@ -66,22 +69,16 @@ const navGroups: NavGroup[] = [
   {
     title: "TIENDA",
     items: [
-      { label: "Tema", href: "/dashboard/store/theme", icon: Palette },
-      { label: "Página inicio", href: "/dashboard/store/homepage", icon: Home },
-      { label: "Secciones", href: "/dashboard/store/sections", icon: Layers },
-      {
-        label: "Footer y Redes",
-        href: "/dashboard/store/footer",
-        icon: Globe,
-      },
+      { label: "Mi Tienda", href: "/dashboard/store", icon: StoreIcon },
     ],
   },
   {
     title: "SISTEMA",
     items: [
       { label: "Equipo", href: "/dashboard/team", icon: UserCog },
-      { label: "Configuración", href: "/dashboard/settings", icon: Settings },
       { label: "Plan", href: "/dashboard/plan", icon: CreditCard },
+      { label: "Aplicaciones", href: "/dashboard/apps", icon: Puzzle },
+      { label: "Soporte", href: "/dashboard/support", icon: HelpCircle },
     ],
   },
 ];
@@ -95,7 +92,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
       {/* Logo area */}
       <div className="p-5 border-b border-gray-100">
         <Link href="/dashboard" className="flex items-center gap-2.5 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-green-800 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg gradient-brand flex items-center justify-center shadow-sm">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <span className="font-display font-bold text-lg text-slate-900">
@@ -105,7 +102,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
 
         {/* Store pill */}
         <div className="bg-slate-50 rounded-xl p-3 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-green-800 flex items-center justify-center flex-shrink-0">
+          <div className="w-9 h-9 rounded-lg gradient-brand flex items-center justify-center flex-shrink-0">
             <span className="text-white font-bold text-sm">
               {store.name.charAt(0).toUpperCase()}
             </span>
@@ -141,7 +138,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                     className={cn(
                       "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all group",
                       isActive
-                        ? "bg-green-800 text-white shadow-sm"
+                        ? "bg-brand-600 text-white shadow-sm"
                         : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                     )}
                   >
@@ -171,7 +168,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
           href={storeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex items-center gap-2 w-full px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-50 rounded-lg transition-colors"
+          className="flex items-center gap-2 w-full px-3 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50 rounded-lg transition-colors"
         >
           <ExternalLink className="w-4 h-4" />
           Ver mi tienda
@@ -184,7 +181,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
             className={cn(
               "text-xs font-bold px-2 py-0.5 rounded-full",
               store.plan === "pro"
-                ? "bg-green-100 text-green-700"
+                ? "bg-brand-100 text-brand-700"
                 : "bg-gray-200 text-gray-600"
             )}
           >
@@ -194,7 +191,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
         {store.plan === "free" && (
           <Link
             href="/dashboard/plan"
-            className="flex items-center justify-center gap-1.5 bg-green-800 text-white text-xs font-bold px-3 py-2 rounded-lg hover:bg-green-700 transition-all w-full"
+            className="flex items-center justify-center gap-1.5 gradient-brand text-white text-xs font-bold px-3 py-2 rounded-lg hover:opacity-90 transition-all w-full"
           >
             <Zap className="w-3 h-3" />
             Upgrade a Pro

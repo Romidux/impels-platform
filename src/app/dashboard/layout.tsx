@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
+import BottomNav from "@/components/dashboard/BottomNav";
 
 export default async function DashboardLayout({
   children,
@@ -55,8 +56,9 @@ export default async function DashboardLayout({
       <DashboardSidebar store={activeStore as import('@/lib/types').Store} />
       <div className="flex-1 flex flex-col min-w-0 md:ml-64">
         <DashboardHeader user={authUser} store={activeStore as import('@/lib/types').Store} />
-        <main className="flex-1 p-6 overflow-auto">{children}</main>
+        <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto">{children}</main>
       </div>
+      <BottomNav />
     </div>
   );
 }

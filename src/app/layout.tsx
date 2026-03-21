@@ -50,7 +50,7 @@ export default function RootLayout({
               background: 'white',
               color: '#1a1a1a',
               border: '1px solid #f0f0f0',
-              borderRadius: '0px',
+              borderRadius: '12px',
               fontSize: '12px',
               letterSpacing: '0.05em',
               textTransform: 'uppercase',

@@ -2,9 +2,11 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Users, ShoppingCart, Clock } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { DashEmptyState } from "@/components/dashboard/ui/DashEmptyState";
 import { DashBadge } from "@/components/dashboard/ui/DashBadge";
+import { Button } from "@/components/ui/Button";
+import { Download } from "lucide-react";
 
 interface CustomerAggregate {
   name: string;
@@ -65,9 +67,16 @@ export default async function CustomersPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <DashPageHeader
+      <PageHeader
         title="Clientes"
         subtitle={`${customers.length} clientes únicos`}
+        actions={
+          <Button asChild variant="secondary" icon={<Download className="w-4 h-4" />}>
+            <a href="/api/export?type=customers" download>
+              Exportar CSV
+            </a>
+          </Button>
+        }
       />
 
       {customers.length === 0 ? (

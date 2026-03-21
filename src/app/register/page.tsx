@@ -7,6 +7,7 @@ import { Zap, Mail, Lock, Eye, EyeOff, User, Store, ArrowRight, CheckCircle } fr
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
+import { sendWelcomeEmail } from "@/lib/events";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -82,6 +83,9 @@ export default function RegisterPage() {
       }
 
       toast.success("¡Cuenta y tienda creadas! Redirigiendo...");
+      // Fire-and-forget server action
+      sendWelcomeEmail(form.email, form.storeName).catch(console.error);
+
       startTransition(() => {
         router.push("/dashboard");
         router.refresh();

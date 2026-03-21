@@ -1,13 +1,15 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { ShoppingCart, Clock, ArrowRight } from "lucide-react";
+import { ShoppingCart, Clock, ArrowRight, MessageCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Order } from "@/lib/types";
 import OrderStatusBadge from "@/components/dashboard/OrderStatusBadge";
 import OrderStatusChanger from "@/components/dashboard/OrderStatusChanger";
-import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
-import { DashEmptyState } from "@/components/dashboard/ui/DashEmptyState";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Button } from "@/components/ui/Button";
+import { Download } from "lucide-react";
 
 export default async function OrdersPage({
   searchParams,
@@ -22,7 +24,7 @@ export default async function OrdersPage({
 
   const { data: store } = await supabase
     .from("stores")
-    .select("id, store_settings(*)")
+    .select("id, name, store_settings(*)")
     .eq("owner_id", user.id)
     .single();
   if (!store) redirect("/onboarding");
@@ -30,7 +32,7 @@ export default async function OrdersPage({
   const params = await searchParams;
   const { status } = params;
   const page = parseInt(params.page || "1");
-  const pageSize = 20;
+  const pageSize = status ? 20 : 50; // Increase page size for the Kanban board view
 
   let query = supabase
     .from("orders")
@@ -58,13 +60,20 @@ export default async function OrdersPage({
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <DashPageHeader
+      <PageHeader
         title="Pedidos"
         subtitle={`${totalCount || 0} pedidos${status ? ` con estado "${status}"` : ""}`}
+        actions={
+          <Button asChild variant="secondary" icon={<Download className="w-4 h-4" />}>
+            <a href="/api/export?type=orders" download>
+              Exportar CSV
+            </a>
+          </Button>
+        }
       />
 
-      {/* Status filters */}
-      <div className="flex flex-wrap gap-2">
+      {/* Status filters (Mobile/Segmented) */}
+      <div className="flex flex-wrap gap-2 lg:hidden">
         {statusFilters.map((f) => (
           <Link
             key={f.value}
@@ -73,8 +82,8 @@ export default async function OrdersPage({
             }
             className={`text-sm font-medium px-4 py-2 rounded-lg transition-all ${
               status === f.value || (!status && !f.value)
-                ? "bg-green-800 text-white shadow-sm"
-                : "bg-white border border-gray-200 text-slate-600 hover:border-green-300 hover:text-green-700"
+                ? "bg-brand-600 text-white shadow-sm"
+                : "bg-white border border-gray-200 text-slate-600 hover:border-brand-300 hover:text-brand-700"
             }`}
           >
             {f.label}
@@ -82,99 +91,114 @@ export default async function OrdersPage({
         ))}
       </div>
 
-      {/* Orders list */}
+      {/* Orders list / Pipeline */}
       {!orders || orders.length === 0 ? (
         <div className="dash-card">
-          <DashEmptyState
-            icon={<ShoppingCart className="w-7 h-7 text-green-600" />}
-            title={`Sin pedidos${status ? ` con estado "${status}"` : ""}`}
-            description="Los pedidos de tus clientes aparecerán aquí"
+          <EmptyState
+            icon={<ShoppingCart className="w-8 h-8" />}
+            heading={`Sin pedidos${status ? ` con estado "${status}"` : ""}`}
+            description="Los pedidos de tus clientes aparecerán aquí."
           />
         </div>
       ) : (
-        <div className="dash-card overflow-hidden">
-          <div className="divide-y divide-gray-50">
-            {(orders as Order[]).map((order) => (
-              <div
-                key={order.id}
-                className="p-5 hover:bg-slate-50/40 transition-colors"
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="flex items-start gap-3.5 flex-1 min-w-0">
-                    <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
-                      <ShoppingCart className="w-4.5 h-4.5 text-green-600" />
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-slate-900">
-                          {order.customer_name}
-                        </span>
-                        <OrderStatusBadge status={order.status} />
+        <div className="overflow-x-auto pb-4">
+          <div className={`flex gap-4 ${status ? "flex-col lg:flex-row" : "flex-col lg:flex-row min-w-[1000px]"}`}>
+            {statusFilters
+              .filter(f => !status || f.value === status) // If filtered, show only that column or list
+              .filter(f => f.value !== "") // Exclude "Todos" from being a column
+              .map((col) => {
+                const columnOrders = (orders as Order[]).filter((o) => o.status === col.value);
+                
+                // Hide empty columns on mobile if we are in "Todos" mode, but show on desktop pipeline
+                if (columnOrders.length === 0 && !status) {
+                  return (
+                    <div key={col.value} className="hidden lg:flex flex-col w-full min-w-[300px] bg-slate-50/50 rounded-2xl border border-slate-100 p-3">
+                      <div className="flex items-center justify-between mb-3 px-1">
+                        <h3 className="font-semibold text-slate-700 text-sm">{col.label}</h3>
+                        <span className="text-xs font-bold text-slate-400 bg-slate-200 px-2 py-0.5 rounded-full">0</span>
                       </div>
-                      <p className="text-sm text-slate-500 mt-0.5">
-                        📞 {order.customer_phone}
-                        {order.customer_address &&
-                          ` • 📍 ${order.customer_address}`}
-                      </p>
+                      <div className="flex-1 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center py-10">
+                        <p className="text-xs text-slate-400 font-medium tracking-wide">Vacio</p>
+                      </div>
+                    </div>
+                  );
+                }
 
-                      {/* Items */}
-                      <div className="mt-3 space-y-1">
-                        {(order.items as { product_name: string; quantity: number; unit_price: number; variant_label?: string }[]).map((item, i) => (
-                          <div
-                            key={i}
-                            className="text-sm text-slate-600 flex items-center gap-2"
-                          >
-                            <span className="w-5 h-5 rounded-full bg-slate-100 text-slate-500 text-xs flex items-center justify-center flex-shrink-0">
-                              {item.quantity}
-                            </span>
-                            <span className="truncate">
-                              {item.product_name}
-                              {item.variant_label && (
-                                <span className="text-slate-400">
-                                  {" "}
-                                  ({item.variant_label})
-                                </span>
-                              )}
-                            </span>
-                            <span className="ml-auto font-medium text-slate-700 whitespace-nowrap">
-                              {formatCurrency(item.unit_price * item.quantity, currency)}
-                            </span>
+                return (
+                  <div key={col.value} className="flex flex-col flex-1 w-full lg:min-w-[320px] bg-slate-50/50 lg:bg-slate-50 lg:p-3 lg:rounded-2xl lg:border lg:border-slate-100 gap-3">
+                    <div className="hidden lg:flex items-center justify-between mb-1 px-1">
+                      <h3 className="font-semibold text-slate-700 text-sm uppercase tracking-wider">{col.label}</h3>
+                      <span className="text-xs font-bold text-slate-600 bg-white shadow-sm border border-slate-200 px-2 py-0.5 rounded-full">
+                        {columnOrders.length}
+                      </span>
+                    </div>
+                    
+                    {columnOrders.map((order) => {
+                      const whatsappLink = order.customer_phone
+                        ? `https://wa.me/${order.customer_phone.replace(/\D/g, '')}?text=Hola+${encodeURIComponent(order.customer_name)}+somos+${encodeURIComponent(store.name)},+les+escribimos+sobre+su+pedido.`
+                        : null;
+
+                      return (
+                        <div key={order.id} className="dash-card flex flex-col p-4 border border-slate-200 shadow-sm hover:shadow-md transition-shadow gap-3 bg-white">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-bold text-slate-900">{order.customer_name}</span>
+                              </div>
+                              <p className="text-xs text-slate-500 font-medium">#{order.id.slice(0, 8).toUpperCase()}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-display font-black text-lg text-slate-900 leading-none mb-1">
+                                {formatCurrency(order.total, currency)}
+                              </p>
+                              <p className="text-xs text-slate-400 flex items-center justify-end gap-1">
+                                <Clock className="w-3 h-3" />
+                                {new Date(order.created_at).toLocaleString("es-PY", {
+                                  month: "short",
+                                  day: "numeric",
+                                  hour: "2-digit",
+                                  minute: "2-digit"
+                                })}
+                              </p>
+                            </div>
                           </div>
-                        ))}
-                      </div>
 
-                      {order.customer_notes && (
-                        <p className="mt-2 text-xs text-slate-400 bg-slate-50 px-3 py-1.5 rounded-lg">
-                          💬 {order.customer_notes}
-                        </p>
-                      )}
-                    </div>
-                  </div>
+                          <div className="bg-slate-50 rounded-lg p-3 space-y-1.5 border border-slate-100">
+                            {(order.items as { product_name: string; quantity: number; variant_label?: string }[]).map((item, i) => (
+                              <div key={i} className="text-xs text-slate-600 flex items-start gap-2">
+                                <span className="font-bold text-brand-600">{item.quantity}x</span>
+                                <span className="truncate flex-1">
+                                  {item.product_name}
+                                  {item.variant_label && <span className="text-slate-400 ml-1">({item.variant_label})</span>}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
 
-                  <div className="text-right flex-shrink-0">
-                    <p className="font-display font-black text-xl text-slate-900">
-                      {formatCurrency(order.total, currency)}
-                    </p>
-                    <p className="text-xs text-slate-400 flex items-center gap-1 justify-end mt-1">
-                      <Clock className="w-3 h-3" />
-                      {new Date(order.created_at).toLocaleString("es-PY", {
-                        dateStyle: "short",
-                        timeStyle: "short",
-                      })}
-                    </p>
-                    <OrderStatusChanger
-                      orderId={order.id}
-                      currentStatus={order.status}
-                    />
+                          <div className="flex items-center justify-between mt-1 pt-3 border-t border-slate-100 gap-2">
+                            {whatsappLink ? (
+                              <Button asChild variant="secondary" size="sm" className="bg-green-50 text-green-700 hover:bg-green-100 border-green-200">
+                                <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                                  <MessageCircle className="w-4 h-4 mr-1.5" />
+                                  Contactar
+                                </a>
+                              </Button>
+                            ) : (
+                              <div />
+                            )}
+                            <OrderStatusChanger orderId={order.id} currentStatus={order.status} />
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
           </div>
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-gray-100 text-sm text-slate-500">
+            <div className="dash-card mt-4 flex items-center justify-between px-5 py-3 text-sm text-slate-500">
               <span>
                 Página {page} de {totalPages} ({totalCount} pedidos)
               </span>
