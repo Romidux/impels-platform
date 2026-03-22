@@ -25,6 +25,10 @@ export default function CategorySelector({
   const [selectedChild, setSelectedChild] = useState<string>("");
   const supabase = createClient();
 
+  useEffect(() => {
+    setLocalCategories(initialCategories);
+  }, [initialCategories]);
+
   // Estados para creación inline
   const [isCreatingParent, setIsCreatingParent] = useState(false);
   const [newParentName, setNewParentName] = useState("");
@@ -74,10 +78,24 @@ export default function CategorySelector({
 
   // Creación de nueva categoría padre
   const handleSaveParent = async () => {
-    if (!newParentName.trim() || !storeId) return setIsCreatingParent(false);
+    const trimmedName = newParentName.trim();
+    if (!trimmedName || !storeId) return setIsCreatingParent(false);
+    
+    // Validar duplicado
+    const existing = localCategories.find(
+      (c) => !c.parent_id && c.name.toLowerCase() === trimmedName.toLowerCase()
+    );
+    if (existing) {
+      toast.info("La categoría ya existe");
+      setIsCreatingParent(false);
+      setNewParentName("");
+      handleParentSelect(existing.id);
+      return;
+    }
+
     setIsSavingParent(true);
     
-    const baseSlug = newParentName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const baseSlug = trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 6)}`;
     
     // Obtenemos el max sort_order
@@ -112,10 +130,24 @@ export default function CategorySelector({
 
   // Creación de nueva subcategoría
   const handleSaveChild = async () => {
-    if (!newChildName.trim() || !selectedParent || !storeId) return setIsCreatingChild(false);
+    const trimmedName = newChildName.trim();
+    if (!trimmedName || !selectedParent || !storeId) return setIsCreatingChild(false);
+    
+    // Validar duplicado
+    const existing = localCategories.find(
+      (c) => c.parent_id === selectedParent && c.name.toLowerCase() === trimmedName.toLowerCase()
+    );
+    if (existing) {
+      toast.info("La subcategoría ya existe");
+      setIsCreatingChild(false);
+      setNewChildName("");
+      handleChildSelect(existing.id);
+      return;
+    }
+
     setIsSavingChild(true);
     
-    const baseSlug = newChildName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const baseSlug = trimmedName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const slug = `${baseSlug}-${Math.random().toString(36).substring(2, 6)}`;
     
     const children = localCategories.filter(c => c.parent_id === selectedParent);
@@ -157,7 +189,7 @@ export default function CategorySelector({
   return (
     <div className="space-y-4">
       {/* Categoria Principal */}
-      <div className="space-y-1.5 min-h-[70px]">
+      <div className="space-y-1.5">
         <label className="block text-[13px] font-bold text-slate-700">Categoría Principal</label>
         
         {isCreatingParent ? (
@@ -192,6 +224,7 @@ export default function CategorySelector({
         ) : (
           <div className="animate-fade-in">
             <DashSelect
+              searchable
               value={selectedParent}
               onChange={handleParentSelect}
               placeholder="Seleccionar categoría"
@@ -253,6 +286,7 @@ export default function CategorySelector({
           ) : (
             <div className="animate-fade-in">
               <DashSelect
+                searchable
                 value={selectedChild}
                 onChange={handleChildSelect}
                 placeholder="Seleccionar subcategoría"
