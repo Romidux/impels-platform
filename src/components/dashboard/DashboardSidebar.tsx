@@ -13,7 +13,6 @@ import {
   UserCog,
   CreditCard,
   ExternalLink,
-  ChevronRight,
   Zap,
   Store as StoreIcon,
   Puzzle,
@@ -142,7 +141,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                     className={cn(
                       "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 group",
                       isActive
-                        ? "bg-brand-600 text-white shadow-lg shadow-brand-600/20"
+                        ? "bg-indigo-600 text-white shadow-sm"
                         : "text-slate-400 hover:text-white hover:bg-slate-800"
                     )}
                   >
@@ -155,9 +154,6 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                       )}
                     />
                     {item.label}
-                    {isActive && (
-                      <ChevronRight className="w-3.5 h-3.5 ml-auto text-white/50" />
-                    )}
                   </Link>
                 );
               })}

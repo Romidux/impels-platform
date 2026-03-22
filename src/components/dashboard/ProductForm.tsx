@@ -17,12 +17,15 @@ import {
   AlertCircle,
   Save,
   ArrowLeft,
+  Hash,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
 import { Category, Product, ProductOptionType } from "@/lib/types";
 import Link from "next/link";
+import CategorySelector from "./CategorySelector";
+import DashSelect from "./ui/DashSelect";
 
 interface ProductFormProps {
   storeId: string;
@@ -229,11 +232,11 @@ export default function ProductForm({
 
     const newCombinations: VariantCombinationLocal[] = matrix.map(row => {
       // Preserve existing combination data if possible
-      const existing = combinations.find(c => 
-        c.values.length === row.length && 
+      const existing = combinations.find(c =>
+        c.values.length === row.length &&
         c.values.every((v, i) => v === row[i])
       );
-      
+
       return existing || {
         values: row,
         price: form.price, // default to base price
@@ -350,7 +353,7 @@ export default function ProductForm({
 
           for (const ot of optionTypes) {
             if (!ot.name || ot.values.length === 0) continue;
-            
+
             const { data: otData, error: otError } = await supabase
               .from("product_option_types")
               .insert({
@@ -375,7 +378,7 @@ export default function ProductForm({
                   }))
                 )
                 .select("id, value");
-              
+
               if (valError) throw valError;
 
               valueMap[ot.name] = {};
@@ -406,7 +409,7 @@ export default function ProductForm({
             const { error: comboError } = await supabase
               .from("product_variant_combinations")
               .insert(combinationsToInsert);
-            
+
             if (comboError) throw comboError;
           }
         }
@@ -432,7 +435,7 @@ export default function ProductForm({
   };
 
   return (
-    <div className="space-y-6 animate-fade-in max-w-4xl">
+    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto pb-24">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -467,122 +470,65 @@ export default function ProductForm({
         </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main column */}
-        <div className="lg:col-span-2 space-y-5">
+        <div className="lg:col-span-2 space-y-8">
+
+
           {/* Basic info */}
-          <div className="card-flat p-6 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
             <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
               <Package className="w-5 h-5 text-blue-500" />
-              Información básica
+              Información general
             </h2>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Nombre del producto *
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-slate-700">
+                Nombre del producto <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => handleChange("name", e.target.value)}
-                placeholder="Ej: Figura Naruto Uzumaki"
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+                placeholder="Ej: Camiseta de Algodón Premium"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
               />
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Slug (URL)
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-slate-700">
+                URL amigable (Slug)
               </label>
-              <div className="flex rounded-xl overflow-hidden border border-gray-200 focus-within:border-blue-400 focus-within:ring-1 focus-within:ring-blue-100 transition-all">
-                <span className="bg-gray-50 text-gray-400 text-sm px-3 flex items-center border-r border-gray-200">
+              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
+                <span className="text-slate-400 text-sm px-4 flex items-center border-r border-slate-200 font-mono">
                   /p/
                 </span>
                 <input
                   type="text"
                   value={form.slug}
                   onChange={(e) => handleChange("slug", e.target.value)}
-                  className="flex-1 px-3 py-3 text-sm focus:outline-none"
+                  placeholder="camiseta-algodon"
+                  className="flex-1 px-4 py-3 text-sm bg-transparent focus:outline-none"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Descripción
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-slate-700">
+                Descripción detallada
               </label>
               <textarea
                 value={form.description}
                 onChange={(e) => handleChange("description", e.target.value)}
-                placeholder="Describe tu producto en detalle..."
-                rows={4}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all resize-none"
+                placeholder="Describe los beneficios, material, medidas..."
+                rows={5}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all resize-none"
               />
             </div>
           </div>
 
-          {/* Images */}
-          <div className="card-flat p-6 space-y-4">
-            <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
-              <Image className="w-5 h-5 text-blue-500" />
-              Imágenes
-            </h2>
-
-            <input
-              ref={fileRef}
-              type="file"
-              multiple
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-            />
-
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-              {images.map((img, i) => (
-                <div
-                  key={i}
-                  className={`relative aspect-square rounded-xl overflow-hidden border-2 cursor-pointer transition-all ${
-                    img.is_primary
-                      ? "border-blue-500 shadow-glow"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                  onClick={() => setPrimary(i)}
-                >
-                  <img
-                    src={img.url}
-                    alt=""
-                    className="w-full h-full object-cover"
-                  />
-                  {img.is_primary && (
-                    <div className="absolute bottom-0 left-0 right-0 bg-blue-500 text-white text-xs text-center py-1 font-semibold">
-                      Principal
-                    </div>
-                  )}
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeImage(i);
-                    }}
-                    className="absolute top-1.5 right-1.5 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 text-xs"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </div>
-              ))}
-              <button
-                onClick={() => fileRef.current?.click()}
-                className="aspect-square rounded-xl border-2 border-dashed border-gray-300 hover:border-blue-400 hover:bg-blue-50 flex flex-col items-center justify-center gap-2 transition-all group"
-              >
-                <Upload className="w-6 h-6 text-gray-400 group-hover:text-blue-500" />
-                <span className="text-xs text-gray-400 group-hover:text-blue-500">
-                  Agregar
-                </span>
-              </button>
-            </div>
-          </div>
-
           {/* Variants */}
-          <div className="card-flat p-6 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
             <div className="flex flex-col gap-4">
               <div className="flex items-center justify-between">
                 <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
@@ -602,14 +548,12 @@ export default function ProductForm({
               <label className="flex items-center gap-3 cursor-pointer mb-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
                 <div
                   onClick={() => handleChange("has_variants", !form.has_variants)}
-                  className={`w-10 h-5 rounded-full transition-colors relative ${
-                    form.has_variants ? "bg-blue-500" : "bg-gray-300"
-                  }`}
+                  className={`w-10 h-5 rounded-full transition-colors relative ${form.has_variants ? "bg-blue-500" : "bg-gray-300"
+                    }`}
                 >
                   <div
-                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                      form.has_variants ? "translate-x-5" : ""
-                    }`}
+                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.has_variants ? "translate-x-5" : ""
+                      }`}
                   />
                 </div>
                 <div>
@@ -629,26 +573,24 @@ export default function ProductForm({
                   <div className="flex items-center justify-between">
                     <h3 className="text-sm font-bold text-gray-900">Control de Stock y Precios</h3>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-3">
                     <button
                       onClick={() => handleChange("manage_stock_by_variant", false)}
-                      className={`p-3 rounded-xl border-2 text-left transition-all ${
-                        !form.manage_stock_by_variant 
-                          ? "border-blue-500 bg-blue-50" 
-                          : "border-gray-100 hover:border-gray-200"
-                      }`}
+                      className={`p-3 rounded-xl border-2 text-left transition-all ${!form.manage_stock_by_variant
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-100 hover:border-gray-200"
+                        }`}
                     >
                       <span className="block text-sm font-bold">Stock General</span>
                       <span className="text-xs text-gray-500">Un solo stock para todo el producto</span>
                     </button>
                     <button
                       onClick={() => handleChange("manage_stock_by_variant", true)}
-                      className={`p-3 rounded-xl border-2 text-left transition-all ${
-                        form.manage_stock_by_variant 
-                          ? "border-blue-500 bg-blue-50" 
-                          : "border-gray-100 hover:border-gray-200"
-                      }`}
+                      className={`p-3 rounded-xl border-2 text-left transition-all ${form.manage_stock_by_variant
+                        ? "border-blue-500 bg-blue-50"
+                        : "border-gray-100 hover:border-gray-200"
+                        }`}
                     >
                       <span className="block text-sm font-bold">Stock por Variante</span>
                       <span className="text-xs text-gray-500">Stock individual para cada combinación</span>
@@ -747,12 +689,12 @@ export default function ProductForm({
                     ))}
 
                     <div className="pt-4">
-                        <button
-                          onClick={generateCombinations}
-                          className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
-                        >
-                          {combinations.length > 0 ? "Actualizar combinaciones" : "Generar combinaciones"}
-                        </button>
+                      <button
+                        onClick={generateCombinations}
+                        className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+                      >
+                        {combinations.length > 0 ? "Actualizar combinaciones" : "Generar combinaciones"}
+                      </button>
                     </div>
 
                     {combinations.length > 0 && (
@@ -810,10 +752,11 @@ export default function ProductForm({
               </>
             )}
           </div>
-          
+
           {/* Tags */}
-          <div className="card-flat p-6 space-y-4">
-            <h2 className="font-display text-lg font-bold text-gray-900">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
+            <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
+              <Hash className="w-5 h-5 text-blue-500" />
               Etiquetas
             </h2>
             <div className="flex flex-wrap gap-2 min-h-[40px]">
@@ -857,9 +800,93 @@ export default function ProductForm({
         </div>
 
         {/* Side column */}
-        <div className="space-y-5">
+        <div className="space-y-6 lg:sticky lg:top-8 h-fit">
+          {/* Upload Img (Reference Mode) */}
+          <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-6 space-y-4">
+            <h2 className="font-display text-lg font-bold text-slate-900 flex items-center gap-2">
+              <Image className="w-5 h-5 text-blue-500" />
+              Imágenes
+            </h2>
+
+            <input
+              ref={fileRef}
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
+
+            {/* Main Preview */}
+            <div className="w-full aspect-[4/3] sm:aspect-square bg-[#f4f4f4] flex items-center justify-center rounded-[20px] overflow-hidden relative cursor-pointer group" onClick={() => fileRef.current?.click()}>
+              {images.length > 0 && images[images.findIndex(img => img.is_primary) !== -1 ? images.findIndex(img => img.is_primary) : 0] ? (
+                <img
+                  src={images[images.findIndex(img => img.is_primary) !== -1 ? images.findIndex(img => img.is_primary) : 0].url}
+                  alt="Primary Product"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center text-slate-400 gap-2">
+                  <Image className="w-10 h-10 opacity-50" />
+                  <span className="text-sm font-medium">Haz clic para agregar</span>
+                </div>
+              )}
+            </div>
+
+            {/* Thumbnails Row */}
+            <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar px-1 items-center">
+              {images.map((img, i) => (
+                <div
+                  key={i}
+                  className={`w-[72px] h-[72px] shrink-0 rounded-[16px] overflow-hidden border-[1.5px] cursor-pointer transition-all relative group bg-[#f4f4f4] ${img.is_primary ? "border-slate-800" : "border-slate-200 hover:border-slate-300"
+                    }`}
+                  onClick={() => setPrimary(i)}
+                >
+                  <img
+                    src={img.url}
+                    alt=""
+                    className="w-full h-full object-cover p-1 rounded-2xl"
+                  />
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      removeImage(i);
+                    }}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-white text-slate-700 hover:text-red-500 border border-slate-200 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
+              ))}
+
+              <button
+                onClick={() => fileRef.current?.click()}
+                className="w-[72px] h-[72px] shrink-0 rounded-[16px] border-[1.5px] border-dashed border-green-200 hover:border-green-400 focus:outline-none flex flex-col items-center justify-center transition-colors bg-white group"
+              >
+                <div className="w-6 h-6 rounded-full bg-green-100/50 flex items-center justify-center text-green-500 group-hover:bg-green-500 group-hover:text-white transition-colors">
+                  <Plus className="w-3.5 h-3.5 font-bold" />
+                </div>
+              </button>
+            </div>
+          </div>
+
+          {/* Category (Reference Mode) */}
+          <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-6 space-y-4">
+            <h2 className="font-display text-lg font-bold text-slate-900">
+              Categoría
+            </h2>
+
+            <CategorySelector
+              storeId={storeId}
+              categories={categories}
+              value={form.category_id}
+              onChange={(val) => handleChange("category_id", val)}
+            />
+
+
+          </div>
           {/* Price */}
-          <div className="card-flat p-5 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
             <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
               <DollarSign className="w-5 h-5 text-green-500" />
               Precio
@@ -898,14 +925,12 @@ export default function ProductForm({
             <label className="flex items-center gap-3 cursor-pointer">
               <div
                 onClick={() => handleChange("show_price", !form.show_price)}
-                className={`w-10 h-5 rounded-full transition-colors relative ${
-                  form.show_price ? "bg-blue-500" : "bg-gray-300"
-                }`}
+                className={`w-10 h-5 rounded-full transition-colors relative ${form.show_price ? "bg-blue-500" : "bg-gray-300"
+                  }`}
               >
                 <div
-                  className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                    form.show_price ? "translate-x-5" : ""
-                  }`}
+                  className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.show_price ? "translate-x-5" : ""
+                    }`}
                 />
               </div>
               <span className="text-sm font-medium text-gray-700">
@@ -914,49 +939,24 @@ export default function ProductForm({
             </label>
           </div>
 
-          {/* Organization */}
-          <div className="card-flat p-5 space-y-4">
-            <h2 className="font-display text-lg font-bold text-gray-900">
-              Organización
-            </h2>
 
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Categoría
-              </label>
-              <select
-                value={form.category_id}
-                onChange={(e) => handleChange("category_id", e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 transition-all bg-white"
-              >
-                <option value="">Sin categoría</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
 
           {/* Status */}
-          <div className="card-flat p-5 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
             <h2 className="font-display text-lg font-bold text-gray-900">
               Estado
             </h2>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Visibilidad
-              </label>
-              <select
+              <DashSelect
+                label="Visibilidad"
                 value={form.visibility}
-                onChange={(e) => handleChange("visibility", e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 transition-all bg-white"
-              >
-                <option value="visible">Visible</option>
-                <option value="hidden">Oculto</option>
-              </select>
+                onChange={(val) => handleChange("visibility", val)}
+                options={[
+                  { value: "visible", label: "Visible" },
+                  { value: "hidden", label: "Oculto" },
+                ]}
+              />
             </div>
 
             {/* Detailed Inventory Tracking */}
@@ -964,14 +964,12 @@ export default function ProductForm({
               <label className="flex items-center gap-3 cursor-pointer">
                 <div
                   onClick={() => handleChange("track_inventory", !form.track_inventory)}
-                  className={`w-10 h-5 rounded-full transition-colors relative ${
-                    form.track_inventory ? "bg-blue-500" : "bg-gray-300"
-                  }`}
+                  className={`w-10 h-5 rounded-full transition-colors relative ${form.track_inventory ? "bg-blue-500" : "bg-gray-300"
+                    }`}
                 >
                   <div
-                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                      form.track_inventory ? "translate-x-5" : ""
-                    }`}
+                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.track_inventory ? "translate-x-5" : ""
+                      }`}
                   />
                 </div>
                 <span className="text-sm font-medium text-gray-700">
@@ -998,14 +996,12 @@ export default function ProductForm({
                   <label className="flex items-center gap-3 cursor-pointer">
                     <div
                       onClick={() => handleChange("allow_backorder", !form.allow_backorder)}
-                      className={`w-10 h-5 rounded-full transition-colors relative ${
-                        form.allow_backorder ? "bg-purple-500" : "bg-gray-300"
-                      }`}
+                      className={`w-10 h-5 rounded-full transition-colors relative ${form.allow_backorder ? "bg-purple-500" : "bg-gray-300"
+                        }`}
                     >
                       <div
-                        className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                          form.allow_backorder ? "translate-x-5" : ""
-                        }`}
+                        className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.allow_backorder ? "translate-x-5" : ""
+                          }`}
                       />
                     </div>
                     <div>
@@ -1030,14 +1026,12 @@ export default function ProductForm({
             <label className="flex items-center gap-3 cursor-pointer">
               <div
                 onClick={() => handleChange("is_featured", !form.is_featured)}
-                className={`w-10 h-5 rounded-full transition-colors relative ${
-                  form.is_featured ? "bg-blue-500" : "bg-gray-300"
-                }`}
+                className={`w-10 h-5 rounded-full transition-colors relative ${form.is_featured ? "bg-blue-500" : "bg-gray-300"
+                  }`}
               >
                 <div
-                  className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
-                    form.is_featured ? "translate-x-5" : ""
-                  }`}
+                  className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.is_featured ? "translate-x-5" : ""
+                    }`}
                 />
               </div>
               <span className="text-sm font-medium text-gray-700">

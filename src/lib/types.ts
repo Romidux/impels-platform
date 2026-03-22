@@ -157,9 +157,28 @@ export type OrderStatus =
   | "delivered"
   | "cancelled";
 
+export interface Customer {
+  id: string;
+  store_id: string;
+  full_name: string;
+  doc_type?: string;
+  doc_number?: string;
+  doc_verifier?: string;
+  phone_country_code: string;
+  phone_number: string;
+  email?: string;
+  address?: string;
+  neighborhood?: string;
+  city?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Order {
   id: string;
   store_id: string;
+  customer_id?: string;
   customer_name: string;
   customer_phone: string;
   customer_email?: string;

@@ -1,20 +1,23 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Users, ShoppingCart, Clock } from "lucide-react";
+import { Users, ShoppingCart, Clock, Plus, Download } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { DashEmptyState } from "@/components/dashboard/ui/DashEmptyState";
 import { DashBadge } from "@/components/dashboard/ui/DashBadge";
 import { Button } from "@/components/ui/Button";
-import { Download } from "lucide-react";
+import Link from "next/link";
 
-interface CustomerAggregate {
-  name: string;
-  phone: string;
+interface EnhancedCustomer {
+  id: string;
+  store_id: string;
+  full_name: string;
+  phone_number: string;
   email: string | null;
+  city: string | null;
   orderCount: number;
   totalSpent: number;
-  lastOrderDate: string;
+  lastOrderDate: string | null;
 }
 
 export default async function CustomersPage() {
@@ -31,51 +34,60 @@ export default async function CustomersPage() {
     .single();
   if (!store) redirect("/onboarding");
 
-  const { data: orders } = await supabase
-    .from("orders")
-    .select("customer_name, customer_phone, customer_email, total, created_at")
+  // Consultar clientes reales y sus pedidos relacionados a través del foreign key
+  const { data: dbCustomers } = await supabase
+    .from("customers")
+    .select("*, orders(id, total, created_at)")
     .eq("store_id", store.id)
-    .neq("status", "cancelled")
     .order("created_at", { ascending: false });
 
   const currency = store.store_settings?.[0]?.currency || "Gs";
 
-  // Aggregate customers by phone (unique identifier)
-  const customerMap = new Map<string, CustomerAggregate>();
-  orders?.forEach((order) => {
-    const key = order.customer_phone;
-    const existing = customerMap.get(key);
-    if (existing) {
-      existing.orderCount++;
-      existing.totalSpent += order.total || 0;
-      // Keep the most recent name/email
-    } else {
-      customerMap.set(key, {
-        name: order.customer_name,
-        phone: order.customer_phone,
-        email: order.customer_email || null,
-        orderCount: 1,
-        totalSpent: order.total || 0,
-        lastOrderDate: order.created_at,
-      });
+  const customers: EnhancedCustomer[] = (dbCustomers || []).map((customer) => {
+    const orders = Array.isArray(customer.orders) ? customer.orders : [];
+    const validOrders = orders.filter((o) => o != null);
+    
+    const orderCount = validOrders.length;
+    const totalSpent = validOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+    
+    let lastOrderDate = null;
+    if (validOrders.length > 0) {
+      // Ordenamos para agarrar la más reciente
+      const sorted = [...validOrders].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+      lastOrderDate = sorted[0].created_at;
     }
-  });
 
-  const customers = Array.from(customerMap.values()).sort(
-    (a, b) => b.totalSpent - a.totalSpent
-  );
+    return {
+      id: customer.id,
+      store_id: customer.store_id,
+      full_name: customer.full_name,
+      phone_number: customer.phone_number,
+      email: customer.email,
+      city: customer.city,
+      orderCount,
+      totalSpent,
+      lastOrderDate,
+    };
+  });
 
   return (
     <div className="space-y-5 animate-fade-in">
       <PageHeader
         title="Clientes"
-        subtitle={`${customers.length} clientes únicos`}
+        subtitle={`${customers.length} clientes registrados`}
         actions={
-          <Button asChild variant="secondary" icon={<Download className="w-4 h-4" />}>
-            <a href="/api/export?type=customers" download>
-              Exportar CSV
-            </a>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button asChild variant="secondary" icon={<Download className="w-4 h-4" />}>
+              <a href="/api/export?type=customers" download>
+                Exportar CSV
+              </a>
+            </Button>
+            <Button asChild icon={<Plus className="w-4 h-4" />}>
+              <Link href="/dashboard/customers/new">Nuevo cliente</Link>
+            </Button>
+          </div>
         }
       />
 
@@ -84,7 +96,12 @@ export default async function CustomersPage() {
           <DashEmptyState
             icon={<Users className="w-7 h-7 text-green-600" />}
             title="Sin clientes todavía"
-            description="Los datos de tus compradores se agregarán automáticamente aquí cuando recibas pedidos"
+            description="Agrega clientes manualmente o pídeles que compren en tu tienda para que se registren aquí."
+            action={{
+              label: "Crear tu primer cliente",
+              href: "/dashboard/customers/new",
+              icon: Plus,
+            }}
           />
         </div>
       ) : (
@@ -100,6 +117,9 @@ export default async function CustomersPage() {
                     Teléfono
                   </th>
                   <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                    Ciudad
+                  </th>
+                  <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
                     Pedidos
                   </th>
                   <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
@@ -112,17 +132,17 @@ export default async function CustomersPage() {
               </thead>
               <tbody className="divide-y divide-gray-50">
                 {customers.map((customer) => (
-                  <tr key={customer.phone} className="hover:bg-slate-50/60 transition-colors">
+                  <tr key={customer.id} className="hover:bg-slate-50/60 transition-colors">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-full bg-green-50 flex items-center justify-center flex-shrink-0">
                           <span className="text-sm font-bold text-green-700">
-                            {customer.name.charAt(0).toUpperCase()}
+                            {customer.full_name?.charAt(0).toUpperCase()}
                           </span>
                         </div>
                         <div>
                           <p className="font-semibold text-sm text-slate-900">
-                            {customer.name}
+                            {customer.full_name}
                           </p>
                           {customer.email && (
                             <p className="text-xs text-slate-400">
@@ -134,7 +154,12 @@ export default async function CustomersPage() {
                     </td>
                     <td className="px-4 py-3.5">
                       <span className="text-sm text-slate-600">
-                        {customer.phone}
+                        {customer.phone_number}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3.5">
+                      <span className="text-sm text-slate-600">
+                        {customer.city || "-"}
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
@@ -149,10 +174,14 @@ export default async function CustomersPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3.5">
-                      <div className="flex items-center gap-1 text-xs text-slate-400">
-                        <Clock className="w-3 h-3" />
-                        {new Date(customer.lastOrderDate).toLocaleDateString("es-PY")}
-                      </div>
+                      {customer.lastOrderDate ? (
+                        <div className="flex items-center gap-1 text-xs text-slate-400">
+                          <Clock className="w-3 h-3" />
+                          {new Date(customer.lastOrderDate).toLocaleDateString("es-PY")}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-slate-400">-</span>
+                      )}
                     </td>
                   </tr>
                 ))}

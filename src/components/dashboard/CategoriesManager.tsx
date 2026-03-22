@@ -21,6 +21,7 @@ import { Category } from "@/lib/types";
 import { slugify, cn } from "@/lib/utils";
 
 import { DashPageHeader } from "./ui/DashPageHeader";
+import { DashButton } from "./ui/DashButton";
 
 interface CategoriesManagerProps {
   storeId: string;
@@ -361,17 +362,16 @@ export default function CategoriesManager({
         title="Categorías"
         subtitle="Organiza la estructura de tu catálogo de productos"
       >
-        <button
+        <DashButton
           onClick={() => {
             setAdding(true);
             setAddingSubOf(null);
             setNewName("");
           }}
-          className="dash-btn-primary"
         >
           <Plus className="w-4 h-4" />
           Nueva categoría
-        </button>
+        </DashButton>
       </DashPageHeader>
 
       <div className="dash-card overflow-hidden bg-white shadow-sm ring-1 ring-slate-200/50">
@@ -391,13 +391,13 @@ export default function CategoriesManager({
               <p className="text-slate-500 mb-8 max-w-sm mx-auto text-sm leading-relaxed">
                 Organiza tu tienda estructurando tus productos en categorías. Mejora la experiencia de tus clientes.
               </p>
-              <button
+              <DashButton
                 onClick={() => setAdding(true)}
-                className="dash-btn-primary px-8"
+                className="px-8"
               >
                 <Plus className="w-5 h-5" />
                 Crear primera categoría
-              </button>
+              </DashButton>
             </div>
           ) : (
             <div className="flex flex-col">

@@ -9,7 +9,7 @@ import {
   EyeOff,
   Edit,
 } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, cn } from "@/lib/utils";
 import { Product } from "@/lib/types";
 import ProductsActions from "@/components/dashboard/ProductsActions";
 import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
@@ -144,27 +144,31 @@ export default async function ProductsPage({
         </div>
 
         {/* View mode toggle */}
-        <div className="dash-card p-2 flex items-center justify-center gap-1 shrink-0">
-          <Button
-            asChild
-            variant={view === "list" ? "primary" : "ghost"}
-            size="sm"
-            className={view === "list" ? "" : "text-slate-400"}
+        <div className="inline-flex items-center rounded-2xl border border-slate-200 bg-slate-50 p-1 shrink-0 h-11 self-end sm:self-auto">
+          <Link
+            href={buildUrl({ view: "list", page: "1" })}
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200",
+              view === "list"
+                ? "bg-blue-600 text-white shadow-sm"
+                : "text-slate-500 hover:bg-white hover:text-slate-700"
+            )}
+            title="Vista de lista"
           >
-            <Link href={buildUrl({ view: "list", page: "1" })}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-            </Link>
-          </Button>
-          <Button
-            asChild
-            variant={view === "grid" ? "primary" : "ghost"}
-            size="sm"
-            className={view === "grid" ? "" : "text-slate-400"}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+          </Link>
+          <Link
+            href={buildUrl({ view: "grid", page: "1" })}
+            className={cn(
+              "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200",
+              view === "grid"
+                ? "bg-blue-600 text-white shadow-sm"
+                : "text-slate-500 hover:bg-white hover:text-slate-700"
+            )}
+            title="Vista de cuadrícula"
           >
-            <Link href={buildUrl({ view: "grid", page: "1" })}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-            </Link>
-          </Button>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+          </Link>
         </div>
       </div>
 
