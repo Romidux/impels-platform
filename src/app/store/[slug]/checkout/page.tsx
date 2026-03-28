@@ -24,7 +24,7 @@ export default async function CheckoutPage({
     ? store.store_settings[0] 
     : store.store_settings;
 
-  const template = store.template || "modern";
+  const template = settings?.template || "modern";
 
   if (template === "minimal") {
     return (

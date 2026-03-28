@@ -153,6 +153,15 @@ export default function OnboardingPage() {
         // Non-fatal: continue
       }
 
+      // Create default store branding
+      const { error: brandingError } = await supabase.from("store_branding").insert({
+        store_id: store.id,
+      });
+      if (brandingError) {
+        console.error("Branding insert error:", brandingError);
+        // Non-fatal: continue
+      }
+
       setStep(2); // success step
     } catch (err: unknown) {
       const e = err as { message?: string; code?: string };

@@ -3,10 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import AdminSidebar from "@/components/admin/AdminSidebar";
 import AdminTopbar from "@/components/admin/AdminTopbar";
 
-// Add your super admin email(s) here
-const SUPER_ADMIN_EMAILS: string[] = [
-  // The middleware checks this too, but we double-check here
-];
+// Super admin emails from env var (comma-separated)
+const SUPER_ADMIN_EMAILS: string[] = (process.env.SUPER_ADMIN_EMAILS || "")
+  .split(",")
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean);
 
 export default async function AdminLayout({
   children,
@@ -25,11 +26,9 @@ export default async function AdminLayout({
   // Check super admin access via user metadata or email
   const isSuperAdmin =
     user.user_metadata?.is_super_admin === true ||
-    SUPER_ADMIN_EMAILS.includes(user.email || "");
+    SUPER_ADMIN_EMAILS.includes((user.email || "").toLowerCase());
 
-  // If SUPER_ADMIN_EMAILS is empty, allow the store owner (first user) as fallback
-  // This is a temporary measure — configure SUPER_ADMIN_EMAILS for production
-  if (!isSuperAdmin && SUPER_ADMIN_EMAILS.length > 0) {
+  if (!isSuperAdmin) {
     redirect("/dashboard");
   }
 

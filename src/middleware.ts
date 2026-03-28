@@ -38,15 +38,28 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Protect admin routes
+  // Protect admin routes — real super admin check
   if (request.nextUrl.pathname.startsWith("/admin")) {
     if (!user) {
       const url = request.nextUrl.clone();
       url.pathname = "/login";
       return NextResponse.redirect(url);
     }
-    // Additional super admin check can be done via user_metadata
-    // For now, any authenticated user can access (layout does the real check)
+    // Check super admin via user_metadata (set in Supabase Auth)
+    // or against a comma-separated env var SUPER_ADMIN_EMAILS
+    const superAdminEmails = (process.env.SUPER_ADMIN_EMAILS || "")
+      .split(",")
+      .map((e) => e.trim().toLowerCase())
+      .filter(Boolean);
+    const isSuperAdmin =
+      user.user_metadata?.is_super_admin === true ||
+      (superAdminEmails.length > 0 &&
+        superAdminEmails.includes((user.email || "").toLowerCase()));
+    if (!isSuperAdmin) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/dashboard";
+      return NextResponse.redirect(url);
+    }
   }
 
   // Redirect logged-in users away from auth pages
