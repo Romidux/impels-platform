@@ -20,6 +20,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/Tabs";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { ToggleStoreButton } from "./ToggleStoreButton";
 import { ImpersonateButton } from "./ImpersonateButton";
+import { DeleteStoreButton } from "./DeleteStoreButton";
 import { getStoreUrl } from "@/lib/utils";
 
 export default async function AdminStoreDetailPage({
@@ -152,6 +153,7 @@ export default async function AdminStoreDetailPage({
               ownerEmail={ownerEmail} 
             />
             <ToggleStoreButton storeId={store.id} isActive={store.is_active} />
+            <DeleteStoreButton storeId={store.id} storeName={store.name} />
           </div>
         </div>
       </div>

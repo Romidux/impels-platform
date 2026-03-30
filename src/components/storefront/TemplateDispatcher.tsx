@@ -1,9 +1,12 @@
 import { Store, StoreSettings, StoreBranding, Category, Product } from "@/lib/types";
-import MinimalLayout from "./minimal/MinimalLayout";
-import MinimalHomePage from "./minimal/MinimalHomePage";
-import ModernLayout from "./modern/ModernLayout";
-import ModernHomePage from "./modern/ModernHomePage";
-import MinimalCatalogPageClient from "./minimal-catalog/MinimalCatalogPageClient";
+import dynamic from "next/dynamic";
+
+// Dynamic imports — only loads the template code the store actually uses
+const MinimalLayout = dynamic(() => import("./minimal/MinimalLayout"));
+const MinimalHomePage = dynamic(() => import("./minimal/MinimalHomePage"));
+const ModernLayout = dynamic(() => import("./modern/ModernLayout"));
+const ModernHomePage = dynamic(() => import("./modern/ModernHomePage"));
+const MinimalCatalogPageClient = dynamic(() => import("./minimal-catalog/MinimalCatalogPageClient"));
 
 type TemplateType = "minimal" | "modern" | "brand";
 
@@ -118,4 +121,3 @@ export default function TemplateDispatcher({
 
   return null;
 }
-

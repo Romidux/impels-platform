@@ -45,10 +45,10 @@ export default async function CustomersPage() {
 
   const customers: EnhancedCustomer[] = (dbCustomers || []).map((customer) => {
     const orders = Array.isArray(customer.orders) ? customer.orders : [];
-    const validOrders = orders.filter((o) => o != null);
+    const validOrders = orders.filter((o: { id: string; total: number; created_at: string } | null) => o != null);
     
     const orderCount = validOrders.length;
-    const totalSpent = validOrders.reduce((sum, o) => sum + (o.total || 0), 0);
+    const totalSpent = validOrders.reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0);
     
     let lastOrderDate = null;
     if (validOrders.length > 0) {
@@ -97,11 +97,14 @@ export default async function CustomersPage() {
             icon={<Users className="w-7 h-7 text-green-600" />}
             title="Sin clientes todavía"
             description="Agrega clientes manualmente o pídeles que compren en tu tienda para que se registren aquí."
-            action={{
-              label: "Crear tu primer cliente",
-              href: "/dashboard/customers/new",
-              icon: Plus,
-            }}
+            action={
+              <Link href="/dashboard/customers/new">
+                <Button>
+                  <Plus className="w-4 h-4" />
+                  Crear tu primer cliente
+                </Button>
+              </Link>
+            }
           />
         </div>
       ) : (

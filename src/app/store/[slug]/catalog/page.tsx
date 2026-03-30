@@ -5,6 +5,9 @@ import { Package, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import { Product } from "@/lib/types";
 import TemplateDispatcher from "@/components/storefront/TemplateDispatcher";
+import { getStoreBySlug, getStoreCategories } from "@/lib/queries/store";
+
+export const revalidate = 60; // ISR: revalidate every 60 seconds
 
 export default async function CatalogPage({
   params,
@@ -13,17 +16,10 @@ export default async function CatalogPage({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ category?: string; search?: string; sort?: string }>;
 }) {
-  const supabase = await createClient();
   const { slug } = await params;
   const sp = await searchParams;
 
-  const { data: store } = await supabase
-    .from("stores")
-    .select("*, store_settings(*)")
-    .eq("slug", slug)
-    .eq("is_active", true)
-    .single();
-
+  const store = await getStoreBySlug(slug); // Cached
   if (!store) notFound();
 
   const settings = Array.isArray(store.store_settings) 
@@ -33,14 +29,11 @@ export default async function CatalogPage({
   const currency = settings?.currency || "Gs";
   const template = settings?.template || "modern";
 
-  // Fetch categories for layout/filters
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("store_id", store.id)
-    .is("parent_id", null)
-    .eq("is_active", true)
-    .order("sort_order");
+  // Fetch categories (cached)
+  const categories = await getStoreCategories(store.id, true);
+
+  // Build product query (not cached — depends on search params)
+  const supabase = await createClient();
 
   // Build product query
   let query = supabase

@@ -2,6 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 
 export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+
+  // Skip auth for public routes — no need to call getUser() on storefront
+  if (
+    pathname.startsWith("/store/") ||
+    pathname === "/" ||
+    pathname.startsWith("/api/")
+  ) {
+    return NextResponse.next({ request });
+  }
+
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

@@ -1,23 +1,18 @@
 import { notFound } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import Script from "next/script";
 import TemplateDispatcher from "@/components/storefront/TemplateDispatcher";
+import { getStoreBySlug, getStoreCategories } from "@/lib/queries/store";
+
+export const revalidate = 60; // ISR: revalidate every 60 seconds
 
 export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const supabase = await createClient();
   const { slug } = await params;
-
-  const { data: store } = await supabase
-    .from("stores")
-    .select("name, description, store_branding(*), store_settings(*)")
-    .eq("slug", slug)
-    .eq("is_active", true)
-    .single();
+  const store = await getStoreBySlug(slug); // Cached — same call in layout won't hit DB again
 
   if (!store) return { title: "Tienda no encontrada" };
 
@@ -39,15 +34,8 @@ export default async function StoreLayout({
   children: React.ReactNode;
   params: Promise<{ slug: string }>;
 }) {
-  const supabase = await createClient();
   const { slug } = await params;
-
-  const { data: store } = await supabase
-    .from("stores")
-    .select("*, store_settings(*), store_branding(*)")
-    .eq("slug", slug)
-    .eq("is_active", true)
-    .single();
+  const store = await getStoreBySlug(slug); // Cached — reuses result from generateMetadata
 
   if (!store) notFound();
 
@@ -58,12 +46,7 @@ export default async function StoreLayout({
   const template = settings?.template || "modern";
 
   // Categories are needed for the minimal layout header
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("store_id", store.id)
-    .eq("is_active", true)
-    .order("sort_order");
+  const categories = await getStoreCategories(store.id);
 
   return (
     <>

@@ -2,21 +2,17 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Product, Category } from "@/lib/types";
 import TemplateDispatcher from "@/components/storefront/TemplateDispatcher";
+import { getStoreBySlug, getStoreCategories } from "@/lib/queries/store";
+
+export const revalidate = 60; // ISR: revalidate every 60 seconds
 
 export default async function StorePage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const supabase = await createClient();
   const { slug } = await params;
-
-  const { data: store } = await supabase
-    .from("stores")
-    .select("*, store_settings(*), store_branding(*)")
-    .eq("slug", slug)
-    .eq("is_active", true)
-    .single();
+  const store = await getStoreBySlug(slug); // Cached — reuses layout result
 
   if (!store) notFound();
 
@@ -24,38 +20,33 @@ export default async function StorePage({
     ? store.store_settings[0] 
     : store.store_settings;
 
-  // Fetch categories
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("*")
-    .eq("store_id", store.id)
-    .is("parent_id", null)
-    .eq("is_active", true)
-    .limit(6)
-    .order("sort_order");
+  // Fetch categories (cached)
+  const categories = await getStoreCategories(store.id, true); // parent only
 
-  // Fetch featured products
-  const { data: featuredProducts } = await supabase
-    .from("products")
-    .select(
-      "*, images:product_images(url, is_primary), category:categories(name)"
-    )
-    .eq("store_id", store.id)
-    .eq("visibility", "visible")
-    .eq("is_featured", true)
-    .limit(8)
-    .order("created_at", { ascending: false });
+  // Fetch featured and recent products (these are page-specific, not cached globally)
+  const supabase = await createClient();
 
-  // Fetch recent products
-  const { data: recentProducts } = await supabase
-    .from("products")
-    .select(
-      "*, images:product_images(url, is_primary), category:categories(name)"
-    )
-    .eq("store_id", store.id)
-    .eq("visibility", "visible")
-    .limit(12)
-    .order("created_at", { ascending: false });
+  const [{ data: featuredProducts }, { data: recentProducts }] = await Promise.all([
+    supabase
+      .from("products")
+      .select(
+        "*, images:product_images(url, is_primary), category:categories(name)"
+      )
+      .eq("store_id", store.id)
+      .eq("visibility", "visible")
+      .eq("is_featured", true)
+      .limit(8)
+      .order("created_at", { ascending: false }),
+    supabase
+      .from("products")
+      .select(
+        "*, images:product_images(url, is_primary), category:categories(name)"
+      )
+      .eq("store_id", store.id)
+      .eq("visibility", "visible")
+      .limit(12)
+      .order("created_at", { ascending: false }),
+  ]);
 
   const template = settings?.template || "modern";
 
