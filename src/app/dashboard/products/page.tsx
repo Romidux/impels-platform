@@ -13,6 +13,7 @@ import { formatCurrency, cn } from "@/lib/utils";
 import { Product } from "@/lib/types";
 import ProductsActions from "@/components/dashboard/ProductsActions";
 import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
+import ProductFilters from "@/components/dashboard/ProductFilters";
 import { DashButton } from "@/components/dashboard/ui/DashButton";
 import { DashBadge } from "@/components/dashboard/ui/DashBadge";
 import { EmptyState } from "@/components/ui/EmptyState";
@@ -112,36 +113,13 @@ export default async function ProductsPage({
 
       {/* Filters & View Toggle */}
       <div className="flex flex-col sm:flex-row gap-3">
-        <div className="dash-card p-4 flex flex-1 flex-col sm:flex-row gap-3">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              defaultValue={search}
-              placeholder="Buscar productos..."
-              className="dash-input pl-9"
-            />
-          </div>
-          <select
-            defaultValue={category}
-            className="dash-input bg-white w-auto min-w-[180px]"
-          >
-            <option value="">Todas las categorías</option>
-            {categories?.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-          <select
-            defaultValue={visibility}
-            className="dash-input bg-white w-auto min-w-[140px]"
-          >
-            <option value="">Visibilidad</option>
-            <option value="visible">Visible</option>
-            <option value="hidden">Oculto</option>
-          </select>
-        </div>
+        <ProductFilters
+          categories={categories || []}
+          currentSearch={search || ""}
+          currentCategory={category || ""}
+          currentVisibility={visibility || ""}
+          currentView={view || "list"}
+        />
 
         {/* View mode toggle */}
         <div className="inline-flex items-center rounded-2xl border border-slate-200 bg-slate-50 p-1 shrink-0 h-11 self-end sm:self-auto">

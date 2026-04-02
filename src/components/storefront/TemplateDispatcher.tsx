@@ -1,12 +1,18 @@
 import { Store, StoreSettings, StoreBranding, Category, Product } from "@/lib/types";
 import dynamic from "next/dynamic";
 
+const TemplateFallback = () => (
+  <div className="min-h-screen w-full bg-slate-50 flex flex-col items-center justify-center animate-pulse">
+    <div className="w-8 h-8 rounded-full border-4 border-slate-200 border-t-slate-400 animate-spin"></div>
+  </div>
+);
+
 // Dynamic imports — only loads the template code the store actually uses
-const MinimalLayout = dynamic(() => import("./minimal/MinimalLayout"));
-const MinimalHomePage = dynamic(() => import("./minimal/MinimalHomePage"));
-const ModernLayout = dynamic(() => import("./modern/ModernLayout"));
-const ModernHomePage = dynamic(() => import("./modern/ModernHomePage"));
-const MinimalCatalogPageClient = dynamic(() => import("./minimal-catalog/MinimalCatalogPageClient"));
+const MinimalLayout = dynamic(() => import("./minimal/MinimalLayout"), { loading: () => <TemplateFallback /> });
+const MinimalHomePage = dynamic(() => import("./minimal/MinimalHomePage"), { loading: () => <TemplateFallback /> });
+const ModernLayout = dynamic(() => import("./modern/ModernLayout"), { loading: () => <TemplateFallback /> });
+const ModernHomePage = dynamic(() => import("./modern/ModernHomePage"), { loading: () => <TemplateFallback /> });
+const MinimalCatalogPageClient = dynamic(() => import("./minimal-catalog/MinimalCatalogPageClient"), { loading: () => <TemplateFallback /> });
 
 type TemplateType = "minimal" | "modern" | "brand";
 

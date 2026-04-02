@@ -1,9 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Product } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
-import { motion } from "framer-motion";
 
 interface MinimalCatalogProductCardProps {
   product: Product;
@@ -21,21 +21,17 @@ export default function MinimalCatalogProductCard({
   const outOfStock = product.track_inventory && product.stock_status === "out_of_stock";
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
-      className="group relative"
-    >
+    <div className="group relative animate-fade-in">
       <Link href={`/store/${storeSlug}/product/${product.slug}`} className="block">
         <div className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-50 rounded-sm">
           {/* Product Image */}
-          {primaryImage ? (
-            <img
+          {primaryImage?.url ? (
+            <Image
               src={primaryImage.url}
-              alt={product.name}
-              className="h-full w-full object-cover object-center transition-transform duration-700 ease-in-out group-hover:scale-105"
-              loading="lazy"
+              alt={product.name || "Producto"}
+              fill
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+              className="object-cover object-center transition-transform duration-700 ease-in-out group-hover:scale-105"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center text-neutral-300">
@@ -95,6 +91,6 @@ export default function MinimalCatalogProductCard({
           )}
         </div>
       </Link>
-    </motion.div>
+    </div>
   );
 }

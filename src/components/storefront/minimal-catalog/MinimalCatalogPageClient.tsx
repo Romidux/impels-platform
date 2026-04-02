@@ -8,7 +8,6 @@ import MinimalFiltersDrawer from "./MinimalFiltersDrawer";
 import MinimalCatalogGrid from "./MinimalCatalogGrid";
 import MinimalCatalogProductCard from "./MinimalCatalogProductCard";
 import MinimalEmptyState from "./MinimalEmptyState";
-import { motion, AnimatePresence } from "framer-motion";
 
 interface MinimalCatalogPageClientProps {
   store: Store;
@@ -74,25 +73,12 @@ export default function MinimalCatalogPageClient({
 
         {/* Content Section */}
         <main className="w-full">
-          <AnimatePresence mode="wait">
             {initialProducts.length === 0 ? (
-              <motion.div
-                key="empty"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-              >
+              <div key="empty" className="animate-fade-in">
                 <MinimalEmptyState storeSlug={store.slug} />
-              </motion.div>
+              </div>
             ) : (
-              <motion.div
-                key="grid"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.5 }}
-              >
+              <div key="grid" className="animate-fade-in">
                 <MinimalCatalogGrid>
                   {initialProducts.map((product) => (
                     <MinimalCatalogProductCard
@@ -103,9 +89,8 @@ export default function MinimalCatalogPageClient({
                     />
                   ))}
                 </MinimalCatalogGrid>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
         </main>
 
         {/* Filters Drawer */}

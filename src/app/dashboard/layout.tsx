@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
 import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import BottomNav from "@/components/dashboard/BottomNav";
+import OrderNotificationListener from "@/components/dashboard/OrderNotificationListener";
 
 export default async function DashboardLayout({
   children,
@@ -53,6 +54,7 @@ export default async function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] flex">
+      <OrderNotificationListener storeId={activeStore.id} />
       <DashboardSidebar store={activeStore as import('@/lib/types').Store} />
       <div className="flex-1 flex flex-col min-w-0 md:ml-64">
         <DashboardHeader user={authUser} store={activeStore as import('@/lib/types').Store} />

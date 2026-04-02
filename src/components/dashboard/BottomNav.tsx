@@ -14,8 +14,6 @@ import {
   UserCog,
   X,
   Store as StoreIcon,
-  Puzzle,
-  HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -33,8 +31,6 @@ const moreItems = [
   { label: "Clientes", href: "/dashboard/customers", icon: Users },
   { label: "Equipo", href: "/dashboard/team", icon: UserCog },
   { label: "Plan", href: "/dashboard/plan", icon: CreditCard },
-  { label: "Aplicaciones", href: "/dashboard/apps", icon: Puzzle },
-  { label: "Soporte", href: "/dashboard/support", icon: HelpCircle },
 ];
 
 export default function BottomNav() {

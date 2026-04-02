@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Product } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 
@@ -35,13 +36,14 @@ export default function ProductCard({ product, storeSlug, currency }: ProductCar
         </div>
 
 
-        {primaryImage ? (
+        {primaryImage?.url ? (
 
-          <img
+          <Image
             src={primaryImage.url}
-            alt={product.name}
-            className="w-full h-full object-cover object-center transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110"
-            loading="lazy"
+            alt={product.name || "Producto"}
+            fill
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            className="object-cover object-center transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)] group-hover:scale-110"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-gray-300">

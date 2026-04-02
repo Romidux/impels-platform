@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Warehouse, AlertTriangle, Package } from "lucide-react";
+import Link from "next/link";
+import { Warehouse, AlertTriangle, Package, Edit } from "lucide-react";
 import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
 import { DashCard } from "@/components/dashboard/ui/DashCard";
 import { DashBadge } from "@/components/dashboard/ui/DashBadge";
 import { DashEmptyState } from "@/components/dashboard/ui/DashEmptyState";
+import InlineStockEditor from "@/components/dashboard/InlineStockEditor";
 
 export default async function InventoryPage() {
   const supabase = await createClient();
@@ -105,7 +107,7 @@ export default async function InventoryPage() {
                     Estado
                   </th>
                   <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
-                    Tipo
+                    Acciones
                   </th>
                 </tr>
               </thead>
@@ -140,13 +142,10 @@ export default async function InventoryPage() {
                         </div>
                       </td>
                       <td className="px-4 py-3.5">
-                        <span
-                          className={`text-sm font-bold ${
-                            isOut ? "text-red-600" : isLow ? "text-amber-600" : "text-slate-900"
-                          }`}
-                        >
-                          {product.stock_quantity}
-                        </span>
+                        <InlineStockEditor
+                          productId={product.id}
+                          currentStock={product.stock_quantity}
+                        />
                       </td>
                       <td className="px-4 py-3.5">
                         <DashBadge
@@ -157,9 +156,13 @@ export default async function InventoryPage() {
                         </DashBadge>
                       </td>
                       <td className="px-4 py-3.5">
-                        <span className="text-xs text-slate-500">
-                          {product.has_variants ? "Por variante" : "General"}
-                        </span>
+                        <Link
+                          href={`/dashboard/products/${product.id}`}
+                          className="p-1.5 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors inline-flex"
+                          title="Editar producto"
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Link>
                       </td>
                     </tr>
                   );

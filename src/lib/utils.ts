@@ -38,28 +38,48 @@ export function buildWhatsAppMessage(
     phone: string;
     address: string;
     notes?: string;
+    payment_method?: string;
+    shipping_method?: string;
   },
+  subtotal: number,
+  discountAmount: number,
   total: number,
-  currency: string = "Gs"
+  currency: string = "Gs",
+  couponCode?: string,
+  orderId?: string
 ): string {
   const itemLines = items
     .map(
       (item) =>
-        `• ${item.product_name}${item.variant_label ? ` (${item.variant_label})` : ""} x${item.quantity} = ${formatCurrency(item.price * item.quantity, currency)}`
+        `▪️ ${item.quantity}x ${item.product_name}${item.variant_label ? ` (${item.variant_label})` : ""} - ${formatCurrency(item.price * item.quantity, currency)}`
     )
     .join("\n");
 
-  const message = `¡Hola! Quiero realizar este pedido:
+  const orderLine = orderId ? `*Pedido:* #${orderId.split("-")[1] || orderId.substring(0,8)}` : `*Nuevo Pedido*`;
 
+  const discountLine = discountAmount > 0 
+    ? `\nDescuento ${couponCode ? `(${couponCode})` : ""}: -${formatCurrency(discountAmount, currency)}` 
+    : "";
+
+  const financeLines = discountAmount > 0 
+    ? `Subtotal: ${formatCurrency(subtotal, currency)}${discountLine}\n*Total a pagar: ${formatCurrency(total, currency)}*`
+    : `*Total a pagar: ${formatCurrency(total, currency)}*`;
+
+  const message = `¡Hola! Quiero confirmar mi pedido 👋
+
+${orderLine}
+
+*Detalle:*
 ${itemLines}
 
-*Total: ${formatCurrency(total, currency)}*
+${financeLines}
 
----
-*Datos del cliente:*
-Nombre: ${customer.name}
-Teléfono: ${customer.phone}
-Dirección: ${customer.address}${customer.notes ? `\nNotas: ${customer.notes}` : ""}`;
+*Datos de entrega y pago:*
+👤 ${customer.name}
+📞 ${customer.phone}
+📍 ${customer.address || "No especificada"}${customer.notes ? `\n📝 Notas: ${customer.notes}` : ""}
+💳 Pago: ${customer.payment_method || "A coordinar"}
+🚚 Envío a través de: ${customer.shipping_method || "A coordinar"}`;
 
   return encodeURIComponent(message);
 }

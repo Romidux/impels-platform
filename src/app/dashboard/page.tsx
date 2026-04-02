@@ -11,9 +11,9 @@ import {
   Store,
   ArrowRight,
   Paintbrush,
+  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
 import { KpiCard } from "@/components/ui/KpiCard";
 import { Button } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -21,6 +21,8 @@ import { SetupWizard } from "@/components/dashboard/SetupWizard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { MerchantAnnouncements } from "@/components/dashboard/MerchantAnnouncements";
 import { CopyLinkButton } from "@/components/dashboard/ui/CopyLinkButton";
+import OrderStatusBadge from "@/components/dashboard/OrderStatusBadge";
+import { OrderStatus } from "@/lib/types";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -44,10 +46,18 @@ export default async function DashboardPage() {
     redirect("/onboarding");
   }
 
-  // Fetch quick metrics for the store in parallel
+  // Calculate date ranges for real metrics
+  const now = new Date();
+  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+
+  // Fetch real metrics for the store in parallel
   const [
     { count: productsCount },
-    { data: recentOrders, count: ordersCount },
+    { data: recentOrders },
+    { data: monthlyOrders },
+    { count: todayOrdersCount },
+    { count: newOrdersCount },
   ] = await Promise.all([
     supabase
       .from("products")
@@ -55,21 +65,38 @@ export default async function DashboardPage() {
       .eq("store_id", store.id),
     supabase
       .from("orders")
-      .select("*, order_items(*)")
+      .select("*")
       .eq("store_id", store.id)
       .order("created_at", { ascending: false })
       .limit(5),
+    supabase
+      .from("orders")
+      .select("total")
+      .eq("store_id", store.id)
+      .gte("created_at", startOfMonth),
+    supabase
+      .from("orders")
+      .select("*", { count: "exact", head: true })
+      .eq("store_id", store.id)
+      .gte("created_at", startOfToday),
+    supabase
+      .from("orders")
+      .select("*", { count: "exact", head: true })
+      .eq("store_id", store.id)
+      .eq("status", "new"),
   ]);
 
-  const settings = store.store_settings?.[0];
+  const settings = Array.isArray(store.store_settings)
+    ? store.store_settings[0]
+    : store.store_settings;
 
-  // Calculate some basic dummy "trends" or aggregations
-  const totalRevenue =
-    recentOrders?.reduce((sum, order) => sum + (order.total || 0), 0) || 0;
-  
+  // Real revenue calculation from current month
+  const monthlyRevenue = monthlyOrders?.reduce((sum, order) => sum + (order.total || 0), 0) || 0;
+  const monthlyOrderCount = monthlyOrders?.length || 0;
+
   const formatCurrency = (value: number) => {
     const currency = settings?.currency || "Gs";
-    return `${currency} ${value.toLocaleString("es-PY")}`;
+    return `${value.toLocaleString("es-PY")} ${currency}`;
   };
 
   // Setup completeness
@@ -96,25 +123,25 @@ export default async function DashboardPage() {
         />
       )}
 
-      {/* Main KPI Cards with temporal trends */}
+      {/* Main KPI Cards — REAL DATA */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
           icon={<DollarSign className="w-5 h-5 text-brand-600" />}
-          label="Ventas totales (Mes)"
-          value={formatCurrency(totalRevenue * 5)} // Dummy multiplier for demo
-          trend={{ value: "+12.5% vs mes anterior", positive: true }}
+          label="Ventas del mes"
+          value={formatCurrency(monthlyRevenue)}
+          trend={monthlyRevenue > 0 ? { value: `${monthlyOrderCount} pedidos este mes`, positive: true } : undefined}
         />
         <KpiCard
           icon={<ShoppingCart className="w-5 h-5 text-brand-600" />}
-          label="Pedidos (Mes)"
-          value={(ordersCount || 0) * 3} // Dummy multiplier
-          trend={{ value: "+3 pedidos nuevos hoy", positive: true }}
+          label="Pedidos del mes"
+          value={monthlyOrderCount}
+          trend={(todayOrdersCount || 0) > 0 ? { value: `${todayOrdersCount} pedidos hoy`, positive: true } : undefined}
         />
         <KpiCard
-          icon={<Eye className="w-5 h-5 text-brand-600" />}
-          label="Visitas a la tienda"
-          value="1,245"
-          trend={{ value: "-2.1% vs mes anterior", positive: false }}
+          icon={<AlertTriangle className="w-5 h-5 text-amber-500" />}
+          label="Pedidos pendientes"
+          value={newOrdersCount || 0}
+          trend={(newOrdersCount || 0) > 0 ? { value: "Requieren atención", positive: false } : { value: "Todo al día ✓", positive: true }}
         />
         <KpiCard
           icon={<Package className="w-5 h-5 text-brand-600" />}
@@ -165,25 +192,22 @@ export default async function DashboardPage() {
                   </thead>
                   <tbody className="divide-y divide-gray-50">
                     {recentOrders.map((order) => (
-                      <tr key={order.id} className="hover:bg-slate-50/50 transition-colors">
+                      <tr key={order.id} className="hover:bg-slate-50/50 transition-colors cursor-pointer group">
                         <td className="py-3 px-5">
-                          <p className="text-sm font-medium text-slate-900">
-                            {order.customer_name || "Cliente"}
-                          </p>
-                          <p className="text-xs text-slate-500">
-                            {order.customer_phone || ""}
-                          </p>
+                          <Link href={`/dashboard/orders?status=${order.status}`} className="block">
+                            <p className="text-sm font-medium text-slate-900 group-hover:text-brand-600 transition-colors">
+                              {order.customer_name || "Cliente"}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {order.customer_phone || ""}
+                            </p>
+                          </Link>
                         </td>
                         <td className="py-3 px-5 text-sm text-slate-600">
                           {new Date(order.created_at).toLocaleDateString("es-PY")}
                         </td>
                         <td className="py-3 px-5">
-                          <Badge 
-                            variant={order.status === "completed" ? "success" : order.status === "cancelled" ? "error" : "warning"} 
-                            size="sm"
-                          >
-                            {order.status}
-                          </Badge>
+                          <OrderStatusBadge status={order.status as OrderStatus} />
                         </td>
                         <td className="py-3 px-5 text-sm font-semibold text-slate-900 text-right">
                           {formatCurrency(order.total || 0)}

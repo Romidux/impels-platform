@@ -16,13 +16,36 @@ export async function generateMetadata({
 
   if (!store) return { title: "Tienda no encontrada" };
 
+  const branding = Array.isArray(store.store_branding)
+    ? store.store_branding[0]
+    : store.store_branding;
+
+  // Fallback if the layout doesn't have a logo: public generic shop image or default UI.
+  const origin = process.env.NEXT_PUBLIC_APP_URL || "https://impels.com";
+  const ogImage = branding?.logo_url || `${origin}/og-fallback.png`;
+
   return {
-    title: store.name,
-    description: store.description || `Tienda online de ${store.name}`,
+    title: `${store.name} | Tienda Online`,
+    description: store.description || `Bienvenido a la tienda online de ${store.name}`,
     openGraph: {
+      title: `${store.name} | Tienda Online`,
+      description: store.description || `Bienvenido a la tienda online de ${store.name}`,
+      type: "website",
+      siteName: store.name,
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `Logo de ${store.name}`,
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
       title: store.name,
       description: store.description || `Tienda online de ${store.name}`,
-      type: "website",
+      images: [ogImage],
     },
   };
 }

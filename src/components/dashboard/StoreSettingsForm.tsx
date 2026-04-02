@@ -8,6 +8,7 @@ import {
   Mail,
   DollarSign,
   Save,
+  CreditCard,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -35,6 +36,8 @@ export default function StoreSettingsForm({
     currency: settings?.currency || "Gs",
     whatsapp_number: settings?.whatsapp_number || "",
     contact_email: settings?.contact_email || "",
+    payment_methods: (settings?.payment_methods || ["Transferencia bancaria", "Contra entrega"]).join(", "),
+    shipping_methods: (settings?.shipping_methods || ["Delivery", "Retiro en tienda"]).join(", "),
   });
 
   const handleChange = (key: string, value: string) => {
@@ -64,6 +67,8 @@ export default function StoreSettingsForm({
             currency: form.currency,
             whatsapp_number: form.whatsapp_number,
             contact_email: form.contact_email,
+            payment_methods: form.payment_methods.split(",").map(m => m.trim()).filter(Boolean),
+            shipping_methods: form.shipping_methods.split(",").map(m => m.trim()).filter(Boolean),
           },
           { onConflict: "store_id" }
         );
@@ -102,11 +107,8 @@ export default function StoreSettingsForm({
               URL de la tienda
             </label>
             <div className="flex rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-              <span className="text-slate-400 text-sm px-4 flex items-center border-r border-gray-200 whitespace-nowrap">
-                impels-platform.vercel.app/store/
-              </span>
-              <span className="px-4 py-2.5 text-sm text-slate-500">
-                {store.slug}
+              <span className="px-4 py-2.5 text-sm text-slate-500 font-medium">
+                {`${(typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_APP_URL || 'https://impels.com')}/store/${store.slug}`}
               </span>
             </div>
             <p className="text-xs text-slate-400">
@@ -163,6 +165,31 @@ export default function StoreSettingsForm({
             { value: "USD", label: "Dólar (USD)" },
           ]}
         />
+      </DashCard>
+
+      {/* Checkout Methods */}
+      <DashCard
+        header={{
+          title: "Métodos de Checkout",
+          icon: <CreditCard className="w-5 h-5 text-indigo-500" />,
+        }}
+      >
+        <div className="space-y-4">
+          <DashInput
+            label="Métodos de Pago"
+            value={form.payment_methods}
+            onChange={(e) => handleChange("payment_methods", e.target.value)}
+            placeholder="Transferencia, Efectivo, Tarjeta..."
+            hint="Escribe los métodos separados por comas."
+          />
+          <DashInput
+            label="Métodos de Envío / Entrega"
+            value={form.shipping_methods}
+            onChange={(e) => handleChange("shipping_methods", e.target.value)}
+            placeholder="Delivery, Retiro en tienda..."
+            hint="Escribe los métodos separados por comas."
+          />
+        </div>
       </DashCard>
 
       <DashButton

@@ -20,6 +20,8 @@ interface MinimalCheckoutPageClientProps {
   whatsappNumber?: string;
   currency: string;
   primaryColor: string;
+  paymentMethods: string[];
+  shippingMethods: string[];
 }
 
 export default function MinimalCheckoutPageClient({
@@ -28,6 +30,8 @@ export default function MinimalCheckoutPageClient({
   whatsappNumber,
   currency,
   primaryColor,
+  paymentMethods,
+  shippingMethods,
 }: MinimalCheckoutPageClientProps) {
   const {
     items,
@@ -39,6 +43,15 @@ export default function MinimalCheckoutPageClient({
     handleChange,
     handleSubmit,
     clearSuccessSession,
+    couponCode,
+    setCouponCode,
+    appliedCoupon,
+    couponError,
+    validatingCoupon,
+    handleApplyCoupon,
+    removeCoupon,
+    subtotal,
+    discountAmount
   } = useCheckoutLogic({ storeId, storeSlug, whatsappNumber, currency });
 
   if (!mounted) return null;
@@ -157,7 +170,39 @@ export default function MinimalCheckoutPageClient({
                   />
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-4 pt-4 border-t border-gray-100">
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Método de Envío / Retiro *</label>
+                    <select
+                      value={form.shipping_method}
+                      onChange={(e) => handleChange("shipping_method", e.target.value)}
+                      className="w-full border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent cursor-pointer"
+                      required
+                    >
+                      <option value="" disabled>Selecciona una opción</option>
+                      {shippingMethods.map((m) => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Método de Pago *</label>
+                    <select
+                      value={form.payment_method}
+                      onChange={(e) => handleChange("payment_method", e.target.value)}
+                      className="w-full border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent cursor-pointer"
+                      required
+                    >
+                      <option value="" disabled>Selecciona una opción</option>
+                      {paymentMethods.map((m) => (
+                        <option key={m} value={m}>{m}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="space-y-2 pt-4 border-t border-gray-100">
                   <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Notas Adicionales</label>
                   <textarea
                     value={form.notes}
@@ -200,12 +245,68 @@ export default function MinimalCheckoutPageClient({
               ))}
             </div>
 
-            <div className="border-t border-gray-200 pt-8 mt-8">
-              <div className="flex justify-between items-center">
-                <span className="text-xs uppercase tracking-widest font-bold text-gray-400">Total</span>
-                <span className="text-2xl font-medium text-gray-900">
-                  {formatCurrency(total, currency)}
-                </span>
+            <div className="border-t border-gray-200 pt-8 mt-8 space-y-6">
+              
+              {/* Cupón */}
+              <div className="space-y-3">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">¿Tienes un cupón?</label>
+                {!appliedCoupon ? (
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                      placeholder="CÓDIGO"
+                      className="flex-1 w-full border-b border-gray-200 py-2 text-sm focus:outline-none focus:border-black uppercase transition-all"
+                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleApplyCoupon(); } }}
+                    />
+                    <button
+                      type="button"
+                      onClick={handleApplyCoupon}
+                      disabled={validatingCoupon || !couponCode.trim()}
+                      className="px-6 py-2 bg-black text-white text-[10px] font-bold tracking-widest uppercase hover:bg-gray-800 transition-colors disabled:opacity-50"
+                    >
+                      {validatingCoupon ? "..." : "Aplicar"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between bg-gray-50 px-4 py-3 border border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-black" />
+                      <span className="text-sm font-bold text-black">{appliedCoupon.code}</span>
+                    </div>
+                    <button type="button" onClick={removeCoupon} className="text-[10px] text-gray-500 hover:text-black underline uppercase tracking-widest font-bold">
+                      Quitar
+                    </button>
+                  </div>
+                )}
+                {couponError && (
+                  <p className={`text-[10px] tracking-wide uppercase font-medium ${appliedCoupon ? 'text-green-600' : 'text-red-500'}`}>
+                    {couponError}
+                  </p>
+                )}
+              </div>
+
+              {/* Totals */}
+              <div className="pt-6 border-t border-gray-200 space-y-4">
+                {appliedCoupon && (
+                  <>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">Subtotal</span>
+                      <span className="text-gray-900">{formatCurrency(subtotal, currency)}</span>
+                    </div>
+                    <div className="flex justify-between items-center text-sm font-medium">
+                      <span>Descuento ({appliedCoupon.code})</span>
+                      <span>-{formatCurrency(discountAmount, currency)}</span>
+                    </div>
+                  </>
+                )}
+                <div className="flex justify-between items-center pt-2">
+                  <span className="text-xs uppercase tracking-widest font-bold text-gray-400">Total</span>
+                  <span className="text-2xl font-medium text-gray-900">
+                    {formatCurrency(total, currency)}
+                  </span>
+                </div>
               </div>
             </div>
 

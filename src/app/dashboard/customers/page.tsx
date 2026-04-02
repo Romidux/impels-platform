@@ -2,7 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Users, ShoppingCart, Clock, Plus, Download } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import { PageHeader } from "@/components/ui/PageHeader";
+import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
+import { DashButton } from "@/components/dashboard/ui/DashButton";
 import { DashEmptyState } from "@/components/dashboard/ui/DashEmptyState";
 import { DashBadge } from "@/components/dashboard/ui/DashBadge";
 import { Button } from "@/components/ui/Button";
@@ -74,22 +75,25 @@ export default async function CustomersPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <PageHeader
+      <DashPageHeader
         title="Clientes"
         subtitle={`${customers.length} clientes registrados`}
-        actions={
-          <div className="flex items-center gap-2">
-            <Button asChild variant="secondary" icon={<Download className="w-4 h-4" />}>
-              <a href="/api/export?type=customers" download>
-                Exportar CSV
-              </a>
-            </Button>
-            <Button asChild icon={<Plus className="w-4 h-4" />}>
-              <Link href="/dashboard/customers/new">Nuevo cliente</Link>
-            </Button>
-          </div>
-        }
-      />
+      >
+        <div className="flex items-center gap-2">
+          <Button asChild variant="secondary" size="md">
+            <a href="/api/export?type=customers" download className="flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              Exportar CSV
+            </a>
+          </Button>
+          <Link href="/dashboard/customers/new">
+            <DashButton>
+              <Plus className="w-4 h-4" />
+              Nuevo cliente
+            </DashButton>
+          </Link>
+        </div>
+      </DashPageHeader>
 
       {customers.length === 0 ? (
         <div className="dash-card">
@@ -99,10 +103,10 @@ export default async function CustomersPage() {
             description="Agrega clientes manualmente o pídeles que compren en tu tienda para que se registren aquí."
             action={
               <Link href="/dashboard/customers/new">
-                <Button>
+                <DashButton>
                   <Plus className="w-4 h-4" />
                   Crear tu primer cliente
-                </Button>
+                </DashButton>
               </Link>
             }
           />

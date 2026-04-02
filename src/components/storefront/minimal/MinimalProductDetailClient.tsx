@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Product, StoreSettings } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { useCartStore } from "@/lib/store";
@@ -104,10 +105,12 @@ export default function MinimalProductDetailClient({
             
             <div className="aspect-square bg-gray-100 flex-1 relative overflow-hidden group">
               {activeImage ? (
-                <img
+                <Image
                   src={activeImage}
-                  alt={product.name}
-                  className="w-full h-full object-contain object-center"
+                  alt={product.name || "Producto"}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-contain object-center border-none shadow-none"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-300">

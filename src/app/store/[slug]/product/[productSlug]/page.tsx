@@ -4,6 +4,7 @@ import { Metadata } from "next";
 import ProductDetailClient from "@/components/storefront/modern/ModernProductDetailClient";
 import MinimalProductDetailClient from "@/components/storefront/minimal/MinimalProductDetailClient";
 import { Product } from "@/lib/types";
+import { getStoreBySlug } from "@/lib/queries/store";
 
 export const revalidate = 60; // ISR cache logic: revalidate every 60 seconds
 
@@ -14,12 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const supabase = await createClient();
   const { slug, productSlug } = await params;
-
-  const { data: store } = await supabase
-    .from("stores")
-    .select("id, name")
-    .eq("slug", slug)
-    .single();
+  const store = await getStoreBySlug(slug);
 
   if (!store) return { title: "Producto no encontrado" };
 
@@ -58,13 +54,7 @@ export default async function ProductPage({
 }) {
   const supabase = await createClient();
   const { slug, productSlug } = await params;
-
-  const { data: store } = await supabase
-    .from("stores")
-    .select("id, name, slug, store_settings(*)")
-    .eq("slug", slug)
-    .eq("is_active", true)
-    .single();
+  const store = await getStoreBySlug(slug);
 
   if (!store) notFound();
 

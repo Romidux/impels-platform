@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, AuthUser } from "@/lib/types";
 import { getStoreUrl } from "@/lib/utils";
+import GlobalSearch from "@/components/dashboard/GlobalSearch";
 
 /* ─── Breadcrumb label map ─── */
 const ROUTE_LABELS: Record<string, string> = {
@@ -16,6 +17,7 @@ const ROUTE_LABELS: Record<string, string> = {
   "/dashboard/categories": "Categorías",
   "/dashboard/inventory": "Inventario",
   "/dashboard/orders": "Pedidos",
+  "/dashboard/orders/new": "Nuevo pedido",
   "/dashboard/customers": "Clientes",
   "/dashboard/store": "Mi Tienda",
   "/dashboard/team": "Equipo",
@@ -54,40 +56,42 @@ export default function DashboardHeader({
   }
 
   return (
-    <header className="bg-white border-b border-gray-100 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30">
-      {/* Left: breadcrumbs */}
-      <div className="flex items-center gap-1.5 text-sm">
-        {breadcrumbs.map((bc, i) => (
-          <div key={bc.href} className="flex items-center gap-1.5">
-            {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-slate-300" />}
-            {i === breadcrumbs.length - 1 ? (
-              <span className="font-semibold text-slate-900">{bc.label}</span>
-            ) : (
-              <a
-                href={bc.href}
-                className="text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                {bc.label}
-              </a>
-            )}
-          </div>
-        ))}
+    <header className="sticky top-0 z-30 h-16 bg-white border-b border-gray-200 px-4 flex items-center justify-between shadow-sm md:shadow-none transition-shadow">
+      {/* Search / Breadcrumbs */}
+      <div className="flex items-center flex-1 gap-4">
+        {/* Mobile menu trigger is inside sidebar component, we just need space here or breadcrumbs */}
+        <nav className="hidden sm:flex items-center text-sm font-medium text-gray-500 whitespace-nowrap">
+          <span className="text-gray-400">Tienda</span>
+          {breadcrumbs.map((crumb, i) => (
+            <div key={crumb.href} className="flex items-center">
+              <ChevronRight className="w-4 h-4 mx-1 text-gray-300" />
+              <span className={i === breadcrumbs.length - 1 ? "text-gray-900 font-semibold" : ""}>
+                {crumb.label}
+              </span>
+            </div>
+          ))}
+        </nav>
       </div>
 
-      {/* Right: user menu */}
       <div className="flex items-center gap-3">
+        <GlobalSearch storeId={store.id} />
+        
         <a
           href={getStoreUrl(store.slug)}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden sm:flex items-center gap-1.5 text-xs text-slate-400 hover:text-brand-600 transition-colors"
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors group border border-brand-200/50"
         >
-          <ExternalLink className="w-3.5 h-3.5" />
-          <span>{getStoreUrl(store.slug).replace(/^https?:\/\//, "")}</span>
+          <ExternalLink className="w-4 h-4 text-brand-500 group-hover:text-brand-700 transition-colors" />
+          <span className="group-hover:translate-x-0.5 transition-transform">
+            Ver tienda
+          </span>
         </a>
 
-        <button className="relative p-2 rounded-lg hover:bg-gray-50 transition-colors text-slate-400">
-          <Bell className="w-4.5 h-4.5" />
+        {/* Notifications */}
+        <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0">
+          <Bell className="w-5 h-5" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border-2 border-white"></span>
         </button>
 
         <div className="relative">

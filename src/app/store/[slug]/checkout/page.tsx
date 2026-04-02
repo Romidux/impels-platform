@@ -34,6 +34,8 @@ export default async function CheckoutPage({
         whatsappNumber={settings?.whatsapp_number}
         currency={settings?.currency || "Gs"}
         primaryColor={settings?.primary_color || "#000000"}
+        paymentMethods={settings?.payment_methods || ["Transferencia bancaria", "Pago contra entrega"]}
+        shippingMethods={settings?.shipping_methods || ["Delivery", "Retiro en tienda"]}
       />
     );
   }
@@ -45,6 +47,8 @@ export default async function CheckoutPage({
       whatsappNumber={settings?.whatsapp_number}
       currency={settings?.currency || "Gs"}
       primaryColor={settings?.primary_color || "#2563eb"}
+      paymentMethods={settings?.payment_methods || ["Transferencia bancaria", "Pago contra entrega"]}
+      shippingMethods={settings?.shipping_methods || ["Delivery", "Retiro en tienda"]}
     />
   );
 }

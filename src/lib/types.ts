@@ -45,6 +45,8 @@ export interface StoreSettings {
   hero_title?: string;
   hero_subtitle?: string;
   benefits_bar_items?: string[];
+  payment_methods?: string[];
+  shipping_methods?: string[];
 }
 
 export interface StoreBranding {
@@ -188,6 +190,10 @@ export interface Order {
   subtotal: number;
   total: number;
   status: OrderStatus;
+  payment_method?: string;
+  shipping_method?: string;
+  coupon_code?: string;
+  discount_amount?: number;
   created_at: string;
   updated_at: string;
 }
@@ -200,6 +206,22 @@ export interface OrderItem {
   quantity: number;
   unit_price: number;
   total_price: number;
+}
+
+// ─── Coupons (Fase 4A) ────────────────────────────────────────────────────────
+export interface Coupon {
+  id: string;
+  store_id: string;
+  code: string;
+  type: "percentage" | "fixed";
+  value: number;
+  min_purchase?: number;
+  max_uses?: number;
+  current_uses: number;
+  expires_at?: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 // ─── Cart ────────────────────────────────────────────────────────────────────

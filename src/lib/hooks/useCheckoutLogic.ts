@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useCartStore } from "@/lib/store";
 import { createClient } from "@/lib/supabase/client";
-import { buildWhatsAppMessage } from "@/lib/utils";
+import { buildWhatsAppMessage, formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface UseCheckoutLogicProps {
@@ -22,7 +22,10 @@ export function useCheckoutLogic({
 }: UseCheckoutLogicProps) {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCartStore();
-  const total = getTotalPrice();
+  const subtotal = getTotalPrice();
+  
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const total = Math.max(0, subtotal - discountAmount);
 
   const [form, setForm] = useState({
     name: "",
@@ -30,7 +33,13 @@ export function useCheckoutLogic({
     email: "",
     address: "",
     notes: "",
+    payment_method: "",
+    shipping_method: "",
   });
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; type: string; value: number } | null>(null);
+  const [couponError, setCouponError] = useState("");
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -72,6 +81,49 @@ export function useCheckoutLogic({
     setForm((prev) => ({ ...prev, [key]: value }));
   };
 
+  const handleApplyCoupon = async () => {
+    if (!couponCode.trim()) return;
+    setValidatingCoupon(true);
+    setCouponError("");
+
+    const supabase = createClient();
+    try {
+      const { data, error } = await supabase.rpc("validate_coupon_public", {
+        p_store_id: storeId,
+        p_code: couponCode.trim().toUpperCase(),
+        p_subtotal: subtotal,
+      });
+
+      if (error) throw new Error("Error interno al validar cupón");
+      
+      const res = data as { valid: boolean, code?: string, type?: string, calculated_discount?: number, message: string, min_purchase?: number };
+
+      if (!res.valid) {
+        if (res.message === 'minimum_not_met' && res.min_purchase) {
+          throw new Error(`El mínimo de compra es ${formatCurrency(res.min_purchase, currency)}`);
+        }
+        throw new Error(res.message || "Cupón inválido");
+      }
+
+      setDiscountAmount(res.calculated_discount || 0);
+      setAppliedCoupon({ code: res.code!, type: res.type!, value: 0 }); // El valor exacto real no importa a la UI ahora, solo el descuento calculado
+      setCouponError(res.message);
+    } catch (err: any) {
+      setCouponError(err.message || "Cupón inválido");
+      setAppliedCoupon(null);
+      setDiscountAmount(0);
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
+
+  const removeCoupon = () => {
+    setCouponCode("");
+    setAppliedCoupon(null);
+    setDiscountAmount(0);
+    setCouponError("");
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.phone) {
@@ -102,15 +154,18 @@ export function useCheckoutLogic({
             unit_price: item.price,
             total_price: item.price * item.quantity,
           })),
-          p_subtotal: total,
+          p_subtotal: subtotal,
           p_total: total,
+          p_payment_method: form.payment_method || null,
+          p_shipping_method: form.shipping_method || null,
+          p_coupon_code: appliedCoupon ? appliedCoupon.code : null,
         }
       );
 
       if (error) throw error;
 
       if (whatsappNumber) {
-        const message = buildWhatsAppMessage(items, form, total, currency);
+        const message = buildWhatsAppMessage(items, form, subtotal, discountAmount, total, currency, appliedCoupon?.code, orderId);
         window.open(
           `https://wa.me/${whatsappNumber}?text=${message}`,
           "_blank"
@@ -130,11 +185,20 @@ export function useCheckoutLogic({
 
   return {
     items,
+    subtotal,
+    discountAmount,
     total,
     form,
     submitting,
     submitted,
     mounted,
+    couponCode,
+    setCouponCode,
+    appliedCoupon,
+    couponError,
+    validatingCoupon,
+    handleApplyCoupon,
+    removeCoupon,
     handleChange,
     handleSubmit,
     clearSuccessSession,

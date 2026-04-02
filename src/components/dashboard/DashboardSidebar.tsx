@@ -10,13 +10,12 @@ import {
   ShoppingCart,
   Users,
   Settings,
+  Ticket,
   UserCog,
   CreditCard,
   ExternalLink,
   Zap,
   Store as StoreIcon,
-  Puzzle,
-  HelpCircle,
 } from "lucide-react";
 import { cn, getStoreUrl } from "@/lib/utils";
 import { Store } from "@/lib/types";
@@ -58,6 +57,7 @@ const navGroups: NavGroup[] = [
     title: "VENTAS",
     items: [
       { label: "Pedidos", href: "/dashboard/orders", icon: ShoppingCart },
+      { label: "Cupones", href: "/dashboard/coupons", icon: Ticket },
       { label: "Clientes", href: "/dashboard/customers", icon: Users },
     ],
   },
@@ -72,8 +72,6 @@ const navGroups: NavGroup[] = [
     items: [
       { label: "Equipo", href: "/dashboard/team", icon: UserCog },
       { label: "Plan", href: "/dashboard/plan", icon: CreditCard },
-      { label: "Aplicaciones", href: "/dashboard/apps", icon: Puzzle },
-      { label: "Soporte", href: "/dashboard/support", icon: HelpCircle },
     ],
   },
 ];

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useProductDetailLogic } from "@/lib/hooks/useProductDetailLogic";
 import {
@@ -137,12 +138,14 @@ export default function ProductDetailClient({
         {/* Images */}
         <div className="space-y-3">
           {/* Main image */}
-          <div className="aspect-square rounded-3xl overflow-hidden bg-gray-100">
-            {images.length > 0 ? (
-              <img
-                src={images[selectedImage]?.url}
-                alt={product.name}
-                className="w-full h-full object-cover"
+          <div className="relative aspect-square rounded-3xl overflow-hidden bg-gray-100">
+            {images[selectedImage]?.url ? (
+              <Image
+                src={images[selectedImage].url}
+                alt={product.name || "Producto"}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">

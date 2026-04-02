@@ -3,9 +3,8 @@
 import { Category } from "@/lib/types";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
 import { clearCheckoutSuccess } from "@/lib/hooks/useCheckoutLogic";
 
 interface MinimalCategoryMenuDesktopProps {
@@ -57,15 +56,12 @@ export default function MinimalCategoryMenuDesktop({
         Categorías
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="absolute left-1/2 -translate-x-1/2 top-full pt-4 z-[100]"
-          >
+      <div
+        className={cn(
+          "absolute left-1/2 -translate-x-1/2 top-full pt-4 z-[100] transition-all duration-200",
+          isOpen ? "opacity-100 visible translate-y-0" : "opacity-0 invisible translate-y-2 pointer-events-none"
+        )}
+      >
             <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex min-w-[220px]">
               {/* Primary Categories */}
               <div className="py-2 border-r border-gray-50 bg-white min-w-[220px]">
@@ -111,16 +107,11 @@ export default function MinimalCategoryMenuDesktop({
               </div>
 
               {/* Subcategories Panel */}
-              <AnimatePresence mode="wait">
-                {activeCategory && subCategoriesMap[activeCategory] && (
-                  <motion.div
-                    key={activeCategory}
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -10 }}
-                    transition={{ duration: 0.15 }}
-                    className="py-2 bg-gray-50/30 min-w-[220px]"
-                  >
+              {activeCategory && subCategoriesMap[activeCategory] && (
+                <div
+                  key={activeCategory}
+                  className="py-2 bg-gray-50/30 min-w-[220px] animate-in fade-in slide-in-from-left-2 duration-200"
+                >
                     <Link
                       href={`/store/${storeSlug}/catalog?category=${activeCategory}`}
                       onClick={() => clearCheckoutSuccess(storeSlug)}
@@ -138,13 +129,10 @@ export default function MinimalCategoryMenuDesktop({
                         {sub.name}
                       </Link>
                     ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                </div>
+              )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </div>
     </div>
   );
 }

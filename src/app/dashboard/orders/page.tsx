@@ -72,8 +72,8 @@ export default async function OrdersPage({
         }
       />
 
-      {/* Status filters (Mobile/Segmented) */}
-      <div className="flex flex-wrap gap-2 lg:hidden">
+      {/* Status filters */}
+      <div className="flex flex-wrap gap-2">
         {statusFilters.map((f) => (
           <Link
             key={f.value}
@@ -140,10 +140,10 @@ export default async function OrdersPage({
 
                       return (
                         <div key={order.id} className="dash-card flex flex-col p-4 border border-slate-200 shadow-sm hover:shadow-md transition-shadow gap-3 bg-white">
-                          <div className="flex items-start justify-between">
+                          <Link href={`/dashboard/orders/${order.id}`} className="flex items-start justify-between group">
                             <div>
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-bold text-slate-900">{order.customer_name}</span>
+                                <span className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">{order.customer_name}</span>
                               </div>
                               <p className="text-xs text-slate-500 font-medium">#{order.id.slice(0, 8).toUpperCase()}</p>
                             </div>
@@ -161,7 +161,7 @@ export default async function OrdersPage({
                                 })}
                               </p>
                             </div>
-                          </div>
+                          </Link>
 
                           <div className="bg-slate-50 rounded-lg p-3 space-y-1.5 border border-slate-100">
                             {(order.items as { product_name: string; quantity: number; variant_label?: string }[]).map((item, i) => (
@@ -184,7 +184,13 @@ export default async function OrdersPage({
                                 </a>
                               </Button>
                             ) : (
-                              <div />
+                              <Link
+                                href={`/dashboard/orders/${order.id}`}
+                                className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-colors"
+                              >
+                                Ver detalle
+                                <ArrowRight className="w-3 h-3" />
+                              </Link>
                             )}
                             <OrderStatusChanger orderId={order.id} currentStatus={order.status} />
                           </div>

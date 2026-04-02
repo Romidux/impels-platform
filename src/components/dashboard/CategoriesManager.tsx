@@ -26,11 +26,13 @@ import { DashButton } from "./ui/DashButton";
 interface CategoriesManagerProps {
   storeId: string;
   categories: Category[];
+  productCounts?: Record<string, number>;
 }
 
 export default function CategoriesManager({
   storeId,
   categories: initialCategories,
+  productCounts = {},
 }: CategoriesManagerProps) {
   const router = useRouter();
   const [categories, setCategories] = useState(initialCategories);
@@ -215,14 +217,21 @@ export default function CategoriesManager({
             />
           </div>
         ) : (
-          <span className={cn(
-            "font-medium transition-colors",
-            isSubcategory 
-              ? "text-sm text-slate-500 group-hover:text-slate-900" 
-              : "text-[15px] font-semibold text-slate-900 group-hover:text-dash-primary"
-          )}>
-            {category.name}
-          </span>
+          <>
+            <span className={cn(
+              "font-medium transition-colors",
+              isSubcategory 
+                ? "text-sm text-slate-500 group-hover:text-slate-900" 
+                : "text-[15px] font-semibold text-slate-900 group-hover:text-dash-primary"
+            )}>
+              {category.name}
+            </span>
+            {(productCounts[category.id] ?? 0) > 0 && (
+              <span className="text-[11px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                {productCounts[category.id]} prod.
+              </span>
+            )}
+          </>
         )}
       </div>
 
