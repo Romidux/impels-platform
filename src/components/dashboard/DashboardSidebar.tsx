@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -12,15 +12,7 @@ import {
   UserCog,
   CreditCard,
   Store as StoreIcon,
-  ChevronDown,
-  ChevronRight,
   ExternalLink,
-  Palette,
-  Home,
-  Layers,
-  Phone,
-  Link as LinkIcon,
-  Sparkles,
 } from "lucide-react";
 import { cn, getStoreUrl } from "@/lib/utils";
 import { Store } from "@/lib/types";
@@ -28,7 +20,6 @@ import { Store } from "@/lib/types";
 interface NavChild {
   label: string;
   href: string;
-  icon?: React.ComponentType<{ className?: string }>;
 }
 
 interface NavItem {
@@ -37,6 +28,7 @@ interface NavItem {
   icon: React.ComponentType<{ className?: string }>;
   exact?: boolean;
   children?: NavChild[];
+  expandableKey?: "catalog" | "store";
 }
 
 interface NavGroup {
@@ -63,6 +55,7 @@ const navGroups: NavGroup[] = [
         label: "Productos",
         href: "/dashboard/products",
         icon: Package,
+        expandableKey: "catalog",
         children: [
           { label: "Categorias", href: "/dashboard/categories" },
           { label: "Inventario", href: "/dashboard/inventory" },
@@ -79,48 +72,19 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    title: "TIENDA",
+    title: "MI TIENDA",
     items: [
       {
         label: "Mi Tienda",
         href: "/dashboard/store",
         icon: StoreIcon,
+        expandableKey: "store",
         children: [
-          {
-            label: "Identidad",
-            href: "/dashboard/store?tab=identity",
-            icon: StoreIcon,
-          },
-          {
-            label: "Apariencia",
-            href: "/dashboard/store?tab=appearance",
-            icon: Palette,
-          },
-          {
-            label: "Inicio",
-            href: "/dashboard/store?tab=homepage",
-            icon: Home,
-          },
-          {
-            label: "Secciones",
-            href: "/dashboard/store?tab=sections",
-            icon: Layers,
-          },
-          {
-            label: "Ventas y contacto",
-            href: "/dashboard/store?tab=commerce",
-            icon: Phone,
-          },
-          {
-            label: "Footer y redes",
-            href: "/dashboard/store?tab=footer",
-            icon: LinkIcon,
-          },
-          {
-            label: "Edición por capas",
-            href: "/dashboard/store",
-            icon: Sparkles,
-          },
+          { label: "Identidad", href: "/dashboard/store/identity" },
+          { label: "Apariencia", href: "/dashboard/store/appearance" },
+          { label: "Inicio", href: "/dashboard/store/home" },
+          { label: "Secciones", href: "/dashboard/store/sections" },
+          { label: "Ventas y contacto", href: "/dashboard/store/sales" },
         ],
       },
     ],
@@ -136,43 +100,43 @@ const navGroups: NavGroup[] = [
 
 export default function DashboardSidebar({ store }: { store: Store }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
   const storeUrl = getStoreUrl(store.slug);
-  const [productsOpen, setProductsOpen] = useState(false);
-  const [storeOpen, setStoreOpen] = useState(false);
+  const [expanded, setExpanded] = useState({
+    catalog: false,
+    store: false,
+  });
 
   const isItemActive = (item: NavItem) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href);
 
-  const isChildActive = (href: string) => {
-    const [path, query] = href.split("?");
-    if (!query) return pathname === path;
-    
-    const params = new URLSearchParams(query);
-    const tab = params.get("tab");
-    return pathname === path && searchParams.get("tab") === tab;
-  };
+  const isChildActive = (href: string) =>
+    pathname === href || pathname.startsWith(`${href}/`);
 
-  const isExpanded = (item: NavItem) => {
-    if (item.label === "Productos") return productsOpen;
-    if (item.label === "Mi Tienda") return storeOpen;
-    return false;
-  };
+  useEffect(() => {
+    setExpanded((current) => ({
+      catalog:
+        current.catalog ||
+        pathname.startsWith("/dashboard/products") ||
+        pathname.startsWith("/dashboard/categories") ||
+        pathname.startsWith("/dashboard/inventory"),
+      store: current.store || pathname.startsWith("/dashboard/store"),
+    }));
+  }, [pathname]);
 
-  const toggleItem = (item: NavItem) => {
-    if (item.label === "Productos") setProductsOpen(!productsOpen);
-    if (item.label === "Mi Tienda") setStoreOpen(!storeOpen);
+  const toggleExpandable = (key?: "catalog" | "store") => {
+    if (!key) return;
+    setExpanded((current) => ({ ...current, [key]: !current[key] }));
   };
 
   return (
     <aside className="fixed left-0 top-14 bottom-0 z-40 hidden w-64 flex-col border-r border-slate-200/80 bg-gradient-to-b from-white via-white to-slate-50/80 shadow-[10px_0_28px_rgba(15,23,42,0.04)] md:flex">
-      <div className="px-4 py-4 pt-5 pb-2">
+      <div className="px-4 pb-2 pt-5">
         <div className="flex items-center justify-between gap-2 px-2 py-1.5">
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-slate-950 text-white shadow-sm flex-shrink-0">
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[12px] bg-blue-50 text-blue-600 shadow-sm">
               <StoreIcon className="h-5 w-5" />
             </div>
-            <p className="truncate font-bold text-[16px] text-slate-900 leading-tight tracking-tight">
+            <p className="truncate text-[16px] font-bold leading-tight tracking-tight text-slate-900">
               {store.name}
             </p>
           </div>
@@ -180,7 +144,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
             href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors flex-shrink-0"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
             title="Ver tienda"
           >
             <ExternalLink className="h-4 w-4" />
@@ -188,105 +152,84 @@ export default function DashboardSidebar({ store }: { store: Store }) {
         </div>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
-        {navGroups.map((group) => {
-          const groupActive = group.items.some(
-            (item) =>
-              isItemActive(item) ||
-              item.children?.some((child) => isChildActive(child.href))
-          );
+      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-3">
+        {navGroups.map((group) => (
+          <section key={group.title} className="space-y-3">
+            <p className="px-3 text-[10px] font-bold uppercase tracking-[0.22em] text-gray-400">
+              {group.title}
+            </p>
 
-          return (
-            <div key={group.title} className="space-y-1">
+            <div className="space-y-3">
               {group.items.map((item) => {
-                  const hasChildren = Boolean(item.children?.length);
-                  const isActive = isItemActive(item);
-                  const hasActiveChild = item.children?.some((child) =>
-                    isChildActive(child.href)
-                  );
-                  const expanded = isExpanded(item);
+                const hasChildren = Boolean(item.children?.length);
+                const itemActive = isItemActive(item);
+                const childActive = item.children?.some((child) =>
+                  isChildActive(child.href)
+                );
+                const active = itemActive || childActive;
+                const isOpen = item.expandableKey
+                  ? expanded[item.expandableKey]
+                  : false;
 
-                  if (hasChildren) {
-                    return (
-                      <div
-                        key={item.href}
+                const ParentLink = (
+                  <Link
+                    href={item.href}
+                    onClick={() => toggleExpandable(item.expandableKey)}
+                    className={cn(
+                      "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-150",
+                      active
+                        ? "bg-blue-50 text-blue-700 border border-blue-100 font-medium before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-full before:bg-blue-500"
+                        : "font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900"
+                    )}
+                  >
+                    <div className="flex h-5 w-5 items-center justify-center">
+                      <item.icon
                         className={cn(
-                          "group rounded-xl transition-all duration-150",
-                          isActive || hasActiveChild
-                            ? "bg-slate-100/50"
-                            : "hover:bg-white/50"
+                          "h-4 w-4 flex-shrink-0",
+                          active ? "text-blue-600" : "text-gray-400"
                         )}
-                      >
-                        <div className="flex items-center">
-                          <Link
-                            href={item.href}
-                            onClick={() => toggleItem(item)}
-                            className={cn(
-                              "flex min-w-0 flex-1 items-center gap-3 rounded-xl px-3 py-2 text-[14px] transition-all duration-150",
-                              isActive || hasActiveChild
-                                ? "text-slate-900 font-semibold"
-                                : "text-slate-500 hover:text-slate-700"
-                            )}
-                          >
-                            <div className="flex h-5 w-5 items-center justify-center">
-                              <item.icon className="h-5 w-5" />
-                            </div>
-                            <span className="truncate">{item.label}</span>
-                          </Link>
-                        </div>
+                      />
+                    </div>
+                    <span className="truncate">{item.label}</span>
+                  </Link>
+                );
 
-                        {expanded && (
-                          <div className="space-y-1 pb-2">
-                            {item.children?.map((child) => {
-                              const childActive = isChildActive(child.href);
+                if (!hasChildren) {
+                  return <div key={item.href}>{ParentLink}</div>;
+                }
 
-                              return (
-                                <Link
-                                  key={child.href}
-                                  href={child.href}
-                                  className={cn(
-                                    "flex items-center gap-3 rounded-xl py-1.5 pl-8 pr-3 text-[13px] transition-all duration-150",
-                                    childActive
-                                      ? "text-slate-900 font-semibold"
-                                      : "text-slate-500 hover:text-slate-700 hover:bg-white/60"
-                                  )}
-                                >
-                                  {child.icon && (
-                                    <child.icon className="h-4 w-4 flex-shrink-0" />
-                                  )}
-                                  <span className="truncate">{child.label}</span>
-                                </Link>
-                              );
-                            })}
-                          </div>
-                        )}
+                return (
+                  <div key={item.href} className="space-y-1">
+                    {ParentLink}
+
+                    {isOpen && (
+                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-gray-200/60 pl-3">
+                        {item.children?.map((child) => {
+                          const isActive = isChildActive(child.href);
+
+                          return (
+                            <Link
+                              key={child.href}
+                              href={child.href}
+                              className={cn(
+                                "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900",
+                                isActive &&
+                                  "bg-blue-50/80 font-medium text-blue-700 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-full before:bg-blue-500"
+                              )}
+                            >
+                              <span className="truncate">{child.label}</span>
+                            </Link>
+                          );
+                        })}
                       </div>
-                    );
-                  }
-
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
-                        "group flex items-center gap-3 rounded-xl px-3 py-2 text-[14px] transition-all duration-150",
-                        isActive
-                          ? "bg-slate-100 text-slate-900 font-semibold"
-                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                      )}
-                    >
-                      <div className="flex h-5 w-5 items-center justify-center">
-                        <item.icon className="h-5 w-5" />
-                      </div>
-                      <span>{item.label}</span>
-                    </Link>
-                  );
-                })}
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
+          </section>
+        ))}
       </nav>
-
     </aside>
   );
 }
