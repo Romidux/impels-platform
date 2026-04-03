@@ -5,7 +5,7 @@ import Image from "next/image";
 import { ShoppingCart, Eye } from "lucide-react";
 import { useCartStore } from "@/lib/store";
 import { Product } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, checkIsOutOfStock } from "@/lib/utils";
 import { toast } from "sonner";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -28,7 +28,7 @@ export default function ProductCard({
   const [added, setAdded] = useState(false);
 
   const primaryImage = product.images?.find((img) => img.is_primary) || product.images?.[0];
-  const isOutOfStock = product.stock_status === "out_of_stock";
+  const isOutOfStock = checkIsOutOfStock(product);
 
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault();

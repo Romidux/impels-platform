@@ -1,9 +1,31 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { CartItem } from "./types";
+import { CartItem, Product } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
+}
+
+// ============================================================================
+// 🛒 CENTRALIZADOR DE STOCK (ÚNICA FUENTE DE VERDAD)
+// ============================================================================
+export function checkIsOutOfStock(product: Product): boolean {
+  if (!product.track_inventory) {
+    return false; // Inventario infinito
+  }
+  
+  if (product.allow_backorder) {
+    return false; // Se puede seguir vendiendo aunque sea < 0
+  }
+
+  if (product.has_variants && product.manage_stock_by_variant) {
+    // Si tiene variantes y maneja stock por variante, asumimos OOS si TODOS los seleccionables son <= 0
+    const totalVariantStock = product.variant_combinations?.reduce((acc, vc) => acc + (vc.stock || 0), 0) || 0;
+    return totalVariantStock <= 0;
+  }
+
+  // Stock base del producto simple
+  return (product.stock_quantity || 0) <= 0;
 }
 
 export function formatCurrency(

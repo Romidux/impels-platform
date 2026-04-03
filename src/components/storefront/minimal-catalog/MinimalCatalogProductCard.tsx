@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, checkIsOutOfStock } from "@/lib/utils";
 
 interface MinimalCatalogProductCardProps {
   product: Product;
@@ -18,7 +18,7 @@ export default function MinimalCatalogProductCard({
 }: MinimalCatalogProductCardProps) {
   const primaryImage = product.images?.find((img) => img.is_primary) || product.images?.[0];
   const hasSale = product.compare_at_price && product.compare_at_price > product.price;
-  const outOfStock = product.track_inventory && product.stock_status === "out_of_stock";
+  const outOfStock = checkIsOutOfStock(product);
 
   return (
     <div className="group relative animate-fade-in">

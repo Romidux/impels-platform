@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/lib/types";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, checkIsOutOfStock } from "@/lib/utils";
 
 interface ProductCardProps {
   product: Product;
@@ -20,7 +20,7 @@ export default function ProductCard({ product, storeSlug, currency }: ProductCar
       <div className="relative aspect-[4/5] bg-gray-50 overflow-hidden w-full rounded-sm shadow-sm transition-shadow duration-500 group-hover:shadow-xl group-hover:shadow-black/5">
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
-          {product.track_inventory && product.stock_status === "out_of_stock" ? (
+          {checkIsOutOfStock(product) ? (
             <span className="bg-neutral-50/90 backdrop-blur-sm text-neutral-400 text-[9px] font-medium px-2 py-0.5 rounded-md uppercase tracking-[0.12em] border border-neutral-100/50 shadow-none">
               Agotado
             </span>

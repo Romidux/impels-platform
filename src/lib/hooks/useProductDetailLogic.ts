@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { Product, ProductVariantCombination, CartItem, ProductOptionType } from "@/lib/types";
+import { checkIsOutOfStock } from "@/lib/utils";
 import { toast } from "sonner";
 
 interface UseProductDetailLogicProps {
@@ -55,7 +56,17 @@ export function useProductDetailLogic({ product, cartItems }: UseProductDetailLo
     
     // If we have variants but none is fully selected, we don't show "Out of stock" yet
     const needsSelection = hasVariants && !selectedVariant;
-    const outOfStock = !needsSelection && available <= 0 && !product.allow_backorder;
+    const isGlobalOOS = checkIsOutOfStock(product);
+    const isVariantOOS = selectedVariant ? (selectedVariant.stock <= 0 && !product.allow_backorder) : false;
+    
+    let outOfStock = false;
+    if (!needsSelection) {
+      if (hasVariants && product.manage_stock_by_variant) {
+        outOfStock = isVariantOOS;
+      } else {
+        outOfStock = isGlobalOOS;
+      }
+    }
 
     return {
       maxStock: baseStock,
