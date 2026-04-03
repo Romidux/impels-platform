@@ -53,13 +53,19 @@ export default async function DashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex">
+    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
       <OrderNotificationListener storeId={activeStore.id} />
-      <DashboardSidebar store={activeStore as import('@/lib/types').Store} />
-      <div className="flex-1 flex flex-col min-w-0 md:ml-64">
-        <DashboardHeader user={authUser} store={activeStore as import('@/lib/types').Store} />
-        <main className="flex-1 p-4 md:p-6 pb-20 md:pb-6 overflow-auto">{children}</main>
+      <DashboardHeader user={authUser} store={activeStore as import('@/lib/types').Store} />
+      
+      <div className="flex-1 flex min-w-0">
+        <DashboardSidebar store={activeStore as import('@/lib/types').Store} />
+        <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8 overflow-auto md:ml-64">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
       </div>
+      
       <BottomNav />
     </div>
   );

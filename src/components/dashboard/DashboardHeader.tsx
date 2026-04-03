@@ -2,27 +2,13 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Bell, LogOut, User, ChevronDown, ExternalLink, ChevronRight } from "lucide-react";
+import { Bell, LogOut, User, ChevronDown, Zap } from "lucide-react";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, AuthUser } from "@/lib/types";
-import { getStoreUrl } from "@/lib/utils";
+import { getStoreUrl, cn } from "@/lib/utils";
 import GlobalSearch from "@/components/dashboard/GlobalSearch";
-
-/* ─── Breadcrumb label map ─── */
-const ROUTE_LABELS: Record<string, string> = {
-  "/dashboard": "Dashboard",
-  "/dashboard/products": "Productos",
-  "/dashboard/products/new": "Nuevo producto",
-  "/dashboard/categories": "Categorías",
-  "/dashboard/inventory": "Inventario",
-  "/dashboard/orders": "Pedidos",
-  "/dashboard/orders/new": "Nuevo pedido",
-  "/dashboard/customers": "Clientes",
-  "/dashboard/store": "Mi Tienda",
-  "/dashboard/team": "Equipo",
-  "/dashboard/plan": "Plan",
-};
 
 export default function DashboardHeader({
   user,
@@ -43,73 +29,54 @@ export default function DashboardHeader({
     router.refresh();
   };
 
-  // Build breadcrumbs
-  const segments = pathname.split("/").filter(Boolean);
-  const breadcrumbs: { label: string; href: string }[] = [];
-  let currentPath = "";
-  for (const seg of segments) {
-    currentPath += `/${seg}`;
-    const label = ROUTE_LABELS[currentPath];
-    if (label) {
-      breadcrumbs.push({ label, href: currentPath });
-    }
-  }
-
   return (
-    <header className="sticky top-0 z-30 h-16 bg-white border-b border-gray-200 px-4 flex items-center justify-between shadow-sm md:shadow-none transition-shadow">
-      {/* Search / Breadcrumbs */}
-      <div className="flex items-center flex-1 gap-4">
-        {/* Mobile menu trigger is inside sidebar component, we just need space here or breadcrumbs */}
-        <nav className="hidden sm:flex items-center text-sm font-medium text-gray-500 whitespace-nowrap">
-          <span className="text-gray-400">Tienda</span>
-          {breadcrumbs.map((crumb, i) => (
-            <div key={crumb.href} className="flex items-center">
-              <ChevronRight className="w-4 h-4 mx-1 text-gray-300" />
-              <span className={i === breadcrumbs.length - 1 ? "text-gray-900 font-semibold" : ""}>
-                {crumb.label}
-              </span>
-            </div>
-          ))}
-        </nav>
+    <header className="sticky top-0 z-50 h-14 bg-slate-950 border-b border-slate-800 px-4 flex items-center justify-between text-white">
+      {/* Left: Logo */}
+      <div className="flex-1 flex items-center min-w-0">
+        <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
+          <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-600/20">
+            <Zap className="w-4 h-4 text-white" />
+          </div>
+          <div className="hidden lg:block">
+            <span className="font-display font-bold text-base text-white">
+              Impels
+            </span>
+            <span className="text-brand-400 font-display font-bold text-base ml-0.5">
+              Commerce
+            </span>
+          </div>
+        </Link>
       </div>
 
-      <div className="flex items-center gap-3">
+      {/* Center: Search */}
+      <div className="flex-1 max-w-xl px-4">
         <GlobalSearch storeId={store.id} />
-        
-        <a
-          href={getStoreUrl(store.slug)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 text-sm font-semibold text-brand-700 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors group border border-brand-200/50"
-        >
-          <ExternalLink className="w-4 h-4 text-brand-500 group-hover:text-brand-700 transition-colors" />
-          <span className="group-hover:translate-x-0.5 transition-transform">
-            Ver tienda
-          </span>
-        </a>
+      </div>
 
+      {/* Right: Actions */}
+      <div className="flex-1 flex items-center justify-end gap-2">
         {/* Notifications */}
-        <button className="relative p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0">
+        <button className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0">
           <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-red-500 border-2 border-white"></span>
+          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500 border-2 border-slate-950"></span>
         </button>
 
-        <div className="relative">
+        <div className="relative ml-1">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 hover:bg-gray-50 pl-2 pr-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-2 hover:bg-slate-800 px-2 py-1.5 rounded-lg transition-colors"
           >
-            <div className="w-7 h-7 rounded-full gradient-brand flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full gradient-brand flex items-center justify-center border border-slate-700">
               <span className="text-white text-xs font-bold">
                 {user.email?.charAt(0).toUpperCase()}
               </span>
             </div>
-            <div className="hidden sm:block text-left">
-              <p className="text-xs font-medium text-slate-700 truncate max-w-[140px]">
+            <div className="hidden md:block text-left">
+              <p className="text-xs font-medium text-slate-200 truncate max-w-[120px]">
                 {user.email}
               </p>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
           </button>
 
           {menuOpen && (

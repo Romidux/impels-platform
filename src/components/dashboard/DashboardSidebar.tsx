@@ -2,30 +2,34 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import {
   LayoutDashboard,
   Package,
-  Tags,
-  Warehouse,
   ShoppingCart,
   Users,
-  Settings,
   Ticket,
   UserCog,
   CreditCard,
-  ExternalLink,
-  Zap,
   Store as StoreIcon,
+  ChevronDown,
+  ChevronRight,
+  ExternalLink,
 } from "lucide-react";
 import { cn, getStoreUrl } from "@/lib/utils";
 import { Store } from "@/lib/types";
 
-/* ─── Navigation Structure ─── */
+interface NavChild {
+  label: string;
+  href: string;
+}
+
 interface NavItem {
   label: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
   exact?: boolean;
+  children?: NavChild[];
 }
 
 interface NavGroup {
@@ -38,7 +42,7 @@ const navGroups: NavGroup[] = [
     title: "GENERAL",
     items: [
       {
-        label: "Dashboard",
+        label: "Inicio",
         href: "/dashboard",
         icon: LayoutDashboard,
         exact: true,
@@ -46,19 +50,25 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    title: "CATÁLOGO",
+    title: "CATALOGO",
     items: [
-      { label: "Productos", href: "/dashboard/products", icon: Package },
-      { label: "Categorías", href: "/dashboard/categories", icon: Tags },
-      { label: "Inventario", href: "/dashboard/inventory", icon: Warehouse },
+      {
+        label: "Productos",
+        href: "/dashboard/products",
+        icon: Package,
+        children: [
+          { label: "Categorias", href: "/dashboard/categories" },
+          { label: "Inventario", href: "/dashboard/inventory" },
+        ],
+      },
     ],
   },
   {
     title: "VENTAS",
     items: [
       { label: "Pedidos", href: "/dashboard/orders", icon: ShoppingCart },
-      { label: "Cupones", href: "/dashboard/coupons", icon: Ticket },
       { label: "Clientes", href: "/dashboard/customers", icon: Users },
+      { label: "Cupones", href: "/dashboard/coupons", icon: Ticket },
     ],
   },
   {
@@ -79,124 +89,159 @@ const navGroups: NavGroup[] = [
 export default function DashboardSidebar({ store }: { store: Store }) {
   const pathname = usePathname();
   const storeUrl = getStoreUrl(store.slug);
+  const [catalogOpen, setCatalogOpen] = useState(false);
+
+  const isItemActive = (item: NavItem) =>
+    item.exact ? pathname === item.href : pathname.startsWith(item.href);
+
+  const isChildActive = (href: string) => pathname.startsWith(href);
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-gradient-to-b from-slate-900 to-slate-950 flex flex-col z-40 hidden md:flex">
-      {/* Logo area */}
-      <div className="p-5 border-b border-slate-700/50">
-        <Link href="/dashboard" className="flex items-center gap-2.5 mb-4">
-          <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-600/20">
-            <Zap className="w-4 h-4 text-white" />
-          </div>
-          <div>
-            <span className="font-display font-bold text-base text-white">
-              Impels
-            </span>
-            <span className="text-brand-400 font-display font-bold text-base ml-0.5">
-              Commerce
-            </span>
-          </div>
-        </Link>
-
-        {/* Store pill — premium */}
-        <div className="bg-slate-800/60 border border-slate-700/50 rounded-xl p-3 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-brand-600 flex items-center justify-center flex-shrink-0 shadow-md shadow-brand-600/20">
-            <span className="text-white font-bold text-sm">
-              {store.name.charAt(0).toUpperCase()}
-            </span>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-semibold text-sm text-white truncate">
+    <aside className="fixed left-0 top-14 bottom-0 z-40 hidden w-64 flex-col border-r border-slate-200/80 bg-gradient-to-b from-white via-white to-slate-50/80 shadow-[10px_0_28px_rgba(15,23,42,0.04)] md:flex">
+      <div className="px-4 py-4 pt-5 pb-2">
+        <div className="flex items-center justify-between gap-2 px-2 py-1.5">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-slate-950 text-white shadow-sm flex-shrink-0">
+              <StoreIcon className="h-5 w-5" />
+            </div>
+            <p className="truncate font-bold text-[16px] text-slate-900 leading-tight tracking-tight">
               {store.name}
             </p>
-            <p className="text-xs text-slate-400 truncate">
-              {storeUrl.replace(/^https?:\/\//, "")}
-            </p>
           </div>
+          <a
+            href={storeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-colors flex-shrink-0"
+            title="Ver tienda"
+          >
+            <ExternalLink className="h-4 w-4" />
+          </a>
         </div>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-5">
-        {navGroups.map((group, groupIdx) => (
-          <div key={group.title}>
-            {groupIdx > 0 && (
-              <div className="border-t border-slate-800 mb-4" />
-            )}
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">
-              {group.title}
-            </p>
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const isActive = item.exact
-                  ? pathname === item.href
-                  : pathname.startsWith(item.href);
+      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
+        {navGroups.map((group) => {
+          const groupActive = group.items.some(
+            (item) =>
+              isItemActive(item) ||
+              item.children?.some((child) => isChildActive(child.href))
+          );
 
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
-                      "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-200 group",
-                      isActive
-                        ? "bg-indigo-600 text-white shadow-sm"
-                        : "text-slate-400 hover:text-white hover:bg-slate-800"
-                    )}
-                  >
-                    <item.icon
+          return (
+            <div key={group.title} className="space-y-1">
+              {group.items.map((item) => {
+                  const hasChildren = Boolean(item.children?.length);
+                  const isActive = isItemActive(item);
+                  const hasActiveChild = item.children?.some((child) =>
+                    isChildActive(child.href)
+                  );
+                  const isExpanded = hasChildren && catalogOpen;
+
+                  if (hasChildren) {
+                    return (
+                      <div
+                        key={item.href}
+                        className={cn(
+                          "group rounded-xl transition-all duration-150",
+                          isActive || hasActiveChild
+                            ? "bg-slate-100"
+                            : "hover:bg-slate-50"
+                        )}
+                      >
+                        <div className="flex items-center gap-2 px-1 py-0.5">
+                          <Link
+                            href={item.href}
+                            className={cn(
+                              "flex min-w-0 flex-1 items-center gap-3 rounded-xl px-2 py-2 text-[14px] transition-all duration-150",
+                              isActive || hasActiveChild
+                                ? "text-slate-900 font-semibold"
+                                : "text-slate-500 hover:text-slate-700"
+                            )}
+                          >
+                            <div className="flex h-5 w-5 items-center justify-center">
+                              <item.icon className="h-5 w-5" />
+                            </div>
+                            <span className="truncate">{item.label}</span>
+                          </Link>
+
+                          <button
+                            type="button"
+                            onClick={() => setCatalogOpen((current) => !current)}
+                            className={cn(
+                              "flex h-7 w-7 items-center justify-center rounded-lg transition-colors",
+                              isActive || hasActiveChild
+                                ? "text-slate-900 hover:bg-slate-200"
+                                : "text-slate-400 hover:bg-slate-200 hover:text-slate-600"
+                            )}
+                          >
+                            {isExpanded ? (
+                              <ChevronDown className="h-3.5 w-3.5" />
+                            ) : (
+                              <ChevronRight className="h-3.5 w-3.5" />
+                            )}
+                          </button>
+                        </div>
+
+                        {isExpanded && (
+                          <div className="px-4 pb-2 pl-[3.35rem]">
+                            <div className="space-y-1">
+                              {item.children?.map((child) => {
+                                const childActive = isChildActive(child.href);
+
+                                return (
+                                  <Link
+                                    key={child.href}
+                                    href={child.href}
+                                    className={cn(
+                                      "group flex items-center gap-2.5 rounded-xl px-3 py-2 text-[13px] font-medium transition-all duration-200",
+                                      childActive
+                                        ? "bg-brand-50/80 text-brand-700"
+                                        : "text-slate-500 hover:bg-slate-50 hover:text-slate-900"
+                                    )}
+                                  >
+                                    <span
+                                      className={cn(
+                                        "h-1.5 w-1.5 rounded-full transition-colors",
+                                        childActive
+                                          ? "bg-brand-600"
+                                          : "bg-slate-300 group-hover:bg-slate-500"
+                                      )}
+                                    />
+                                    <span>{child.label}</span>
+                                  </Link>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
                       className={cn(
-                        "w-4 h-4 flex-shrink-0",
+                        "group flex items-center gap-3 rounded-xl px-3 py-2 text-[14px] transition-all duration-150",
                         isActive
-                          ? "text-white"
-                          : "text-slate-500 group-hover:text-slate-300"
+                          ? "bg-slate-100 text-slate-900 font-semibold"
+                          : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
                       )}
-                    />
-                    {item.label}
-                  </Link>
-                );
-              })}
+                    >
+                      <div className="flex h-5 w-5 items-center justify-center">
+                        <item.icon className="h-5 w-5" />
+                      </div>
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </nav>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-slate-700/50 space-y-2">
-        {/* CTA: Ver mi tienda — primary button */}
-        <a
-          href={storeUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 w-full px-3 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-xl hover:bg-brand-700 transition-all duration-200 shadow-lg shadow-brand-600/25"
-        >
-          <ExternalLink className="w-4 h-4" />
-          Ver mi tienda
-        </a>
-
-        {/* Plan badge */}
-        <div className="px-3 py-2.5 bg-slate-800/60 border border-slate-700/50 rounded-xl flex items-center justify-between">
-          <span className="text-xs font-medium text-slate-400">Plan</span>
-          <span
-            className={cn(
-              "text-xs font-bold px-2.5 py-0.5 rounded-full",
-              store.plan === "pro"
-                ? "bg-brand-600/20 text-brand-300 border border-brand-500/30"
-                : "bg-slate-700 text-slate-300"
-            )}
-          >
-            {store.plan === "pro" ? "Pro ✨" : "Gratis"}
-          </span>
-        </div>
-        {store.plan === "free" && (
-          <Link
-            href="/dashboard/plan"
-            className="flex items-center justify-center gap-1.5 bg-gradient-to-r from-brand-600 to-purple-600 text-white text-xs font-bold px-3 py-2.5 rounded-xl hover:opacity-90 transition-all duration-200 w-full shadow-lg shadow-brand-600/20"
-          >
-            <Zap className="w-3 h-3" />
-            Upgrade a Pro
-          </Link>
-        )}
-      </div>
     </aside>
   );
 }
