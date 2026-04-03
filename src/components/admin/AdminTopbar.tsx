@@ -2,22 +2,26 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { Bell, LogOut, Search, ChevronRight, Store, User, Settings } from "lucide-react";
+import {
+  Bell,
+  LogOut,
+  Search,
+  ChevronRight,
+  Store,
+  CreditCard,
+  LifeBuoy,
+  Megaphone,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { AuthUser } from "@/lib/types";
 
-/* ─── Breadcrumb label map ─── */
 const ROUTE_LABELS: Record<string, string> = {
-  "/admin": "Overview",
+  "/admin": "Resumen",
   "/admin/stores": "Tiendas",
-  "/admin/billing": "Billing",
-  "/admin/analytics": "Analytics",
-  "/admin/system/audit": "Audit Log",
-  "/admin/system/flags": "Feature Flags",
-  "/admin/system/templates": "Templates",
-  "/admin/system/announcements": "Anuncios",
-  "/admin/settings": "Configuración",
+  "/admin/billing": "Facturacion",
+  "/admin/support": "Soporte",
+  "/admin/announcements": "Anuncios",
 };
 
 export default function AdminTopbar({ user }: { user: AuthUser }) {
@@ -38,7 +42,6 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
     return () => document.removeEventListener("keydown", down);
   }, []);
 
-  // Close search when route changes
   useEffect(() => {
     setSearchOpen(false);
     setSearchQuery("");
@@ -47,12 +50,11 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
   const handleLogout = async () => {
     const supabase = createClient();
     await supabase.auth.signOut();
-    toast.success("Sesión cerrada");
+    toast.success("Sesion cerrada");
     router.push("/login");
     router.refresh();
   };
 
-  // Build breadcrumbs
   const segments = pathname.split("/").filter(Boolean);
   const breadcrumbs: { label: string; href: string }[] = [];
   let currentPath = "";
@@ -64,14 +66,15 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
     }
   }
 
-  // Check for store detail pages
   if (pathname.match(/^\/admin\/stores\/[^/]+$/)) {
     breadcrumbs.push({ label: "Detalle", href: pathname });
+  }
+  if (pathname.match(/^\/admin\/support\/[^/]+$/)) {
+    breadcrumbs.push({ label: "Ticket", href: pathname });
   }
 
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30">
-      {/* Left: breadcrumbs */}
       <div className="flex items-center gap-1.5 text-sm">
         {breadcrumbs.map((bc, i) => (
           <div key={bc.href} className="flex items-center gap-1.5">
@@ -90,24 +93,21 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
         ))}
       </div>
 
-      {/* Right */}
       <div className="flex items-center gap-3">
-        {/* Search placeholder */}
-        <button 
+        <button
           onClick={() => setSearchOpen(true)}
           className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 transition-colors rounded-lg text-sm text-slate-400 border border-slate-100 w-64 text-left"
         >
           <Search className="w-4 h-4" />
           <span className="flex-1">Buscar...</span>
           <kbd className="text-[10px] bg-white border border-slate-200 rounded px-1.5 py-0.5 text-slate-400 font-mono">
-            ⌘K
+            Ctrl K
           </kbd>
         </button>
 
-        {/* Search Modal */}
         {searchOpen && (
           <div className="fixed inset-0 z-50 flex items-start justify-center pt-[10vh]">
-            <div 
+            <div
               className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
               onClick={() => setSearchOpen(false)}
             />
@@ -117,7 +117,7 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
                 <input
                   type="text"
                   autoFocus
-                  placeholder="Buscar tiendas, usuarios, o ajustes..."
+                  placeholder="Buscar tiendas o accesos rapidos del admin..."
                   className="flex-1 bg-transparent border-none outline-none text-slate-900 placeholder:text-slate-400"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
@@ -131,9 +131,9 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
                 <div className="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-widest">
                   Resultados sugeridos
                 </div>
-                
+
                 <div className="mt-1 space-y-0.5">
-                  <button 
+                  <button
                     onClick={() => router.push("/admin/stores")}
                     className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
                   >
@@ -141,33 +141,80 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
                       <Store className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-700">Explorar todas las tiendas</p>
-                      <p className="text-xs text-slate-500">Módulo de gestión</p>
+                      <p className="text-sm font-semibold text-slate-700">
+                        Explorar todas las tiendas
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Modulo de gestion
+                      </p>
                     </div>
                   </button>
 
-                  <button 
-                    onClick={() => router.push("/admin/settings")}
+                  <button
+                    onClick={() => router.push("/admin/billing")}
                     className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
                   >
-                    <div className="bg-slate-100 text-slate-600 p-1.5 rounded-lg group-hover:bg-slate-200 transition-colors">
-                      <Settings className="w-4 h-4" />
+                    <div className="bg-emerald-50 text-emerald-600 p-1.5 rounded-lg group-hover:bg-emerald-100 transition-colors">
+                      <CreditCard className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-700">Configuración global</p>
-                      <p className="text-xs text-slate-500">Ajustes de la plataforma</p>
+                      <p className="text-sm font-semibold text-slate-700">
+                        Revisar facturacion
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Planes e ingresos de plataforma
+                      </p>
                     </div>
                   </button>
-                  
+
+                  <button
+                    onClick={() => router.push("/admin/support")}
+                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+                  >
+                    <div className="bg-amber-50 text-amber-600 p-1.5 rounded-lg group-hover:bg-amber-100 transition-colors">
+                      <LifeBuoy className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700">
+                        Abrir soporte
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Tickets y seguimiento operativo
+                      </p>
+                    </div>
+                  </button>
+
+                  <button
+                    onClick={() => router.push("/admin/announcements")}
+                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+                  >
+                    <div className="bg-indigo-50 text-indigo-600 p-1.5 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                      <Megaphone className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700">
+                        Gestionar anuncios
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        Comunicados visibles para comercios
+                      </p>
+                    </div>
+                  </button>
                 </div>
               </div>
-              
+
               <div className="bg-slate-50 px-4 py-2.5 border-t border-slate-100 flex items-center gap-4 text-xs text-slate-500">
                 <span className="flex items-center gap-1.5">
-                  <kbd className="bg-white border shadow-sm rounded px-1.5 py-0.5">↑↓</kbd> para navegar
+                  <kbd className="bg-white border shadow-sm rounded px-1.5 py-0.5">
+                    ↑↓
+                  </kbd>
+                  para navegar
                 </span>
                 <span className="flex items-center gap-1.5">
-                  <kbd className="bg-white border shadow-sm rounded px-1.5 py-0.5">↵</kbd> para seleccionar
+                  <kbd className="bg-white border shadow-sm rounded px-1.5 py-0.5">
+                    ↵
+                  </kbd>
+                  para seleccionar
                 </span>
               </div>
             </div>
@@ -216,7 +263,7 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
                     className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     <LogOut className="w-4 h-4" />
-                    Cerrar sesión
+                    Cerrar sesion
                   </button>
                 </div>
               </div>
