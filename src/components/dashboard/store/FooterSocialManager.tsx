@@ -8,6 +8,7 @@ import {
   Instagram,
   Facebook,
   Twitter,
+  Sparkles,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -67,7 +68,6 @@ export default function FooterSocialManager({
     const supabase = createClient();
 
     try {
-      // Save social links to store_settings
       await supabase.from("store_settings").upsert(
         {
           store_id: store.id,
@@ -79,7 +79,6 @@ export default function FooterSocialManager({
         { onConflict: "store_id" }
       );
 
-      // Save footer labels to branding
       await supabase.from("store_branding").upsert(
         {
           store_id: store.id,
@@ -89,10 +88,10 @@ export default function FooterSocialManager({
         { onConflict: "store_id" }
       );
 
-      toast.success("Footer y redes guardados ✓");
+      toast.success("Footer y redes guardados");
       router.refresh();
     } catch {
-      toast.error("Error al guardar");
+      toast.error("Error al guardar footer y redes");
     } finally {
       setSaving(false);
     }
@@ -123,19 +122,39 @@ export default function FooterSocialManager({
       icon: Twitter,
       placeholder: "https://x.com/tutienda",
     },
-  ];
+  ] as const;
 
   return (
-    <div className="space-y-5 max-w-2xl">
-      {/* Social Links */}
-      <DashCard header={{ title: "Redes sociales", icon: <Globe className="w-5 h-5 text-green-600" /> }}>
+    <div className="max-w-3xl space-y-5">
+      <DashCard className="border-brand-100 bg-brand-50/50">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-sm">
+            <Sparkles className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              Cierre de marca
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-slate-600">
+              Completa tus redes y los textos del footer para que tu tienda se vea mas consistente y profesional.
+            </p>
+          </div>
+        </div>
+      </DashCard>
+
+      <DashCard
+        header={{
+          title: "Redes sociales",
+          icon: <Globe className="h-5 w-5 text-emerald-600" />,
+        }}
+      >
         <div className="space-y-4">
           {socialFields.map(({ key, label, icon, placeholder }) => (
             <DashInput
               key={key}
               label={label}
               icon={icon}
-              value={form[key as keyof typeof form]}
+              value={form[key]}
               onChange={(e) => handleChange(key, e.target.value)}
               placeholder={placeholder}
               type="url"
@@ -144,28 +163,30 @@ export default function FooterSocialManager({
         </div>
       </DashCard>
 
-      {/* Footer Content */}
       <DashCard
-        header={{ title: "Contenido del footer", icon: <Globe className="w-5 h-5 text-purple-500" /> }}
+        header={{
+          title: "Textos del footer",
+          icon: <Globe className="h-5 w-5 text-violet-600" />,
+        }}
       >
         <div className="space-y-4">
           <DashInput
-            label="Título sección categorías"
+            label="Titulo de categorias"
             value={form.footer_categories_label}
             onChange={(e) =>
               handleChange("footer_categories_label", e.target.value)
             }
-            placeholder="Categorías"
-            hint="Título que aparece en la columna de categorías del footer"
+            placeholder="Categorias"
+            hint="Titulo que aparece en la columna de categorias del footer."
           />
           <DashInput
-            label="Título sección contacto"
+            label="Titulo de contacto"
             value={form.footer_contact_label}
             onChange={(e) =>
               handleChange("footer_contact_label", e.target.value)
             }
             placeholder="Contacto"
-            hint="Título que aparece en la columna de contacto del footer"
+            hint="Titulo que aparece en la columna de contacto del footer."
           />
         </div>
       </DashCard>
@@ -176,7 +197,7 @@ export default function FooterSocialManager({
         size="lg"
         className="w-full"
       >
-        <Save className="w-4 h-4" />
+        <Save className="h-4 w-4" />
         Guardar footer y redes
       </DashButton>
     </div>

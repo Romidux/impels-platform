@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Home, Save, Type, Image } from "lucide-react";
+import { Home, Save, Type, Image, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, StoreSettings, StoreBranding } from "@/lib/types";
 import { DashCard } from "@/components/dashboard/ui/DashCard";
 import { DashButton } from "@/components/dashboard/ui/DashButton";
-import { DashInput, DashTextarea } from "@/components/dashboard/ui/DashInput";
+import { DashInput } from "@/components/dashboard/ui/DashInput";
 
 interface HomepageManagerProps {
   store: Store;
@@ -59,7 +59,6 @@ export default function HomepageManager({
     const supabase = createClient();
 
     try {
-      // Update hero text in settings
       await supabase.from("store_settings").upsert(
         {
           store_id: store.id,
@@ -69,7 +68,6 @@ export default function HomepageManager({
         { onConflict: "store_id" }
       );
 
-      // Update promo banner in branding
       await supabase.from("store_branding").upsert(
         {
           store_id: store.id,
@@ -81,81 +79,83 @@ export default function HomepageManager({
         { onConflict: "store_id" }
       );
 
-      toast.success("Página de inicio guardada ✓");
+      toast.success("Portada guardada");
       router.refresh();
     } catch {
-      toast.error("Error al guardar");
+      toast.error("Error al guardar la portada");
     } finally {
       setSaving(false);
     }
   };
 
-  const previewColor = settings?.primary_color || "#166534";
-
   return (
-    <div className="space-y-5 max-w-4xl">
-      {/* Hero text */}
-      <DashCard header={{ title: "Hero de la tienda", icon: <Type className="w-5 h-5 text-green-600" /> }}>
+    <div className="max-w-4xl space-y-5">
+      <DashCard className="border-brand-100 bg-brand-50/50">
+        <div className="flex items-start gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-sm">
+            <Sparkles className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-slate-900">
+              Mensaje de portada
+            </p>
+            <p className="mt-1 text-sm leading-relaxed text-slate-600">
+              Aqui controlas el primer impacto de tu tienda: el texto principal de bienvenida y el banner promocional.
+            </p>
+          </div>
+        </div>
+      </DashCard>
+
+      <DashCard
+        header={{
+          title: "Hero principal",
+          icon: <Type className="h-5 w-5 text-emerald-600" />,
+        }}
+      >
         <div className="space-y-4">
           <DashInput
-            label="Título principal"
+            label="Titulo principal"
             value={heroTitle}
             onChange={(e) => setHeroTitle(e.target.value)}
             placeholder={`Bienvenidos a ${store.name}`}
           />
           <DashInput
-            label="Subtítulo"
+            label="Subtitulo"
             value={heroSubtitle}
             onChange={(e) => setHeroSubtitle(e.target.value)}
-            placeholder="Los mejores productos al mejor precio"
+            placeholder="Presenta tu propuesta de valor en una frase clara."
           />
-        </div>
-
-        {/* Live Preview */}
-        <div className="mt-5 rounded-xl border border-gray-200 overflow-hidden bg-gray-50">
-          <div className="px-8 py-10 text-center">
-            <h3 className="font-display text-xl font-bold text-slate-900">
-              {heroTitle || `Bienvenidos a ${store.name}`}
-            </h3>
-            <p className="text-sm text-slate-500 mt-1 mb-4">
-              {heroSubtitle || "Los mejores productos al mejor precio"}
-            </p>
-            <button
-              className="text-white text-sm font-semibold px-5 py-2 rounded-lg"
-              style={{ backgroundColor: previewColor }}
-            >
-              Ver catálogo
-            </button>
-          </div>
         </div>
       </DashCard>
 
-      {/* Promo Banner */}
       <DashCard
-        header={{ title: "Banner promocional", icon: <Image className="w-5 h-5 text-purple-500" /> }}
+        header={{
+          title: "Banner promocional",
+          icon: <Image className="h-5 w-5 text-violet-600" />,
+        }}
       >
         <div className="space-y-4">
           <DashInput
-            label="Título del banner"
+            label="Titulo del banner"
             value={promoBannerTitle}
             onChange={(e) => setPromoBannerTitle(e.target.value)}
-            placeholder="¡Oferta especial!"
+            placeholder="Oferta especial"
           />
           <DashInput
-            label="Subtítulo"
+            label="Subtitulo"
             value={promoBannerSubtitle}
             onChange={(e) => setPromoBannerSubtitle(e.target.value)}
-            placeholder="Hasta 50% de descuento"
+            placeholder="Resume la promocion o mensaje que quieres destacar."
           />
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <DashInput
-              label="Texto del botón (CTA)"
+              label="Texto del boton"
               value={promoBannerCta}
               onChange={(e) => setPromoBannerCta(e.target.value)}
               placeholder="Comprar ahora"
             />
             <DashInput
-              label="URL del botón"
+              label="URL del boton"
               value={promoBannerUrlLink}
               onChange={(e) => setPromoBannerUrlLink(e.target.value)}
               placeholder="/store/tu-tienda"
@@ -170,8 +170,8 @@ export default function HomepageManager({
         size="lg"
         className="w-full"
       >
-        <Save className="w-4 h-4" />
-        Guardar página de inicio
+        <Save className="h-4 w-4" />
+        Guardar portada
       </DashButton>
     </div>
   );
