@@ -38,9 +38,9 @@ export function DashInput({
         )}
         <input
           id={inputId}
+          style={Icon ? { paddingLeft: "2.5rem" } : undefined}
           className={cn(
             "dash-input",
-            Icon && "pl-10",
             error && "border-red-300 focus:border-red-400 focus:ring-red-100",
             className
           )}

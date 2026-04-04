@@ -7,9 +7,10 @@ interface ProductGridProps {
   products: Product[];
   storeSlug: string;
   currency: string;
+  imageRatio?: "1:1" | "4:5";
 }
 
-export default function ProductGrid({ title, products, storeSlug, currency }: ProductGridProps) {
+export default function ProductGrid({ title, products, storeSlug, currency, imageRatio }: ProductGridProps) {
   if (!products || products.length === 0) {
     return (
       <div className="text-center py-24 w-full">
@@ -33,6 +34,7 @@ export default function ProductGrid({ title, products, storeSlug, currency }: Pr
             product={product}
             storeSlug={storeSlug}
             currency={currency}
+            imageRatio={imageRatio}
           />
         ))}
       </div>

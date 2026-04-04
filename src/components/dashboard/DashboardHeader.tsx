@@ -30,7 +30,7 @@ export default function DashboardHeader({
   };
 
   return (
-    <header className="sticky top-0 z-50 h-14 bg-slate-950 border-b border-slate-800 px-4 flex items-center justify-between text-white">
+    <header className="sticky top-0 z-50 h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between">
       {/* Left: Logo */}
       <div className="flex-1 flex items-center min-w-0">
         <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
@@ -38,10 +38,10 @@ export default function DashboardHeader({
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div className="hidden lg:block">
-            <span className="font-display font-bold text-base text-white">
+            <span className="font-display font-bold text-base text-slate-900">
               Impels
             </span>
-            <span className="text-brand-400 font-display font-bold text-base ml-0.5">
+            <span className="text-brand-600 font-display font-bold text-base ml-0.5">
               Commerce
             </span>
           </div>
@@ -56,27 +56,27 @@ export default function DashboardHeader({
       {/* Right: Actions */}
       <div className="flex-1 flex items-center justify-end gap-2">
         {/* Notifications */}
-        <button className="relative p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors flex-shrink-0">
+        <button className="relative p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0">
           <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500 border-2 border-slate-950"></span>
+          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500 border-2 border-white"></span>
         </button>
 
         <div className="relative ml-1">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 hover:bg-slate-800 px-2 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-2 hover:bg-slate-100 px-2 py-1.5 rounded-lg transition-colors"
           >
-            <div className="w-7 h-7 rounded-full gradient-brand flex items-center justify-center border border-slate-700">
+            <div className="w-7 h-7 rounded-full gradient-brand flex items-center justify-center border border-slate-200">
               <span className="text-white text-xs font-bold">
                 {user.email?.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="hidden md:block text-left">
-              <p className="text-xs font-medium text-slate-200 truncate max-w-[120px]">
+              <p className="text-xs font-medium text-slate-700 truncate max-w-[120px]">
                 {user.email}
               </p>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
 
           {menuOpen && (

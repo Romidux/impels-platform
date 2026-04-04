@@ -259,6 +259,7 @@ export default function MinimalProductDetailClient({
             products={relatedProducts}
             storeSlug={storeSlug}
             currency={currency}
+            imageRatio={settings?.product_image_ratio}
           />
         </div>
       )}

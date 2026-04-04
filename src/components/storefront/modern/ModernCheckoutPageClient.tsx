@@ -15,6 +15,7 @@ import {
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { PhoneInput } from "@/components/ui/PhoneInput";
+import { useEffect } from "react";
 
 interface CheckoutPageClientProps {
   storeId: string;
@@ -55,6 +56,13 @@ export default function CheckoutPageClient({
     subtotal,
     discountAmount
   } = useCheckoutLogic({ storeId, storeSlug, whatsappNumber, currency });
+
+  // Auto-select when only one option is available
+  useEffect(() => {
+    if (shippingMethods.length === 1) handleChange("shipping_method", shippingMethods[0]);
+    if (paymentMethods.length === 1) handleChange("payment_method", paymentMethods[0]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!mounted) return null;
 
@@ -187,11 +195,20 @@ export default function CheckoutPageClient({
               </div>
             </div>
 
+            {/* Shipping method */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Método de Envío / Retiro *
+                Método de Envío / Retiro {shippingMethods.length > 0 && "*"}
               </label>
-              <div className="relative">
+              {shippingMethods.length === 0 ? (
+                <p className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-400 italic bg-gray-50">
+                  A coordinar por chat
+                </p>
+              ) : shippingMethods.length === 1 ? (
+                <p className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 bg-gray-50">
+                  {shippingMethods[0]}
+                </p>
+              ) : (
                 <select
                   value={form.shipping_method}
                   onChange={(e) => handleChange("shipping_method", e.target.value)}
@@ -203,14 +220,23 @@ export default function CheckoutPageClient({
                     <option key={m} value={m}>{m}</option>
                   ))}
                 </select>
-              </div>
+              )}
             </div>
 
+            {/* Payment method */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Método de Pago *
+                Método de Pago {paymentMethods.length > 0 && "*"}
               </label>
-              <div className="relative">
+              {paymentMethods.length === 0 ? (
+                <p className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-400 italic bg-gray-50">
+                  A coordinar por chat
+                </p>
+              ) : paymentMethods.length === 1 ? (
+                <p className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 bg-gray-50">
+                  {paymentMethods[0]}
+                </p>
+              ) : (
                 <select
                   value={form.payment_method}
                   onChange={(e) => handleChange("payment_method", e.target.value)}
@@ -222,7 +248,7 @@ export default function CheckoutPageClient({
                     <option key={m} value={m}>{m}</option>
                   ))}
                 </select>
-              </div>
+              )}
             </div>
 
             <div>

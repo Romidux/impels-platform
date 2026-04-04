@@ -109,11 +109,11 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
       {/* Fake Search Bar Button */}
       <button
         onClick={() => setOpen(true)}
-        className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-900/50 hover:bg-slate-800 text-slate-400 rounded-lg text-sm transition-all border border-slate-800 hover:border-slate-700 w-full group"
+        className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-lg text-sm transition-all border border-slate-200 hover:border-slate-300 w-full group"
       >
-        <Search className="w-4 h-4 text-slate-500 group-hover:text-slate-300" />
-        <span className="flex-1 text-left">Buscar productos, órdenes, clientes...</span>
-        <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700 rounded shadow-sm">
+        <Search className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
+        <span className="flex-1 text-left text-slate-400">Buscar productos, órdenes, clientes...</span>
+        <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-white text-slate-400 border border-slate-300 rounded shadow-sm">
           <span className="text-xs">CTRL</span>K
         </kbd>
       </button>
@@ -121,7 +121,7 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
       {/* Mobile Search Button */}
       <button
         onClick={() => setOpen(true)}
-        className="md:hidden p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors"
+        className="md:hidden p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
       >
         <Search className="w-5 h-5" />
       </button>

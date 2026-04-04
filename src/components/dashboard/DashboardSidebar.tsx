@@ -33,6 +33,7 @@ interface NavItem {
 }
 
 interface NavGroup {
+  label?: string;
   items: NavItem[];
 }
 
@@ -48,6 +49,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Catálogo",
     items: [
       {
         label: "Productos",
@@ -62,6 +64,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Ventas",
     items: [
       { label: "Pedidos", href: "/dashboard/orders", icon: ShoppingCart },
       { label: "Clientes", href: "/dashboard/customers", icon: Users },
@@ -70,6 +73,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Tienda",
     items: [
       {
         label: "Mi Tienda",
@@ -87,6 +91,7 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    label: "Cuenta",
     items: [
       { label: "Equipo", href: "/dashboard/team", icon: UserCog },
       { label: "Plan", href: "/dashboard/plan", icon: CreditCard },
@@ -129,7 +134,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
       <div className="px-4 pb-2 pt-5">
         <div className="flex items-center justify-between gap-2 px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[12px] bg-blue-50 text-blue-600 shadow-sm">
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600 shadow-sm">
               <StoreIcon className="h-5 w-5" />
             </div>
             <p className="truncate text-[16px] font-bold leading-tight tracking-tight text-slate-900">
@@ -148,10 +153,15 @@ export default function DashboardSidebar({ store }: { store: Store }) {
         </div>
       </div>
 
-      <nav className="flex-1 space-y-2 overflow-y-auto px-3 py-3">
+      <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-3">
         {navGroups.map((group, groupIdx) => (
-          <section key={groupIdx} className="space-y-1">
-            <div className="space-y-1">
+          <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-4")}>
+            {group.label && (
+              <p className="px-3 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+                {group.label}
+              </p>
+            )}
+            <div className="space-y-0.5">
               {group.items.map((item) => {
                 const hasChildren = Boolean(item.children?.length);
                 const itemActive = isItemActive(item);
@@ -170,7 +180,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                     className={cn(
                       "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-150",
                       active
-                        ? "bg-blue-50 text-blue-700 border border-blue-100 font-medium before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-full before:bg-blue-500"
+                        ? "bg-brand-50 text-brand-700 border border-brand-100 font-medium before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-full before:bg-brand-600"
                         : "font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900"
                     )}
                   >
@@ -178,7 +188,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                       <item.icon
                         className={cn(
                           "h-4 w-4 flex-shrink-0",
-                          active ? "text-blue-600" : "text-gray-400"
+                          active ? "text-brand-600" : "text-gray-400"
                         )}
                       />
                     </div>
@@ -206,7 +216,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                               className={cn(
                                 "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900",
                                 isActive &&
-                                  "bg-blue-50/80 font-medium text-blue-700 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-full before:bg-blue-500"
+                                  "bg-brand-50/80 font-medium text-brand-700 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-full before:bg-brand-600"
                               )}
                             >
                               <span className="truncate">{child.label}</span>

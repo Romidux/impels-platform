@@ -33,9 +33,20 @@ export default function MarketingNav() {
       className={cn(
         "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
         scrolled
-          ? "glass border-b border-white/10 shadow-lg py-3"
+          ? "py-3"
           : "bg-transparent py-5"
       )}
+      style={
+        scrolled
+          ? {
+              background: "rgba(253,249,244,0.85)",
+              backdropFilter: "blur(24px)",
+              WebkitBackdropFilter: "blur(24px)",
+              borderBottom: "1px solid rgba(196,197,217,0.15)",
+              boxShadow: "0 4px 20px -4px rgba(28,28,25,0.08)",
+            }
+          : undefined
+      }
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}

@@ -14,6 +14,7 @@ import {
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { PhoneInput } from "@/components/ui/PhoneInput";
+import { useEffect } from "react";
 
 interface MinimalCheckoutPageClientProps {
   storeId: string;
@@ -54,6 +55,13 @@ export default function MinimalCheckoutPageClient({
     subtotal,
     discountAmount
   } = useCheckoutLogic({ storeId, storeSlug, whatsappNumber, currency });
+
+  // Auto-select when only one option is available
+  useEffect(() => {
+    if (shippingMethods.length === 1) handleChange("shipping_method", shippingMethods[0]);
+    if (paymentMethods.length === 1) handleChange("payment_method", paymentMethods[0]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   if (!mounted) return null;
 
@@ -172,34 +180,60 @@ export default function MinimalCheckoutPageClient({
                 </div>
 
                 <div className="space-y-4 pt-4 border-t border-gray-100">
+                  {/* Shipping method */}
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Método de Envío / Retiro *</label>
-                    <select
-                      value={form.shipping_method}
-                      onChange={(e) => handleChange("shipping_method", e.target.value)}
-                      className="w-full border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent cursor-pointer"
-                      required
-                    >
-                      <option value="" disabled>Selecciona una opción</option>
-                      {shippingMethods.map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
+                      Método de Envío / Retiro {shippingMethods.length > 0 && "*"}
+                    </label>
+                    {shippingMethods.length === 0 ? (
+                      <p className="py-3 border-b border-gray-200 text-sm text-gray-400 italic">
+                        A coordinar por chat
+                      </p>
+                    ) : shippingMethods.length === 1 ? (
+                      <p className="py-3 border-b border-gray-200 text-sm text-gray-900">
+                        {shippingMethods[0]}
+                      </p>
+                    ) : (
+                      <select
+                        value={form.shipping_method}
+                        onChange={(e) => handleChange("shipping_method", e.target.value)}
+                        className="w-full border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent cursor-pointer"
+                        required
+                      >
+                        <option value="" disabled>Selecciona una opción</option>
+                        {shippingMethods.map((m) => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                    )}
                   </div>
 
+                  {/* Payment method */}
                   <div className="space-y-2">
-                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Método de Pago *</label>
-                    <select
-                      value={form.payment_method}
-                      onChange={(e) => handleChange("payment_method", e.target.value)}
-                      className="w-full border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent cursor-pointer"
-                      required
-                    >
-                      <option value="" disabled>Selecciona una opción</option>
-                      {paymentMethods.map((m) => (
-                        <option key={m} value={m}>{m}</option>
-                      ))}
-                    </select>
+                    <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">
+                      Método de Pago {paymentMethods.length > 0 && "*"}
+                    </label>
+                    {paymentMethods.length === 0 ? (
+                      <p className="py-3 border-b border-gray-200 text-sm text-gray-400 italic">
+                        A coordinar por chat
+                      </p>
+                    ) : paymentMethods.length === 1 ? (
+                      <p className="py-3 border-b border-gray-200 text-sm text-gray-900">
+                        {paymentMethods[0]}
+                      </p>
+                    ) : (
+                      <select
+                        value={form.payment_method}
+                        onChange={(e) => handleChange("payment_method", e.target.value)}
+                        className="w-full border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors bg-transparent cursor-pointer"
+                        required
+                      >
+                        <option value="" disabled>Selecciona una opción</option>
+                        {paymentMethods.map((m) => (
+                          <option key={m} value={m}>{m}</option>
+                        ))}
+                      </select>
+                    )}
                   </div>
                 </div>
 

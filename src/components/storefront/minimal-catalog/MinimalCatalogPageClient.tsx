@@ -36,6 +36,7 @@ export default function MinimalCatalogPageClient({
 
   const primaryColor = settings?.primary_color || "#000000";
   const currency = settings?.currency || "Gs";
+  const imageRatio = settings?.product_image_ratio || "4:5";
 
   const activeCategoryName = useMemo(() => {
     if (activeSearch) return `Resultados para "${activeSearch}"`;
@@ -86,6 +87,7 @@ export default function MinimalCatalogPageClient({
                       product={product}
                       storeSlug={store.slug}
                       currency={currency}
+                      imageRatio={imageRatio}
                     />
                   ))}
                 </MinimalCatalogGrid>

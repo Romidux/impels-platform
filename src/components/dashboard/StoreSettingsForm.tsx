@@ -10,6 +10,9 @@ import {
   Save,
   CreditCard,
   ShoppingBag,
+  Check,
+  X,
+  Plus,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -22,6 +25,7 @@ import {
   DashSelect,
 } from "@/components/dashboard/ui/DashInput";
 import { PhoneInput } from "@/components/ui/PhoneInput";
+import { cn } from "@/lib/utils";
 
 type StoreSettingsFormMode = "all" | "identity" | "commerce";
 
@@ -29,6 +33,140 @@ interface StoreSettingsFormProps {
   store: StoreType;
   settings?: StoreSettings;
   mode?: StoreSettingsFormMode;
+}
+
+const PAYMENT_OPTIONS = [
+  "Efectivo",
+  "Transferencia",
+  "Tarjeta",
+  "Giro / Billetera",
+  "A convenir",
+];
+
+const SHIPPING_OPTIONS = [
+  "Delivery",
+  "Retiro en tienda",
+  "Envío por transportadora",
+  "A convenir",
+];
+
+function parseMethodsArray(value: string[] | string | null | undefined): string[] {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  // legacy string fallback
+  return (value as string).split(",").map((s) => s.trim()).filter(Boolean);
+}
+
+interface MethodSelectorProps {
+  label: string;
+  icon: React.ReactNode;
+  options: string[];
+  selected: string[];
+  onChange: (next: string[]) => void;
+  hint?: string;
+}
+
+function MethodSelector({ label, icon, options, selected, onChange, hint }: MethodSelectorProps) {
+  const [customInput, setCustomInput] = useState("");
+
+  const toggle = (opt: string) => {
+    onChange(
+      selected.includes(opt) ? selected.filter((s) => s !== opt) : [...selected, opt]
+    );
+  };
+
+  const addCustom = () => {
+    const trimmed = customInput.trim();
+    if (!trimmed || selected.includes(trimmed)) return;
+    onChange([...selected, trimmed]);
+    setCustomInput("");
+  };
+
+  const removeCustom = (opt: string) => {
+    onChange(selected.filter((s) => s !== opt));
+  };
+
+  const customItems = selected.filter((s) => !options.includes(s));
+
+  return (
+    <div className="space-y-3">
+      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+        {icon}
+        {label}
+      </label>
+
+      {/* Predefined toggleable pills */}
+      <div className="flex flex-wrap gap-2">
+        {options.map((opt) => {
+          const active = selected.includes(opt);
+          return (
+            <button
+              key={opt}
+              type="button"
+              onClick={() => toggle(opt)}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-all duration-150 select-none",
+                active
+                  ? "bg-slate-900 text-white border-slate-900"
+                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+              )}
+            >
+              {active && <Check className="w-3 h-3 shrink-0" />}
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Custom items as dismissible chips */}
+      {customItems.length > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {customItems.map((item) => (
+            <span
+              key={item}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-blue-50 text-blue-700 border border-blue-100"
+            >
+              {item}
+              <button
+                type="button"
+                onClick={() => removeCustom(item)}
+                className="hover:text-blue-900 transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+
+      {/* Add custom option */}
+      <div className="flex gap-2">
+        <input
+          value={customInput}
+          onChange={(e) => setCustomInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addCustom();
+            }
+          }}
+          placeholder="Otro método..."
+          className="dash-input flex-1 text-sm py-2"
+        />
+        <button
+          type="button"
+          onClick={addCustom}
+          disabled={!customInput.trim()}
+          className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-40 transition-all"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          Agregar
+        </button>
+      </div>
+
+      {hint && <p className="text-xs text-slate-400">{hint}</p>}
+    </div>
+  );
 }
 
 export default function StoreSettingsForm({
@@ -44,7 +182,6 @@ export default function StoreSettingsForm({
   );
 
   useEffect(() => {
-    // Evitar hidratacion fallida usando el origen real solo en el cliente
     if (typeof window !== "undefined") {
       setOrigin(window.location.origin);
     }
@@ -59,12 +196,8 @@ export default function StoreSettingsForm({
     currency: settings?.currency || "Gs",
     whatsapp_number: settings?.whatsapp_number || "",
     contact_email: settings?.contact_email || "",
-    payment_methods: (
-      settings?.payment_methods || ["Transferencia bancaria", "Contra entrega"]
-    ).join(", "),
-    shipping_methods: (
-      settings?.shipping_methods || ["Delivery", "Retiro en tienda"]
-    ).join(", "),
+    payment_methods: parseMethodsArray(settings?.payment_methods),
+    shipping_methods: parseMethodsArray(settings?.shipping_methods),
   });
 
   const handleChange = (key: string, value: string) => {
@@ -98,14 +231,8 @@ export default function StoreSettingsForm({
               currency: form.currency,
               whatsapp_number: form.whatsapp_number,
               contact_email: form.contact_email,
-              payment_methods: form.payment_methods
-                .split(",")
-                .map((method) => method.trim())
-                .filter(Boolean),
-              shipping_methods: form.shipping_methods
-                .split(",")
-                .map((method) => method.trim())
-                .filter(Boolean),
+              payment_methods: form.payment_methods,
+              shipping_methods: form.shipping_methods,
             },
             { onConflict: "store_id" }
           );
@@ -209,7 +336,7 @@ export default function StoreSettingsForm({
               icon: <DollarSign className="h-5 w-5 text-amber-500" />,
             }}
           >
-            <div className="space-y-4">
+            <div className="space-y-6">
               <DashSelect
                 label="Moneda de la tienda"
                 value={form.currency}
@@ -224,22 +351,26 @@ export default function StoreSettingsForm({
                 ]}
               />
 
-              <DashInput
-                label="Metodos de pago"
-                icon={CreditCard}
-                value={form.payment_methods}
-                onChange={(e) => handleChange("payment_methods", e.target.value)}
-                placeholder="Transferencia, Efectivo, Tarjeta..."
-                hint="Escribe los metodos separados por comas."
+              <div className="h-px bg-slate-100" />
+
+              <MethodSelector
+                label="Métodos de pago"
+                icon={<CreditCard className="w-4 h-4 text-slate-400" />}
+                options={PAYMENT_OPTIONS}
+                selected={form.payment_methods}
+                onChange={(next) => setForm((prev) => ({ ...prev, payment_methods: next }))}
+                hint="Seleccioná los métodos que aceptás. Los clientes verán estas opciones al pagar."
               />
 
-              <DashInput
-                label="Metodos de envio o entrega"
-                icon={ShoppingBag}
-                value={form.shipping_methods}
-                onChange={(e) => handleChange("shipping_methods", e.target.value)}
-                placeholder="Delivery, Retiro en tienda..."
-                hint="Escribe las opciones separadas por comas."
+              <div className="h-px bg-slate-100" />
+
+              <MethodSelector
+                label="Métodos de envío o entrega"
+                icon={<ShoppingBag className="w-4 h-4 text-slate-400" />}
+                options={SHIPPING_OPTIONS}
+                selected={form.shipping_methods}
+                onChange={(next) => setForm((prev) => ({ ...prev, shipping_methods: next }))}
+                hint="Seleccioná las modalidades de entrega disponibles en tu tienda."
               />
             </div>
           </DashCard>

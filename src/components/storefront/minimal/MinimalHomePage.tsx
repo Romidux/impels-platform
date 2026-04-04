@@ -23,6 +23,7 @@ export default function MinimalHomePage({
   recentProducts,
 }: MinimalHomePageProps) {
   const currency = settings?.currency || "Gs";
+  const imageRatio = settings?.product_image_ratio || "4:5";
 
   return (
     <div className="w-full flex flex-col items-center animate-fade-in bg-white">
@@ -35,6 +36,7 @@ export default function MinimalHomePage({
           products={featuredProducts}
           storeSlug={store.slug}
           currency={currency}
+          imageRatio={imageRatio}
         />
       )}
       
@@ -45,6 +47,7 @@ export default function MinimalHomePage({
         products={recentProducts || []}
         storeSlug={store.slug}
         currency={currency}
+        imageRatio={imageRatio}
       />
     </div>
   );
