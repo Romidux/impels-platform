@@ -1,36 +1,198 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Impels Commerce
 
-## Getting Started
+> La forma más fácil de crear una tienda online para emprendedores y PYMEs de LATAM.
 
-First, run the development server:
+Impels Commerce es una plataforma SaaS multi-tenant que permite a cualquier negocio tener su propio catálogo digital en minutos, optimizado para venta por WhatsApp y redes sociales. Cada tienda opera en su propio subdominio (`{slug}.impels.com`) con su catálogo, gestión de pedidos e identidad visual personalizable.
+
+---
+
+## Stack técnico
+
+| Capa | Tecnología |
+|:---|:---|
+| Framework | Next.js 16 (App Router) |
+| UI | React 19 + Tailwind CSS v4 + Radix UI |
+| Base de datos | Supabase (PostgreSQL + RLS) |
+| Autenticación | Supabase Auth |
+| Storage | Supabase Storage |
+| Estado global | Zustand |
+| Animaciones | Framer Motion |
+| Despliegue | Vercel |
+
+---
+
+## Requisitos previos
+
+- **Node.js** v20 o superior
+- **npm** v10 o superior
+- Cuenta en [Supabase](https://supabase.com) (plan gratuito alcanza para desarrollo)
+- Cuenta en [Vercel](https://vercel.com) (para producción)
+
+---
+
+## Setup local
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/Romidux/impels-platform.git
+cd impels-platform
+```
+
+### 2. Instalar dependencias
+
+```bash
+npm install
+```
+
+### 3. Crear proyecto en Supabase
+
+1. Ir a [supabase.com](https://supabase.com) → New project
+2. Anotar la **Project URL** y la **anon public key** (en Project Settings → API)
+
+### 4. Configurar variables de entorno
+
+```bash
+cp .env.example .env.local
+```
+
+Editar `.env.local` con tus valores reales (ver tabla de variables más abajo).
+
+### 5. Inicializar la base de datos
+
+En el **SQL Editor** de Supabase, ejecutar el contenido completo de:
+
+```
+supabase/schema.sql
+```
+
+> ⚠️ Este script es **destructivo** — hace `DROP SCHEMA public CASCADE`. Usarlo solo en proyectos nuevos o de desarrollo. Para bases de datos existentes, aplicar las migraciones en `supabase/migrations/` en orden numérico.
+
+### 6. Levantar el servidor de desarrollo
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abrir [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Variables de entorno
 
-## Learn More
+| Variable | Descripción | Ejemplo |
+|:---|:---|:---|
+| `NEXT_PUBLIC_SUPABASE_URL` | URL de tu proyecto Supabase | `https://abcdef.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Clave pública anon de Supabase | `eyJh...` |
+| `NEXT_PUBLIC_APP_URL` | URL base de la app | `http://localhost:3000` |
+| `SUPER_ADMIN_EMAILS` | Emails con acceso a `/admin`, separados por coma | `admin@tudominio.com` |
 
-To learn more about Next.js, take a look at the following resources:
+Copiar `.env.example` como punto de partida.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Estructura del proyecto
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── (marketing)/        # Landing page pública
+│   ├── dashboard/          # Panel de administración (auth required)
+│   │   ├── products/
+│   │   ├── orders/
+│   │   ├── store/          # Configuración de tienda (identidad, apariencia, etc.)
+│   │   ├── customers/
+│   │   ├── coupons/
+│   │   └── apps/           # Integraciones (Meta Pixel, Google Analytics)
+│   ├── store/[slug]/       # Storefront público por slug
+│   ├── admin/              # Super admin (acceso restringido)
+│   ├── login/
+│   ├── register/
+│   └── onboarding/
+├── components/
+│   ├── dashboard/          # Componentes del panel admin
+│   ├── storefront/         # Templates del storefront (minimal, modern)
+│   └── ui/                 # Componentes UI compartidos
+├── lib/
+│   ├── supabase/           # Clientes server/client de Supabase
+│   ├── types.ts            # Tipos TypeScript centralizados
+│   └── utils.ts            # Utilidades compartidas
+└── middleware.ts            # Auth guard + routing multi-tenant
+supabase/
+├── schema.sql              # Schema completo (fresh install)
+├── schema_v2.sql           # Schema v2 con RLS hardening (fresh install)
+└── migrations/             # Migraciones incrementales numeradas
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Cómo funciona el multi-tenant
+
+Cada tienda registrada tiene un `slug` único. El routing multi-tenant funciona así:
+
+- **Desarrollo**: `http://{slug}.localhost:3000`
+- **Producción**: `https://{slug}.impels.com`
+
+El middleware en `src/middleware.ts` protege automáticamente las rutas `/dashboard` y `/admin`. Las rutas `/store/[slug]/*` son públicas y no requieren autenticación.
+
+---
+
+## Templates de storefront
+
+| Template | Estado | Descripción |
+|:---|:---|:---|
+| **Minimal** | ✅ Disponible | Catálogo limpio, blanco y negro, ideal para mostrar productos sin distracciones |
+| **Modern** | 🔜 Próximamente | Más dinámico y visual, con hero y marca protagonista |
+| **Brand** | 🔜 Próximamente | Mayor énfasis en identidad visual |
+
+---
+
+## Scripts disponibles
+
+```bash
+npm run dev          # Servidor de desarrollo
+npm run build        # Build de producción
+npm run start        # Servidor de producción
+npm run lint         # Linter (ESLint)
+npm run typecheck    # Verificación de tipos (TypeScript)
+npm run format       # Formatear código (Prettier)
+npm run format:check # Verificar formato sin modificar
+npm run validate     # typecheck + lint + build (pre-deploy)
+```
+
+---
+
+## Migraciones
+
+Las migraciones en `supabase/migrations/` son scripts SQL incrementales, numerados, seguros de ejecutar contra una base de datos existente.
+
+Para aplicar una migración:
+1. Abrir el **SQL Editor** en Supabase
+2. Pegar el contenido del archivo de migración
+3. Ejecutar
+
+| Archivo | Descripción |
+|:---|:---|
+| `005_customers.sql` | Tabla de clientes |
+| `006_checkout_methods.sql` | Métodos de pago y envío |
+| `006b_customers_backfill.sql` | Backfill de datos de clientes |
+| `007_admin_actions_log.sql` | Log de acciones de super admin |
+| `008_coupons.sql` | Sistema de cupones |
+| `008b_coupons_rls.sql` | RLS para cupones |
+| `009_phase4b_iteration1.sql` | Backend fase 4b |
+| `010_rls_hardening.sql` | Endurecimiento de RLS + storage multi-tenant |
+
+---
+
+## Deploy en Vercel
+
+1. Conectar el repositorio en [vercel.com](https://vercel.com)
+2. Agregar todas las variables de entorno (ver tabla arriba)
+3. Vercel detecta Next.js automáticamente — no requiere configuración adicional
+4. Configurar los dominios wildcard `*.impels.com` para el multi-tenant (requiere plan Pro de Vercel)
+
+---
+
+## Licencia
+
+Proyecto privado — todos los derechos reservados.

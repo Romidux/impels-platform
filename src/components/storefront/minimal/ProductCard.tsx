@@ -7,17 +7,19 @@ interface ProductCardProps {
   product: Product;
   storeSlug: string;
   currency: string;
+  imageRatio?: "1:1" | "4:5";
 }
 
-export default function ProductCard({ product, storeSlug, currency }: ProductCardProps) {
+export default function ProductCard({ product, storeSlug, currency, imageRatio = "4:5" }: ProductCardProps) {
   const primaryImage = product.images?.find((img) => img.is_primary) || product.images?.[0];
+  const aspectClass = imageRatio === "1:1" ? "aspect-square" : "aspect-[4/5]";
 
   return (
     <Link 
       href={`/store/${storeSlug}/product/${product.slug}`} 
       className="group block w-full space-y-4 transition-all duration-500 ease-out hover:-translate-y-1"
     >
-      <div className="relative aspect-[4/5] bg-gray-50 overflow-hidden w-full rounded-sm shadow-sm transition-shadow duration-500 group-hover:shadow-xl group-hover:shadow-black/5">
+      <div className={`relative ${aspectClass} bg-gray-50 overflow-hidden w-full rounded-sm shadow-sm transition-shadow duration-500 group-hover:shadow-xl group-hover:shadow-black/5`}>
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col gap-1.5 z-10">
           {checkIsOutOfStock(product) ? (

@@ -21,6 +21,7 @@ import {
   DashTextarea,
   DashSelect,
 } from "@/components/dashboard/ui/DashInput";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 
 type StoreSettingsFormMode = "all" | "identity" | "commerce";
 
@@ -180,14 +181,17 @@ export default function StoreSettingsForm({
             }}
           >
             <div className="space-y-4">
-              <DashInput
-                label="Numero de WhatsApp"
-                value={form.whatsapp_number}
-                onChange={(e) => handleChange("whatsapp_number", e.target.value)}
-                placeholder="595991234567"
-                hint="Usa el numero completo con codigo de pais."
-                type="tel"
-              />
+              <div>
+                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                  Numero de WhatsApp
+                </label>
+                <PhoneInput
+                  value={form.whatsapp_number}
+                  onChange={(val) => handleChange("whatsapp_number", val)}
+                  placeholder="981 234 567"
+                  hint="El numero completo se guarda automaticamente con el prefijo."
+                />
+              </div>
               <DashInput
                 label="Email de contacto"
                 icon={Mail}

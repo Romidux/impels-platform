@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 
 interface CheckoutPageClientProps {
   storeId: string;
@@ -146,17 +147,13 @@ export default function CheckoutPageClient({
               <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                 Teléfono / WhatsApp *
               </label>
-              <div className="relative">
-                <Phone className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                  placeholder="+595 XXX XXXXXX"
-                  required
-                  className="w-full border border-gray-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-blue-400 transition-all"
-                />
-              </div>
+              <PhoneInput
+                value={form.phone}
+                onChange={(val) => handleChange("phone", val)}
+                placeholder="981 234 567"
+                inputClassName="flex-1 w-full border border-gray-200 rounded-r-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 transition-all"
+                required
+              />
             </div>
 
             <div>

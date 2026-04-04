@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Palette, Save, Layers, Check, Sparkles } from "lucide-react";
+import { Palette, Save, Layers, Check, Sparkles, ImageIcon } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, StoreSettings } from "@/lib/types";
@@ -16,7 +16,8 @@ const TEMPLATES = [
     description: "Catalogo limpio y directo, ideal para mostrar productos sin distracciones.",
     preview: "bg-gradient-to-br from-slate-100 via-white to-slate-200",
     accent: "border-slate-200",
-    tier: "Gratis",
+    tier: "Activo",
+    available: true,
   },
   {
     id: "modern",
@@ -24,7 +25,8 @@ const TEMPLATES = [
     description: "Mas dinamico y visual, pensado para tiendas con una marca mas protagonista.",
     preview: "bg-gradient-to-br from-blue-600 to-violet-600",
     accent: "border-blue-200",
-    tier: "Pro",
+    tier: "Próximamente",
+    available: false,
   },
   {
     id: "brand",
@@ -32,7 +34,8 @@ const TEMPLATES = [
     description: "Mayor enfasis en identidad visual y mensajes de portada mas marcados.",
     preview: "bg-gradient-to-br from-rose-500 to-orange-500",
     accent: "border-rose-200",
-    tier: "Pro",
+    tier: "Próximamente",
+    available: false,
   },
 ] as const;
 
@@ -58,21 +61,27 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
 
-  const [template, setTemplate] = useState(settings?.template || "modern");
+  const [template, setTemplate] = useState(settings?.template || "minimal");
   const [primaryColor, setPrimaryColor] = useState(
     settings?.primary_color || "#2563eb"
+  );
+  const [imageRatio, setImageRatio] = useState<"1:1" | "4:5">(
+    settings?.product_image_ratio || "4:5"
   );
 
   useEffect(() => {
     if (settings) {
-      setTemplate(settings.template || "modern");
+      setTemplate(settings.template || "minimal");
       setPrimaryColor(settings.primary_color || "#2563eb");
+      setImageRatio(settings.product_image_ratio || "4:5");
     }
   }, [settings]);
 
   const handleSave = async () => {
-    if (store.plan === "free" && template !== "minimal") {
-      toast.error("Los templates premium requieren plan Pro");
+    // Prevent saving a template that isn't available yet
+    const selectedTemplate = TEMPLATES.find((t) => t.id === template);
+    if (selectedTemplate && !selectedTemplate.available) {
+      toast("Este template aún no está disponible");
       return;
     }
 
@@ -85,6 +94,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
           store_id: store.id,
           template,
           primary_color: primaryColor,
+          product_image_ratio: imageRatio,
         },
         { onConflict: "store_id" }
       );
@@ -125,7 +135,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {TEMPLATES.map((templateOption) => {
-            const locked = templateOption.tier === "Pro" && store.plan === "free";
+            const locked = !templateOption.available;
             const isSelected = template === templateOption.id;
 
             return (
@@ -134,7 +144,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                 type="button"
                 onClick={() => {
                   if (locked) {
-                    toast.error("Requiere plan Pro");
+                    toast("Este template está en desarrollo activo");
                     return;
                   }
                   setTemplate(templateOption.id);
@@ -151,9 +161,9 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                       {templateOption.name}
                     </p>
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${templateOption.tier === "Pro"
-                          ? "bg-brand-50 text-brand-700"
-                          : "bg-slate-100 text-slate-600"
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${!templateOption.available
+                          ? "bg-amber-50 text-amber-700"
+                          : "bg-emerald-50 text-emerald-700"
                         }`}
                     >
                       {templateOption.tier}
@@ -218,6 +228,53 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                 />
               ))}
             </div>
+          </div>
+        </div>
+      </DashCard>
+
+      <DashCard
+        header={{
+          title: "Formato de imagen de producto",
+          icon: <ImageIcon className="h-5 w-5 text-rose-600" />,
+        }}
+      >
+        <div className="space-y-3">
+          <p className="text-sm text-slate-500">
+            Define el aspect ratio de las imágenes en tu catálogo.
+          </p>
+          <div className="grid grid-cols-2 gap-4">
+            {(["1:1", "4:5"] as const).map((ratio) => {
+              const isSelected = imageRatio === ratio;
+              const label = ratio === "1:1" ? "Cuadrado" : "Instagram";
+              const sublabel = ratio === "1:1" ? "1:1" : "4:5";
+              return (
+                <button
+                  key={ratio}
+                  type="button"
+                  onClick={() => setImageRatio(ratio)}
+                  className={`relative flex flex-col items-center gap-3 rounded-2xl border p-5 transition-all ${
+                    isSelected
+                      ? "border-brand-300 bg-brand-50/50 shadow-[0_8px_24px_rgba(37,99,235,0.1)]"
+                      : "border-slate-200 bg-white hover:border-slate-300"
+                  }`}
+                >
+                  <div
+                    className={`rounded-lg bg-slate-100 border border-slate-200 ${
+                      ratio === "1:1" ? "w-16 h-16" : "w-14 h-[70px]"
+                    }`}
+                  />
+                  <div className="text-center">
+                    <p className="text-sm font-bold text-slate-900">{label}</p>
+                    <p className="text-xs text-slate-400">{sublabel}</p>
+                  </div>
+                  {isSelected && (
+                    <div className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-white">
+                      <Check className="h-3.5 w-3.5" />
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </DashCard>

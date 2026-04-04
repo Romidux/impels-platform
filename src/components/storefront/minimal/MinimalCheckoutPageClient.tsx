@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 
 interface MinimalCheckoutPageClientProps {
   storeId: string;
@@ -138,12 +139,12 @@ export default function MinimalCheckoutPageClient({
 
                 <div className="space-y-2">
                   <label className="text-[10px] uppercase tracking-widest font-bold text-gray-400">Teléfono / WhatsApp *</label>
-                  <input
-                    type="tel"
+                  <PhoneInput
                     value={form.phone}
-                    onChange={(e) => handleChange("phone", e.target.value)}
-                    placeholder="+595 XXX XXXXXX"
-                    className="w-full border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300"
+                    onChange={(val) => handleChange("phone", val)}
+                    placeholder="981 234 567"
+                    className=""
+                    inputClassName="flex-1 w-full border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-colors placeholder:text-gray-300 border-t-0 border-l-0 border-r-0 rounded-none"
                     required
                   />
                 </div>

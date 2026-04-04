@@ -2,10 +2,11 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save, User, MapPin, FileText, Phone } from "lucide-react";
+import { ArrowLeft, Save, User, MapPin, FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import Link from "next/link";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 
 interface CustomerFormProps {
   storeId: string;
@@ -23,6 +24,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
     doc_verifier: "",
     phone_country_code: "+595",
     phone_number: "",
+    phone_full: "595",
     email: "",
     city: "",
     neighborhood: "",
@@ -182,28 +184,11 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                   Teléfono *
                 </label>
-                <div className="flex flex-row gap-2">
-                  <select
-                    value={form.phone_country_code}
-                    onChange={(e) => handleChange("phone_country_code", e.target.value)}
-                    className="w-[100px] border border-gray-200 rounded-xl px-2 py-3 text-xs sm:text-sm focus:outline-none focus:border-blue-400 bg-white"
-                  >
-                    <option value="+595">+595 (PY)</option>
-                    <option value="+54">+54 (AR)</option>
-                    <option value="+55">+55 (BR)</option>
-                    <option value="+56">+56 (CL)</option>
-                    <option value="+57">+57 (CO)</option>
-                    <option value="+52">+52 (MX)</option>
-                    <option value="+1">+1 (US)</option>
-                  </select>
-                  <input
-                    type="tel"
-                    value={form.phone_number}
-                    onChange={(e) => handleChange("phone_number", e.target.value)}
-                    placeholder="Ej: 0981 123 456"
-                    className="flex-1 border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
-                  />
-                </div>
+                <PhoneInput
+                  value={form.phone_full}
+                  onChange={(val) => handleChange("phone_full", val)}
+                  placeholder="981 234 567"
+                />
               </div>
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">

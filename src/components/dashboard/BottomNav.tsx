@@ -14,6 +14,8 @@ import {
   UserCog,
   X,
   Store as StoreIcon,
+  Ticket,
+  LayoutGrid,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
@@ -29,6 +31,8 @@ const moreItems = [
   { label: "Categorías", href: "/dashboard/categories", icon: Tags },
   { label: "Inventario", href: "/dashboard/inventory", icon: Warehouse },
   { label: "Clientes", href: "/dashboard/customers", icon: Users },
+  { label: "Cupones", href: "/dashboard/coupons", icon: Ticket },
+  { label: "Aplicaciones", href: "/dashboard/apps", icon: LayoutGrid },
   { label: "Equipo", href: "/dashboard/team", icon: UserCog },
   { label: "Plan", href: "/dashboard/plan", icon: CreditCard },
 ];

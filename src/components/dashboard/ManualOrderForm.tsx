@@ -2,14 +2,14 @@
 
 import { useState, useMemo, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, Save, Plus, Trash2, Search, User, MapPin, Phone, MessageSquare } from "lucide-react";
+import { ArrowLeft, Save, Plus, Trash2, Search, User, MapPin, MessageSquare } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Product } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
 import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
 import { DashCard } from "@/components/dashboard/ui/DashCard";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 
 interface ManualOrderFormProps {
   storeId: string;
@@ -54,6 +54,7 @@ export default function ManualOrderForm({
     name: "",
     phone: "",
     phone_country_code: "+595",
+    phone_full: "595",
     email: "",
     city: "",
     neighborhood: "",
@@ -463,25 +464,11 @@ export default function ManualOrderForm({
 
               <div>
                 <label className="block text-xs font-semibold text-gray-700 mb-1">WhatsApp *</label>
-                <div className="flex gap-2">
-                  <select
-                    value={customer.phone_country_code}
-                    onChange={(e) => handleUpdateCustomer("phone_country_code", e.target.value)}
-                    className="w-[80px] dash-input py-2 text-sm px-1"
-                  >
-                    <option value="+595">+595</option>
-                    <option value="+54">+54</option>
-                    <option value="+55">+55</option>
-                    <option value="+56">+56</option>
-                  </select>
-                  <input
-                    type="tel"
-                    value={customer.phone}
-                    onChange={(e) => handleUpdateCustomer("phone", e.target.value)}
-                    placeholder="0981 123 456"
-                    className="flex-1 dash-input py-2 text-sm"
-                  />
-                </div>
+                <PhoneInput
+                  value={customer.phone_full}
+                  onChange={(val) => handleUpdateCustomer("phone_full", val)}
+                  placeholder="981 234 567"
+                />
               </div>
 
               <div>

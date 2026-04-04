@@ -47,6 +47,7 @@ export interface StoreSettings {
   benefits_bar_items?: string[];
   payment_methods?: string[];
   shipping_methods?: string[];
+  product_image_ratio?: "1:1" | "4:5";
 }
 
 export interface StoreBranding {

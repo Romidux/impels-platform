@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
+import { getStoreUrl } from "@/lib/utils";
 import {
   Package,
   ShoppingCart,
@@ -174,7 +175,7 @@ export default async function DashboardPage() {
                 description="Comparte el link de tu tienda en tus redes sociales para recibir tu primer pedido."
                 action={
                   <CopyLinkButton 
-                    url={`https://${store.slug}.impels.com`}
+                    url={getStoreUrl(store.slug)}
                     className="h-10 px-4 py-2 bg-brand-600 text-white hover:bg-brand-700 inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 shadow-sm shadow-brand-600/20"
                   />
                 }
@@ -257,7 +258,7 @@ export default async function DashboardPage() {
             </div>
             <div className="divide-y divide-gray-50">
               <Link 
-                href="/dashboard/store/theme" 
+                href="/dashboard/store/appearance" 
                 className="flex items-center justify-between p-4 hover:bg-slate-50 group transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -269,7 +270,7 @@ export default async function DashboardPage() {
                 <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-brand-400" />
               </Link>
               <Link 
-                href="/dashboard/settings" 
+                href="/dashboard/store/identity" 
                 className="flex items-center justify-between p-4 hover:bg-slate-50 group transition-colors"
               >
                 <div className="flex items-center gap-3">
@@ -288,11 +289,3 @@ export default async function DashboardPage() {
   );
 }
 
-// Add a helper to replace hardcoded strings
-// In a real app this might come from a utils file
-function getStoreUrl(slug: string) {
-  if (process.env.NODE_ENV === "development") {
-    return `http://${slug}.localhost:3000`;
-  }
-  return `https://${slug}.impels.com`;
-}

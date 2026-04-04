@@ -116,12 +116,18 @@ export default function TemplateDispatcher({
             initialProducts={allProducts}
           />
         );
-      // Other templates can still use the generic version for now
-      // or we can implement their specific views here.
-      // Since they were rendering in the page.tsx before,
-      // we'll need to define a fallback or use the existing page.tsx logic.
+      // Modern and Brand reuse Minimal catalog until bespoke versions ship
+      case "modern":
+      case "brand":
       default:
-        return null; // The page.tsx will handle the default if dispatcher returns null
+        return (
+          <MinimalCatalogPageClient
+            store={store}
+            settings={settings}
+            categories={categories}
+            initialProducts={allProducts}
+          />
+        );
     }
   }
 

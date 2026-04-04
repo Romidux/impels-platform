@@ -15,6 +15,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
+import { PhoneInput } from "@/components/ui/PhoneInput";
 
 const STEPS = ["Tu tienda", "WhatsApp", "¡Listo!"];
 
@@ -122,7 +123,7 @@ export default function OnboardingPage() {
         store_id: store.id,
         currency: form.currency,
         whatsapp_number: form.whatsapp.replace(/\D/g, ""),
-        template: "modern",
+        template: "minimal",
         primary_color: "#2563eb",
         secondary_color: "#7c3aed",
       });
@@ -351,22 +352,12 @@ export default function OnboardingPage() {
                   <label className="block text-sm font-semibold text-white/70 mb-2">
                     Número de WhatsApp
                   </label>
-                  <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 text-sm font-semibold">
-                      +
-                    </span>
-                    <input
-                      type="tel"
-                      value={form.whatsapp}
-                      onChange={(e) => handleChange("whatsapp", e.target.value)}
-                      placeholder="595991234567"
-                      className="w-full bg-white/10 border border-white/15 text-white placeholder-white/30 rounded-xl pl-7 pr-4 py-3 text-sm focus:outline-none focus:border-green-400 focus:bg-white/15 transition-all"
-                      autoFocus
-                    />
-                  </div>
-                  <p className="text-white/40 text-xs mt-1.5">
-                    Código de país sin el + • Ej: 595 (Paraguay), 54 (Argentina), 52 (México)
-                  </p>
+                  <PhoneInput
+                    value={form.whatsapp}
+                    onChange={(val) => handleChange("whatsapp", val)}
+                    placeholder="981 234 567"
+                    hint="Selecciona tu país y escribe solo el número local."
+                  />
                 </div>
 
                 {/* WhatsApp preview */}

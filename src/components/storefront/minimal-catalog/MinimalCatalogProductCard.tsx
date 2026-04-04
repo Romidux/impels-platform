@@ -9,21 +9,24 @@ interface MinimalCatalogProductCardProps {
   product: Product;
   storeSlug: string;
   currency: string;
+  imageRatio?: "1:1" | "4:5";
 }
 
 export default function MinimalCatalogProductCard({
   product,
   storeSlug,
   currency,
+  imageRatio = "4:5",
 }: MinimalCatalogProductCardProps) {
   const primaryImage = product.images?.find((img) => img.is_primary) || product.images?.[0];
   const hasSale = product.compare_at_price && product.compare_at_price > product.price;
   const outOfStock = checkIsOutOfStock(product);
+  const aspectClass = imageRatio === "1:1" ? "aspect-square" : "aspect-[4/5]";
 
   return (
     <div className="group relative animate-fade-in">
       <Link href={`/store/${storeSlug}/product/${product.slug}`} className="block">
-        <div className="relative aspect-[4/5] w-full overflow-hidden bg-neutral-50 rounded-sm">
+        <div className={`relative ${aspectClass} w-full overflow-hidden bg-neutral-50 rounded-sm`}>
           {/* Product Image */}
           {primaryImage?.url ? (
             <Image

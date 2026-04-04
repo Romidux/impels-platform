@@ -95,7 +95,7 @@ export default function DashboardHeader({
                   <button
                     onClick={() => {
                       setMenuOpen(false);
-                      router.push("/dashboard/store");
+                      router.push("/dashboard/store/identity");
                     }}
                     className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-slate-700 hover:bg-gray-50 rounded-lg transition-colors"
                   >
