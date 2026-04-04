@@ -110,7 +110,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
               Capa visual base
             </p>
             <p className="mt-1 text-sm leading-relaxed text-slate-600">
-              En esta etapa puedes definir el template base y el color principal.
+              En esta etapa puedes definir la plantilla base y el color principal.
               Luego ajustas portada, secciones y textos en las siguientes capas.
             </p>
           </div>
@@ -139,11 +139,10 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                   }
                   setTemplate(templateOption.id);
                 }}
-                className={`relative overflow-hidden rounded-[24px] border bg-white text-left transition-all ${
-                  isSelected
+                className={`relative overflow-hidden rounded-[24px] border bg-white text-left transition-all ${isSelected
                     ? "border-brand-300 shadow-[0_12px_32px_rgba(37,99,235,0.14)]"
                     : `border-slate-200 hover:border-slate-300 ${templateOption.accent}`
-                } ${locked ? "opacity-75" : ""}`}
+                  } ${locked ? "opacity-75" : ""}`}
               >
                 <div className={`h-24 ${templateOption.preview}`} />
                 <div className="space-y-2 p-4">
@@ -152,11 +151,10 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                       {templateOption.name}
                     </p>
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${
-                        templateOption.tier === "Pro"
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${templateOption.tier === "Pro"
                           ? "bg-brand-50 text-brand-700"
                           : "bg-slate-100 text-slate-600"
-                      }`}
+                        }`}
                     >
                       {templateOption.tier}
                     </span>
@@ -213,11 +211,10 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                   type="button"
                   onClick={() => setPrimaryColor(color)}
                   style={{ backgroundColor: color }}
-                  className={`h-9 w-9 rounded-xl transition-transform hover:scale-105 ${
-                    primaryColor === color
+                  className={`h-9 w-9 rounded-xl transition-transform hover:scale-105 ${primaryColor === color
                       ? "ring-2 ring-brand-300 ring-offset-2"
                       : ""
-                  }`}
+                    }`}
                 />
               ))}
             </div>

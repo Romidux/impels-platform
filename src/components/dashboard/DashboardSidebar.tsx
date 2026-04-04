@@ -13,6 +13,7 @@ import {
   CreditCard,
   Store as StoreIcon,
   ExternalLink,
+  LayoutGrid,
 } from "lucide-react";
 import { cn, getStoreUrl } from "@/lib/utils";
 import { Store } from "@/lib/types";
@@ -32,13 +33,11 @@ interface NavItem {
 }
 
 interface NavGroup {
-  title: string;
   items: NavItem[];
 }
 
 const navGroups: NavGroup[] = [
   {
-    title: "GENERAL",
     items: [
       {
         label: "Inicio",
@@ -49,7 +48,6 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    title: "CATALOGO",
     items: [
       {
         label: "Productos",
@@ -64,15 +62,14 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    title: "VENTAS",
     items: [
       { label: "Pedidos", href: "/dashboard/orders", icon: ShoppingCart },
       { label: "Clientes", href: "/dashboard/customers", icon: Users },
       { label: "Cupones", href: "/dashboard/coupons", icon: Ticket },
+      { label: "Aplicaciones", href: "/dashboard/apps", icon: LayoutGrid },
     ],
   },
   {
-    title: "MI TIENDA",
     items: [
       {
         label: "Mi Tienda",
@@ -90,7 +87,6 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
-    title: "SISTEMA",
     items: [
       { label: "Equipo", href: "/dashboard/team", icon: UserCog },
       { label: "Plan", href: "/dashboard/plan", icon: CreditCard },
@@ -152,14 +148,10 @@ export default function DashboardSidebar({ store }: { store: Store }) {
         </div>
       </div>
 
-      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-3">
-        {navGroups.map((group) => (
-          <section key={group.title} className="space-y-3">
-            <p className="px-3 text-[10px] font-bold uppercase tracking-[0.22em] text-gray-400">
-              {group.title}
-            </p>
-
-            <div className="space-y-3">
+      <nav className="flex-1 space-y-2 overflow-y-auto px-3 py-3">
+        {navGroups.map((group, groupIdx) => (
+          <section key={groupIdx} className="space-y-1">
+            <div className="space-y-1">
               {group.items.map((item) => {
                 const hasChildren = Boolean(item.children?.length);
                 const itemActive = isItemActive(item);
