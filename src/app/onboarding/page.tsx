@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { PhoneInput } from "@/components/ui/PhoneInput";
+import { createStoreForUser } from "@/app/register/actions";
 
 const STEPS = ["Tu tienda", "WhatsApp", "¡Listo!"];
 
@@ -73,100 +74,37 @@ export default function OnboardingPage() {
     if (!userId) return;
 
     setSaving(true);
-    const supabase = createClient();
 
     try {
-      // Prevent duplicate stores
-      const { data: existingStore } = await supabase
-        .from("stores")
-        .select("id")
-        .eq("owner_id", userId)
-        .single();
-        
-      if (existingStore) {
-        toast.error("Ya tienes una tienda creada.");
-        router.push("/dashboard");
-        return;
-      }
-
-      // Create the store
-      const { data: store, error: storeError } = await supabase
-        .from("stores")
-        .insert({
-          name: form.name.trim(),
-          slug: form.slug || slugify(form.name),
-          description: form.description,
-          owner_id: userId,
-          plan: "free",
-          is_active: true,
-        })
-        .select("id")
-        .single();
+      // Create store atomically via server action + RPC.
+      // This creates stores + store_settings + sections + branding + owner member
+      // in a single Postgres transaction — all or nothing.
+      const { error: storeError } = await createStoreForUser({
+        userId,
+        name: form.name.trim(),
+        slug: form.slug || slugify(form.name),
+        description: form.description || undefined,
+        currency: form.currency,
+        whatsapp: form.whatsapp.replace(/\D/g, "") || undefined,
+      });
 
       if (storeError) {
-        console.error("Store insert error:", storeError);
-        if (storeError.code === "23505" || storeError.message?.includes("duplicate")) {
-          toast.error("Ya existe una tienda con ese slug. Cambia el nombre.");
-        } else if (storeError.code === "42501" || storeError.message?.includes("permission") || storeError.message?.includes("policy")) {
-          toast.error(`Error de permisos RLS: ${storeError.message}. ¿Aplicaste el schema SQL en Supabase?`);
-        } else if (storeError.code === "42P01" || storeError.message?.includes("does not exist")) {
-          toast.error("La tabla 'stores' no existe. Necesitás aplicar el schema SQL en Supabase primero.");
-        } else {
-          toast.error(`Error [${storeError.code}]: ${storeError.message}`);
+        if (storeError === "already_has_store") {
+          toast.success("Ya tienes una tienda creada.");
+          router.push("/dashboard");
+          return;
         }
-        setSaving(false);
+        if (storeError === "slug_taken") {
+          toast.error("Ya existe una tienda con ese nombre/URL. Cambia el nombre.");
+          return;
+        }
+        toast.error(`Error: ${storeError}`);
         return;
-      }
-
-      // Create store settings
-      const { error: settingsError } = await supabase.from("store_settings").insert({
-        store_id: store.id,
-        currency: form.currency,
-        whatsapp_number: form.whatsapp.replace(/\D/g, ""),
-        template: "minimal",
-        primary_color: "#2563eb",
-        secondary_color: "#7c3aed",
-      });
-      if (settingsError) {
-        console.error("Settings insert error:", settingsError);
-        // Non-fatal: continue even if settings fail
-      }
-
-      // Create default section visibility
-      const sections = [
-        "hero_banner",
-        "featured_categories",
-        "featured_products",
-        "main_catalog",
-        "promo_banner",
-        "recommended_products",
-      ];
-      const { error: sectionsError } = await supabase.from("store_sections_visibility").insert(
-        sections.map((section, i) => ({
-          store_id: store.id,
-          section,
-          is_visible: true,
-          sort_order: i + 1,
-        }))
-      );
-      if (sectionsError) {
-        console.error("Sections insert error:", sectionsError);
-        // Non-fatal: continue
-      }
-
-      // Create default store branding
-      const { error: brandingError } = await supabase.from("store_branding").insert({
-        store_id: store.id,
-      });
-      if (brandingError) {
-        console.error("Branding insert error:", brandingError);
-        // Non-fatal: continue
       }
 
       setStep(2); // success step
     } catch (err: unknown) {
-      const e = err as { message?: string; code?: string };
-      console.error("Onboarding error:", err);
+      const e = err as { message?: string };
       toast.error(`Error: ${e?.message || "Intenta de nuevo."}`);
     } finally {
       setSaving(false);

@@ -73,9 +73,16 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect logged-in users away from auth pages
+  // Redirect logged-in users away from auth pages — but ONLY for page
+  // navigations (GET), never for Server Action requests (POST with
+  // "next-action" header). Without this check, signUp() sets session
+  // cookies and the subsequent server action call to createStoreForUser()
+  // gets redirected before it can execute — causing the store to never
+  // be created during registration.
+  const isServerAction = request.headers.has("next-action");
   if (
     user &&
+    !isServerAction &&
     (request.nextUrl.pathname === "/login" ||
       request.nextUrl.pathname === "/register")
   ) {

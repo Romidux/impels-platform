@@ -62,7 +62,9 @@ export default function RegisterPage() {
         return;
       }
 
-      // 2) Create the store via server action (bypasses RLS — user has no session yet)
+      // 2) Create store atomically via RPC (bypasses RLS — user has no session yet)
+      // This creates stores + store_settings + sections + branding + owner member
+      // in a single Postgres transaction — all or nothing.
       const { error: storeError } = await createStoreForUser({
         userId: authData.user.id,
         name: form.storeName,
@@ -71,11 +73,18 @@ export default function RegisterPage() {
 
       if (storeError) {
         if (storeError === "slug_taken") {
-          toast.error("Cuenta creada, pero el nombre de tienda ya está en uso. Elige otro.");
+          toast.error("Cuenta creada, pero ese nombre de tienda ya está en uso. Elige otro.");
           router.push("/onboarding");
           return;
         }
-        toast.error("Cuenta creada, pero hubo un error con la tienda. Intenta configurarla de nuevo.");
+        if (storeError === "already_has_store") {
+          toast.success("Ya tienes una tienda. Redirigiendo...");
+          router.push("/dashboard");
+          return;
+        }
+        // Show the actual error for debugging — critical for diagnosing issues
+        console.error("[Register] Store creation failed:", storeError);
+        toast.error(`Cuenta creada, pero hubo un error con la tienda: ${storeError}`);
         router.push("/onboarding");
         return;
       }
