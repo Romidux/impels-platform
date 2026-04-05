@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
 // ── Helpers ──────────────────────────────────────────────────────
@@ -33,12 +34,37 @@ async function assertSuperAdmin() {
 
 // ── Toggle Store Active ──────────────────────────────────────────
 
-export async function toggleStoreActive(storeId: string, isActive: boolean) {
-  const supabase = await createClient();
+export async function toggleStoreActive(
+  storeId: string,
+  isActive: boolean,
+  reason?: string
+) {
+  // Verify caller is super admin
+  try {
+    await assertSuperAdmin();
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Acceso denegado";
+    return { success: false, error: message };
+  }
 
-  const { error } = await supabase
+  // Use admin client to bypass RLS — we need to update any store, not just our own
+  const adminClient = createAdminClient();
+
+  const updatePayload: Record<string, unknown> = { is_active: isActive };
+
+  if (!isActive) {
+    // Suspending: save reason and timestamp
+    updatePayload.disabled_reason = reason?.trim() || null;
+    updatePayload.disabled_at = new Date().toISOString();
+  } else {
+    // Reactivating: clear suspension fields
+    updatePayload.disabled_reason = null;
+    updatePayload.disabled_at = null;
+  }
+
+  const { error } = await adminClient
     .from("stores")
-    .update({ is_active: isActive })
+    .update(updatePayload)
     .eq("id", storeId);
 
   if (error) {
@@ -67,8 +93,11 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
     return { success: false, error: message };
   }
 
+  // Use admin client to bypass RLS for all subsequent operations
+  const adminClient = createAdminClient();
+
   // 2. Verify store exists and name matches confirmation
-  const { data: store, error: storeError } = await supabase
+  const { data: store, error: storeError } = await adminClient
     .from("stores")
     .select("id, name, slug")
     .eq("id", storeId)
@@ -87,13 +116,13 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
 
   try {
     // 3a. Product images (stored in bucket: product-images/{storeId}/...)
-    const { data: productImages } = await supabase
+    const { data: productImages } = await adminClient
       .from("product_images")
       .select("url")
       .in(
         "product_id",
         (
-          await supabase
+          await adminClient
             .from("products")
             .select("id")
             .eq("store_id", storeId)
@@ -101,7 +130,7 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
       );
 
     // 3b. Store branding images (logo, banner, etc.)
-    const { data: branding } = await supabase
+    const { data: branding } = await adminClient
       .from("store_branding")
       .select("logo_url, favicon_url, hero_banner_url, promo_banner_url")
       .eq("store_id", storeId)
@@ -109,7 +138,7 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
 
     // 3c. Store logo from stores table
     const storeLogoUrl = (
-      await supabase.from("stores").select("logo_url").eq("id", storeId).single()
+      await adminClient.from("stores").select("logo_url").eq("id", storeId).single()
     ).data?.logo_url;
 
     // Collect all URLs
@@ -154,7 +183,7 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
     }
 
     // Also try to list the entire store folder in product-images bucket
-    const { data: folderFiles } = await supabase.storage
+    const { data: folderFiles } = await adminClient.storage
       .from("product-images")
       .list(storeId, { limit: 1000 });
 
@@ -185,7 +214,7 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
       // Delete in batches of 100
       for (let i = 0; i < paths.length; i += 100) {
         const batch = paths.slice(i, i + 100);
-        const { error: removeError } = await supabase.storage
+        const { error: removeError } = await adminClient.storage
           .from(bucket)
           .remove(batch);
 
@@ -203,7 +232,7 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
   }
 
   // 5. Log the action in admin_actions_log BEFORE deleting the store
-  await supabase.from("admin_actions_log").insert({
+  await adminClient.from("admin_actions_log").insert({
     action: "DELETE_STORE",
     store_id: storeId, // Insert with real FK. Postgres ON DELETE SET NULL will handle it when the store is deleted.
     performed_by: user.id,
@@ -216,7 +245,7 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
   });
 
   // 6. Delete the store from DB (CASCADE handles all child tables, and SET NULL handles the log)
-  const { error: deleteError } = await supabase
+  const { error: deleteError } = await adminClient
     .from("stores")
     .delete()
     .eq("id", storeId);

@@ -176,6 +176,7 @@ export default function SectionsManager({
       <DashButton
         onClick={handleSave}
         loading={saving}
+        variant="primarySolid"
         size="lg"
         className="w-full"
       >

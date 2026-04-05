@@ -1,9 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { LucideIcon } from "lucide-react";
 
-type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
+type ButtonVariant = "primary" | "primarySolid" | "secondary" | "danger" | "ghost";
 type ButtonSize = "sm" | "md" | "lg";
 
 interface DashButtonProps
@@ -15,19 +14,29 @@ interface DashButtonProps
   children: React.ReactNode;
 }
 
+/*
+ * primary / primarySolid → bg-indigo-600 text-white (igual a "Crear Cupón")
+ * secondary → bg-white border-slate-200
+ * danger    → bg-red-50 text-red-600 border-red-200
+ * ghost     → transparente, hover gris
+ */
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-brand-600 text-white transition-all duration-200 hover:bg-brand-700 active:scale-[0.98] disabled:opacity-50 disabled:scale-100 shadow-[0_2px_8px_rgba(45,91,255,0.30)] hover:shadow-[0_4px_16px_rgba(45,91,255,0.40)]",
+    "bg-indigo-600 text-white font-semibold shadow-sm hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
+  primarySolid:
+    "bg-indigo-600 text-white font-semibold shadow-sm hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
   secondary:
-    "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 transition-all duration-200 active:scale-[0.98]",
-  danger: "bg-red-600 text-white hover:bg-red-700 shadow-[0_2px_8px_rgba(220,38,38,0.25)] transition-all duration-200 active:scale-[0.98]",
-  ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 active:scale-[0.98]",
+    "bg-white text-slate-600 font-semibold border border-slate-200 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-colors disabled:opacity-50",
+  danger:
+    "bg-red-50 text-red-600 font-semibold border border-red-200 hover:bg-red-100 hover:border-red-300 transition-colors disabled:opacity-50",
+  ghost:
+    "text-slate-500 font-medium hover:bg-slate-100 hover:text-slate-700 transition-colors disabled:opacity-50",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
   sm: "text-xs px-3 py-1.5 rounded-lg gap-1.5",
-  md: "text-sm px-5 h-11 rounded-2xl gap-2",
-  lg: "text-sm px-6 py-3 rounded-2xl gap-2 font-bold",
+  md: "text-sm px-5 py-2.5 rounded-lg gap-2",
+  lg: "text-sm px-5 py-2.5 rounded-lg gap-2",
 };
 
 export function DashButton({
@@ -43,7 +52,7 @@ export function DashButton({
   return (
     <button
       className={cn(
-        "inline-flex items-center justify-center font-semibold transition-all cursor-pointer disabled:cursor-not-allowed",
+        "inline-flex items-center justify-center cursor-pointer disabled:cursor-not-allowed",
         variantStyles[variant],
         sizeStyles[size],
         className
@@ -52,7 +61,7 @@ export function DashButton({
       {...props}
     >
       {loading ? (
-        <div className="w-4 h-4 border-2 border-current/30 border-t-current rounded-full animate-spin" />
+        <Loader2Icon />
       ) : icon ? (
         <span className="w-4 h-4 flex-shrink-0 inline-flex items-center justify-center">
           {icon}
@@ -60,5 +69,28 @@ export function DashButton({
       ) : null}
       {children}
     </button>
+  );
+}
+
+function Loader2Icon() {
+  return (
+    <svg
+      className="w-4 h-4 animate-spin flex-shrink-0"
+      viewBox="0 0 24 24"
+      fill="none"
+    >
+      <circle
+        cx="12" cy="12" r="10"
+        stroke="currentColor"
+        strokeOpacity="0.25"
+        strokeWidth="2.5"
+      />
+      <path
+        d="M12 2a10 10 0 0 1 10 10"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+    </svg>
   );
 }

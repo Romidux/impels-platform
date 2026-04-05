@@ -1,5 +1,6 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   ArrowLeft,
   DollarSign,
@@ -27,6 +28,8 @@ type StoreDetailRow = {
   is_active: boolean;
   created_at: string;
   owner_id: string;
+  disabled_reason?: string | null;
+  disabled_at?: string | null;
   auth_users?: { email?: string | null } | null;
   store_settings?:
     | {
@@ -120,6 +123,8 @@ export default async function AdminStoreDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+
+  // Verify session (auth check only — data fetched via admin client below)
   const supabase = await createClient();
   const {
     data: { user },
@@ -127,13 +132,16 @@ export default async function AdminStoreDetailPage({
 
   if (!user) redirect("/login");
 
+  // Use admin client to bypass RLS — admin needs to read any store
+  const adminClient = createAdminClient();
+
   const [{ data: store }, { data: orders }] = await Promise.all([
-    supabase
+    adminClient
       .from("stores")
-      .select("id, name, slug, plan, is_active, created_at, owner_id, store_settings(*), auth_users:owner_id(email)")
+      .select("id, name, slug, plan, is_active, created_at, owner_id, disabled_reason, disabled_at, store_settings(*), auth_users:owner_id(email)")
       .eq("id", id)
       .single(),
-    supabase
+    adminClient
       .from("orders")
       .select("id, total, created_at, customer_name, status")
       .eq("store_id", id)
@@ -356,6 +364,7 @@ export default async function AdminStoreDetailPage({
                 <ToggleStoreButton
                   storeId={typedStore.id}
                   isActive={typedStore.is_active}
+                  disabledReason={typedStore.disabled_reason}
                 />
                 <DeleteStoreButton
                   storeId={typedStore.id}
@@ -430,6 +439,22 @@ export default async function AdminStoreDetailPage({
               </div>
             ))}
           </div>
+
+          {!typedStore.is_active && typedStore.disabled_reason && (
+            <div className="mt-4 rounded-[22px] border border-amber-200 bg-amber-50 px-4 py-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-amber-500">
+                Motivo de suspensión
+              </p>
+              <p className="mt-1 text-sm font-semibold text-amber-900">
+                {typedStore.disabled_reason}
+              </p>
+              {typedStore.disabled_at && (
+                <p className="mt-0.5 text-xs text-amber-600">
+                  Desde {formatShortDate(typedStore.disabled_at)}
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="mt-5 rounded-[22px] border border-slate-200 bg-slate-50/80 p-4">
             <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">

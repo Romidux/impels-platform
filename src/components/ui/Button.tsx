@@ -9,22 +9,22 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 active:scale-[0.98] shadow-[0_2px_8px_rgba(45,91,255,0.30)] hover:shadow-[0_4px_16px_rgba(45,91,255,0.40)] transition-all duration-200",
+          "bg-indigo-600 text-white font-semibold shadow-sm hover:bg-indigo-700 transition-colors",
         secondary:
-          "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 transition-all duration-200",
+          "bg-white text-slate-600 font-semibold border border-slate-200 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-colors",
         ghost:
-          "text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200",
+          "text-slate-500 font-medium hover:bg-slate-100 hover:text-slate-700 transition-colors",
         danger:
-          "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-[0_2px_8px_rgba(220,38,38,0.25)] transition-all duration-200",
+          "bg-red-50 text-red-600 font-semibold border border-red-200 hover:bg-red-100 hover:border-red-300 transition-colors",
         "danger-ghost":
-          "text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200",
+          "text-red-600 font-medium hover:bg-red-50 hover:text-red-700 transition-colors",
         brand:
-          "bg-gradient-to-r from-brand-600 to-purple-600 text-white hover:from-brand-700 hover:to-purple-700 shadow-[0_2px_8px_rgba(45,91,255,0.30)] hover:shadow-[0_4px_16px_rgba(45,91,255,0.40)] transition-all duration-200",
+          "bg-indigo-600 text-white font-semibold shadow-sm hover:bg-indigo-700 transition-colors",
       },
       size: {
         sm: "text-xs px-3 py-1.5 rounded-lg",
-        md: "text-sm px-4 py-2.5 rounded-lg",
-        lg: "text-sm px-5 py-3 rounded-xl",
+        md: "text-sm px-5 py-2.5 rounded-lg",
+        lg: "text-sm px-5 py-2.5 rounded-lg",
         icon: "p-2 rounded-lg",
       },
     },

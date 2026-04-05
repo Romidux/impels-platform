@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
 import { sendWelcomeEmail } from "@/lib/events";
+import { createStoreForUser } from "./actions";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -61,18 +62,15 @@ export default function RegisterPage() {
         return;
       }
 
-      // 2) Create the store
-      const { error: storeError } = await supabase.from("stores").insert({
+      // 2) Create the store via server action (bypasses RLS — user has no session yet)
+      const { error: storeError } = await createStoreForUser({
+        userId: authData.user.id,
         name: form.storeName,
         slug: form.storeSlug,
-        owner_id: authData.user.id,
-        plan: "free",
-        is_active: true,
       });
 
       if (storeError) {
-        // Slug might be taken
-        if (storeError.code === "23505") {
+        if (storeError === "slug_taken") {
           toast.error("Cuenta creada, pero el nombre de tienda ya está en uso. Elige otro.");
           router.push("/onboarding");
           return;

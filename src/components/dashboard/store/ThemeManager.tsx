@@ -282,6 +282,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
       <DashButton
         onClick={handleSave}
         loading={saving}
+        variant="primarySolid"
         size="lg"
         className="w-full"
       >

@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   Store,
   AlertTriangle,
@@ -119,12 +120,14 @@ export default async function AdminOverviewPage() {
 
   if (!user) redirect("/login");
 
+  const adminClient = createAdminClient();
+
   const [{ data: stores }, { data: orders }] = await Promise.all([
-    supabase
+    adminClient
       .from("stores")
       .select("id, name, slug, plan, is_active, created_at")
       .order("created_at", { ascending: false }),
-    supabase
+    adminClient
       .from("orders")
       .select("id, store_id, total, created_at")
       .neq("status", "cancelled"),

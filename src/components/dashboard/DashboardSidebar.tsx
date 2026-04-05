@@ -130,11 +130,11 @@ export default function DashboardSidebar({ store }: { store: Store }) {
   };
 
   return (
-    <aside className="fixed left-0 top-14 bottom-0 z-40 hidden w-64 flex-col border-r border-slate-100 bg-white md:flex">
+    <aside className="fixed left-0 top-14 bottom-0 z-40 hidden w-64 flex-col border-r border-slate-200/80 bg-white md:flex">
       <div className="px-4 pb-2 pt-5">
         <div className="flex items-center justify-between gap-2 px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[12px] bg-brand-50 text-brand-600 shadow-sm">
+            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[12px] bg-blue-50 text-blue-600 shadow-sm">
               <StoreIcon className="h-5 w-5" />
             </div>
             <p className="truncate text-[16px] font-bold leading-tight tracking-tight text-slate-900">
@@ -145,7 +145,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
             href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
+            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-blue-50/70 hover:text-slate-600"
             title="Ver tienda"
           >
             <ExternalLink className="h-4 w-4" />
@@ -157,7 +157,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
         {navGroups.map((group, groupIdx) => (
           <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-4")}>
             {group.label && (
-              <p className="px-3 pb-1 pt-0.5 text-[11px] font-medium tracking-normal text-slate-400">
+              <p className="px-3 pb-1 pt-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
                 {group.label}
               </p>
             )}
@@ -178,17 +178,17 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                     href={item.href}
                     onClick={() => toggleExpandable(item.expandableKey)}
                     className={cn(
-                      "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-150",
+                      "relative flex items-center gap-2 px-3 py-2 text-sm transition-all duration-150",
                       active
-                        ? "bg-[#EFF6FF] text-brand-700 font-semibold before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[2px] before:rounded-full before:bg-brand-600"
-                        : "font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                        ? "bg-blue-50 border border-blue-100 text-blue-700 font-semibold shadow-sm rounded-2xl"
+                        : "font-medium text-slate-700 hover:bg-blue-50/70 hover:text-slate-900 rounded-2xl"
                     )}
                   >
                     <div className="flex h-5 w-5 items-center justify-center">
                       <item.icon
                         className={cn(
                           "h-4 w-4 flex-shrink-0",
-                          active ? "text-brand-600" : "text-gray-400"
+                          active ? "text-blue-600" : "text-slate-400"
                         )}
                       />
                     </div>
@@ -205,7 +205,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                     {ParentLink}
 
                     {isOpen && (
-                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-gray-200/60 pl-3">
+                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-slate-200/80 pl-3">
                         {item.children?.map((child) => {
                           const isActive = isChildActive(child.href);
 
@@ -214,9 +214,9 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                               key={child.href}
                               href={child.href}
                               className={cn(
-                                "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-500 transition-all duration-150 hover:bg-slate-50 hover:text-slate-800",
+                                "relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-500 transition-all duration-150 hover:bg-blue-50/50 hover:text-slate-900",
                                 isActive &&
-                                  "bg-[#EFF6FF] font-semibold text-brand-700 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[2px] before:rounded-full before:bg-brand-600"
+                                  "bg-blue-50 border border-blue-100 font-semibold text-blue-700 shadow-sm"
                               )}
                             >
                               <span className="truncate">{child.label}</span>

@@ -58,7 +58,7 @@ export default function RootLayout({
         <Toaster 
           position="top-center" 
           expand={false}
-          duration={2000}
+          duration={4000}
           theme="light"
           toastOptions={{
             style: {

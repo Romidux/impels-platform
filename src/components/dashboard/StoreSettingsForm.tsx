@@ -381,6 +381,7 @@ export default function StoreSettingsForm({
         onClick={handleSave}
         loading={saving}
         icon={<Save className="h-4 w-4" />}
+        variant="primarySolid"
         size="lg"
         className="w-full"
       >

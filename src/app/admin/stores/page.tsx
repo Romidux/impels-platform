@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   Store,
   Search,
@@ -140,12 +141,14 @@ export default async function AdminStoresPage({
   const activity = params.activity || "all";
   const sort = params.sort || "newest";
 
+  const adminClient = createAdminClient();
+
   const [{ data: stores }, { data: orders }] = await Promise.all([
-    supabase
+    adminClient
       .from("stores")
       .select("id, name, slug, plan, is_active, created_at")
       .order("created_at", { ascending: false }),
-    supabase
+    adminClient
       .from("orders")
       .select("id, store_id, total, created_at")
       .neq("status", "cancelled"),
