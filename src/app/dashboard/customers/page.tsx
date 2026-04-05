@@ -103,7 +103,7 @@ export default async function CustomersPage() {
             description="Aquí aparecerán las personas que compren en tu tienda o que agregues manualmente."
             action={
               <Link href="/dashboard/customers/new">
-                <DashButton className="bg-slate-900 hover:bg-slate-800 text-white border-none shadow-md">
+                <DashButton>
                   <Plus className="w-4 h-4" />
                   Agregar mi primer cliente
                 </DashButton>
@@ -121,24 +121,24 @@ export default async function CustomersPage() {
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-slate-50/50 border-b border-slate-100">
-                  <th className="text-left text-[11px] font-bold text-slate-400 uppercase tracking-tight px-6 py-3">
+                <tr className="bg-[#F2F4F6] border-b border-slate-100">
+                  <th className="text-left text-xs font-semibold text-slate-500 px-6 py-3">
                     Cliente
                   </th>
-                  <th className="text-left text-[11px] font-bold text-slate-400 uppercase tracking-tight px-4 py-3">
+                  <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
                     WhatsApp / Tel
                   </th>
-                  <th className="text-left text-[11px] font-bold text-slate-400 uppercase tracking-tight px-4 py-3">
+                  <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
                     Ciudad
                   </th>
-                  <th className="text-left text-[11px] font-bold text-slate-400 uppercase tracking-tight px-4 py-3 text-center">
+                  <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3 text-center">
                     Pedidos
                   </th>
-                  <th className="text-left text-[11px] font-bold text-slate-400 uppercase tracking-tight px-4 py-3">
-                    Inversión Total
+                  <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
+                    Inversión total
                   </th>
-                  <th className="text-right text-[11px] font-bold text-slate-400 uppercase tracking-tight px-6 py-3">
-                    Última Actividad
+                  <th className="text-right text-xs font-semibold text-slate-500 px-6 py-3">
+                    Última actividad
                   </th>
                 </tr>
               </thead>

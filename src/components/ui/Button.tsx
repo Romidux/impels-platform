@@ -9,17 +9,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-sm",
+          "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 active:scale-[0.98] shadow-[0_2px_8px_rgba(45,91,255,0.30)] hover:shadow-[0_4px_16px_rgba(45,91,255,0.40)] transition-all duration-200",
         secondary:
-          "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300",
+          "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 transition-all duration-200",
         ghost:
-          "text-slate-600 hover:bg-slate-100 hover:text-slate-900",
+          "text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200",
         danger:
-          "bg-red-600 text-white hover:bg-red-700 active:bg-red-800",
+          "bg-red-600 text-white hover:bg-red-700 active:bg-red-800 shadow-[0_2px_8px_rgba(220,38,38,0.25)] transition-all duration-200",
         "danger-ghost":
-          "text-red-600 hover:bg-red-50 hover:text-red-700",
+          "text-red-600 hover:bg-red-50 hover:text-red-700 transition-all duration-200",
         brand:
-          "bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700 shadow-sm",
+          "bg-gradient-to-r from-brand-600 to-purple-600 text-white hover:from-brand-700 hover:to-purple-700 shadow-[0_2px_8px_rgba(45,91,255,0.30)] hover:shadow-[0_4px_16px_rgba(45,91,255,0.40)] transition-all duration-200",
       },
       size: {
         sm: "text-xs px-3 py-1.5 rounded-lg",

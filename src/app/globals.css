@@ -11,17 +11,17 @@
     --color-brand-200: #bfdbfe;
     --color-brand-300: #93c5fd;
     --color-brand-400: #60a5fa;
-    --color-brand-500: #3b82f6;
-    --color-brand-600: #2563eb;
-    --color-brand-700: #1d4ed8;
+    --color-brand-500: #2D5BFF;
+    --color-brand-600: #2D5BFF;
+    --color-brand-700: #0040df;
     --color-brand-800: #1e40af;
     --color-brand-900: #1e3a8a;
     --color-brand-950: #172554;
 
     /* Legacy gradient alias */
-    --brand-primary: #2563eb;
+    --brand-primary: #2D5BFF;
     --brand-secondary: #7c3aed;
-    --brand-gradient: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    --brand-gradient: linear-gradient(135deg, #2D5BFF 0%, #7c3aed 100%);
 
     /* ── Surface / Neutral ── */
     --color-surface-bg: #f8fafc;
@@ -64,11 +64,11 @@
     --radius-full: 9999px;
 
     /* ── Shadows ── */
-    --shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-xs: 0 1px 3px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.04);
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 6px 16px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.09), 0 8px 24px rgba(0,0,0,0.05);
     --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
-    --shadow-brand: 0 0 20px rgba(37,99,235,0.2);
+    --shadow-brand: 0 0 20px rgba(45,91,255,0.2);
   }
 
   * {
@@ -114,14 +114,14 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 60%, #ec4899 100%);
+    background: linear-gradient(135deg, #2D5BFF 0%, #7c3aed 60%, #ec4899 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .gradient-brand {
-    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    background: linear-gradient(135deg, #2D5BFF 0%, #7c3aed 100%);
   }
 
   .gradient-brand-soft {
@@ -236,7 +236,7 @@
 
   .dash-input:focus {
     border-color: var(--color-brand-500);
-    box-shadow: 0 0 0 3px rgba(37, 99, 246, 0.1);
+    box-shadow: 0 0 0 3px rgba(45, 91, 255, 0.1);
   }
 
   .dash-input::placeholder {
@@ -270,11 +270,11 @@
 
   /* ── Glow shadows ── */
   .shadow-glow {
-    box-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+    box-shadow: 0 0 20px rgba(45, 91, 255, 0.3);
   }
 
   .shadow-glow-lg {
-    box-shadow: 0 0 40px rgba(37, 99, 235, 0.4);
+    box-shadow: 0 0 40px rgba(45, 91, 255, 0.4);
   }
 
   .shadow-brand-glow {

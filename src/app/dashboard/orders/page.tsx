@@ -112,7 +112,7 @@ export default async function OrdersPage({
                 // Hide empty columns on mobile if we are in "Todos" mode, but show on desktop pipeline
                 if (columnOrders.length === 0 && !status) {
                   return (
-                    <div key={col.value} className="hidden lg:flex flex-col w-full min-w-[300px] bg-slate-50/50 rounded-2xl border border-slate-100 p-3">
+                    <div key={col.value} className="hidden lg:flex flex-col w-full min-w-[300px] bg-[#F2F4F6] rounded-2xl p-3">
                       <div className="flex items-center justify-between mb-3 px-1">
                         <h3 className="font-semibold text-slate-700 text-sm">{col.label}</h3>
                         <span className="text-xs font-bold text-slate-400 bg-slate-200 px-2 py-0.5 rounded-full">0</span>
@@ -125,9 +125,9 @@ export default async function OrdersPage({
                 }
 
                 return (
-                  <div key={col.value} className="flex flex-col flex-1 w-full lg:min-w-[320px] bg-slate-50/50 lg:bg-slate-50 lg:p-3 lg:rounded-2xl lg:border lg:border-slate-100 gap-3">
+                  <div key={col.value} className="flex flex-col flex-1 w-full lg:min-w-[320px] bg-transparent lg:bg-[#F2F4F6] lg:p-3 lg:rounded-2xl gap-3">
                     <div className="hidden lg:flex items-center justify-between mb-1 px-1">
-                      <h3 className="font-semibold text-slate-700 text-sm uppercase tracking-wider">{col.label}</h3>
+                      <h3 className="font-semibold text-slate-600 text-sm">{col.label}</h3>
                       <span className="text-xs font-bold text-slate-600 bg-white shadow-sm border border-slate-200 px-2 py-0.5 rounded-full">
                         {columnOrders.length}
                       </span>
@@ -139,7 +139,7 @@ export default async function OrdersPage({
                         : null;
 
                       return (
-                        <div key={order.id} className="dash-card flex flex-col p-4 border border-slate-200 shadow-sm hover:shadow-md transition-shadow gap-3 bg-white">
+                        <div key={order.id} className="dash-card flex flex-col p-4 hover:shadow-md transition-shadow gap-3 bg-white">
                           <Link href={`/dashboard/orders/${order.id}`} className="flex items-start justify-between group">
                             <div>
                               <div className="flex items-center gap-2 mb-1">

@@ -53,7 +53,7 @@ export default async function DashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex flex-col">
+    <div className="min-h-screen bg-[#F7F8FA] flex flex-col">
       <OrderNotificationListener storeId={activeStore.id} />
       <DashboardHeader user={authUser} store={activeStore as import('@/lib/types').Store} />
       

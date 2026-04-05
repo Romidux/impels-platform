@@ -17,11 +17,11 @@ interface DashButtonProps
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-blue-600 text-white shadow-sm transition-all duration-200 hover:bg-blue-700 hover:shadow-md active:scale-[0.98] disabled:opacity-50 disabled:scale-100",
+    "bg-brand-600 text-white transition-all duration-200 hover:bg-brand-700 active:scale-[0.98] disabled:opacity-50 disabled:scale-100 shadow-[0_2px_8px_rgba(45,91,255,0.30)] hover:shadow-[0_4px_16px_rgba(45,91,255,0.40)]",
   secondary:
-    "bg-white text-slate-700 border border-gray-200 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 active:scale-[0.98]",
-  danger: "bg-red-600 text-white hover:bg-red-700 transition-all duration-200 active:scale-[0.98]",
-  ghost: "text-slate-600 hover:bg-gray-100 hover:text-slate-900 transition-all duration-200 active:scale-[0.98]",
+    "bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-800 transition-all duration-200 active:scale-[0.98]",
+  danger: "bg-red-600 text-white hover:bg-red-700 shadow-[0_2px_8px_rgba(220,38,38,0.25)] transition-all duration-200 active:scale-[0.98]",
+  ghost: "text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all duration-200 active:scale-[0.98]",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

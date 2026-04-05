@@ -131,12 +131,14 @@ export default async function DashboardPage() {
           icon={<DollarSign className="w-5 h-5 text-brand-600" />}
           label="Ventas del mes"
           value={formatCurrency(monthlyRevenue)}
+          iconClassName="bg-brand-50"
           trend={monthlyRevenue > 0 ? { value: `${monthlyOrderCount} pedidos este mes`, positive: true } : undefined}
         />
         <KpiCard
-          icon={<ShoppingCart className="w-5 h-5 text-brand-600" />}
+          icon={<ShoppingCart className="w-5 h-5 text-violet-600" />}
           label="Pedidos del mes"
           value={monthlyOrderCount}
+          iconClassName="bg-violet-50"
           trend={(todayOrdersCount || 0) > 0 ? { value: `${todayOrdersCount} pedidos hoy`, positive: true } : undefined}
         />
         <KpiCard
@@ -147,9 +149,10 @@ export default async function DashboardPage() {
           trend={(newOrdersCount || 0) > 0 ? { value: "Requieren atención", positive: false } : { value: "Todo al día ✓", positive: true }}
         />
         <KpiCard
-          icon={<Package className="w-5 h-5 text-brand-600" />}
+          icon={<Package className="w-5 h-5 text-emerald-600" />}
           label="Productos activos"
           value={productsCount || 0}
+          iconClassName="bg-emerald-50"
         />
       </div>
 
@@ -187,7 +190,7 @@ export default async function DashboardPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50/60">
+                  <tr className="border-b border-slate-100 bg-[#F2F4F6]">
                     <th className="text-left text-xs font-semibold text-slate-500 py-3 px-5">Cliente</th>
                     <th className="text-left text-xs font-semibold text-slate-500 py-3 px-5">Fecha</th>
                     <th className="text-left text-xs font-semibold text-slate-500 py-3 px-5">Estado</th>

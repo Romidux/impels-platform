@@ -107,7 +107,7 @@ function MethodSelector({ label, icon, options, selected, onChange, hint }: Meth
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-all duration-150 select-none",
                 active
-                  ? "bg-slate-900 text-white border-slate-900"
+                  ? "bg-brand-600 text-white border-brand-600"
                   : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
               )}
             >

@@ -128,7 +128,7 @@ export default async function ProductsPage({
             className={cn(
               "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200",
               view === "list"
-                ? "bg-blue-600 text-white shadow-sm"
+                ? "bg-brand-600 text-white shadow-sm"
                 : "text-slate-500 hover:bg-white hover:text-slate-700"
             )}
             title="Vista de lista"
@@ -140,7 +140,7 @@ export default async function ProductsPage({
             className={cn(
               "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200",
               view === "grid"
-                ? "bg-blue-600 text-white shadow-sm"
+                ? "bg-brand-600 text-white shadow-sm"
                 : "text-slate-500 hover:bg-white hover:text-slate-700"
             )}
             title="Vista de cuadrícula"
@@ -173,23 +173,23 @@ export default async function ProductsPage({
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-gray-100">
-                      <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-5 py-3">
+                    <tr className="bg-[#F2F4F6]">
+                      <th className="text-left text-xs font-semibold text-slate-500 px-5 py-3 rounded-tl-xl">
                         Producto
                       </th>
-                      <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
                         Categoría
                       </th>
-                      <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
                         Precio
                       </th>
-                      <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
                         Stock
                       </th>
-                      <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-4 py-3">
+                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
                         Visibilidad
                       </th>
-                      <th className="text-right text-xs font-semibold text-slate-500 uppercase tracking-wider px-5 py-3">
+                      <th className="text-right text-xs font-semibold text-slate-500 px-5 py-3 rounded-tr-xl">
                         Acciones
                       </th>
                     </tr>

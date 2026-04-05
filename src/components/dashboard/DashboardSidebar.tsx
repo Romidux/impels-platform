@@ -130,7 +130,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
   };
 
   return (
-    <aside className="fixed left-0 top-14 bottom-0 z-40 hidden w-64 flex-col border-r border-slate-200/80 bg-gradient-to-b from-white via-white to-slate-50/80 shadow-[10px_0_28px_rgba(15,23,42,0.04)] md:flex">
+    <aside className="fixed left-0 top-14 bottom-0 z-40 hidden w-64 flex-col border-r border-slate-100 bg-white md:flex">
       <div className="px-4 pb-2 pt-5">
         <div className="flex items-center justify-between gap-2 px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-3">
@@ -157,7 +157,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
         {navGroups.map((group, groupIdx) => (
           <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-4")}>
             {group.label && (
-              <p className="px-3 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+              <p className="px-3 pb-1 pt-0.5 text-[11px] font-medium tracking-normal text-slate-400">
                 {group.label}
               </p>
             )}
@@ -180,8 +180,8 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                     className={cn(
                       "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition-all duration-150",
                       active
-                        ? "bg-brand-50 text-brand-700 border border-brand-100 font-medium before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-full before:bg-brand-600"
-                        : "font-medium text-gray-900 hover:bg-gray-100 hover:text-gray-900"
+                        ? "bg-[#EFF6FF] text-brand-700 font-semibold before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[2px] before:rounded-full before:bg-brand-600"
+                        : "font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                     )}
                   >
                     <div className="flex h-5 w-5 items-center justify-center">
@@ -214,9 +214,9 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                               key={child.href}
                               href={child.href}
                               className={cn(
-                                "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-gray-600 transition-all duration-150 hover:bg-gray-100 hover:text-gray-900",
+                                "relative flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-500 transition-all duration-150 hover:bg-slate-50 hover:text-slate-800",
                                 isActive &&
-                                  "bg-brand-50/80 font-medium text-brand-700 before:absolute before:left-0 before:top-1 before:bottom-1 before:w-[2px] before:rounded-full before:bg-brand-600"
+                                  "bg-[#EFF6FF] font-semibold text-brand-700 before:absolute before:left-0 before:top-1.5 before:bottom-1.5 before:w-[2px] before:rounded-full before:bg-brand-600"
                               )}
                             >
                               <span className="truncate">{child.label}</span>
