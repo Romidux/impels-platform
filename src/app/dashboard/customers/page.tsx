@@ -1,13 +1,13 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { Users, ShoppingCart, Clock, Plus, Download } from "lucide-react";
+import { Users, ShoppingCart, Clock, Plus, Download, ChevronLeft, ChevronRight } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
-import { DashButton } from "@/components/dashboard/ui/DashButton";
-import { DashEmptyState } from "@/components/dashboard/ui/DashEmptyState";
-import { DashBadge } from "@/components/dashboard/ui/DashBadge";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
+import { EmptyState } from "@/components/ui/EmptyState";
 import Link from "next/link";
+
+const PAGE_SIZE = 20;
 
 interface EnhancedCustomer {
   id: string;
@@ -21,7 +21,11 @@ interface EnhancedCustomer {
   lastOrderDate: string | null;
 }
 
-export default async function CustomersPage() {
+export default async function CustomersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ page?: string }>;
+}) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -35,27 +39,39 @@ export default async function CustomersPage() {
     .single();
   if (!store) redirect("/onboarding");
 
-  // Consultar clientes reales y sus pedidos relacionados a través del foreign key
-  const { data: dbCustomers } = await supabase
+  const params = await searchParams;
+  const page = Math.max(1, Number(params.page) || 1);
+  const offset = (page - 1) * PAGE_SIZE;
+
+  const { data: dbCustomers, count: totalCount } = await supabase
     .from("customers")
-    .select("*, orders(id, total, created_at)")
+    .select("*, orders(id, total, created_at)", { count: "exact" })
     .eq("store_id", store.id)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: false })
+    .range(offset, offset + PAGE_SIZE - 1);
+
+  const total = totalCount ?? 0;
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   const currency = store.store_settings?.[0]?.currency || "Gs";
 
   const customers: EnhancedCustomer[] = (dbCustomers || []).map((customer) => {
     const orders = Array.isArray(customer.orders) ? customer.orders : [];
-    const validOrders = orders.filter((o: { id: string; total: number; created_at: string } | null) => o != null);
-    
+    const validOrders = orders.filter(
+      (o: { id: string; total: number; created_at: string } | null) => o != null
+    );
+
     const orderCount = validOrders.length;
-    const totalSpent = validOrders.reduce((sum: number, o: { total: number }) => sum + (o.total || 0), 0);
-    
+    const totalSpent = validOrders.reduce(
+      (sum: number, o: { total: number }) => sum + (o.total || 0),
+      0
+    );
+
     let lastOrderDate = null;
     if (validOrders.length > 0) {
-      // Ordenamos para agarrar la más reciente
       const sorted = [...validOrders].sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        (a, b) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
       lastOrderDate = sorted[0].created_at;
     }
@@ -75,38 +91,37 @@ export default async function CustomersPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <DashPageHeader
+      <PageHeader
         title="Clientes"
-        subtitle={`${customers.length} clientes registrados`}
-      >
-        <div className="flex items-center gap-2">
-          <Button asChild variant="secondary" size="md">
-            <a href="/api/export?type=customers" download className="flex items-center gap-2">
-              <Download className="w-4 h-4" />
-              Exportar CSV
-            </a>
-          </Button>
-          <Link href="/dashboard/customers/new">
-            <DashButton>
-              <Plus className="w-4 h-4" />
-              Nuevo cliente
-            </DashButton>
-          </Link>
-        </div>
-      </DashPageHeader>
+        subtitle={`${total} clientes registrados`}
+        actions={
+          <div className="flex items-center gap-2">
+            <Button asChild variant="secondary" size="md">
+              <a href="/api/export?type=customers" download className="flex items-center gap-2">
+                <Download className="w-4 h-4" />
+                Exportar CSV
+              </a>
+            </Button>
+            <Link href="/dashboard/customers/new">
+              <Button icon={<Plus className="w-4 h-4" />}>
+                Nuevo cliente
+              </Button>
+            </Link>
+          </div>
+        }
+      />
 
-      {customers.length === 0 ? (
+      {total === 0 ? (
         <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-12">
-          <DashEmptyState
+          <EmptyState
             icon={<Users className="w-10 h-10 text-slate-300" />}
-            title="Aún no tienes clientes"
+            heading="Aún no tienes clientes"
             description="Aquí aparecerán las personas que compren en tu tienda o que agregues manualmente."
             action={
               <Link href="/dashboard/customers/new">
-                <DashButton>
-                  <Plus className="w-4 h-4" />
+                <Button icon={<Plus className="w-4 h-4" />}>
                   Agregar mi primer cliente
-                </DashButton>
+                </Button>
               </Link>
             }
           />
@@ -144,7 +159,10 @@ export default async function CustomersPage() {
               </thead>
               <tbody className="divide-y divide-slate-50">
                 {customers.map((customer) => (
-                  <tr key={customer.id} className="hover:bg-slate-50/80 transition-colors group cursor-default">
+                  <tr
+                    key={customer.id}
+                    className="hover:bg-slate-50/80 transition-colors group cursor-default"
+                  >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center flex-shrink-0 group-hover:border-brand-200 group-hover:bg-brand-50 transition-colors">
@@ -190,7 +208,9 @@ export default async function CustomersPage() {
                       {customer.lastOrderDate ? (
                         <div className="inline-flex items-center gap-1.5 text-xs text-slate-400 font-medium bg-slate-50 px-2 py-1 rounded-md border border-slate-100 transition-colors group-hover:border-slate-200">
                           <Clock className="w-3 h-3" />
-                          {new Date(customer.lastOrderDate).toLocaleDateString("es-PY")}
+                          {new Date(customer.lastOrderDate).toLocaleDateString(
+                            "es-PY"
+                          )}
                         </div>
                       ) : (
                         <span className="text-xs text-slate-300">-</span>
@@ -201,6 +221,44 @@ export default async function CustomersPage() {
               </tbody>
             </table>
           </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 bg-slate-50/30">
+              <p className="text-sm text-slate-500">
+                Página {page} de {totalPages}
+                <span className="text-slate-400 ml-1">· {total} clientes</span>
+              </p>
+              <div className="flex items-center gap-2">
+                {page > 1 ? (
+                  <Link href={`/dashboard/customers?page=${page - 1}`}>
+                    <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                      Anterior
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button variant="secondary" size="sm" disabled className="flex items-center gap-1">
+                    <ChevronLeft className="w-3.5 h-3.5" />
+                    Anterior
+                  </Button>
+                )}
+                {page < totalPages ? (
+                  <Link href={`/dashboard/customers?page=${page + 1}`}>
+                    <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                      Siguiente
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button variant="secondary" size="sm" disabled className="flex items-center gap-1">
+                    Siguiente
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Button>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -68,7 +68,8 @@ export function buildWhatsAppMessage(
   total: number,
   currency: string = "Gs",
   couponCode?: string,
-  orderId?: string
+  orderId?: string,
+  storeName?: string
 ): string {
   const itemLines = items
     .map(
@@ -79,15 +80,19 @@ export function buildWhatsAppMessage(
 
   const orderLine = orderId ? `*Pedido:* #${orderId.split("-")[1] || orderId.substring(0,8)}` : `*Nuevo Pedido*`;
 
-  const discountLine = discountAmount > 0 
-    ? `\nDescuento ${couponCode ? `(${couponCode})` : ""}: -${formatCurrency(discountAmount, currency)}` 
+  const discountLine = discountAmount > 0
+    ? `\nDescuento ${couponCode ? `(${couponCode})` : ""}: -${formatCurrency(discountAmount, currency)}`
     : "";
 
-  const financeLines = discountAmount > 0 
+  const financeLines = discountAmount > 0
     ? `Subtotal: ${formatCurrency(subtotal, currency)}${discountLine}\n*Total a pagar: ${formatCurrency(total, currency)}*`
     : `*Total a pagar: ${formatCurrency(total, currency)}*`;
 
-  const message = `¡Hola! Quiero confirmar mi pedido 👋
+  const greeting = storeName
+    ? `¡Hola! Soy ${customer.name} desde *${storeName}* 👋`
+    : `¡Hola! Soy ${customer.name}, quiero confirmar mi pedido 👋`;
+
+  const message = `${greeting}
 
 ${orderLine}
 

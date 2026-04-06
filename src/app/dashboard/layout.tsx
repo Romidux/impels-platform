@@ -66,7 +66,7 @@ export default async function DashboardLayout({
         </main>
       </div>
       
-      <BottomNav />
+      <BottomNav storeSlug={activeStore.slug} />
     </div>
   );
 }

@@ -24,7 +24,7 @@ import { MerchantAnnouncements } from "@/components/dashboard/MerchantAnnounceme
 import { CopyLinkButton } from "@/components/dashboard/ui/CopyLinkButton";
 import OrderStatusBadge from "@/components/dashboard/OrderStatusBadge";
 import { OrderStatus } from "@/lib/types";
-import { DashCard } from "@/components/dashboard/ui/DashCard";
+import { Card } from "@/components/ui/Card";
 
 export default async function DashboardPage() {
   const supabase = await createClient();
@@ -158,7 +158,7 @@ export default async function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Recent Orders Table */}
-        <DashCard
+        <Card
           className="lg:col-span-2 overflow-hidden"
           padding={false}
           header={{
@@ -225,12 +225,12 @@ export default async function DashboardPage() {
               </table>
             </div>
           )}
-        </DashCard>
+        </Card>
 
         {/* Quick Actions */}
         <div className="space-y-5">
           {/* Main CTA */}
-          <DashCard className="bg-brand-50 border-brand-100" padding={false}>
+          <Card className="bg-brand-50 border-brand-100" padding={false}>
             <div className="p-5">
               <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center mb-3">
                 <Store className="w-5 h-5 text-brand-600" />
@@ -254,10 +254,10 @@ export default async function DashboardPage() {
                 />
               </div>
             </div>
-          </DashCard>
+          </Card>
 
           {/* Settings Shortcuts */}
-          <DashCard padding={false} className="overflow-hidden">
+          <Card padding={false} className="overflow-hidden">
             <div className="px-5 py-3 border-b border-slate-100 bg-slate-50/60">
               <h3 className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                 Ajustes rápidos
@@ -289,7 +289,7 @@ export default async function DashboardPage() {
                 <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-brand-400 transition-colors" />
               </Link>
             </div>
-          </DashCard>
+          </Card>
         </div>
       </div>
     </div>

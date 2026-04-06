@@ -12,6 +12,7 @@ interface UseCheckoutLogicProps {
   storeSlug: string;
   whatsappNumber?: string;
   currency: string;
+  storeName?: string;
 }
 
 export function useCheckoutLogic({
@@ -19,6 +20,7 @@ export function useCheckoutLogic({
   storeSlug,
   whatsappNumber,
   currency,
+  storeName,
 }: UseCheckoutLogicProps) {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCartStore();
@@ -165,7 +167,7 @@ export function useCheckoutLogic({
       if (error) throw error;
 
       if (whatsappNumber) {
-        const message = buildWhatsAppMessage(items, form, subtotal, discountAmount, total, currency, appliedCoupon?.code, orderId);
+        const message = buildWhatsAppMessage(items, form, subtotal, discountAmount, total, currency, appliedCoupon?.code, orderId, storeName);
         window.open(
           `https://wa.me/${whatsappNumber}?text=${message}`,
           "_blank"

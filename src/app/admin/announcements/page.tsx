@@ -15,8 +15,11 @@ export default async function AdminAnnouncementsPage() {
 
   // Check if super admin
   const isSuperAdmin = user.user_metadata?.is_super_admin === true;
-  const adminEmails = (process.env.SUPER_ADMIN_EMAILS || "").split(",");
-  if (!isSuperAdmin && !adminEmails.includes(user.email || "")) {
+  const adminEmails = (process.env.SUPER_ADMIN_EMAILS || "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  if (!isSuperAdmin && !adminEmails.includes((user.email || "").toLowerCase())) {
     redirect("/dashboard");
   }
 

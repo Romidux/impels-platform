@@ -17,30 +17,40 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { PageHeader } from "@/components/ui/PageHeader";
 
-type AdminStoreRow = {
+// ── Types returned by the get_admin_overview() RPC ──────────────────────────
+
+type AdminOverviewStats = {
+  total_stores: number;
+  active_stores: number;
+  inactive_stores: number;
+  new_stores_this_month: number;
+  stores_without_orders: number;
+  stores_without_recent_activity: number;
+  platform_total_orders: number;
+  platform_total_revenue: number;
+};
+
+type RecentNewStore = {
   id: string;
   name: string;
   slug: string;
-  plan: "free" | "pro";
-  is_active: boolean;
   created_at: string;
+  total_orders: number;
 };
 
-type AdminOrderRow = {
+type StoreToReview = {
   id: string;
-  store_id: string;
-  total: number | null;
+  name: string;
+  slug: string;
   created_at: string;
+  last_order_at: string | null;
+  has_orders: boolean;
 };
 
-type DecoratedStore = AdminStoreRow & {
-  totalOrders: number;
-  totalRevenue: number;
-  ordersLast30Days: number;
-  lastOrderAt: string | null;
-  isNewStore: boolean;
-  hasRecentActivity: boolean;
-  hasOrders: boolean;
+type AdminOverviewData = {
+  stats: AdminOverviewStats;
+  recent_new_stores: RecentNewStore[];
+  stores_to_review: StoreToReview[];
 };
 
 type OverviewAlert = {
@@ -50,21 +60,7 @@ type OverviewAlert = {
   variant: "error" | "warning" | "info";
 };
 
-const RECENT_ACTIVITY_DAYS = 30;
-
-function getDateDaysAgo(days: number) {
-  const date = new Date();
-  date.setHours(0, 0, 0, 0);
-  date.setDate(date.getDate() - days);
-  return date;
-}
-
-function getMonthStart() {
-  const date = new Date();
-  date.setDate(1);
-  date.setHours(0, 0, 0, 0);
-  return date;
-}
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatShortDate(value: string) {
   return new Date(value).toLocaleDateString("es-PY", {
@@ -74,43 +70,7 @@ function formatShortDate(value: string) {
   });
 }
 
-function buildStoreOrderStats(orders: AdminOrderRow[]) {
-  const recentThreshold = getDateDaysAgo(RECENT_ACTIVITY_DAYS);
-  const stats = new Map<
-    string,
-    {
-      totalOrders: number;
-      totalRevenue: number;
-      ordersLast30Days: number;
-      lastOrderAt: string | null;
-    }
-  >();
-
-  for (const order of orders) {
-    const current = stats.get(order.store_id) || {
-      totalOrders: 0,
-      totalRevenue: 0,
-      ordersLast30Days: 0,
-      lastOrderAt: null,
-    };
-
-    current.totalOrders += 1;
-    current.totalRevenue += order.total || 0;
-
-    const createdAt = new Date(order.created_at);
-    if (createdAt >= recentThreshold) {
-      current.ordersLast30Days += 1;
-    }
-
-    if (!current.lastOrderAt || createdAt > new Date(current.lastOrderAt)) {
-      current.lastOrderAt = order.created_at;
-    }
-
-    stats.set(order.store_id, current);
-  }
-
-  return stats;
-}
+// ── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function AdminOverviewPage() {
   const supabase = await createClient();
@@ -122,117 +82,58 @@ export default async function AdminOverviewPage() {
 
   const adminClient = createAdminClient();
 
-  const [{ data: stores }, { data: orders }] = await Promise.all([
-    adminClient
-      .from("stores")
-      .select("id, name, slug, plan, is_active, created_at")
-      .order("created_at", { ascending: false }),
-    adminClient
-      .from("orders")
-      .select("id, store_id, total, created_at")
-      .neq("status", "cancelled"),
-  ]);
+  // Single RPC replaces two full-table fetches + JS Map aggregation.
+  // See supabase/migrations/015_admin_overview_rpc.sql
+  const { data: overviewRaw, error } = await adminClient.rpc("get_admin_overview");
 
-  const allStores = (stores || []) as AdminStoreRow[];
-  const allOrders = (orders || []) as AdminOrderRow[];
+  if (error) {
+    throw new Error(`get_admin_overview RPC failed: ${error.message}`);
+  }
 
-  const monthStart = getMonthStart();
-  const orderStats = buildStoreOrderStats(allOrders);
+  const {
+    stats,
+    recent_new_stores: recentNewStores,
+    stores_to_review: storesToReview,
+  } = overviewRaw as AdminOverviewData;
 
-  const decoratedStores: DecoratedStore[] = allStores.map((store) => {
-    const stats = orderStats.get(store.id);
-    const totalOrders = stats?.totalOrders || 0;
-    const totalRevenue = stats?.totalRevenue || 0;
-    const ordersLast30Days = stats?.ordersLast30Days || 0;
-    const lastOrderAt = stats?.lastOrderAt || null;
-    const isNewStore = new Date(store.created_at) >= monthStart;
-
-    return {
-      ...store,
-      totalOrders,
-      totalRevenue,
-      ordersLast30Days,
-      lastOrderAt,
-      isNewStore,
-      hasRecentActivity: ordersLast30Days > 0,
-      hasOrders: totalOrders > 0,
-    };
-  });
-
-  const totalStores = decoratedStores.length;
-  const activeStores = decoratedStores.filter((store) => store.is_active);
-  const inactiveStores = decoratedStores.filter((store) => !store.is_active);
-  const newStores = decoratedStores.filter((store) => store.isNewStore);
-  const storesWithoutOrders = decoratedStores.filter((store) => !store.hasOrders);
-  const storesWithoutRecentActivity = decoratedStores.filter(
-    (store) => store.ordersLast30Days === 0
-  );
-
-  const recentNewStores = [...newStores]
-    .sort(
-      (a, b) =>
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    )
-    .slice(0, 5);
-
-  const storesToReview = [...storesWithoutRecentActivity]
-    .sort((a, b) => {
-      if (a.hasOrders !== b.hasOrders) {
-        return a.hasOrders ? 1 : -1;
-      }
-
-      if (a.lastOrderAt && b.lastOrderAt) {
-        return (
-          new Date(a.lastOrderAt).getTime() - new Date(b.lastOrderAt).getTime()
-        );
-      }
-
-      if (!a.lastOrderAt && !b.lastOrderAt) {
-        return (
-          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
-        );
-      }
-
-      return a.lastOrderAt ? 1 : -1;
-    })
-    .slice(0, 5);
+  // ── Alerts ────────────────────────────────────────────────────────────────
 
   const alerts = [
-    inactiveStores.length > 0
+    stats.inactive_stores > 0
       ? {
-          title: `${inactiveStores.length} tienda${
-            inactiveStores.length === 1 ? "" : "s"
-          } inactiva${inactiveStores.length === 1 ? "" : "s"}`,
+          title: `${stats.inactive_stores} tienda${
+            stats.inactive_stores === 1 ? "" : "s"
+          } inactiva${stats.inactive_stores === 1 ? "" : "s"}`,
           description: "Revisa si deben reactivarse o mantenerse suspendidas.",
           href: "/admin/stores?status=inactive",
           variant: "error" as const,
         }
       : null,
-    storesWithoutOrders.length > 0
+    stats.stores_without_orders > 0
       ? {
-          title: `${storesWithoutOrders.length} tienda${
-            storesWithoutOrders.length === 1 ? "" : "s"
+          title: `${stats.stores_without_orders} tienda${
+            stats.stores_without_orders === 1 ? "" : "s"
           } sin pedidos`,
           description: "Detecta onboarding incompleto o falta de activacion.",
           href: "/admin/stores?activity=no-orders",
           variant: "warning" as const,
         }
       : null,
-    storesWithoutRecentActivity.length > 0
+    stats.stores_without_recent_activity > 0
       ? {
-          title: `${storesWithoutRecentActivity.length} tienda${
-            storesWithoutRecentActivity.length === 1 ? "" : "s"
+          title: `${stats.stores_without_recent_activity} tienda${
+            stats.stores_without_recent_activity === 1 ? "" : "s"
           } sin actividad reciente`,
           description: "No registran pedidos en los ultimos 30 dias.",
           href: "/admin/stores?activity=no-recent",
           variant: "warning" as const,
         }
       : null,
-    newStores.length > 0
+    stats.new_stores_this_month > 0
       ? {
-          title: `${newStores.length} tienda${
-            newStores.length === 1 ? "" : "s"
-          } nueva${newStores.length === 1 ? "" : "s"} este mes`,
+          title: `${stats.new_stores_this_month} tienda${
+            stats.new_stores_this_month === 1 ? "" : "s"
+          } nueva${stats.new_stores_this_month === 1 ? "" : "s"} este mes`,
           description: "Conviene seguir su activacion temprana.",
           href: "/admin/stores?segment=new&sort=newest",
           variant: "info" as const,
@@ -240,50 +141,59 @@ export default async function AdminOverviewPage() {
       : null,
   ].filter((alert): alert is OverviewAlert => alert !== null);
 
+  // ── Summary cards ─────────────────────────────────────────────────────────
+
   const summaryCards = [
     {
       label: "Tiendas activas",
-      value: activeStores.length,
+      value: stats.active_stores,
       icon: <ShieldCheck className="w-5 h-5 text-green-600" />,
       tone: "bg-green-50 text-green-700",
-      helper: `${totalStores > 0 ? Math.round((activeStores.length / totalStores) * 100) : 0}% del total`,
+      helper: `${
+        stats.total_stores > 0
+          ? Math.round((stats.active_stores / stats.total_stores) * 100)
+          : 0
+      }% del total`,
       href: "/admin/stores?status=active",
     },
     {
       label: "Tiendas inactivas",
-      value: inactiveStores.length,
+      value: stats.inactive_stores,
       icon: <ShieldX className="w-5 h-5 text-red-600" />,
       tone: "bg-red-50 text-red-700",
-      helper: inactiveStores.length > 0 ? "Requieren revision" : "Sin alertas",
+      helper: stats.inactive_stores > 0 ? "Requieren revision" : "Sin alertas",
       href: "/admin/stores?status=inactive",
     },
     {
       label: "Nuevas este mes",
-      value: newStores.length,
+      value: stats.new_stores_this_month,
       icon: <StoreIcon className="w-5 h-5 text-indigo-600" />,
       tone: "bg-indigo-50 text-indigo-700",
-      helper: newStores.length > 0 ? "Altas recientes" : "Sin altas nuevas",
+      helper:
+        stats.new_stores_this_month > 0 ? "Altas recientes" : "Sin altas nuevas",
       href: "/admin/stores?segment=new&sort=newest",
     },
     {
       label: "Sin actividad reciente",
-      value: storesWithoutRecentActivity.length,
+      value: stats.stores_without_recent_activity,
       icon: <Clock className="w-5 h-5 text-amber-500" />,
       tone: "bg-amber-50 text-amber-700",
       helper:
-        storesWithoutRecentActivity.length > 0
+        stats.stores_without_recent_activity > 0
           ? "0 pedidos en 30 dias"
           : "Actividad al dia",
       href: "/admin/stores?activity=no-recent",
     },
   ];
 
+  // ── Render ────────────────────────────────────────────────────────────────
+
   return (
     <div className="space-y-8 animate-fade-in">
       <section className="rounded-[28px] border border-slate-200 bg-gradient-to-br from-white via-white to-slate-50 p-6 shadow-sm">
         <PageHeader
           title="Operacion de tiendas"
-          subtitle={`${totalStores} tiendas analizadas y ${allOrders.length} pedidos no cancelados revisados.`}
+          subtitle={`${stats.total_stores} tiendas analizadas y ${stats.platform_total_orders} pedidos no cancelados revisados.`}
           className="mb-6"
         />
 
@@ -294,7 +204,9 @@ export default async function AdminOverviewPage() {
               href={card.href}
               className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
             >
-              <div className={`inline-flex rounded-2xl p-3 ${card.tone}`}>{card.icon}</div>
+              <div className={`inline-flex rounded-2xl p-3 ${card.tone}`}>
+                {card.icon}
+              </div>
               <div className="mt-6">
                 <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
                   {card.label}
@@ -408,10 +320,12 @@ export default async function AdminOverviewPage() {
                       </p>
                     </div>
                     <Badge
-                      variant={store.hasOrders ? "info" : "warning"}
+                      variant={store.total_orders > 0 ? "info" : "warning"}
                       size="sm"
                     >
-                      {store.hasOrders ? `${store.totalOrders} pedidos` : "Sin pedidos"}
+                      {store.total_orders > 0
+                        ? `${store.total_orders} pedidos`
+                        : "Sin pedidos"}
                     </Badge>
                   </Link>
                 ))}
@@ -460,16 +374,16 @@ export default async function AdminOverviewPage() {
                         {store.name}
                       </p>
                       <p className="text-xs text-slate-400 mt-1">
-                        {store.lastOrderAt
-                          ? `Ultimo pedido ${formatShortDate(store.lastOrderAt)}`
+                        {store.last_order_at
+                          ? `Ultimo pedido ${formatShortDate(store.last_order_at)}`
                           : "Sin pedidos historicos"}
                       </p>
                     </div>
                     <Badge
-                      variant={store.hasOrders ? "warning" : "error"}
+                      variant={store.has_orders ? "warning" : "error"}
                       size="sm"
                     >
-                      {store.hasOrders ? "Sin actividad 30d" : "Sin pedidos"}
+                      {store.has_orders ? "Sin actividad 30d" : "Sin pedidos"}
                     </Badge>
                   </Link>
                 ))}
@@ -483,13 +397,15 @@ export default async function AdminOverviewPage() {
         <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
           Resumen rapido
         </span>
-        <span>{activeStores.length} activas</span>
+        <span>{stats.active_stores} activas</span>
         <span className="text-slate-300">/</span>
-        <span>{inactiveStores.length} inactivas</span>
+        <span>{stats.inactive_stores} inactivas</span>
         <span className="text-slate-300">/</span>
-        <span>{storesWithoutOrders.length} sin pedidos</span>
+        <span>{stats.stores_without_orders} sin pedidos</span>
         <span className="text-slate-300">/</span>
-        <span>{formatCurrency(allOrders.reduce((sum, order) => sum + (order.total || 0), 0))} en ventas analizadas</span>
+        <span>
+          {formatCurrency(stats.platform_total_revenue)} en ventas analizadas
+        </span>
       </div>
     </div>
   );

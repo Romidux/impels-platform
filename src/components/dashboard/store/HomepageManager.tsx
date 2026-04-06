@@ -6,9 +6,9 @@ import { Home, Save, Type, Image, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, StoreSettings, StoreBranding } from "@/lib/types";
-import { DashCard } from "@/components/dashboard/ui/DashCard";
-import { DashButton } from "@/components/dashboard/ui/DashButton";
-import { DashInput } from "@/components/dashboard/ui/DashInput";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 interface HomepageManagerProps {
   store: Store;
@@ -90,7 +90,7 @@ export default function HomepageManager({
 
   return (
     <div className="max-w-4xl space-y-5">
-      <DashCard className="border-brand-100 bg-brand-50/50">
+      <Card className="border-brand-100 bg-brand-50/50">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-sm">
             <Sparkles className="h-4 w-4" />
@@ -104,57 +104,57 @@ export default function HomepageManager({
             </p>
           </div>
         </div>
-      </DashCard>
+      </Card>
 
-      <DashCard
+      <Card
         header={{
           title: "Hero principal",
           icon: <Type className="h-5 w-5 text-emerald-600" />,
         }}
       >
         <div className="space-y-4">
-          <DashInput
+          <Input
             label="Titulo principal"
             value={heroTitle}
             onChange={(e) => setHeroTitle(e.target.value)}
             placeholder={`Bienvenidos a ${store.name}`}
           />
-          <DashInput
+          <Input
             label="Subtitulo"
             value={heroSubtitle}
             onChange={(e) => setHeroSubtitle(e.target.value)}
             placeholder="Presenta tu propuesta de valor en una frase clara."
           />
         </div>
-      </DashCard>
+      </Card>
 
-      <DashCard
+      <Card
         header={{
           title: "Banner promocional",
           icon: <Image className="h-5 w-5 text-violet-600" />,
         }}
       >
         <div className="space-y-4">
-          <DashInput
+          <Input
             label="Titulo del banner"
             value={promoBannerTitle}
             onChange={(e) => setPromoBannerTitle(e.target.value)}
             placeholder="Oferta especial"
           />
-          <DashInput
+          <Input
             label="Subtitulo"
             value={promoBannerSubtitle}
             onChange={(e) => setPromoBannerSubtitle(e.target.value)}
             placeholder="Resume la promocion o mensaje que quieres destacar."
           />
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <DashInput
+            <Input
               label="Texto del boton"
               value={promoBannerCta}
               onChange={(e) => setPromoBannerCta(e.target.value)}
               placeholder="Comprar ahora"
             />
-            <DashInput
+            <Input
               label="URL del boton"
               value={promoBannerUrlLink}
               onChange={(e) => setPromoBannerUrlLink(e.target.value)}
@@ -162,18 +162,17 @@ export default function HomepageManager({
             />
           </div>
         </div>
-      </DashCard>
+      </Card>
 
-      <DashButton
+      <Button
         onClick={handleSave}
         loading={saving}
-        variant="primarySolid"
+        icon={<Save className="h-4 w-4" />}
         size="lg"
         className="w-full"
       >
-        <Save className="h-4 w-4" />
         Guardar portada
-      </DashButton>
+      </Button>
     </div>
   );
 }

@@ -12,7 +12,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { getStoreUrl } from "@/lib/utils";
-import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { StoreStudioDesktopPreview, StoreStudioMobilePreview } from "@/components/dashboard/store/StoreStudioPreview";
 import { getStoreStudioData } from "./_lib/getStoreStudioData";
 
@@ -90,20 +90,21 @@ export default async function StoreHubPage({
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6 pb-6 animate-fade-in">
-      <DashPageHeader
+      <PageHeader
         title="Mi Tienda"
         subtitle="Centraliza la identidad, el diseno y el contenido de tu tienda en un solo lugar."
-      >
-        <a
-          href={storeUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-blue-200 hover:text-blue-700"
-        >
-          <ExternalLink className="h-4 w-4" />
-          Ver tienda
-        </a>
-      </DashPageHeader>
+        actions={
+          <a
+            href={storeUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-blue-200 hover:text-blue-700"
+          >
+            <ExternalLink className="h-4 w-4" />
+            Ver tienda
+          </a>
+        }
+      />
 
       <section className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-4 shadow-sm">

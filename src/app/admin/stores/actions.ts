@@ -1,8 +1,20 @@
 "use server";
 
+import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+
+const ToggleStoreSchema = z.object({
+  storeId: z.string().uuid(),
+  isActive: z.boolean(),
+  reason: z.string().max(500).optional(),
+});
+
+const DeleteStoreSchema = z.object({
+  storeId: z.string().uuid(),
+  confirmName: z.string().min(1).max(100),
+});
 
 // ── Helpers ──────────────────────────────────────────────────────
 
@@ -39,6 +51,12 @@ export async function toggleStoreActive(
   isActive: boolean,
   reason?: string
 ) {
+  const parsed = ToggleStoreSchema.safeParse({ storeId, isActive, reason });
+  if (!parsed.success) {
+    return { success: false, error: parsed.error.issues[0]?.message ?? "Datos inválidos" };
+  }
+  const { storeId: validStoreId, isActive: validIsActive, reason: validReason } = parsed.data;
+
   // Verify caller is super admin
   try {
     await assertSuperAdmin();
@@ -50,11 +68,11 @@ export async function toggleStoreActive(
   // Use admin client to bypass RLS — we need to update any store, not just our own
   const adminClient = createAdminClient();
 
-  const updatePayload: Record<string, unknown> = { is_active: isActive };
+  const updatePayload: Record<string, unknown> = { is_active: validIsActive };
 
-  if (!isActive) {
+  if (!validIsActive) {
     // Suspending: save reason and timestamp
-    updatePayload.disabled_reason = reason?.trim() || null;
+    updatePayload.disabled_reason = validReason?.trim() || null;
     updatePayload.disabled_at = new Date().toISOString();
   } else {
     // Reactivating: clear suspension fields
@@ -65,14 +83,14 @@ export async function toggleStoreActive(
   const { error } = await adminClient
     .from("stores")
     .update(updatePayload)
-    .eq("id", storeId);
+    .eq("id", validStoreId);
 
   if (error) {
     return { success: false, error: error.message };
   }
 
   revalidatePath("/admin/stores");
-  revalidatePath(`/admin/stores/${storeId}`);
+  revalidatePath(`/admin/stores/${validStoreId}`);
   revalidatePath("/admin");
 
   return { success: true };
@@ -81,6 +99,12 @@ export async function toggleStoreActive(
 // ── Delete Store Complete ────────────────────────────────────────
 
 export async function deleteStoreComplete(storeId: string, confirmName: string) {
+  const parsedDelete = DeleteStoreSchema.safeParse({ storeId, confirmName });
+  if (!parsedDelete.success) {
+    return { success: false, error: parsedDelete.error.issues[0]?.message ?? "Datos inválidos" };
+  }
+  const { storeId: validStoreId2, confirmName: validConfirmName } = parsedDelete.data;
+
   // 1. Strict super admin validation — no fallback
   let supabase;
   let user;
@@ -100,14 +124,14 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
   const { data: store, error: storeError } = await adminClient
     .from("stores")
     .select("id, name, slug")
-    .eq("id", storeId)
+    .eq("id", validStoreId2)
     .single();
 
   if (storeError || !store) {
     return { success: false, error: "Tienda no encontrada" };
   }
 
-  if (store.name.trim().toLowerCase() !== confirmName.trim().toLowerCase()) {
+  if (store.name.trim().toLowerCase() !== validConfirmName.trim().toLowerCase()) {
     return { success: false, error: "El nombre de confirmación no coincide" };
   }
 
@@ -125,7 +149,7 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
           await adminClient
             .from("products")
             .select("id")
-            .eq("store_id", storeId)
+            .eq("store_id", validStoreId2)
         ).data?.map((p) => p.id) || []
       );
 
@@ -138,7 +162,7 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
 
     // 3c. Store logo from stores table
     const storeLogoUrl = (
-      await adminClient.from("stores").select("logo_url").eq("id", storeId).single()
+      await adminClient.from("stores").select("logo_url").eq("id", validStoreId2).single()
     ).data?.logo_url;
 
     // Collect all URLs
@@ -185,12 +209,12 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
     // Also try to list the entire store folder in product-images bucket
     const { data: folderFiles } = await adminClient.storage
       .from("product-images")
-      .list(storeId, { limit: 1000 });
+      .list(validStoreId2, { limit: 1000 });
 
     if (folderFiles && folderFiles.length > 0) {
       const folderPaths = folderFiles
         .filter((f) => f.name) // skip folders
-        .map((f) => `${storeId}/${f.name}`);
+        .map((f) => `${validStoreId2}/${f.name}`);
 
       // Add any files found via folder listing that aren't already in the list
       const existingPaths = new Set(
@@ -234,10 +258,10 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
   // 5. Log the action in admin_actions_log BEFORE deleting the store
   await adminClient.from("admin_actions_log").insert({
     action: "DELETE_STORE",
-    store_id: storeId, // Insert with real FK. Postgres ON DELETE SET NULL will handle it when the store is deleted.
+    store_id: validStoreId2, // Insert with real FK. Postgres ON DELETE SET NULL will handle it when the store is deleted.
     performed_by: user.id,
     metadata: {
-      store_id_deleted: storeId, // Keep for audit
+      store_id_deleted: validStoreId2, // Keep for audit
       store_name: store.name,
       storage_cleanup_errors: storageErrors.length > 0 ? storageErrors : null,
       deleted_at: new Date().toISOString()
@@ -248,7 +272,7 @@ export async function deleteStoreComplete(storeId: string, confirmName: string) 
   const { error: deleteError } = await adminClient
     .from("stores")
     .delete()
-    .eq("id", storeId);
+    .eq("id", validStoreId2);
 
   if (deleteError) {
     return {

@@ -20,6 +20,7 @@ import { useEffect } from "react";
 interface CheckoutPageClientProps {
   storeId: string;
   storeSlug: string;
+  storeName?: string;
   whatsappNumber?: string;
   currency: string;
   primaryColor: string;
@@ -30,6 +31,7 @@ interface CheckoutPageClientProps {
 export default function CheckoutPageClient({
   storeId,
   storeSlug,
+  storeName,
   whatsappNumber,
   currency,
   primaryColor,
@@ -55,7 +57,7 @@ export default function CheckoutPageClient({
     removeCoupon,
     subtotal,
     discountAmount
-  } = useCheckoutLogic({ storeId, storeSlug, whatsappNumber, currency });
+  } = useCheckoutLogic({ storeId, storeSlug, whatsappNumber, currency, storeName });
 
   // Auto-select when only one option is available
   useEffect(() => {

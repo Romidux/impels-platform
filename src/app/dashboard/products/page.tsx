@@ -12,10 +12,9 @@ import {
 import { formatCurrency, cn } from "@/lib/utils";
 import { Product } from "@/lib/types";
 import ProductsActions from "@/components/dashboard/ProductsActions";
-import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import ProductFilters from "@/components/dashboard/ProductFilters";
-import { DashButton } from "@/components/dashboard/ui/DashButton";
-import { DashBadge } from "@/components/dashboard/ui/DashBadge";
+import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 
@@ -90,26 +89,25 @@ export default async function ProductsPage({
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <DashPageHeader
+      <PageHeader
         title="Productos"
         subtitle={`${totalCount || 0} productos${!isPro ? ` / ${MAX_FREE_PRODUCTS} en plan gratis` : ""}`}
-      >
-        {atLimit ? (
-          <Link href="/dashboard/plan">
-            <DashButton variant="secondary">
-              <Package className="w-4 h-4" />
-              ⚡ Upgrade para más
-            </DashButton>
-          </Link>
-        ) : (
-          <Link href="/dashboard/products/new">
-            <DashButton>
-              <Plus className="w-4 h-4" />
-              Nuevo producto
-            </DashButton>
-          </Link>
-        )}
-      </DashPageHeader>
+        actions={
+          atLimit ? (
+            <Link href="/dashboard/plan">
+              <Button variant="secondary" icon={<Package className="w-4 h-4" />}>
+                ⚡ Upgrade para más
+              </Button>
+            </Link>
+          ) : (
+            <Link href="/dashboard/products/new">
+              <Button icon={<Plus className="w-4 h-4" />}>
+                Nuevo producto
+              </Button>
+            </Link>
+          )
+        }
+      />
 
       {/* Filters & View Toggle */}
       <div className="flex flex-col sm:flex-row gap-3">
@@ -239,7 +237,7 @@ export default async function ProductsPage({
                             </span>
                           </td>
                           <td className="px-4 py-3.5">
-                            <DashBadge
+                            <Badge
                               variant={
                                 product.stock_status === "available"
                                   ? "success"
@@ -254,10 +252,10 @@ export default async function ProductsPage({
                                   : product.stock_status === "available"
                                     ? "Disponible"
                                     : "Sin stock"}
-                            </DashBadge>
+                            </Badge>
                           </td>
                           <td className="px-4 py-3.5">
-                            <DashBadge
+                            <Badge
                               variant={
                                 product.visibility === "visible"
                                   ? "info"
@@ -270,7 +268,7 @@ export default async function ProductsPage({
                                 <EyeOff className="w-3 h-3" />
                               )}
                               {product.visibility === "visible" ? "Visible" : "Oculto"}
-                            </DashBadge>
+                            </Badge>
                           </td>
                           <td className="px-5 py-3.5">
                             <ProductsActions productId={product.id} />
@@ -301,9 +299,9 @@ export default async function ProductsPage({
                         </div>
                       )}
                       <div className="absolute top-2 right-2 flex flex-col gap-1">
-                        <DashBadge variant={product.visibility === "visible" ? "info" : "neutral"} className="shadow-sm backdrop-blur-md bg-white/90">
+                        <Badge variant={product.visibility === "visible" ? "info" : "neutral"} className="shadow-sm backdrop-blur-md bg-white/90">
                           {product.visibility === "visible" ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                        </DashBadge>
+                        </Badge>
                       </div>
                     </div>
                     <div className="p-4 flex-1 flex flex-col">

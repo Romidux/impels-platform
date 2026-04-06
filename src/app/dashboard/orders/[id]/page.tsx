@@ -17,7 +17,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Order, OrderItem, OrderStatus } from "@/lib/types";
 import OrderStatusBadge from "@/components/dashboard/OrderStatusBadge";
 import OrderStatusChanger from "@/components/dashboard/OrderStatusChanger";
-import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
+import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 
 const STATUS_TIMELINE: { status: OrderStatus; label: string }[] = [
@@ -73,7 +73,7 @@ export default async function OrderDetailPage({
   return (
     <div className="space-y-5 animate-fade-in max-w-5xl mx-auto">
       {/* Header */}
-      <DashPageHeader
+      <PageHeader
         title={`Pedido #${order.id.slice(0, 8).toUpperCase()}`}
         subtitle={`Creado el ${new Date(order.created_at).toLocaleString("es-PY", {
           dateStyle: "long",

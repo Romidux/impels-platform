@@ -7,8 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Product } from "@/lib/types";
 import { formatCurrency } from "@/lib/utils";
-import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
-import { DashCard } from "@/components/dashboard/ui/DashCard";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Card } from "@/components/ui/Card";
 import { PhoneInput } from "@/components/ui/PhoneInput";
 
 interface ManualOrderFormProps {
@@ -214,7 +214,7 @@ export default function ManualOrderForm({
   return (
     <div className="space-y-6 animate-fade-in relative">
       <div className="flex items-center justify-between gap-4">
-        <DashPageHeader
+        <PageHeader
           title="Nuevo pedido"
           subtitle="Registrar un pedido manualmente"
           backHref="/dashboard/orders"
@@ -236,7 +236,7 @@ export default function ManualOrderForm({
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column: Items */}
         <div className="lg:col-span-2 space-y-6">
-          <DashCard className="p-0 overflow-hidden">
+          <Card className="p-0 overflow-hidden">
             <div className="p-5 border-b border-gray-100 flex items-center justify-between">
               <h2 className="font-semibold text-gray-900">Productos del pedido</h2>
               {!showProductSelector && (
@@ -439,12 +439,12 @@ export default function ManualOrderForm({
                 </div>
               </div>
             )}
-          </DashCard>
+          </Card>
         </div>
 
         {/* Right Column: Customer Details */}
         <div className="space-y-6">
-          <DashCard className="p-5 space-y-4">
+          <Card className="p-5 space-y-4">
             <h2 className="font-semibold text-gray-900 flex items-center gap-2">
               <User className="w-5 h-5 text-brand-600" />
               Datos del cliente
@@ -493,7 +493,7 @@ export default function ManualOrderForm({
                 />
               </div>
             </div>
-          </DashCard>
+          </Card>
         </div>
       </div>
     </div>

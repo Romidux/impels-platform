@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
   Globe,
@@ -13,9 +13,9 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, StoreSettings, StoreBranding } from "@/lib/types";
-import { DashCard } from "@/components/dashboard/ui/DashCard";
-import { DashButton } from "@/components/dashboard/ui/DashButton";
-import { DashInput } from "@/components/dashboard/ui/DashInput";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
 
 interface FooterSocialManagerProps {
   store: Store;
@@ -97,36 +97,37 @@ export default function FooterSocialManager({
     }
   };
 
-  const socialFields = [
+  type SocialKey = "instagram_url" | "facebook_url" | "tiktok_url" | "twitter_url";
+  const socialFields: { key: SocialKey; label: string; icon: React.ReactNode; placeholder: string }[] = [
     {
       key: "instagram_url",
       label: "Instagram",
-      icon: Instagram,
+      icon: <Instagram className="w-4 h-4" />,
       placeholder: "https://instagram.com/tutienda",
     },
     {
       key: "facebook_url",
       label: "Facebook",
-      icon: Facebook,
+      icon: <Facebook className="w-4 h-4" />,
       placeholder: "https://facebook.com/tutienda",
     },
     {
       key: "tiktok_url",
       label: "TikTok",
-      icon: Globe,
+      icon: <Globe className="w-4 h-4" />,
       placeholder: "https://tiktok.com/@tutienda",
     },
     {
       key: "twitter_url",
       label: "X / Twitter",
-      icon: Twitter,
+      icon: <Twitter className="w-4 h-4" />,
       placeholder: "https://x.com/tutienda",
     },
-  ] as const;
+  ];
 
   return (
     <div className="max-w-3xl space-y-5">
-      <DashCard className="border-brand-100 bg-brand-50/50">
+      <Card className="border-brand-100 bg-brand-50/50">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-sm">
             <Sparkles className="h-4 w-4" />
@@ -140,9 +141,9 @@ export default function FooterSocialManager({
             </p>
           </div>
         </div>
-      </DashCard>
+      </Card>
 
-      <DashCard
+      <Card
         header={{
           title: "Redes sociales",
           icon: <Globe className="h-5 w-5 text-emerald-600" />,
@@ -150,7 +151,7 @@ export default function FooterSocialManager({
       >
         <div className="space-y-4">
           {socialFields.map(({ key, label, icon, placeholder }) => (
-            <DashInput
+            <Input
               key={key}
               label={label}
               icon={icon}
@@ -161,16 +162,16 @@ export default function FooterSocialManager({
             />
           ))}
         </div>
-      </DashCard>
+      </Card>
 
-      <DashCard
+      <Card
         header={{
           title: "Textos del footer",
           icon: <Globe className="h-5 w-5 text-violet-600" />,
         }}
       >
         <div className="space-y-4">
-          <DashInput
+          <Input
             label="Titulo de categorias"
             value={form.footer_categories_label}
             onChange={(e) =>
@@ -179,7 +180,7 @@ export default function FooterSocialManager({
             placeholder="Categorias"
             hint="Titulo que aparece en la columna de categorias del footer."
           />
-          <DashInput
+          <Input
             label="Titulo de contacto"
             value={form.footer_contact_label}
             onChange={(e) =>
@@ -189,18 +190,17 @@ export default function FooterSocialManager({
             hint="Titulo que aparece en la columna de contacto del footer."
           />
         </div>
-      </DashCard>
+      </Card>
 
-      <DashButton
+      <Button
         onClick={handleSave}
         loading={saving}
-        variant="primarySolid"
+        icon={<Save className="h-4 w-4" />}
         size="lg"
         className="w-full"
       >
-        <Save className="h-4 w-4" />
         Guardar footer y redes
-      </DashButton>
+      </Button>
     </div>
   );
 }

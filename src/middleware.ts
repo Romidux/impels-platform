@@ -1,8 +1,34 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { Ratelimit } from "@upstash/ratelimit";
+import { Redis } from "@upstash/redis";
+
+// Rate limiter — only active when Upstash env vars are set
+const ratelimit =
+  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
+    ? new Ratelimit({
+        redis: Redis.fromEnv(),
+        limiter: Ratelimit.slidingWindow(10, "60 s"),
+        analytics: false,
+      })
+    : null;
+
+const RATE_LIMITED_PATHS = ["/login", "/register", "/api/export"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+
+  // Rate limiting for sensitive routes
+  if (ratelimit && RATE_LIMITED_PATHS.some((p) => pathname.startsWith(p))) {
+    const ip =
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+      request.headers.get("x-real-ip") ??
+      "anonymous";
+    const { success } = await ratelimit.limit(`rl:${ip}`);
+    if (!success) {
+      return new NextResponse("Too many requests", { status: 429 });
+    }
+  }
 
   // Skip auth for public routes — no need to call getUser() on storefront
   if (

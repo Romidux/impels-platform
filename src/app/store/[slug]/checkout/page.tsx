@@ -31,6 +31,7 @@ export default async function CheckoutPage({
       <MinimalCheckoutPageClient
         storeId={store.id}
         storeSlug={slug}
+        storeName={store.name}
         whatsappNumber={settings?.whatsapp_number}
         currency={settings?.currency || "Gs"}
         primaryColor={settings?.primary_color || "#000000"}
@@ -44,6 +45,7 @@ export default async function CheckoutPage({
     <ModernCheckoutPageClient
       storeId={store.id}
       storeSlug={slug}
+      storeName={store.name}
       whatsappNumber={settings?.whatsapp_number}
       currency={settings?.currency || "Gs"}
       primaryColor={settings?.primary_color || "#2563eb"}

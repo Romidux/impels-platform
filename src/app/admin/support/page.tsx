@@ -3,7 +3,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { HelpCircle, Clock, ChevronRight, Store } from "lucide-react";
 import Link from "next/link";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { DashBadge } from "@/components/dashboard/ui/DashBadge";
+import { Badge } from "@/components/ui/Badge";
 
 export default async function AdminSupportPage() {
   const supabase = await createClient();
@@ -57,11 +57,11 @@ export default async function AdminSupportPage() {
                     </td>
                     <td className="px-5 py-4">
                       {ticket.status === 'open' ? (
-                        <DashBadge variant="warning">Abierto</DashBadge>
+                        <Badge variant="warning">Abierto</Badge>
                       ) : ticket.status === 'in_progress' ? (
-                        <DashBadge variant="info">En proceso</DashBadge>
+                        <Badge variant="info">En proceso</Badge>
                       ) : (
-                        <DashBadge variant="success">Resuelto</DashBadge>
+                        <Badge variant="success">Resuelto</Badge>
                       )}
                     </td>
                     <td className="px-5 py-4 text-slate-500 text-xs">

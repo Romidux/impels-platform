@@ -20,8 +20,8 @@ import { toast } from "sonner";
 import { Category } from "@/lib/types";
 import { slugify, cn } from "@/lib/utils";
 
-import { DashPageHeader } from "./ui/DashPageHeader";
-import { DashButton } from "./ui/DashButton";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Button } from "@/components/ui/Button";
 
 interface CategoriesManagerProps {
   storeId: string;
@@ -367,21 +367,22 @@ export default function CategoriesManager({
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <DashPageHeader
+      <PageHeader
         title="Categorías"
         subtitle="Organiza la estructura de tu catálogo de productos"
-      >
-        <DashButton
-          onClick={() => {
-            setAdding(true);
-            setAddingSubOf(null);
-            setNewName("");
-          }}
-        >
-          <Plus className="w-4 h-4" />
-          Nueva categoría
-        </DashButton>
-      </DashPageHeader>
+        actions={
+          <Button
+            onClick={() => {
+              setAdding(true);
+              setAddingSubOf(null);
+              setNewName("");
+            }}
+            icon={<Plus className="w-4 h-4" />}
+          >
+            Nueva categoría
+          </Button>
+        }
+      />
 
       <div className="dash-card overflow-hidden bg-white shadow-sm ring-1 ring-slate-200/50">
         <div className="flex flex-col">
@@ -400,13 +401,13 @@ export default function CategoriesManager({
               <p className="text-slate-500 mb-8 max-w-sm mx-auto text-sm leading-relaxed">
                 Organiza tu tienda estructurando tus productos en categorías. Mejora la experiencia de tus clientes.
               </p>
-              <DashButton
+              <Button
                 onClick={() => setAdding(true)}
                 className="px-8"
+                icon={<Plus className="w-5 h-5" />}
               >
-                <Plus className="w-5 h-5" />
                 Crear primera categoría
-              </DashButton>
+              </Button>
             </div>
           ) : (
             <div className="flex flex-col">

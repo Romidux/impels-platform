@@ -2,10 +2,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Warehouse, AlertTriangle, Package, Edit } from "lucide-react";
-import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
-import { DashCard } from "@/components/dashboard/ui/DashCard";
-import { DashBadge } from "@/components/dashboard/ui/DashBadge";
-import { DashEmptyState } from "@/components/dashboard/ui/DashEmptyState";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Card } from "@/components/ui/Card";
+import { Badge } from "@/components/ui/Badge";
+import { EmptyState } from "@/components/ui/EmptyState";
 import InlineStockEditor from "@/components/dashboard/InlineStockEditor";
 
 export default async function InventoryPage() {
@@ -34,14 +34,14 @@ export default async function InventoryPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <DashPageHeader
+      <PageHeader
         title="Inventario"
         subtitle={`${trackedProducts.length} productos con seguimiento de stock`}
       />
 
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <DashCard>
+        <Card>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center">
               <Package className="w-5 h-5 text-green-600" />
@@ -53,8 +53,8 @@ export default async function InventoryPage() {
               <p className="text-xs text-slate-500">Con seguimiento</p>
             </div>
           </div>
-        </DashCard>
-        <DashCard>
+        </Card>
+        <Card>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center">
               <AlertTriangle className="w-5 h-5 text-amber-500" />
@@ -66,8 +66,8 @@ export default async function InventoryPage() {
               <p className="text-xs text-slate-500">Stock bajo (≤5)</p>
             </div>
           </div>
-        </DashCard>
-        <DashCard>
+        </Card>
+        <Card>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
               <Warehouse className="w-5 h-5 text-red-500" />
@@ -79,15 +79,15 @@ export default async function InventoryPage() {
               <p className="text-xs text-slate-500">Sin stock</p>
             </div>
           </div>
-        </DashCard>
+        </Card>
       </div>
 
       {/* Inventory table */}
       {trackedProducts.length === 0 ? (
         <div className="dash-card">
-          <DashEmptyState
+          <EmptyState
             icon={<Warehouse className="w-7 h-7 text-green-600" />}
-            title="Sin seguimiento de inventario"
+            heading="Sin seguimiento de inventario"
             description="Activa el seguimiento de stock en tus productos para verlos aquí"
           />
         </div>
@@ -148,12 +148,12 @@ export default async function InventoryPage() {
                         />
                       </td>
                       <td className="px-4 py-3.5">
-                        <DashBadge
+                        <Badge
                           variant={isOut ? "error" : isLow ? "warning" : "success"}
                           dot
                         >
                           {isOut ? "Sin stock" : isLow ? "Stock bajo" : "OK"}
-                        </DashBadge>
+                        </Badge>
                       </td>
                       <td className="px-4 py-3.5">
                         <Link

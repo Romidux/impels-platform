@@ -2,8 +2,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { CreditCard, Zap, Check } from "lucide-react";
-import { DashPageHeader } from "@/components/dashboard/ui/DashPageHeader";
-import { DashCard } from "@/components/dashboard/ui/DashCard";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Card } from "@/components/ui/Card";
 
 export default async function PlanPage() {
   const supabase = await createClient();
@@ -50,7 +50,7 @@ export default async function PlanPage() {
 
   return (
     <div className="space-y-5 animate-fade-in">
-      <DashPageHeader
+      <PageHeader
         title="Plan"
         subtitle="Gestiona tu suscripción"
       />

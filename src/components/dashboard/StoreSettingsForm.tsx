@@ -17,13 +17,9 @@ import {
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store as StoreType, StoreSettings } from "@/lib/types";
-import { DashCard } from "@/components/dashboard/ui/DashCard";
-import { DashButton } from "@/components/dashboard/ui/DashButton";
-import {
-  DashInput,
-  DashTextarea,
-  DashSelect,
-} from "@/components/dashboard/ui/DashInput";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
+import { Input, Textarea, Select } from "@/components/ui/Input";
 import { PhoneInput } from "@/components/ui/PhoneInput";
 import { cn } from "@/lib/utils";
 
@@ -261,20 +257,20 @@ export default function StoreSettingsForm({
   return (
     <div className="max-w-3xl space-y-5">
       {showIdentity && (
-        <DashCard
+        <Card
           header={{
             title: "Identidad de la tienda",
             icon: <Store className="h-5 w-5 text-emerald-600" />,
           }}
         >
           <div className="space-y-4">
-            <DashInput
+            <Input
               label="Nombre de la tienda"
               value={form.name}
               onChange={(e) => handleChange("name", e.target.value)}
             />
 
-            <DashTextarea
+            <Textarea
               label="Descripcion"
               value={form.description}
               onChange={(e) => handleChange("description", e.target.value)}
@@ -296,12 +292,12 @@ export default function StoreSettingsForm({
               </p>
             </div>
           </div>
-        </DashCard>
+        </Card>
       )}
 
       {showCommerce && (
         <>
-          <DashCard
+          <Card
             header={{
               title: "Contacto y pedidos",
               icon: <Phone className="h-5 w-5 text-emerald-600" />,
@@ -319,25 +315,25 @@ export default function StoreSettingsForm({
                   hint="El numero completo se guarda automaticamente con el prefijo."
                 />
               </div>
-              <DashInput
+              <Input
                 label="Email de contacto"
-                icon={Mail}
+                icon={<Mail className="w-4 h-4" />}
                 value={form.contact_email}
                 onChange={(e) => handleChange("contact_email", e.target.value)}
                 placeholder="contacto@mitienda.com"
                 type="email"
               />
             </div>
-          </DashCard>
+          </Card>
 
-          <DashCard
+          <Card
             header={{
               title: "Cobros y moneda",
               icon: <DollarSign className="h-5 w-5 text-amber-500" />,
             }}
           >
             <div className="space-y-6">
-              <DashSelect
+              <Select
                 label="Moneda de la tienda"
                 value={form.currency}
                 onChange={(e) => handleChange("currency", e.target.value)}
@@ -373,15 +369,14 @@ export default function StoreSettingsForm({
                 hint="Seleccioná las modalidades de entrega disponibles en tu tienda."
               />
             </div>
-          </DashCard>
+          </Card>
         </>
       )}
 
-      <DashButton
+      <Button
         onClick={handleSave}
         loading={saving}
         icon={<Save className="h-4 w-4" />}
-        variant="primarySolid"
         size="lg"
         className="w-full"
       >
@@ -390,7 +385,7 @@ export default function StoreSettingsForm({
           : mode === "commerce"
           ? "Guardar ventas y contacto"
           : "Guardar configuracion"}
-      </DashButton>
+      </Button>
     </div>
   );
 }

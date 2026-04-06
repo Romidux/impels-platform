@@ -6,8 +6,8 @@ import { Palette, Save, Layers, Check, Sparkles, ImageIcon } from "lucide-react"
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, StoreSettings } from "@/lib/types";
-import { DashCard } from "@/components/dashboard/ui/DashCard";
-import { DashButton } from "@/components/dashboard/ui/DashButton";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 
 const TEMPLATES = [
   {
@@ -110,7 +110,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
 
   return (
     <div className="max-w-4xl space-y-5">
-      <DashCard className="border-brand-100 bg-brand-50/50">
+      <Card className="border-brand-100 bg-brand-50/50">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-sm">
             <Sparkles className="h-4 w-4" />
@@ -125,9 +125,9 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
             </p>
           </div>
         </div>
-      </DashCard>
+      </Card>
 
-      <DashCard
+      <Card
         header={{
           title: "Template base",
           icon: <Layers className="h-5 w-5 text-emerald-600" />,
@@ -183,9 +183,9 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
             );
           })}
         </div>
-      </DashCard>
+      </Card>
 
-      <DashCard
+      <Card
         header={{
           title: "Color principal",
           icon: <Palette className="h-5 w-5 text-violet-600" />,
@@ -230,9 +230,9 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
             </div>
           </div>
         </div>
-      </DashCard>
+      </Card>
 
-      <DashCard
+      <Card
         header={{
           title: "Formato de imagen de producto",
           icon: <ImageIcon className="h-5 w-5 text-rose-600" />,
@@ -277,18 +277,17 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
             })}
           </div>
         </div>
-      </DashCard>
+      </Card>
 
-      <DashButton
+      <Button
         onClick={handleSave}
         loading={saving}
-        variant="primarySolid"
+        icon={<Save className="h-4 w-4" />}
         size="lg"
         className="w-full"
       >
-        <Save className="h-4 w-4" />
         Guardar apariencia
-      </DashButton>
+      </Button>
     </div>
   );
 }

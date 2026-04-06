@@ -1,6 +1,16 @@
 "use server";
 
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
+
+const CreateStoreSchema = z.object({
+  userId: z.string().uuid(),
+  name: z.string().min(2).max(100),
+  slug: z.string().min(2).max(50).regex(/^[a-z0-9-]+$/, "Solo letras minúsculas, números y guiones"),
+  description: z.string().max(500).optional(),
+  currency: z.string().max(10).optional(),
+  whatsapp: z.string().max(30).optional(),
+});
 
 /**
  * Creates a complete store with all related records atomically.
@@ -13,23 +23,22 @@ import { createAdminClient } from "@/lib/supabase/admin";
  *   - During registration, the user just signed up and has no session yet
  *   - The RPC is restricted to service_role only (REVOKE from anon/authenticated)
  */
-export async function createStoreForUser(params: {
-  userId: string;
-  name: string;
-  slug: string;
-  description?: string;
-  currency?: string;
-  whatsapp?: string;
-}) {
+export async function createStoreForUser(params: z.infer<typeof CreateStoreSchema>) {
+  const parsed = CreateStoreSchema.safeParse(params);
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0]?.message ?? "Datos inválidos", storeId: null };
+  }
+  const validated = parsed.data;
+
   const supabase = createAdminClient();
 
   const { data, error } = await supabase.rpc("create_store_complete", {
-    p_owner_id: params.userId,
-    p_name: params.name,
-    p_slug: params.slug,
-    p_description: params.description || null,
-    p_currency: params.currency || "Gs",
-    p_whatsapp: params.whatsapp || null,
+    p_owner_id: validated.userId,
+    p_name: validated.name,
+    p_slug: validated.slug,
+    p_description: validated.description || null,
+    p_currency: validated.currency || "Gs",
+    p_whatsapp: validated.whatsapp || null,
   });
 
   if (error) {

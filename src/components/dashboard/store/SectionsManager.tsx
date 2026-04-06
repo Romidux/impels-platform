@@ -6,8 +6,8 @@ import { Layers, Save, GripVertical, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, StoreSection } from "@/lib/types";
-import { DashCard } from "@/components/dashboard/ui/DashCard";
-import { DashButton } from "@/components/dashboard/ui/DashButton";
+import { Card } from "@/components/ui/Card";
+import { Button } from "@/components/ui/Button";
 import { DashToggle } from "@/components/dashboard/ui/DashToggle";
 
 const SECTION_LABELS: Record<string, string> = {
@@ -101,7 +101,7 @@ export default function SectionsManager({
 
   return (
     <div className="max-w-3xl space-y-5">
-      <DashCard className="border-brand-100 bg-brand-50/50">
+      <Card className="border-brand-100 bg-brand-50/50">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white text-brand-700 shadow-sm">
             <Sparkles className="h-4 w-4" />
@@ -115,9 +115,9 @@ export default function SectionsManager({
             </p>
           </div>
         </div>
-      </DashCard>
+      </Card>
 
-      <DashCard
+      <Card
         header={{
           title: "Bloques visibles",
           icon: <Layers className="h-5 w-5 text-emerald-600" />,
@@ -171,18 +171,17 @@ export default function SectionsManager({
             </div>
           ))}
         </div>
-      </DashCard>
+      </Card>
 
-      <DashButton
+      <Button
         onClick={handleSave}
         loading={saving}
-        variant="primarySolid"
+        icon={<Save className="h-4 w-4" />}
         size="lg"
         className="w-full"
       >
-        <Save className="h-4 w-4" />
         Guardar secciones
-      </DashButton>
+      </Button>
     </div>
   );
 }
