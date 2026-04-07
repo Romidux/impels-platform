@@ -4,10 +4,8 @@ import Link from "next/link";
 import {
   Plus,
   Package,
-  Search,
   Eye,
   EyeOff,
-  Edit,
 } from "lucide-react";
 import { formatCurrency, cn } from "@/lib/utils";
 import { Product } from "@/lib/types";
@@ -21,7 +19,7 @@ import { Button } from "@/components/ui/Button";
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; category?: string; visibility?: string; page?: string; view?: string }>;
+  searchParams: Promise<{ search?: string; category?: string; visibility?: string; page?: string; view?: string; sort?: string }>;
 }) {
   const supabase = await createClient();
   const {
@@ -39,8 +37,19 @@ export default async function ProductsPage({
   const params = await searchParams;
   const { search, category, visibility } = params;
   const view = params.view || "list";
+  const sort = params.sort || "";
   const page = parseInt(params.page || "1");
   const pageSize = view === "grid" ? 16 : 15;
+
+  // Build sort
+  const sortMap: Record<string, { column: string; ascending: boolean }> = {
+    oldest: { column: "created_at", ascending: true },
+    name_asc: { column: "name", ascending: true },
+    name_desc: { column: "name", ascending: false },
+    price_asc: { column: "price", ascending: true },
+    price_desc: { column: "price", ascending: false },
+  };
+  const sortConfig = sortMap[sort] || { column: "created_at", ascending: false };
 
   // Build query
   let query = supabase
@@ -50,7 +59,7 @@ export default async function ProductsPage({
       { count: "exact" }
     )
     .eq("store_id", store.id)
-    .order("created_at", { ascending: false })
+    .order(sortConfig.column, { ascending: sortConfig.ascending })
     .range((page - 1) * pageSize, page * pageSize - 1);
 
   if (search) {
@@ -79,7 +88,7 @@ export default async function ProductsPage({
 
   // Build query string helper
   const buildUrl = (newParams: Record<string, string>) => {
-    const merged = { search: search || "", category: category || "", visibility: visibility || "", view, page: "1", ...newParams };
+    const merged = { search: search || "", category: category || "", visibility: visibility || "", sort: sort || "", view, page: "1", ...newParams };
     const qs = Object.entries(merged)
       .filter(([, v]) => v)
       .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
@@ -92,21 +101,6 @@ export default async function ProductsPage({
       <PageHeader
         title="Productos"
         subtitle={`${totalCount || 0} productos${!isPro ? ` / ${MAX_FREE_PRODUCTS} en plan gratis` : ""}`}
-        actions={
-          atLimit ? (
-            <Link href="/dashboard/plan">
-              <Button variant="secondary" icon={<Package className="w-4 h-4" />}>
-                ⚡ Upgrade para más
-              </Button>
-            </Link>
-          ) : (
-            <Link href="/dashboard/products/new">
-              <Button icon={<Plus className="w-4 h-4" />}>
-                Nuevo producto
-              </Button>
-            </Link>
-          )
-        }
       />
 
       {/* Filters & View Toggle */}
@@ -117,6 +111,10 @@ export default async function ProductsPage({
           currentCategory={category || ""}
           currentVisibility={visibility || ""}
           currentView={view || "list"}
+          currentSort={sort}
+          products={(products as any[]) || []}
+          currency={currency}
+          atLimit={atLimit}
         />
 
         {/* View mode toggle */}
