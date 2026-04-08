@@ -1,15 +1,18 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getUser, getStore } from "@/lib/supabase/queries";
 import Link from "next/link";
 import {
   Plus,
   Package,
+  ImageIcon,
   Eye,
   EyeOff,
 } from "lucide-react";
-import { formatCurrency, cn } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { Product } from "@/lib/types";
 import ProductsActions from "@/components/dashboard/ProductsActions";
+import VisibilityDropdown from "@/components/dashboard/VisibilityDropdown";
 import { PageHeader } from "@/components/ui/PageHeader";
 import ProductFilters from "@/components/dashboard/ProductFilters";
 import { Badge } from "@/components/ui/Badge";
@@ -21,18 +24,13 @@ export default async function ProductsPage({
 }: {
   searchParams: Promise<{ search?: string; category?: string; visibility?: string; page?: string; view?: string; sort?: string }>;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) redirect("/login");
 
-  const { data: store } = await supabase
-    .from("stores")
-    .select("id, name, slug, plan, store_settings(*)")
-    .eq("owner_id", user.id)
-    .single();
+  const store = await getStore(user.id);
   if (!store) redirect("/onboarding");
+
+  const supabase = await createClient();
 
   const params = await searchParams;
   const { search, category, visibility } = params;
@@ -72,12 +70,17 @@ export default async function ProductsPage({
     query = query.eq("visibility", visibility);
   }
 
-  const { data: products, count: totalCount } = await query;
-  const { data: categories } = await supabase
-    .from("categories")
-    .select("id, name")
-    .eq("store_id", store.id)
-    .order("name");
+  const [
+    { data: products, count: totalCount },
+    { data: categories },
+  ] = await Promise.all([
+    query,
+    supabase
+      .from("categories")
+      .select("id, name")
+      .eq("store_id", store.id)
+      .order("name"),
+  ]);
 
   const currency = store.store_settings?.[0]?.currency || "Gs";
   const isPro = store.plan === "pro";
@@ -104,47 +107,17 @@ export default async function ProductsPage({
       />
 
       {/* Filters & View Toggle */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <ProductFilters
-          categories={categories || []}
-          currentSearch={search || ""}
-          currentCategory={category || ""}
-          currentVisibility={visibility || ""}
-          currentView={view || "list"}
-          currentSort={sort}
-          products={(products as any[]) || []}
-          currency={currency}
-          atLimit={atLimit}
-        />
-
-        {/* View mode toggle */}
-        <div className="inline-flex items-center rounded-2xl border border-slate-200 bg-slate-50 p-1 shrink-0 h-11 self-end sm:self-auto">
-          <Link
-            href={buildUrl({ view: "list", page: "1" })}
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200",
-              view === "list"
-                ? "bg-brand-600 text-white shadow-sm"
-                : "text-slate-500 hover:bg-white hover:text-slate-700"
-            )}
-            title="Vista de lista"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
-          </Link>
-          <Link
-            href={buildUrl({ view: "grid", page: "1" })}
-            className={cn(
-              "flex h-9 w-9 items-center justify-center rounded-xl transition-all duration-200",
-              view === "grid"
-                ? "bg-brand-600 text-white shadow-sm"
-                : "text-slate-500 hover:bg-white hover:text-slate-700"
-            )}
-            title="Vista de cuadrícula"
-          >
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-          </Link>
-        </div>
-      </div>
+      <ProductFilters
+        categories={categories || []}
+        currentSearch={search || ""}
+        currentCategory={category || ""}
+        currentVisibility={visibility || ""}
+        currentView={view || "list"}
+        currentSort={sort}
+        products={(products as any[]) || []}
+        currency={currency}
+        atLimit={atLimit}
+      />
 
       {/* Products table */}
       {!products || products.length === 0 ? (
@@ -170,7 +143,10 @@ export default async function ProductsPage({
                 <table className="w-full">
                   <thead>
                     <tr className="bg-[#F2F4F6]">
-                      <th className="text-left text-xs font-semibold text-slate-500 px-5 py-3 rounded-tl-xl">
+                      <th className="text-left text-xs font-semibold text-slate-500 px-5 py-3 rounded-tl-xl w-14">
+                        Imagen
+                      </th>
+                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
                         Producto
                       </th>
                       <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
@@ -190,16 +166,18 @@ export default async function ProductsPage({
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-gray-50">
+                  <tbody className="divide-y divide-slate-100">
                     {(products as Product[]).map((product) => {
                       const primaryImage = product.images?.find(
                         (img) => img.is_primary
                       );
+                      const editHref = `/dashboard/products/${product.id}`;
                       return (
-                        <tr key={product.id} className="hover:bg-slate-50/60 transition-colors group">
-                          <td className="px-5 py-3.5">
-                            <div className="flex items-center gap-3">
-                              <div className="w-11 h-11 rounded-xl overflow-hidden bg-slate-100 flex-shrink-0">
+                        <tr key={product.id} className="hover:bg-slate-50/60 transition-colors group cursor-pointer">
+                          {/* Imagen */}
+                          <td className="px-0 py-0 w-14">
+                            <Link href={editHref} className="flex items-center justify-center px-5 py-2.5 h-full">
+                              <div className="w-11 h-11 rounded overflow-hidden bg-slate-50 flex-shrink-0">
                                 {primaryImage ? (
                                   <img
                                     src={primaryImage.url}
@@ -208,66 +186,66 @@ export default async function ProductsPage({
                                   />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center">
-                                    <Package className="w-4 h-4 text-slate-300" />
+                                    <ImageIcon className="w-5 h-5 text-slate-300" />
                                   </div>
                                 )}
                               </div>
-                              <div>
-                                <p className="font-semibold text-sm text-slate-900 group-hover:text-green-700 transition-colors">
-                                  {product.name}
-                                </p>
-                                <p className="text-xs text-slate-400 mt-0.5">
-                                  /{product.slug}
-                                </p>
-                              </div>
-                            </div>
+                            </Link>
                           </td>
-                          <td className="px-4 py-3.5">
-                            <span className="text-sm text-slate-500">
-                              {product.category?.name || "—"}
-                            </span>
+                          {/* Producto */}
+                          <td className="px-0 py-0">
+                            <Link href={editHref} className="flex items-center px-4 py-3.5 h-full">
+                              <span className="font-semibold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors">
+                                {product.name}
+                              </span>
+                            </Link>
                           </td>
-                          <td className="px-4 py-3.5">
-                            <span className="text-sm font-semibold text-slate-900">
-                              {product.show_price
-                                ? formatCurrency(product.price, currency)
-                                : "Consultar"}
-                            </span>
+                          {/* Categoría */}
+                          <td className="px-0 py-0">
+                            <Link href={editHref} className="flex items-center px-4 py-3.5 h-full">
+                              <span className="text-sm text-slate-500">
+                                {product.category?.name || "—"}
+                              </span>
+                            </Link>
                           </td>
-                          <td className="px-4 py-3.5">
-                            <Badge
-                              variant={
-                                product.stock_status === "available"
-                                  ? "success"
-                                  : "error"
-                              }
-                              dot
-                            >
-                              {product.has_variants
-                                ? "Variantes"
-                                : product.track_inventory
-                                  ? `${product.stock_quantity} unids.`
+                          {/* Precio */}
+                          <td className="px-0 py-0">
+                            <Link href={editHref} className="flex items-center px-4 py-3.5 h-full">
+                              <span className="text-sm font-semibold text-slate-900 whitespace-nowrap">
+                                {product.show_price && product.price > 0
+                                  ? formatCurrency(product.price, currency)
+                                  : "—"}
+                              </span>
+                            </Link>
+                          </td>
+                          {/* Stock */}
+                          <td className="px-0 py-0">
+                            <Link href={editHref} className="flex items-center px-4 py-3.5 h-full">
+                              <span className={
+                                product.has_variants
+                                  ? "text-sm text-slate-500"
                                   : product.stock_status === "available"
-                                    ? "Disponible"
-                                    : "Sin stock"}
-                            </Badge>
+                                    ? "text-sm text-slate-700"
+                                    : "text-sm text-slate-400"
+                              }>
+                                {product.has_variants
+                                  ? "Variantes"
+                                  : product.track_inventory
+                                    ? product.stock_quantity
+                                    : product.stock_status === "available"
+                                      ? "Disponible"
+                                      : "Sin stock"}
+                              </span>
+                            </Link>
                           </td>
+                          {/* Visibilidad */}
                           <td className="px-4 py-3.5">
-                            <Badge
-                              variant={
-                                product.visibility === "visible"
-                                  ? "info"
-                                  : "neutral"
-                              }
-                            >
-                              {product.visibility === "visible" ? (
-                                <Eye className="w-3 h-3" />
-                              ) : (
-                                <EyeOff className="w-3 h-3" />
-                              )}
-                              {product.visibility === "visible" ? "Visible" : "Oculto"}
-                            </Badge>
+                            <VisibilityDropdown
+                              productId={product.id}
+                              currentVisibility={product.visibility}
+                            />
                           </td>
+                          {/* Acciones */}
                           <td className="px-5 py-3.5">
                             <ProductsActions productId={product.id} />
                           </td>

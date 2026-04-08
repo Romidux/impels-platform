@@ -27,13 +27,13 @@ export function KpiCard({
   const content = (
     <>
       <div className="flex items-start justify-between mb-4">
-        <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform", iconClassName)}>
+        <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center transition-transform", iconClassName)}>
           {icon}
         </div>
         {trend && (
           <div
             className={cn(
-              "flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-full max-w-[140px] truncate",
+              "flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full max-w-[150px] truncate",
               trend.positive
                 ? "bg-green-50 text-green-700"
                 : "bg-amber-50 text-amber-700"
@@ -48,10 +48,10 @@ export function KpiCard({
           </div>
         )}
       </div>
-      <div className="font-display text-3xl font-bold text-slate-900 mb-0.5 tracking-tight">
+      <div className="font-display text-4xl font-bold text-slate-900 mb-1 tracking-tight">
         {value}
       </div>
-      <div className="text-sm text-slate-500">{label}</div>
+      <div className="text-sm font-medium text-slate-400">{label}</div>
     </>
   );
 
@@ -59,7 +59,7 @@ export function KpiCard({
     return (
       <Link
         href={href}
-        className={cn("dash-card-hover p-5 group block", className)}
+        className={cn("dash-card-hover p-6 group block", className)}
       >
         {content}
       </Link>
@@ -67,6 +67,6 @@ export function KpiCard({
   }
 
   return (
-    <div className={cn("dash-card p-5 group", className)}>{content}</div>
+    <div className={cn("dash-card p-6 group", className)}>{content}</div>
   );
 }

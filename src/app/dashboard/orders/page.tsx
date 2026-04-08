@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getUser, getStore } from "@/lib/supabase/queries";
 import Link from "next/link";
 import { ShoppingCart, Clock, ArrowRight, MessageCircle } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
@@ -16,18 +17,13 @@ export default async function OrdersPage({
 }: {
   searchParams: Promise<{ status?: string; page?: string }>;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getUser();
   if (!user) redirect("/login");
 
-  const { data: store } = await supabase
-    .from("stores")
-    .select("id, name, store_settings(*)")
-    .eq("owner_id", user.id)
-    .single();
+  const store = await getStore(user.id);
   if (!store) redirect("/onboarding");
+
+  const supabase = await createClient();
 
   const params = await searchParams;
   const { status } = params;

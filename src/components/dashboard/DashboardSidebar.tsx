@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -14,9 +14,16 @@ import {
   Store as StoreIcon,
   ExternalLink,
   LayoutGrid,
+  Zap,
+  Bell,
+  LogOut,
+  User,
+  ChevronDown,
 } from "lucide-react";
 import { cn, getStoreUrl } from "@/lib/utils";
-import { Store } from "@/lib/types";
+import { Store, AuthUser } from "@/lib/types";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 interface NavChild {
   label: string;
@@ -99,13 +106,22 @@ const navGroups: NavGroup[] = [
   },
 ];
 
-export default function DashboardSidebar({ store }: { store: Store }) {
+export default function DashboardSidebar({
+  store,
+  user,
+}: {
+  store: Store;
+  user: AuthUser;
+}) {
   const pathname = usePathname();
+  const router = useRouter();
   const storeUrl = getStoreUrl(store.slug);
   const [expanded, setExpanded] = useState({
     catalog: false,
     store: false,
   });
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const isItemActive = (item: NavItem) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -124,20 +140,56 @@ export default function DashboardSidebar({ store }: { store: Store }) {
     }));
   }, [pathname]);
 
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   const toggleExpandable = (key?: "catalog" | "store") => {
     if (!key) return;
     setExpanded((current) => ({ ...current, [key]: !current[key] }));
   };
 
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    toast.success("Sesión cerrada");
+    router.push("/login");
+    router.refresh();
+  };
+
   return (
-    <aside className="fixed left-0 top-14 bottom-0 z-40 hidden w-64 flex-col border-r border-slate-200/80 bg-white md:flex">
-      <div className="px-4 pb-2 pt-5">
+    <aside className="fixed left-0 top-0 bottom-0 z-40 hidden w-64 flex-col bg-[#dae0f0] md:flex">
+      {/* Logo */}
+      <div className="px-5 pt-5 pb-4">
+        <Link href="/dashboard" className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center shadow-apple-sm">
+            <Zap className="w-4 h-4 text-white" />
+          </div>
+          <div>
+            <span className="font-display font-bold text-base text-slate-800">
+              Impels
+            </span>
+            <span className="text-brand-500 font-display font-bold text-base ml-0.5">
+              Commerce
+            </span>
+          </div>
+        </Link>
+      </div>
+
+      {/* Store section */}
+      <div className="px-4 pb-3 border-b border-white/20">
         <div className="flex items-center justify-between gap-2 px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[12px] bg-blue-50 text-blue-600 shadow-sm">
-              <StoreIcon className="h-5 w-5" />
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white/70 text-brand-600 shadow-apple-sm">
+              <StoreIcon className="h-4 w-4" />
             </div>
-            <p className="truncate text-[16px] font-bold leading-tight tracking-tight text-slate-900">
+            <p className="truncate text-sm font-semibold leading-tight text-slate-700">
               {store.name}
             </p>
           </div>
@@ -145,19 +197,20 @@ export default function DashboardSidebar({ store }: { store: Store }) {
             href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-blue-50/70 hover:text-slate-600"
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-white/50 hover:text-slate-600"
             title="Ver tienda"
           >
-            <ExternalLink className="h-4 w-4" />
+            <ExternalLink className="h-3.5 w-3.5" />
           </a>
         </div>
       </div>
 
+      {/* Navigation */}
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-3">
         {navGroups.map((group, groupIdx) => (
           <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-4")}>
             {group.label && (
-              <p className="px-3 pb-1 pt-0.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-400">
+              <p className="px-3 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400/80">
                 {group.label}
               </p>
             )}
@@ -178,17 +231,17 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                     href={item.href}
                     onClick={() => toggleExpandable(item.expandableKey)}
                     className={cn(
-                      "relative flex items-center gap-2 px-3 py-2 text-sm transition-all duration-150",
+                      "relative flex items-center gap-2.5 px-3 py-2 text-sm transition-all duration-150 rounded-2xl",
                       active
-                        ? "bg-blue-50 border border-blue-100 text-blue-700 font-semibold shadow-sm rounded-2xl"
-                        : "font-medium text-slate-700 hover:bg-blue-50/70 hover:text-slate-900 rounded-2xl"
+                        ? "bg-white text-slate-800 font-semibold shadow-apple-sm"
+                        : "font-medium text-slate-500 hover:bg-white/50 hover:text-slate-700"
                     )}
                   >
                     <div className="flex h-5 w-5 items-center justify-center">
                       <item.icon
                         className={cn(
                           "h-4 w-4 flex-shrink-0",
-                          active ? "text-blue-600" : "text-slate-400"
+                          active ? "text-brand-500" : "text-slate-400"
                         )}
                       />
                     </div>
@@ -205,7 +258,7 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                     {ParentLink}
 
                     {isOpen && (
-                      <div className="ml-3 mt-1 flex flex-col gap-1 border-l border-slate-200/80 pl-3">
+                      <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-white/30 pl-3">
                         {item.children?.map((child) => {
                           const isActive = isChildActive(child.href);
 
@@ -214,9 +267,9 @@ export default function DashboardSidebar({ store }: { store: Store }) {
                               key={child.href}
                               href={child.href}
                               className={cn(
-                                "relative flex items-center gap-2 rounded-xl px-3 py-2 text-sm text-slate-500 transition-all duration-150 hover:bg-blue-50/50 hover:text-slate-900",
+                                "relative flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm text-slate-500 transition-all duration-150 hover:bg-white/50 hover:text-slate-700",
                                 isActive &&
-                                  "bg-blue-50 border border-blue-100 font-semibold text-blue-700 shadow-sm"
+                                  "bg-white font-semibold text-slate-800 shadow-apple-sm"
                               )}
                             >
                               <span className="truncate">{child.label}</span>
@@ -232,6 +285,64 @@ export default function DashboardSidebar({ store }: { store: Store }) {
           </section>
         ))}
       </nav>
+
+      {/* User section */}
+      <div className="border-t border-white/20 px-3 py-3" ref={userMenuRef}>
+        <div className="relative">
+          <button
+            onClick={() => setUserMenuOpen(!userMenuOpen)}
+            className="flex items-center gap-3 w-full px-3 py-2 rounded-2xl hover:bg-white/50 transition-colors"
+          >
+            {/* Notification bell */}
+            <div className="relative flex-shrink-0">
+              <Bell className="w-4 h-4 text-slate-400" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-500 border-2 border-[#dae0f0]" />
+            </div>
+
+            {/* Avatar */}
+            <div className="w-7 h-7 rounded-full gradient-brand flex items-center justify-center flex-shrink-0 shadow-apple-sm">
+              <span className="text-white text-xs font-bold">
+                {user.email?.charAt(0).toUpperCase()}
+              </span>
+            </div>
+
+            {/* Email */}
+            <p className="text-xs font-medium text-slate-600 truncate flex-1 text-left">
+              {user.email}
+            </p>
+
+            <ChevronDown className={cn(
+              "w-3.5 h-3.5 text-slate-400 flex-shrink-0 transition-transform",
+              userMenuOpen && "rotate-180"
+            )} />
+          </button>
+
+          {/* User dropdown */}
+          {userMenuOpen && (
+            <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-white rounded-2xl shadow-apple-md border border-white/80 z-50 overflow-hidden">
+              <div className="p-1.5">
+                <button
+                  onClick={() => {
+                    setUserMenuOpen(false);
+                    router.push("/dashboard/store/identity");
+                  }}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-xl transition-colors"
+                >
+                  <User className="w-4 h-4 text-slate-400" />
+                  Mi perfil
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Cerrar sesión
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </aside>
   );
 }

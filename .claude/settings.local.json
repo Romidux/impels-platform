@@ -6,7 +6,15 @@
       "mcp__stitch__create_project",
       "mcp__stitch__generate_screen_from_text",
       "WebFetch(domain:contribution.usercontent.google.com)",
-      "Bash(grep -v \"^$\")"
+      "Bash(grep -v \"^$\")",
+      "Bash(npm install:*)",
+      "Bash(sed:*)",
+      "Bash(npm run:*)",
+      "Bash(sed -i 's/<DashPageHeader/<PageHeader/g' src/app/dashboard/inventory/page.tsx)",
+      "Bash(sed -i 's/<\\\\/DashPageHeader>/<\\\\/PageHeader>/g; s/<DashCard/<Card/g; s/<\\\\/DashCard>/<\\\\/Card>/g; s/<DashBadge/<Badge/g; s/<\\\\/DashBadge>/<\\\\/Badge>/g' src/app/dashboard/inventory/page.tsx)",
+      "Read(//c/Users/romin/OneDrive/Desktop/impels-platform/src/app/dashboard/orders/[id/]/**)",
+      "Bash(grep -n -A6 \"<Button$\\\\|<Button \" src/components/dashboard/store/ThemeManager.tsx)",
+      "Bash(rm:*)"
     ]
   }
 }

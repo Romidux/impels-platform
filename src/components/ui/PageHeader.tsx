@@ -29,11 +29,11 @@ export function PageHeader({
           </Link>
         )}
         <div>
-          <h1 className="font-display text-2xl font-bold text-slate-900">
+          <h1 className="font-display text-3xl font-bold text-slate-800 tracking-tight">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-sm text-slate-500 mt-0.5">{subtitle}</p>
+            <p className="text-sm text-slate-400 mt-1">{subtitle}</p>
           )}
         </div>
       </div>

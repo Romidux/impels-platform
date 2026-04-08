@@ -6,8 +6,9 @@ import {
   X,
   ChevronDown,
   Download,
-  ArrowUpDown,
   Plus,
+  LayoutList,
+  LayoutGrid,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -187,7 +188,10 @@ export default function ProductFilters({
       } else {
         params.delete(key);
       }
-      if (currentView) params.set("view", currentView);
+      // Always preserve view (or update if key === "view")
+      if (key !== "view") {
+        if (currentView) params.set("view", currentView);
+      }
       // Reset to page 1 on filter change
       params.delete("page");
       router.push(`/dashboard/products?${params.toString()}`);
@@ -262,13 +266,14 @@ export default function ProductFilters({
       <div className="dash-card p-3 flex flex-col sm:flex-row gap-2 items-stretch sm:items-center">
         {/* Search */}
         <div className="relative flex-1 min-w-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
           <input
             type="text"
             value={searchValue}
             onChange={handleSearchChange}
             placeholder="Buscar productos..."
-            className="dash-input pl-9 pr-8 w-full"
+            className="w-full border border-slate-200 rounded-lg bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
+            style={{ padding: "0.5rem 2rem 0.5rem 2.25rem" }}
           />
           {searchValue && (
             <button
@@ -334,6 +339,36 @@ export default function ProductFilters({
               Nuevo
             </Link>
           )}
+
+          {/* View toggle */}
+          <div className="hidden sm:flex items-center rounded-lg border border-slate-200 bg-slate-100 p-0.5 shrink-0">
+            <button
+              type="button"
+              onClick={() => updateFilter("view", "list")}
+              title="Vista de lista"
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150",
+                currentView === "list"
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              )}
+            >
+              <LayoutList className="w-4 h-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => updateFilter("view", "grid")}
+              title="Vista de cuadrícula"
+              className={cn(
+                "flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150",
+                currentView === "grid"
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              )}
+            >
+              <LayoutGrid className="w-4 h-4" />
+            </button>
+          </div>
         </div>
       </div>
 

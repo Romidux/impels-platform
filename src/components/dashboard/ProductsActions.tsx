@@ -2,8 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { Edit, Trash2, Copy } from "lucide-react";
+import { Trash2, Copy } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 
@@ -103,12 +102,6 @@ export default function ProductsActions({ productId }: { productId: string }) {
       >
         <Copy className="w-4 h-4" />
       </button>
-      <Link
-        href={`/dashboard/products/${productId}`}
-        className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-      >
-        <Edit className="w-4 h-4" />
-      </Link>
       <button
         onClick={handleDelete}
         disabled={deleting}

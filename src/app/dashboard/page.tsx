@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getUser, getStore } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { getStoreUrl } from "@/lib/utils";
 import {
@@ -27,26 +28,13 @@ import { OrderStatus } from "@/lib/types";
 import { Card } from "@/components/ui/Card";
 
 export default async function DashboardPage() {
+  const user = await getUser();
+  if (!user) redirect("/login");
+
+  const store = await getStore(user.id);
+  if (!store) redirect("/onboarding");
+
   const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  // Fetch the user's store
-  const { data: store } = await supabase
-    .from("stores")
-    .select("*, store_settings(*)")
-    .eq("owner_id", user.id)
-    .single();
-
-  if (!store) {
-    redirect("/onboarding");
-  }
 
   // Calculate date ranges for real metrics
   const now = new Date();
@@ -182,7 +170,7 @@ export default async function DashboardPage() {
               action={
                 <CopyLinkButton
                   url={getStoreUrl(store.slug)}
-                  className="px-5 py-2.5 bg-indigo-600 text-white hover:bg-indigo-700 inline-flex items-center justify-center whitespace-nowrap rounded-lg text-sm font-semibold transition-colors shadow-sm"
+                  className="px-5 py-2.5 bg-brand-500 text-white hover:bg-brand-600 inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold transition-colors shadow-apple-sm"
                 />
               }
             />
@@ -190,33 +178,33 @@ export default async function DashboardPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-[#F2F4F6]">
-                    <th className="text-left text-xs font-semibold text-slate-500 py-3 px-5">Cliente</th>
-                    <th className="text-left text-xs font-semibold text-slate-500 py-3 px-5">Fecha</th>
-                    <th className="text-left text-xs font-semibold text-slate-500 py-3 px-5">Estado</th>
-                    <th className="text-right text-xs font-semibold text-slate-500 py-3 px-5">Total</th>
+                  <tr className="border-b border-slate-100/60">
+                    <th className="text-left text-xs font-semibold text-slate-400 py-3.5 px-6">Cliente</th>
+                    <th className="text-left text-xs font-semibold text-slate-400 py-3.5 px-5">Fecha</th>
+                    <th className="text-left text-xs font-semibold text-slate-400 py-3.5 px-5">Estado</th>
+                    <th className="text-right text-xs font-semibold text-slate-400 py-3.5 px-6">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100">
+                <tbody className="divide-y divide-slate-100/60">
                   {recentOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-slate-50/70 transition-colors cursor-pointer group">
-                      <td className="py-3.5 px-5">
+                    <tr key={order.id} className="hover:bg-slate-50/40 transition-colors cursor-pointer group">
+                      <td className="py-4 px-6">
                         <Link href={`/dashboard/orders?status=${order.status}`} className="block">
-                          <p className="text-sm font-medium text-slate-900 group-hover:text-brand-600 transition-colors">
+                          <p className="text-sm font-semibold text-slate-800 group-hover:text-brand-500 transition-colors">
                             {order.customer_name || "Cliente"}
                           </p>
-                          <p className="text-xs text-slate-400">
+                          <p className="text-xs text-slate-400 mt-0.5">
                             {order.customer_phone || ""}
                           </p>
                         </Link>
                       </td>
-                      <td className="py-3.5 px-5 text-sm text-slate-500">
+                      <td className="py-4 px-5 text-sm text-slate-400">
                         {new Date(order.created_at).toLocaleDateString("es-PY")}
                       </td>
-                      <td className="py-3.5 px-5">
+                      <td className="py-4 px-5">
                         <OrderStatusBadge status={order.status as OrderStatus} />
                       </td>
-                      <td className="py-3.5 px-5 text-sm font-semibold text-slate-900 text-right">
+                      <td className="py-4 px-6 text-sm font-bold text-slate-800 text-right">
                         {formatCurrency(order.total || 0)}
                       </td>
                     </tr>
@@ -230,13 +218,13 @@ export default async function DashboardPage() {
         {/* Quick Actions */}
         <div className="space-y-5">
           {/* Main CTA */}
-          <Card className="bg-brand-50 border-brand-100" padding={false}>
+          <Card className="bg-brand-500" padding={false}>
             <div className="p-5">
-              <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center mb-3">
-                <Store className="w-5 h-5 text-brand-600" />
+              <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center mb-3">
+                <Store className="w-5 h-5 text-white" />
               </div>
-              <h3 className="font-semibold text-brand-900 mb-1">Tu tienda online</h3>
-              <p className="text-sm text-brand-700/80 mb-4">
+              <h3 className="font-semibold text-white mb-1">Tu tienda online</h3>
+              <p className="text-sm text-white/70 mb-4">
                 Comparte este link con tus clientes para que puedan comprar.
               </p>
               <div className="flex flex-col gap-2">
@@ -244,13 +232,13 @@ export default async function DashboardPage() {
                   href={getStoreUrl(store.slug)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full text-center px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
+                  className="w-full text-center px-5 py-2.5 bg-white text-brand-600 rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors shadow-apple-sm"
                 >
                   Abrir tienda
                 </a>
                 <CopyLinkButton
                   url={getStoreUrl(store.slug)}
-                  className="w-full text-center px-5 py-2.5 bg-white text-slate-600 border border-slate-200 rounded-lg text-sm font-semibold hover:bg-slate-50 hover:border-slate-300 transition-colors shadow-sm"
+                  className="w-full text-center px-5 py-2.5 bg-white/15 text-white border border-white/20 rounded-xl text-sm font-semibold hover:bg-white/25 transition-colors"
                 />
               </div>
             </div>
@@ -258,33 +246,33 @@ export default async function DashboardPage() {
 
           {/* Settings Shortcuts */}
           <Card padding={false} className="overflow-hidden">
-            <div className="px-5 py-3 border-b border-slate-100 bg-slate-50/60">
+            <div className="px-5 py-3 border-b border-slate-100/60">
               <h3 className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
                 Ajustes rápidos
               </h3>
             </div>
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-slate-100/60">
               <Link
                 href="/dashboard/store/appearance"
-                className="flex items-center justify-between p-4 hover:bg-slate-50 group transition-colors"
+                className="flex items-center justify-between p-4 hover:bg-slate-50/60 group transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
+                  <div className="w-8 h-8 rounded-xl bg-slate-100/80 flex items-center justify-center text-slate-500 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors">
                     <Paintbrush className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-brand-700 transition-colors">Diseño</span>
+                  <span className="text-sm font-medium text-slate-700 group-hover:text-brand-600 transition-colors">Diseño</span>
                 </div>
                 <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-brand-400 transition-colors" />
               </Link>
               <Link
                 href="/dashboard/store/identity"
-                className="flex items-center justify-between p-4 hover:bg-slate-50 group transition-colors"
+                className="flex items-center justify-between p-4 hover:bg-slate-50/60 group transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-brand-50 group-hover:text-brand-600 transition-colors">
+                  <div className="w-8 h-8 rounded-xl bg-slate-100/80 flex items-center justify-center text-slate-500 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors">
                     <Settings className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-brand-700 transition-colors">General</span>
+                  <span className="text-sm font-medium text-slate-700 group-hover:text-brand-600 transition-colors">General</span>
                 </div>
                 <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-brand-400 transition-colors" />
               </Link>

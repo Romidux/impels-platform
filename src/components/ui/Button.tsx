@@ -9,23 +9,23 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-indigo-600 text-white font-semibold shadow-sm hover:bg-indigo-700 transition-colors",
+          "bg-brand-500 text-white font-semibold shadow-apple-sm hover:bg-brand-600 active:bg-brand-700 transition-colors",
         secondary:
-          "bg-white text-slate-600 font-semibold border border-slate-200 shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-colors",
+          "bg-white text-slate-600 font-semibold border border-white/80 shadow-apple-sm hover:bg-white hover:shadow-apple-md transition-all",
         ghost:
-          "text-slate-500 font-medium hover:bg-slate-100 hover:text-slate-700 transition-colors",
+          "text-slate-500 font-medium hover:bg-white/60 hover:text-slate-700 transition-colors",
         danger:
-          "bg-red-50 text-red-600 font-semibold border border-red-200 hover:bg-red-100 hover:border-red-300 transition-colors",
+          "bg-red-50 text-red-600 font-semibold border border-red-100 hover:bg-red-100 transition-colors",
         "danger-ghost":
           "text-red-600 font-medium hover:bg-red-50 hover:text-red-700 transition-colors",
         brand:
-          "bg-indigo-600 text-white font-semibold shadow-sm hover:bg-indigo-700 transition-colors",
+          "bg-brand-500 text-white font-semibold shadow-apple-sm hover:bg-brand-600 active:bg-brand-700 transition-colors",
       },
       size: {
-        sm: "text-xs px-3 py-1.5 rounded-lg",
-        md: "text-sm px-5 py-2.5 rounded-lg",
-        lg: "text-sm px-5 py-2.5 rounded-lg",
-        icon: "p-2 rounded-lg",
+        sm: "text-xs px-3 py-1.5 rounded-xl",
+        md: "text-sm px-5 py-2.5 rounded-xl",
+        lg: "text-sm px-6 py-3 rounded-xl",
+        icon: "p-2 rounded-xl",
       },
     },
     defaultVariants: {

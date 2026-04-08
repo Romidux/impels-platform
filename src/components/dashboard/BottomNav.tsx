@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Package,
@@ -20,9 +20,13 @@ import {
   Copy,
   Check,
   ExternalLink,
+  User,
+  LogOut,
 } from "lucide-react";
 import { cn, getStoreUrl } from "@/lib/utils";
 import { useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
 
 const mainItems = [
   { label: "Inicio", href: "/dashboard", icon: LayoutDashboard, exact: true },
@@ -47,9 +51,19 @@ interface BottomNavProps {
 
 export default function BottomNav({ storeSlug }: BottomNavProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [moreOpen, setMoreOpen] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const handleLogout = async () => {
+    setMoreOpen(false);
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    toast.success("Sesión cerrada");
+    router.push("/login");
+    router.refresh();
+  };
 
   const isActive = (href: string, exact?: boolean) =>
     exact ? pathname === href : pathname.startsWith(href);
@@ -132,6 +146,25 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                   </span>
                 </Link>
               ))}
+            </div>
+
+            {/* Perfil y logout */}
+            <div className="px-3 pb-3 pt-1 border-t border-slate-100 mt-1 space-y-1">
+              <Link
+                href="/dashboard/store/identity"
+                onClick={() => setMoreOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+              >
+                <User className="w-5 h-5 text-slate-400" />
+                Mi perfil
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+              >
+                <LogOut className="w-5 h-5" />
+                Cerrar sesión
+              </button>
             </div>
           </div>
         </div>

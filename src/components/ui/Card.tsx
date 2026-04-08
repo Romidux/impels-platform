@@ -27,8 +27,8 @@ export function Card({
       )}
     >
       {header && (
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100/60">
+          <h2 className="font-display text-base font-bold text-slate-800 flex items-center gap-2">
             {header.icon}
             {header.title}
           </h2>
