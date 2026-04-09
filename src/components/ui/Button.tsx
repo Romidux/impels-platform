@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-brand-500 text-white font-semibold shadow-apple-sm hover:bg-brand-600 active:bg-brand-700 transition-colors",
+          "bg-brand-600 text-white font-semibold shadow-apple-sm hover:bg-brand-700 active:bg-brand-800 transition-colors",
         secondary:
           "bg-white text-slate-600 font-semibold border border-white/80 shadow-apple-sm hover:bg-white hover:shadow-apple-md transition-all",
         ghost:
@@ -19,7 +19,7 @@ const buttonVariants = cva(
         "danger-ghost":
           "text-red-600 font-medium hover:bg-red-50 hover:text-red-700 transition-colors",
         brand:
-          "bg-brand-500 text-white font-semibold shadow-apple-sm hover:bg-brand-600 active:bg-brand-700 transition-colors",
+          "bg-brand-600 text-white font-semibold shadow-apple-sm hover:bg-brand-700 active:bg-brand-800 transition-colors",
       },
       size: {
         sm: "text-xs px-3 py-1.5 rounded-xl",

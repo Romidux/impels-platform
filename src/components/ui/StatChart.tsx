@@ -50,11 +50,11 @@ export function StatChart({
               
               {/* Bar */}
               <div
-                className="w-full bg-indigo-100 hover:bg-indigo-200 transition-colors rounded-t-md relative overflow-hidden"
+                className="w-full bg-brand-100 hover:bg-brand-200 transition-colors rounded-t-lg relative overflow-hidden"
                 style={{ height: `${Math.max(heightPercent, 2)}%` }}
               >
-                <div 
-                  className="absolute bottom-0 w-full bg-indigo-500 rounded-t-md transition-all duration-500"
+                <div
+                  className="absolute bottom-0 w-full bg-brand-500 rounded-t-lg transition-all duration-500"
                   style={{ height: "100%" }}
                 />
               </div>

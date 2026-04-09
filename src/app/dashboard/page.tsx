@@ -170,7 +170,7 @@ export default async function DashboardPage() {
               action={
                 <CopyLinkButton
                   url={getStoreUrl(store.slug)}
-                  className="px-5 py-2.5 bg-brand-500 text-white hover:bg-brand-600 inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold transition-colors shadow-apple-sm"
+                  className="px-5 py-2.5 bg-brand-600 text-white hover:bg-brand-700 inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold transition-colors shadow-apple-sm"
                 />
               }
             />
@@ -218,7 +218,7 @@ export default async function DashboardPage() {
         {/* Quick Actions */}
         <div className="space-y-5">
           {/* Main CTA */}
-          <Card className="bg-brand-500" padding={false}>
+          <Card className="bg-brand-600" padding={false}>
             <div className="p-5">
               <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center mb-3">
                 <Store className="w-5 h-5 text-white" />

@@ -63,11 +63,11 @@ export function SetupWizard({
   const activeStepIdx = steps.findIndex((s) => !s.isDone);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden mb-8 relative">
-      <div className="absolute top-0 left-0 w-full h-1 bg-slate-100">
-        <div 
-          className="h-full bg-brand-500 transition-all duration-1000" 
-          style={{ width: `${progressPercent}%` }} 
+    <div className="bg-white border border-white/80 rounded-3xl shadow-apple-sm overflow-hidden mb-8 relative">
+      <div className="absolute top-0 left-0 w-full h-1 bg-slate-100/60">
+        <div
+          className="h-full bg-brand-600 transition-all duration-1000"
+          style={{ width: `${progressPercent}%` }}
         />
       </div>
 
@@ -77,10 +77,10 @@ export function SetupWizard({
           <div className="flex items-center gap-4">
             <ProgressRing progress={progressPercent} size={56} />
             <div>
-              <h2 className="font-display text-xl font-bold text-slate-900">
+              <h2 className="font-display text-xl font-bold text-slate-800 tracking-tight">
                 Tu tienda está {progressPercent}% lista
               </h2>
-              <p className="text-sm text-slate-500 mt-1">
+              <p className="text-sm text-slate-400 mt-1">
                 Completa estos pasos básicos para empezar a vender.
               </p>
             </div>

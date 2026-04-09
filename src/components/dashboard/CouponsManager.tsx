@@ -142,17 +142,17 @@ export default function CouponsManager({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-            <Ticket className="w-6 h-6 text-indigo-600" />
+          <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+            <Ticket className="w-6 h-6 text-brand-600" />
             Cupones de Descuento
           </h1>
-          <p className="text-slate-500 mt-1">
+          <p className="text-slate-400 mt-1">
             Gestiona descuentos, códigos promocionales y límites de uso.
           </p>
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="inline-flex items-center justify-center gap-2 bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors shadow-sm"
+          className="inline-flex items-center justify-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-700 transition-colors shadow-apple-sm"
         >
           <Plus className="w-4 h-4" />
           Crear Cupón
@@ -161,17 +161,17 @@ export default function CouponsManager({
 
       {/* Grid */}
       {coupons.length === 0 ? (
-        <div className="bg-white border text-center py-20 rounded-2xl shadow-sm">
-          <div className="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
+        <div className="bg-white border border-white/80 text-center py-20 rounded-3xl shadow-apple-sm">
+          <div className="w-16 h-16 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Ticket className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900">No hay cupones</h3>
-          <p className="text-slate-500 mt-1 max-w-sm mx-auto mb-6">
+          <h3 className="text-lg font-bold text-slate-800">No hay cupones</h3>
+          <p className="text-slate-400 mt-1 max-w-sm mx-auto mb-6">
             Crea códigos de descuento para compartir en tus redes sociales y aumentar tus ventas.
           </p>
           <button
             onClick={() => handleOpenModal()}
-            className="text-indigo-600 font-semibold hover:text-indigo-700"
+            className="text-brand-600 font-semibold hover:text-brand-700"
           >
             Crear mi primer cupón &rarr;
           </button>
@@ -203,7 +203,7 @@ export default function CouponsManager({
               <div className="flex-1 space-y-3">
                 <div className="flex items-center gap-2 text-3xl font-display font-medium text-slate-900">
                   {coupon.type === "percentage" ? (
-                    <span className="text-indigo-600">-{coupon.value}%</span>
+                    <span className="text-brand-600">-{coupon.value}%</span>
                   ) : (
                     <span className="text-emerald-600">-{formatCurrency(coupon.value).replace(" Gs", "")}</span>
                   )}
@@ -227,7 +227,7 @@ export default function CouponsManager({
               <div className="border-t border-slate-100 mt-6 pt-4 flex gap-2">
                 <button
                   onClick={() => handleOpenModal(coupon)}
-                  className="flex-1 text-slate-600 hover:text-indigo-600 text-sm font-semibold flex items-center justify-center gap-2 py-2 bg-slate-50 rounded-lg hover:bg-indigo-50 transition-colors"
+                  className="flex-1 text-slate-600 hover:text-brand-600 text-sm font-semibold flex items-center justify-center gap-2 py-2 bg-slate-50 rounded-xl hover:bg-brand-50 transition-colors"
                 >
                   <Pencil className="w-4 h-4" />
                   Editar
@@ -259,7 +259,7 @@ export default function CouponsManager({
                   type="text"
                   value={form.code}
                   onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 uppercase font-bold focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 uppercase font-bold focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
                   placeholder="INVIERNO20"
                   required
                 />
@@ -273,7 +273,7 @@ export default function CouponsManager({
                   <select
                     value={form.type}
                     onChange={(e) => setForm({ ...form, type: e.target.value, value: e.target.value === 'percentage' ? 10 : 50000 })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
                   >
                     <option value="percentage">Porcentaje (%)</option>
                     <option value="fixed">Monto Fijo (Gs)</option>
@@ -292,7 +292,7 @@ export default function CouponsManager({
                       min="1"
                       value={form.value}
                       onChange={(e) => setForm({ ...form, value: Number(e.target.value) })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
                       required
                     />
                   </div>
@@ -309,7 +309,7 @@ export default function CouponsManager({
                   value={form.max_uses}
                   onChange={(e) => setForm({ ...form, max_uses: e.target.value })}
                   placeholder="Ej. Los primeros 100 usuarios"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
                 />
               </div>
 
@@ -323,7 +323,7 @@ export default function CouponsManager({
                   value={form.min_purchase || ""}
                   onChange={(e) => setForm({ ...form, min_purchase: Number(e.target.value) })}
                   placeholder="Ej. 150000"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-500 transition-colors"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
                 />
               </div>
 
@@ -338,7 +338,7 @@ export default function CouponsManager({
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 px-5 py-2.5 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors shadow-sm disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 rounded-xl hover:bg-brand-700 transition-colors shadow-apple-sm disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                   Guardar Cupón

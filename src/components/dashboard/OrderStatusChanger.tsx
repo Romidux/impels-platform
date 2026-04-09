@@ -50,7 +50,7 @@ export default function OrderStatusChanger({
         value={currentStatus}
         onChange={handleChange}
         disabled={loading}
-        className="appearance-none text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 pr-6 focus:outline-none focus:border-blue-400 bg-white cursor-pointer disabled:opacity-50"
+        className="appearance-none text-xs border border-slate-200 rounded-xl px-2.5 py-1.5 pr-6 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 bg-white cursor-pointer disabled:opacity-50 transition-colors"
       >
         {STATUSES.map((s) => (
           <option key={s.value} value={s.value}>

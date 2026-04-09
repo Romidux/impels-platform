@@ -208,7 +208,7 @@ export default function CategorySelector({
               type="button"
               onClick={handleSaveParent}
               disabled={isSavingParent || !newParentName.trim()}
-              className="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors shadow-sm"
+              className="p-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 disabled:opacity-50 transition-colors shadow-apple-sm"
             >
               {isSavingParent ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
             </button>
@@ -270,7 +270,7 @@ export default function CategorySelector({
                 type="button"
                 onClick={handleSaveChild}
                 disabled={isSavingChild || !newChildName.trim()}
-                className="p-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors shadow-sm"
+                className="p-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 disabled:opacity-50 transition-colors shadow-apple-sm"
               >
                 {isSavingChild ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
               </button>

@@ -29,9 +29,9 @@ export async function MerchantAnnouncements() {
         const iconColor = isWarning ? "text-amber-600" : isSuccess ? "text-green-600" : isError ? "text-red-600" : "text-brand-600";
         
         return (
-          <div 
+          <div
             key={ann.id}
-            className={`p-4 rounded-xl border flex gap-3 ${bgColor} ${borderColor} ${textColor}`}
+            className={`p-4 rounded-2xl border flex gap-3 shadow-apple-sm ${bgColor} ${borderColor} ${textColor}`}
           >
             <div className={`mt-0.5 ${iconColor}`}>
               {isWarning ? <AlertTriangle className="w-5 h-5" /> : 

@@ -82,7 +82,7 @@ function FilterDropdown({
         className={cn(
           "inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-lg border transition-colors whitespace-nowrap",
           hasValue
-            ? "bg-indigo-50 text-indigo-700 border-indigo-200 hover:bg-indigo-100"
+            ? "bg-brand-50 text-brand-800 border-brand-200 hover:bg-brand-100"
             : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:border-slate-300"
         )}
       >
@@ -108,7 +108,7 @@ function FilterDropdown({
               className={cn(
                 "w-full text-left px-3 py-2 text-sm transition-colors",
                 option.value === value
-                  ? "bg-indigo-50 text-indigo-700 font-medium"
+                  ? "bg-brand-50 text-brand-800 font-medium"
                   : "text-slate-600 hover:bg-slate-50"
               )}
             >
@@ -272,7 +272,7 @@ export default function ProductFilters({
             value={searchValue}
             onChange={handleSearchChange}
             placeholder="Buscar productos..."
-            className="w-full border border-slate-200 rounded-lg bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-colors"
+            className="w-full border border-slate-200 rounded-lg bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
             style={{ padding: "0.5rem 2rem 0.5rem 2.25rem" }}
           />
           {searchValue && (
@@ -326,14 +326,14 @@ export default function ProductFilters({
           {atLimit ? (
             <Link
               href="/dashboard/plan"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold rounded-lg bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 transition-colors whitespace-nowrap"
             >
               Upgrade
             </Link>
           ) : (
             <Link
               href="/dashboard/products/new"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold rounded-lg bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-2 text-sm font-semibold rounded-lg bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 transition-colors whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
               Nuevo
@@ -349,7 +349,7 @@ export default function ProductFilters({
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150",
                 currentView === "list"
-                  ? "bg-indigo-600 text-white shadow-sm"
+                  ? "bg-brand-600 text-white shadow-apple-sm"
                   : "text-slate-500 hover:text-slate-700"
               )}
             >
@@ -362,7 +362,7 @@ export default function ProductFilters({
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-md transition-all duration-150",
                 currentView === "grid"
-                  ? "bg-indigo-600 text-white shadow-sm"
+                  ? "bg-brand-600 text-white shadow-apple-sm"
                   : "text-slate-500 hover:text-slate-700"
               )}
             >
@@ -386,7 +386,7 @@ export default function ProductFilters({
                   updateFilter(f.key, "");
                 }
               }}
-              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-100 transition-colors"
+              className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-full bg-brand-50 text-brand-800 border border-brand-100 hover:bg-brand-100 transition-colors"
             >
               {f.label}
               <X className="w-3 h-3" />

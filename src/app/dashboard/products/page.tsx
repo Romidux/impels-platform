@@ -195,7 +195,7 @@ export default async function ProductsPage({
                           {/* Producto */}
                           <td className="px-0 py-0">
                             <Link href={editHref} className="flex items-center px-4 py-3.5 h-full">
-                              <span className="font-semibold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors">
+                              <span className="font-semibold text-sm text-slate-800 group-hover:text-brand-600 transition-colors">
                                 {product.name}
                               </span>
                             </Link>

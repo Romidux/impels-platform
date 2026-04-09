@@ -119,7 +119,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
               <div className="px-3 pt-3 pb-1">
                 <button
                   onClick={() => { setMoreOpen(false); handleShare(); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 bg-brand-50 text-brand-700 rounded-xl font-semibold text-sm transition-colors hover:bg-brand-100"
+                  className="w-full flex items-center gap-3 px-4 py-3 bg-brand-50 text-brand-800 rounded-xl font-semibold text-sm transition-colors hover:bg-brand-100"
                 >
                   <Share2 className="w-5 h-5 flex-shrink-0" />
                   Compartir mi tienda
@@ -136,7 +136,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                   className={cn(
                     "flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-200 text-center",
                     isActive(item.href)
-                      ? "bg-brand-50 text-brand-700"
+                      ? "bg-brand-50 text-brand-800"
                       : "text-slate-500 hover:bg-slate-50"
                   )}
                 >
