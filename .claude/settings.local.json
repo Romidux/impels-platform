@@ -14,7 +14,10 @@
       "Bash(sed -i 's/<\\\\/DashPageHeader>/<\\\\/PageHeader>/g; s/<DashCard/<Card/g; s/<\\\\/DashCard>/<\\\\/Card>/g; s/<DashBadge/<Badge/g; s/<\\\\/DashBadge>/<\\\\/Badge>/g' src/app/dashboard/inventory/page.tsx)",
       "Read(//c/Users/romin/OneDrive/Desktop/impels-platform/src/app/dashboard/orders/[id/]/**)",
       "Bash(grep -n -A6 \"<Button$\\\\|<Button \" src/components/dashboard/store/ThemeManager.tsx)",
-      "Bash(rm:*)"
+      "Bash(rm:*)",
+      "Bash(xargs grep:*)",
+      "Bash(npx next *)",
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('next:', p.dependencies.next, '\\\\nreact:', p.dependencies.react\\)\")"
     ]
   }
 }

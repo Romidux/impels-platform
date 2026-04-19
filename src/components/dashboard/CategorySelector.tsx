@@ -189,7 +189,7 @@ export default function CategorySelector({
   return (
     <div className="space-y-4">
       {/* Categoria Principal */}
-      <div className="space-y-1.5">
+      <div className="space-y-1.5 relative z-20">
         <label className="block text-[13px] font-bold text-slate-700">Categoría Principal</label>
         
         {isCreatingParent ? (
@@ -237,6 +237,8 @@ export default function CategorySelector({
                   onClick={(e) => {
                     e.stopPropagation();
                     setIsCreatingParent(true);
+                    setIsCreatingChild(false);
+                    setNewChildName("");
                   }}
                   className="w-full text-left px-3 py-2 text-[14px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 flex items-center gap-2 rounded-xl transition-colors"
                 >
@@ -251,7 +253,7 @@ export default function CategorySelector({
 
       {/* Subcategoría */}
       {selectedParent && (
-        <div className="space-y-1.5 h-[70px] mt-3 animate-fade-in">
+        <div className="space-y-1.5 mt-3 animate-fade-in">
           <label className="block text-[13px] font-bold text-slate-700">Subcategoría (Opcional)</label>
           
           {isCreatingChild ? (
@@ -293,6 +295,7 @@ export default function CategorySelector({
                 emptyStateMessage="No hay subcategorías hijas"
                 disabled={!selectedParent}
                 options={[
+                  ...(selectedChild ? [{ value: "", label: "— Sin subcategoría" }] : []),
                   ...availableSubcategories.map(c => ({ value: c.id, label: c.name }))
                 ]}
                 actionElement={
@@ -302,6 +305,8 @@ export default function CategorySelector({
                       onClick={(e) => {
                         e.stopPropagation();
                         setIsCreatingChild(true);
+                        setIsCreatingParent(false);
+                        setNewParentName("");
                       }}
                       className="w-full text-left px-3 py-2 text-[14px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 flex items-center gap-2 rounded-xl transition-colors"
                     >

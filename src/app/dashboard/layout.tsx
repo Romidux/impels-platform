@@ -46,7 +46,7 @@ export default async function DashboardLayout({
   };
 
   return (
-    <div className="min-h-screen bg-[#e8ecf4] flex">
+    <div className="min-h-screen bg-[#F5F5F7] flex">
       <OrderNotificationListener storeId={activeStore.id} />
       <DashboardSidebar
         store={activeStore as import('@/lib/types').Store}

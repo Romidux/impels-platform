@@ -100,7 +100,7 @@ export default async function ProductsPage({
   };
 
   return (
-    <div className="space-y-5 animate-fade-in">
+    <div className="space-y-6 animate-fade-in">
       <PageHeader
         title="Productos"
         subtitle={`${totalCount || 0} productos${!isPro ? ` / ${MAX_FREE_PRODUCTS} en plan gratis` : ""}`}
@@ -121,7 +121,7 @@ export default async function ProductsPage({
 
       {/* Products table */}
       {!products || products.length === 0 ? (
-        <div className="dash-card">
+        <div className="bg-white border border-[#E5E5EA] rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <EmptyState
             icon={<Package className="w-8 h-8" />}
             heading="Sin productos todavía"
@@ -138,46 +138,46 @@ export default async function ProductsPage({
       ) : (
         <div className="space-y-4">
           {view === "list" ? (
-            <div className="dash-card overflow-hidden">
+            <div className="bg-white border border-[#E5E5EA] rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead>
-                    <tr className="bg-[#F2F4F6]">
-                      <th className="text-left text-xs font-semibold text-slate-500 px-5 py-3 rounded-tl-xl w-14">
+                  <thead className="sticky top-0 z-10">
+                    <tr className="bg-[#F5F5F7] border-b border-[#E5E5EA]">
+                      <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide pl-6 py-4 w-20">
                         Imagen
                       </th>
-                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
+                      <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-6 py-4">
                         Producto
                       </th>
-                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
+                      <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-6 py-4">
                         Categoría
                       </th>
-                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
+                      <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-6 py-4">
                         Precio
                       </th>
-                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
+                      <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-6 py-4">
                         Stock
                       </th>
-                      <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
+                      <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-6 py-4">
                         Visibilidad
                       </th>
-                      <th className="text-right text-xs font-semibold text-slate-500 px-5 py-3 rounded-tr-xl">
+                      <th className="text-right text-xs font-medium text-[#86868B] uppercase tracking-wide pr-6 py-4">
                         Acciones
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100">
+                  <tbody className="divide-y divide-[#F5F5F7]">
                     {(products as Product[]).map((product) => {
                       const primaryImage = product.images?.find(
                         (img) => img.is_primary
                       );
                       const editHref = `/dashboard/products/${product.id}`;
                       return (
-                        <tr key={product.id} className="hover:bg-slate-50/60 transition-colors group cursor-pointer">
+                        <tr key={product.id} className="hover:bg-[#F7F7F8] transition-colors duration-100 group cursor-pointer">
                           {/* Imagen */}
-                          <td className="px-0 py-0 w-14">
-                            <Link href={editHref} className="flex items-center justify-center px-5 py-2.5 h-full">
-                              <div className="w-11 h-11 rounded overflow-hidden bg-slate-50 flex-shrink-0">
+                          <td className="pl-6 py-3 w-20">
+                            <Link href={editHref} className="flex items-center h-full">
+                              <div className="w-12 h-12 rounded-[10px] overflow-hidden bg-[#F5F5F7] flex-shrink-0">
                                 {primaryImage ? (
                                   <img
                                     src={primaryImage.url}
@@ -186,32 +186,32 @@ export default async function ProductsPage({
                                   />
                                 ) : (
                                   <div className="w-full h-full flex items-center justify-center">
-                                    <ImageIcon className="w-5 h-5 text-slate-300" />
+                                    <ImageIcon className="w-5 h-5 text-[#C7C7CC]" />
                                   </div>
                                 )}
                               </div>
                             </Link>
                           </td>
                           {/* Producto */}
-                          <td className="px-0 py-0">
-                            <Link href={editHref} className="flex items-center px-4 py-3.5 h-full">
-                              <span className="font-semibold text-sm text-slate-800 group-hover:text-brand-600 transition-colors">
+                          <td className="px-6 py-4">
+                            <Link href={editHref} className="flex items-center h-full">
+                              <span className="font-semibold text-sm text-[#1D1D1F] group-hover:text-[#0071E3] transition-colors">
                                 {product.name}
                               </span>
                             </Link>
                           </td>
                           {/* Categoría */}
-                          <td className="px-0 py-0">
-                            <Link href={editHref} className="flex items-center px-4 py-3.5 h-full">
-                              <span className="text-sm text-slate-500">
+                          <td className="px-6 py-4">
+                            <Link href={editHref} className="flex items-center h-full">
+                              <span className="text-sm text-[#86868B]">
                                 {product.category?.name || "—"}
                               </span>
                             </Link>
                           </td>
                           {/* Precio */}
-                          <td className="px-0 py-0">
-                            <Link href={editHref} className="flex items-center px-4 py-3.5 h-full">
-                              <span className="text-sm font-semibold text-slate-900 whitespace-nowrap">
+                          <td className="px-6 py-4">
+                            <Link href={editHref} className="flex items-center h-full">
+                              <span className="text-sm font-medium text-[#1D1D1F] whitespace-nowrap">
                                 {product.show_price && product.price > 0
                                   ? formatCurrency(product.price, currency)
                                   : "—"}
@@ -219,15 +219,9 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Stock */}
-                          <td className="px-0 py-0">
-                            <Link href={editHref} className="flex items-center px-4 py-3.5 h-full">
-                              <span className={
-                                product.has_variants
-                                  ? "text-sm text-slate-500"
-                                  : product.stock_status === "available"
-                                    ? "text-sm text-slate-700"
-                                    : "text-sm text-slate-400"
-                              }>
+                          <td className="px-6 py-4">
+                            <Link href={editHref} className="flex items-center h-full">
+                              <span className="text-sm text-[#6E6E73]">
                                 {product.has_variants
                                   ? "Variantes"
                                   : product.track_inventory
@@ -239,14 +233,14 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Visibilidad */}
-                          <td className="px-4 py-3.5">
+                          <td className="px-6 py-4">
                             <VisibilityDropdown
                               productId={product.id}
                               currentVisibility={product.visibility}
                             />
                           </td>
                           {/* Acciones */}
-                          <td className="px-5 py-3.5">
+                          <td className="pr-6 py-4">
                             <ProductsActions productId={product.id} />
                           </td>
                         </tr>
@@ -257,12 +251,12 @@ export default async function ProductsPage({
               </div>
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {(products as Product[]).map((product) => {
                 const primaryImage = product.images?.find((img) => img.is_primary);
                 return (
-                  <div key={product.id} className="dash-card flex flex-col group overflow-hidden p-0 border border-slate-200">
-                    <div className="relative aspect-square bg-slate-100 border-b border-slate-100">
+                  <div key={product.id} className="bg-white border border-[#E5E5EA] rounded-[20px] flex flex-col group overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-200">
+                    <div className="relative aspect-square bg-[#F5F5F7] border-b border-[#F5F5F7]">
                       {primaryImage ? (
                         <img
                           src={primaryImage.url}
@@ -271,7 +265,7 @@ export default async function ProductsPage({
                         />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Package className="w-8 h-8 text-slate-300" />
+                          <Package className="w-8 h-8 text-[#C7C7CC]" />
                         </div>
                       )}
                       <div className="absolute top-2 right-2 flex flex-col gap-1">
@@ -280,13 +274,13 @@ export default async function ProductsPage({
                         </Badge>
                       </div>
                     </div>
-                    <div className="p-4 flex-1 flex flex-col">
-                      <p className="text-xs text-slate-500 mb-1">{product.category?.name || "Sin categoría"}</p>
-                      <h3 className="font-semibold text-sm text-slate-900 line-clamp-2 leading-snug mb-2 group-hover:text-brand-600 transition-colors">
+                    <div className="p-5 flex-1 flex flex-col">
+                      <p className="text-xs text-[#86868B] mb-1.5 font-medium">{product.category?.name || "Sin categoría"}</p>
+                      <h3 className="font-semibold text-sm text-[#1D1D1F] line-clamp-2 leading-snug mb-3 group-hover:text-[#0071E3] transition-colors">
                         {product.name}
                       </h3>
-                      <div className="mt-auto pt-3 border-t border-slate-50 flex items-center justify-between">
-                        <span className="font-bold text-slate-900">
+                      <div className="mt-auto pt-4 border-t border-[#F5F5F7] flex items-center justify-between">
+                        <span className="font-semibold text-sm text-[#1D1D1F]">
                           {product.show_price ? formatCurrency(product.price, currency) : "Consultar"}
                         </span>
                         <ProductsActions productId={product.id} />
@@ -300,7 +294,7 @@ export default async function ProductsPage({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="dash-card px-5 py-3 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500 gap-3">
+            <div className="bg-white border border-[#E5E5EA] rounded-[16px] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-sm text-[#6E6E73] gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               <span>
                 Página {page} de {totalPages} ({totalCount} productos)
               </span>
@@ -308,7 +302,7 @@ export default async function ProductsPage({
                 {page > 1 && (
                   <Link
                     href={buildUrl({ page: String(page - 1) })}
-                    className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 rounded-[10px] border border-[#E5E5EA] text-xs font-medium text-[#1D1D1F] hover:bg-[#F5F5F7] transition-colors"
                   >
                     ← Anterior
                   </Link>
@@ -316,7 +310,7 @@ export default async function ProductsPage({
                 {page < totalPages && (
                   <Link
                     href={buildUrl({ page: String(page + 1) })}
-                    className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-medium hover:bg-gray-50 transition-colors"
+                    className="px-4 py-2 rounded-[10px] border border-[#E5E5EA] text-xs font-medium text-[#1D1D1F] hover:bg-[#F5F5F7] transition-colors"
                   >
                     Siguiente →
                   </Link>

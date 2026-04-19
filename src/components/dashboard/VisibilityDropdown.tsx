@@ -68,10 +68,10 @@ export default function VisibilityDropdown({
         onClick={() => !loading && setOpen(!open)}
         disabled={loading}
         className={cn(
-          "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer",
+          "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer border",
           value === "visible"
-            ? "bg-green-50 text-green-700 hover:bg-green-100"
-            : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+            ? "bg-[#F0FFF4] text-[#1A7F4B] border-[#1A7F4B]/15 hover:bg-[#E6FFF0]"
+            : "bg-[#F5F5F7] text-[#86868B] border-[#E5E5EA] hover:bg-[#EBEBED]"
         )}
       >
         {value === "visible" ? "Visible" : "Oculto"}
@@ -81,17 +81,17 @@ export default function VisibilityDropdown({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-lg border border-slate-200 shadow-lg z-50 min-w-[120px] py-1">
+        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-[14px] border border-[#E5E5EA] shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 min-w-[120px] py-1.5">
           {OPTIONS.map((opt) => (
             <button
               key={opt.value}
               type="button"
               onClick={() => handleChange(opt.value)}
-              className="w-full flex items-center justify-between px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 text-sm text-[#1D1D1F] hover:bg-[#F5F5F7] transition-colors"
             >
               {opt.label}
               {opt.value === value && (
-                <Check className="w-3.5 h-3.5 text-green-600" />
+                <Check className="w-3.5 h-3.5 text-[#1A7F4B]" />
               )}
             </button>
           ))}

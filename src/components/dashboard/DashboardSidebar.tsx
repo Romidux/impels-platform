@@ -164,18 +164,18 @@ export default function DashboardSidebar({
   };
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 z-40 hidden w-64 flex-col bg-[#dae0f0] md:flex">
+    <aside className="fixed left-0 top-0 bottom-0 z-40 hidden w-64 flex-col bg-[#FAFAFA] border-r border-[#E5E5EA]/60 md:flex">
       {/* Logo */}
-      <div className="px-5 pt-5 pb-4">
+      <div className="px-6 pt-5 pb-4">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center shadow-apple-sm">
+          <div className="w-8 h-8 rounded-xl bg-[#0071E3] flex items-center justify-center shadow-[0_2px_8px_rgba(0,113,227,0.25)]">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>
-            <span className="font-display font-bold text-base text-slate-800">
+            <span className="font-display font-semibold text-base text-[#1D1D1F]">
               Impels
             </span>
-            <span className="text-brand-500 font-display font-bold text-base ml-0.5">
+            <span className="text-[#0071E3] font-display font-semibold text-base ml-0.5">
               Commerce
             </span>
           </div>
@@ -183,13 +183,13 @@ export default function DashboardSidebar({
       </div>
 
       {/* Store section */}
-      <div className="px-4 pb-3 border-b border-white/20">
+      <div className="px-4 pb-3 border-b border-[#E5E5EA]/60">
         <div className="flex items-center justify-between gap-2 px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white/70 text-brand-600 shadow-apple-sm">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white border border-[#E5E5EA] text-[#6E6E73] shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               <StoreIcon className="h-4 w-4" />
             </div>
-            <p className="truncate text-sm font-semibold leading-tight text-slate-700">
+            <p className="truncate text-sm font-medium leading-tight text-[#1D1D1F]">
               {store.name}
             </p>
           </div>
@@ -197,7 +197,7 @@ export default function DashboardSidebar({
             href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-white/50 hover:text-slate-600"
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl text-[#86868B] transition-colors hover:bg-[#F0F0F2] hover:text-[#1D1D1F]"
             title="Ver tienda"
           >
             <ExternalLink className="h-3.5 w-3.5" />
@@ -208,9 +208,9 @@ export default function DashboardSidebar({
       {/* Navigation */}
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-3">
         {navGroups.map((group, groupIdx) => (
-          <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-4")}>
+          <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-6")}>
             {group.label && (
-              <p className="px-3 pb-1 pt-0.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-400/80">
+              <p className="px-3 pb-1.5 pt-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-[#86868B]">
                 {group.label}
               </p>
             )}
@@ -231,17 +231,17 @@ export default function DashboardSidebar({
                     href={item.href}
                     onClick={() => toggleExpandable(item.expandableKey)}
                     className={cn(
-                      "relative flex items-center gap-2.5 px-3 py-2 text-sm transition-all duration-150 rounded-2xl",
+                      "relative flex items-center gap-2.5 px-3 py-2 text-sm transition-all duration-150 rounded-xl",
                       active
-                        ? "bg-white text-slate-800 font-semibold shadow-apple-sm"
-                        : "font-medium text-slate-500 hover:bg-white/50 hover:text-slate-700"
+                        ? "bg-white text-[#1D1D1F] font-medium shadow-[0_1px_4px_rgba(0,0,0,0.08)]"
+                        : "font-normal text-[#6E6E73] hover:bg-[#F0F0F2] hover:text-[#1D1D1F]"
                     )}
                   >
                     <div className="flex h-5 w-5 items-center justify-center">
                       <item.icon
                         className={cn(
                           "h-4 w-4 flex-shrink-0",
-                          active ? "text-brand-500" : "text-slate-400"
+                          active ? "text-[#1D1D1F]" : "text-[#86868B]"
                         )}
                       />
                     </div>
@@ -258,7 +258,7 @@ export default function DashboardSidebar({
                     {ParentLink}
 
                     {isOpen && (
-                      <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-white/30 pl-3">
+                      <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-[#E5E5EA] pl-3">
                         {item.children?.map((child) => {
                           const isActive = isChildActive(child.href);
 
@@ -267,9 +267,9 @@ export default function DashboardSidebar({
                               key={child.href}
                               href={child.href}
                               className={cn(
-                                "relative flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm text-slate-500 transition-all duration-150 hover:bg-white/50 hover:text-slate-700",
+                                "relative flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm text-[#6E6E73] transition-all duration-150 hover:bg-[#F0F0F2] hover:text-[#1D1D1F]",
                                 isActive &&
-                                  "bg-white font-semibold text-slate-800 shadow-apple-sm"
+                                  "bg-white font-medium text-[#1D1D1F] shadow-[0_1px_4px_rgba(0,0,0,0.08)]"
                               )}
                             >
                               <span className="truncate">{child.label}</span>
@@ -287,53 +287,53 @@ export default function DashboardSidebar({
       </nav>
 
       {/* User section */}
-      <div className="border-t border-white/20 px-3 py-3" ref={userMenuRef}>
+      <div className="border-t border-[#E5E5EA]/60 px-3 py-3" ref={userMenuRef}>
         <div className="relative">
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="flex items-center gap-3 w-full px-3 py-2 rounded-2xl hover:bg-white/50 transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-2 rounded-xl hover:bg-[#F0F0F2] transition-colors"
           >
             {/* Notification bell */}
             <div className="relative flex-shrink-0">
-              <Bell className="w-4 h-4 text-slate-400" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-500 border-2 border-[#dae0f0]" />
+              <Bell className="w-4 h-4 text-[#86868B]" />
+              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-[#0071E3] border-2 border-[#FAFAFA]" />
             </div>
 
             {/* Avatar */}
-            <div className="w-7 h-7 rounded-full gradient-brand flex items-center justify-center flex-shrink-0 shadow-apple-sm">
-              <span className="text-white text-xs font-bold">
+            <div className="w-7 h-7 rounded-full bg-[#0071E3] flex items-center justify-center flex-shrink-0 shadow-[0_1px_4px_rgba(0,113,227,0.25)]">
+              <span className="text-white text-xs font-semibold">
                 {user.email?.charAt(0).toUpperCase()}
               </span>
             </div>
 
             {/* Email */}
-            <p className="text-xs font-medium text-slate-600 truncate flex-1 text-left">
+            <p className="text-xs font-normal text-[#6E6E73] truncate flex-1 text-left">
               {user.email}
             </p>
 
             <ChevronDown className={cn(
-              "w-3.5 h-3.5 text-slate-400 flex-shrink-0 transition-transform",
+              "w-3.5 h-3.5 text-[#86868B] flex-shrink-0 transition-transform",
               userMenuOpen && "rotate-180"
             )} />
           </button>
 
           {/* User dropdown */}
           {userMenuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-white rounded-2xl shadow-apple-md border border-white/80 z-50 overflow-hidden">
+            <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-white rounded-[14px] shadow-[0_8px_24px_rgba(0,0,0,0.10)] border border-[#E5E5EA] z-50 overflow-hidden">
               <div className="p-1.5">
                 <button
                   onClick={() => {
                     setUserMenuOpen(false);
                     router.push("/dashboard/store/identity");
                   }}
-                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-xl transition-colors"
                 >
-                  <User className="w-4 h-4 text-slate-400" />
+                  <User className="w-4 h-4 text-[#86868B]" />
                   Mi perfil
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-[#FF3B30] hover:bg-[#FFF2F2] rounded-xl transition-colors"
                 >
                   <LogOut className="w-4 h-4" />
                   Cerrar sesión

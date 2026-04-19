@@ -98,7 +98,7 @@ export default function ProductsActions({ productId }: { productId: string }) {
         onClick={handleDuplicate}
         disabled={duplicating}
         title="Duplicar producto"
-        className="p-2 text-gray-400 hover:text-purple-600 hover:bg-purple-50 rounded-lg transition-colors disabled:opacity-50"
+        className="p-2 text-[#86868B] hover:text-[#1D1D1F] hover:bg-[#F0F0F2] rounded-[8px] transition-colors duration-150 disabled:opacity-50"
       >
         <Copy className="w-4 h-4" />
       </button>
@@ -106,7 +106,7 @@ export default function ProductsActions({ productId }: { productId: string }) {
         onClick={handleDelete}
         disabled={deleting}
         title="Eliminar producto"
-        className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+        className="p-2 text-[#86868B] hover:text-[#FF3B30] hover:bg-[#FFF2F2] rounded-[8px] transition-colors duration-150 disabled:opacity-50"
       >
         <Trash2 className="w-4 h-4" />
       </button>

@@ -3,7 +3,6 @@
 import { useState, useRef, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import {
-  Upload,
   X,
   Plus,
   Trash2,
@@ -11,28 +10,31 @@ import {
   DollarSign,
   Tag,
   Image,
+  Save,
+  Hash,
+  Star,
+  Boxes,
   ChevronDown,
   Eye,
   EyeOff,
-  AlertCircle,
-  Save,
-  ArrowLeft,
-  Hash,
+  AlertTriangle,
+  CheckCircle2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { slugify } from "@/lib/utils";
-import { Category, Product, ProductOptionType } from "@/lib/types";
+import { Category, Product } from "@/lib/types";
 import Link from "next/link";
 import CategorySelector from "./CategorySelector";
-import DashSelect from "./ui/DashSelect";
+import { PageHeader } from "@/components/ui/PageHeader";
+import { Button } from "@/components/ui/Button";
 
 interface ProductFormProps {
   storeId: string;
   storePlan: "free" | "pro";
   categories: Category[];
   currency: string;
-  product?: Product; // if editing
+  product?: Product;
 }
 
 interface OptionTypeLocal {
@@ -44,7 +46,7 @@ interface OptionTypeLocal {
 
 interface VariantCombinationLocal {
   id?: string;
-  values: string[]; // array of option value names (e.g. ["Red", "XL"])
+  values: string[];
   price: string;
   stock: string;
   sku: string;
@@ -62,6 +64,7 @@ export default function ProductForm({
   const fileRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   const [form, setForm] = useState({
     name: product?.name || "",
@@ -104,7 +107,6 @@ export default function ProductForm({
 
   const [combinations, setCombinations] = useState<VariantCombinationLocal[]>(
     product?.variant_combinations?.map((vc) => {
-      // Map option_value IDs back to names
       const values = vc.option_values.map((vid) => {
         for (const ot of product?.option_types || []) {
           const val = ot.values?.find((v) => v.id === vid);
@@ -212,6 +214,24 @@ export default function ProductForm({
     setOptionTypes((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const getPresetValues = (optionName: string): string[] => {
+    const lower = optionName.toLowerCase().trim();
+    if (lower === "color") return ["Negro", "Blanco", "Rojo", "Azul", "Verde", "Gris", "Amarillo"];
+    if (lower === "talla" || lower === "talle") return ["XS", "S", "M", "L", "XL", "XXL"];
+    if (lower === "calzado" || lower === "talla de calzado") return ["36", "37", "38", "39", "40", "41", "42", "43"];
+    if (lower === "material") return ["Algodón", "Poliéster", "Lino", "Cuero", "Seda"];
+    return [];
+  };
+
+  const addPresetValue = (typeIndex: number, val: string) => {
+    setOptionTypes((prev) =>
+      prev.map((ot, i) => {
+        if (i !== typeIndex || ot.values.includes(val)) return ot;
+        return { ...ot, values: [...ot.values, val] };
+      })
+    );
+  };
+
   const generateCombinations = () => {
     const activeOptions = optionTypes.filter(ot => ot.name && ot.values.length > 0);
     if (activeOptions.length === 0) {
@@ -231,7 +251,6 @@ export default function ProductForm({
     }
 
     const newCombinations: VariantCombinationLocal[] = matrix.map(row => {
-      // Preserve existing combination data if possible
       const existing = combinations.find(c =>
         c.values.length === row.length &&
         c.values.every((v, i) => v === row[i])
@@ -239,7 +258,7 @@ export default function ProductForm({
 
       return existing || {
         values: row,
-        price: form.price, // default to base price
+        price: form.price,
         stock: "0",
         sku: "",
         is_active: true,
@@ -264,10 +283,9 @@ export default function ProductForm({
     const supabase = createClient();
 
     try {
-      // Upload new images to Supabase Storage
       const uploadedImages = await Promise.all(
         images.map(async (img, index) => {
-          if (!img.file) return img; // already uploaded
+          if (!img.file) return img;
           const ext = img.file.name.split(".").pop();
           const path = `${storeId}/${Date.now()}-${index}.${ext}`;
           const { error } = await supabase.storage
@@ -321,7 +339,6 @@ export default function ProductForm({
         productId = data.id;
       }
 
-      // Save images
       if (productId) {
         if (product) {
           await supabase
@@ -341,9 +358,7 @@ export default function ProductForm({
           );
         }
 
-        // Save options and variants
         if (form.has_variants) {
-          // Delete old options and combinations if editing
           if (product) {
             await supabase.from("product_option_types").delete().eq("product_id", productId);
             await supabase.from("product_variant_combinations").delete().eq("product_id", productId);
@@ -388,7 +403,6 @@ export default function ProductForm({
             }
           }
 
-          // Insert combinations
           if (combinations.length > 0) {
             const combinationsToInsert = combinations.map(c => {
               const optionValueIds = c.values.map((valName, i) => {
@@ -434,52 +448,106 @@ export default function ProductForm({
     }
   };
 
+  // ── Derived UI helpers ──────────────────────────────────────────────────────
+
+  const stockQty = parseInt(form.stock_quantity) || 0;
+  const stockBadge = !form.track_inventory
+    ? null
+    : stockQty === 0
+    ? { label: "Sin stock", color: "bg-red-50 text-red-600 border-red-200" }
+    : stockQty < 10
+    ? { label: "Poco stock", color: "bg-amber-50 text-amber-600 border-amber-200" }
+    : { label: "En stock", color: "bg-emerald-50 text-emerald-600 border-emerald-200" };
+
+  const discountPct =
+    form.compare_at_price && form.price &&
+    parseFloat(form.compare_at_price) > parseFloat(form.price)
+      ? Math.round(
+          (1 - parseFloat(form.price) / parseFloat(form.compare_at_price)) * 100
+        )
+      : null;
+
+  const primaryIdx = images.findIndex(img => img.is_primary);
+  const primaryImage = images[primaryIdx !== -1 ? primaryIdx : 0];
+
+  // ── Reusable toggle ─────────────────────────────────────────────────────────
+  const Toggle = ({
+    checked,
+    onToggle,
+  }: {
+    checked: boolean;
+    onToggle: () => void;
+  }) => (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={onToggle}
+      className={`w-10 h-5 rounded-full transition-colors relative flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-500/30 ${
+        checked ? "bg-blue-500" : "bg-slate-300"
+      }`}
+    >
+      <div
+        className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+          checked ? "translate-x-5" : ""
+        }`}
+      />
+    </button>
+  );
+
   return (
-    <div className="space-y-8 animate-fade-in max-w-5xl mx-auto pb-24">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/dashboard/products"
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5 text-gray-500" />
-          </Link>
-          <div>
-            <h1 className="font-display text-3xl font-bold text-gray-900">
-              {product ? "Editar producto" : "Nuevo producto"}
-            </h1>
-            <p className="text-gray-500 mt-0.5 text-sm">
-              {product
-                ? `Editando: ${product.name}`
-                : "Completa la información del producto"}
-            </p>
-          </div>
-        </div>
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="flex items-center gap-2 gradient-brand text-white font-semibold px-6 py-2.5 rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:scale-100"
-        >
-          {saving ? (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
-          {saving ? "Guardando..." : "Guardar"}
-        </button>
-      </div>
+    <div className="animate-fade-in max-w-5xl mx-auto pb-24">
+      <PageHeader
+        backHref="/dashboard/products"
+        title={product ? product.name || "Editar producto" : "Nuevo producto"}
+        subtitle={product ? "Editando producto" : "Completa la información"}
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={() =>
+                handleChange(
+                  "visibility",
+                  form.visibility === "visible" ? "hidden" : "visible"
+                )
+              }
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-colors ${
+                form.visibility === "visible"
+                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                  : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
+              }`}
+            >
+              {form.visibility === "visible" ? (
+                <Eye className="w-3 h-3" />
+              ) : (
+                <EyeOff className="w-3 h-3" />
+              )}
+              {form.visibility === "visible" ? "Visible" : "Oculto"}
+            </button>
+            <Button variant="secondary" asChild>
+              <Link href="/dashboard/products">Cancelar</Link>
+            </Button>
+            <Button
+              variant="primary"
+              onClick={handleSave}
+              loading={saving}
+              icon={!saving ? <Save className="w-4 h-4" /> : undefined}
+            >
+              {saving ? "Guardando..." : "Guardar"}
+            </Button>
+          </>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Main column */}
-        <div className="lg:col-span-2 space-y-8">
+        {/* ── LEFT COLUMN ──────────────────────────────────────────────────── */}
+        <div className="lg:col-span-2 space-y-6">
 
-
-          {/* Basic info */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
-            <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
-              <Package className="w-5 h-5 text-blue-500" />
-              Información general
+          {/* 1. Información básica */}
+          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
+            <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+              <Package className="w-4 h-4 text-blue-500" />
+              Información básica
             </h2>
 
             <div className="space-y-1.5">
@@ -496,317 +564,87 @@ export default function ProductForm({
             </div>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">
-                URL amigable (Slug)
-              </label>
-              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
-                <span className="text-slate-400 text-sm px-4 flex items-center border-r border-slate-200 font-mono">
-                  /p/
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-semibold text-slate-700">
+                  Descripción
+                </label>
+                <span className="text-xs text-slate-400 tabular-nums">
+                  {form.description.length} / 1000
                 </span>
-                <input
-                  type="text"
-                  value={form.slug}
-                  onChange={(e) => handleChange("slug", e.target.value)}
-                  placeholder="camiseta-algodon"
-                  className="flex-1 px-4 py-3 text-sm bg-transparent focus:outline-none"
-                />
               </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">
-                Descripción detallada
-              </label>
               <textarea
                 value={form.description}
-                onChange={(e) => handleChange("description", e.target.value)}
-                placeholder="Describe los beneficios, material, medidas..."
-                rows={5}
+                onChange={(e) => handleChange("description", e.target.value.slice(0, 1000))}
+                placeholder="Describe los beneficios, materiales, medidas…"
+                rows={4}
+                maxLength={1000}
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all resize-none"
               />
             </div>
-          </div>
 
-          {/* Variants */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
-            <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
-                  <Tag className="w-5 h-5 text-blue-500" />
-                  Variantes
-                </h2>
-                <button
-                  onClick={addOptionType}
-                  className="text-sm text-blue-600 hover:text-blue-700 font-semibold flex items-center gap-1"
-                >
-                  <Plus className="w-4 h-4" />
-                  Agregar variante
-                </button>
-              </div>
-
-              {/* Toggle Has Variants */}
-              <label className="flex items-center gap-3 cursor-pointer mb-2 bg-gray-50 p-3 rounded-xl border border-gray-200">
-                <div
-                  onClick={() => handleChange("has_variants", !form.has_variants)}
-                  className={`w-10 h-5 rounded-full transition-colors relative ${form.has_variants ? "bg-blue-500" : "bg-gray-300"
-                    }`}
-                >
-                  <div
-                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.has_variants ? "translate-x-5" : ""
-                      }`}
-                  />
-                </div>
-                <div>
-                  <span className="text-sm font-bold text-gray-900 block">
-                    Este producto tiene múltiples opciones
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    Como diferentes tallas, colores o modelos. El stock se controlará por cada variante.
-                  </span>
-                </div>
-              </label>
-            </div>
-
-            {form.has_variants && (
-              <>
-                <div className="pt-4 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-bold text-gray-900">Control de Stock y Precios</h3>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      onClick={() => handleChange("manage_stock_by_variant", false)}
-                      className={`p-3 rounded-xl border-2 text-left transition-all ${!form.manage_stock_by_variant
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-100 hover:border-gray-200"
-                        }`}
-                    >
-                      <span className="block text-sm font-bold">Stock General</span>
-                      <span className="text-xs text-gray-500">Un solo stock para todo el producto</span>
-                    </button>
-                    <button
-                      onClick={() => handleChange("manage_stock_by_variant", true)}
-                      className={`p-3 rounded-xl border-2 text-left transition-all ${form.manage_stock_by_variant
-                        ? "border-blue-500 bg-blue-50"
-                        : "border-gray-100 hover:border-gray-200"
-                        }`}
-                    >
-                      <span className="block text-sm font-bold">Stock por Variante</span>
-                      <span className="text-xs text-gray-500">Stock individual para cada combinación</span>
-                    </button>
-                  </div>
-                </div>
-
-                {optionTypes.length === 0 ? (
-                  <div className="text-center py-6 text-gray-400 text-sm">
-                    <p>Sin variantes cargadas. Agrega Color, Talla, etc.</p>
-                    <div className="flex flex-wrap gap-2 justify-center mt-3">
-                      {["Color", "Talla", "Tamaño (ml)"].map((preset) => (
-                        <button
-                          key={preset}
-                          onClick={() =>
-                            setOptionTypes((prev) => [
-                              ...prev,
-                              { name: preset, values: [], newValue: "" },
-                            ])
-                          }
-                          className="text-xs border border-gray-200 px-3 py-1.5 rounded-full hover:border-blue-400 hover:text-blue-600 transition-colors"
-                        >
-                          + {preset}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {optionTypes.map((ot, i) => (
-                      <div
-                        key={i}
-                        className="border border-gray-200 rounded-xl p-4 space-y-3"
-                      >
-                        <div className="flex items-center gap-2">
-                          <input
-                            type="text"
-                            value={ot.name}
-                            onChange={(e) =>
-                              updateOptionTypeName(i, e.target.value)
-                            }
-                            placeholder="Tipo de variante (ej: Color)"
-                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
-                          />
-                          <button
-                            onClick={() => removeOptionType(i)}
-                            className="p-2 text-red-400 hover:bg-red-50 rounded-lg transition-colors"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {ot.values.map((val) => (
-                            <span
-                              key={val}
-                              className="flex items-center gap-1.5 bg-blue-50 text-blue-700 text-sm px-3 py-1 rounded-full"
-                            >
-                              {val}
-                              <button
-                                onClick={() => removeOptionValue(i, val)}
-                                className="hover:text-red-500"
-                              >
-                                <X className="w-3 h-3" />
-                              </button>
-                            </span>
-                          ))}
-                        </div>
-                        <div className="flex gap-2">
-                          <input
-                            type="text"
-                            value={ot.newValue}
-                            onChange={(e) =>
-                              setOptionTypes((prev) =>
-                                prev.map((o, j) =>
-                                  j === i ? { ...o, newValue: e.target.value } : o
-                                )
-                              )
-                            }
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                addOptionValue(i);
-                              }
-                            }}
-                            placeholder="Agregar valor..."
-                            className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-400"
-                          />
-                          <button
-                            onClick={() => addOptionValue(i)}
-                            className="px-3 py-2 gradient-brand text-white rounded-lg text-sm"
-                          >
-                            <Plus className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-
-                    <div className="pt-4">
-                      <button
-                        onClick={generateCombinations}
-                        className="w-full py-3 border-2 border-dashed border-gray-200 rounded-xl text-sm font-bold text-gray-500 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
-                      >
-                        {combinations.length > 0 ? "Actualizar combinaciones" : "Generar combinaciones"}
-                      </button>
-                    </div>
-
-                    {combinations.length > 0 && (
-                      <div className="mt-6 border border-gray-200 rounded-xl overflow-hidden overflow-x-auto no-scrollbar">
-                        <table className="w-full text-sm">
-                          <thead className="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                              <th className="px-4 py-3 text-left font-bold text-gray-600">Combinación</th>
-                              <th className="px-4 py-3 text-left font-bold text-gray-600">Stock</th>
-                              <th className="px-4 py-3 text-left font-bold text-gray-600">Precio (Opcional)</th>
-                              <th className="px-4 py-3 text-left font-bold text-gray-600">SKU</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-gray-100">
-                            {combinations.map((c, idx) => (
-                              <tr key={idx} className="hover:bg-gray-50 transition-colors">
-                                <td className="px-4 py-3 font-medium text-gray-900">
-                                  {c.values.join(" / ")}
-                                </td>
-                                <td className="px-4 py-3">
-                                  <input
-                                    type="number"
-                                    value={c.stock}
-                                    onChange={(e) => updateCombination(idx, "stock", e.target.value)}
-                                    className="w-20 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:border-blue-400 disabled:opacity-50"
-                                    disabled={!form.manage_stock_by_variant}
-                                  />
-                                </td>
-                                <td className="px-4 py-3 text-xs text-gray-400">
-                                  <input
-                                    type="number"
-                                    value={c.price}
-                                    onChange={(e) => updateCombination(idx, "price", e.target.value)}
-                                    placeholder={form.price}
-                                    className="w-24 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:border-blue-400"
-                                  />
-                                </td>
-                                <td className="px-4 py-3">
-                                  <input
-                                    type="text"
-                                    value={c.sku}
-                                    onChange={(e) => updateCombination(idx, "sku", e.target.value)}
-                                    placeholder="SKU-001"
-                                    className="w-24 border border-gray-200 rounded-lg px-2 py-1 focus:outline-none focus:border-blue-400"
-                                  />
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </>
-            )}
-          </div>
-
-          {/* Tags */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
-            <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
-              <Hash className="w-5 h-5 text-blue-500" />
-              Etiquetas
-            </h2>
-            <div className="flex flex-wrap gap-2 min-h-[40px]">
-              {form.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="flex items-center gap-1.5 bg-gray-100 text-gray-700 text-sm px-3 py-1.5 rounded-full"
-                >
-                  {tag}
-                  <button
-                    onClick={() => removeTag(tag)}
-                    className="hover:text-red-500"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={form.newTag}
-                onChange={(e) => handleChange("newTag", e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    addTag();
-                  }
-                }}
-                placeholder="Agregar etiqueta y presionar Enter"
-                className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 transition-all"
-              />
+            {/* Advanced: slug (collapsed) */}
+            <div>
               <button
-                onClick={addTag}
-                className="px-4 py-2.5 border border-gray-200 rounded-xl text-sm hover:bg-gray-50 transition-colors"
+                type="button"
+                onClick={() => setShowAdvanced(!showAdvanced)}
+                className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
               >
-                <Plus className="w-4 h-4" />
+                <ChevronDown
+                  className={`w-3.5 h-3.5 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
+                />
+                Opciones SEO avanzadas
+              </button>
+
+              {showAdvanced && (
+                <div className="mt-3 space-y-1.5 animate-fade-in">
+                  <label className="block text-sm font-semibold text-slate-700">
+                    URL amigable (Slug)
+                  </label>
+                  <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
+                    <span className="text-slate-400 text-sm px-4 flex items-center border-r border-slate-200 font-mono">
+                      /p/
+                    </span>
+                    <input
+                      type="text"
+                      value={form.slug}
+                      onChange={(e) => handleChange("slug", e.target.value)}
+                      placeholder="camiseta-algodon"
+                      className="flex-1 px-4 py-3 text-sm bg-transparent focus:outline-none"
+                    />
+                  </div>
+                  {form.slug && (
+                    <p className="text-xs text-slate-400 font-mono truncate">
+                      tutienda.com/p/{form.slug}
+                    </p>
+                  )}
+                </div>
+              )}
+            </div>
+          </section>
+
+          {/* 2. Imágenes */}
+          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+                  <Image className="w-4 h-4 text-blue-500" />
+                  Imágenes
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  {images.length > 0
+                    ? `${images.length} imagen${images.length !== 1 ? "es" : ""} · toca una para marcarla como principal`
+                    : "Agrega fotos del producto"}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                Agregar
               </button>
             </div>
-          </div>
-        </div>
-
-        {/* Side column */}
-        <div className="space-y-6 lg:sticky lg:top-8 h-fit">
-          {/* Upload Img (Reference Mode) */}
-          <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-6 space-y-4">
-            <h2 className="font-display text-lg font-bold text-slate-900 flex items-center gap-2">
-              <Image className="w-5 h-5 text-blue-500" />
-              Imágenes
-            </h2>
 
             <input
               ref={fileRef}
@@ -817,63 +655,541 @@ export default function ProductForm({
               className="hidden"
             />
 
-            {/* Main Preview */}
-            <div className="w-full aspect-[4/3] sm:aspect-square bg-[#f4f4f4] flex items-center justify-center rounded-[20px] overflow-hidden relative cursor-pointer group" onClick={() => fileRef.current?.click()}>
-              {images.length > 0 && images[images.findIndex(img => img.is_primary) !== -1 ? images.findIndex(img => img.is_primary) : 0] ? (
-                <img
-                  src={images[images.findIndex(img => img.is_primary) !== -1 ? images.findIndex(img => img.is_primary) : 0].url}
-                  alt="Primary Product"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="flex flex-col items-center text-slate-400 gap-2">
-                  <Image className="w-10 h-10 opacity-50" />
-                  <span className="text-sm font-medium">Haz clic para agregar</span>
+            {images.length === 0 ? (
+              <button
+                type="button"
+                onClick={() => fileRef.current?.click()}
+                className="w-full aspect-[16/7] border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-3 text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/30 transition-all group"
+              >
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
+                  <Image className="w-6 h-6 opacity-60 group-hover:opacity-100" />
                 </div>
+                <div className="text-center">
+                  <p className="text-sm font-semibold">Haz clic para agregar imágenes</p>
+                  <p className="text-xs mt-0.5 opacity-70">PNG, JPG, WEBP hasta 10 MB</p>
+                </div>
+              </button>
+            ) : (
+              <div className="grid grid-cols-[1fr_auto] gap-3">
+                {/* Main preview */}
+                <div
+                  className="relative aspect-square rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 cursor-pointer group"
+                  onClick={() => fileRef.current?.click()}
+                >
+                  {primaryImage && (
+                    <img
+                      src={primaryImage.url}
+                      alt="Principal"
+                      className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+                    />
+                  )}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                  <span className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm text-slate-700 text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm">
+                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                    Principal
+                  </span>
+                </div>
+
+                {/* Thumbnails column */}
+                <div className="flex flex-col gap-2 w-[72px]">
+                  {images.map((img, i) => (
+                    <div
+                      key={i}
+                      className={`w-[72px] h-[72px] shrink-0 rounded-xl overflow-hidden border-2 cursor-pointer transition-all relative group bg-slate-50 ${
+                        img.is_primary
+                          ? "border-blue-500 ring-2 ring-blue-500/20"
+                          : "border-slate-200 hover:border-slate-300"
+                      }`}
+                      onClick={() => setPrimary(i)}
+                    >
+                      <img
+                        src={img.url}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeImage(i);
+                        }}
+                        className="absolute -top-1 -right-1 w-5 h-5 bg-white text-slate-700 hover:text-red-500 border border-slate-200 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => fileRef.current?.click()}
+                    className="w-[72px] h-[72px] shrink-0 rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 flex items-center justify-center transition-colors bg-white group"
+                    aria-label="Agregar imagen"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                      <Plus className="w-3.5 h-3.5" />
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+          </section>
+
+          {/* 3. Variantes */}
+          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
+            <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+              <Tag className="w-4 h-4 text-blue-500" />
+              Variantes
+            </h2>
+
+            <label className="flex items-start gap-3 cursor-pointer bg-slate-50 p-4 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
+              <Toggle
+                checked={form.has_variants}
+                onToggle={() => handleChange("has_variants", !form.has_variants)}
+              />
+              <div>
+                <span className="text-sm font-bold text-slate-900 block">
+                  Este producto tiene múltiples opciones
+                </span>
+                <span className="text-xs text-slate-500">
+                  Como diferentes tallas, colores o modelos
+                </span>
+              </div>
+            </label>
+
+            {form.has_variants && (
+              <>
+                {/* Stock mode */}
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                    Control de stock
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleChange("manage_stock_by_variant", false)}
+                      className={`p-3.5 rounded-xl border-2 text-left transition-all ${
+                        !form.manage_stock_by_variant
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-slate-200 hover:border-slate-300 bg-white"
+                      }`}
+                    >
+                      <span className="block text-sm font-bold text-slate-900">Stock general</span>
+                      <span className="text-xs text-slate-500 leading-relaxed">Un solo stock para todo</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleChange("manage_stock_by_variant", true)}
+                      className={`p-3.5 rounded-xl border-2 text-left transition-all ${
+                        form.manage_stock_by_variant
+                          ? "border-blue-500 bg-blue-50"
+                          : "border-slate-200 hover:border-slate-300 bg-white"
+                      }`}
+                    >
+                      <span className="block text-sm font-bold text-slate-900">Stock por variante</span>
+                      <span className="text-xs text-slate-500 leading-relaxed">Individual por combinación</span>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Option types */}
+                <div className="space-y-3">
+                  <p className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                    Atributos del producto
+                  </p>
+
+                  {optionTypes.length === 0 ? (
+                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center">
+                      <Tag className="w-8 h-8 mx-auto mb-3 text-slate-300" />
+                      <p className="text-sm font-semibold text-slate-600 mb-1">
+                        Aún no hay atributos
+                      </p>
+                      <p className="text-xs text-slate-400 mb-5">
+                        Agrega opciones como Color, Talla o Material
+                      </p>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {["Color", "Talla", "Material", "Tamaño (ml)"].map((preset) => (
+                          <button
+                            key={preset}
+                            type="button"
+                            onClick={() =>
+                              setOptionTypes((prev) => [
+                                ...prev,
+                                { name: preset, values: [], newValue: "" },
+                              ])
+                            }
+                            className="text-xs font-medium border border-slate-200 bg-white px-3.5 py-1.5 rounded-full hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                          >
+                            + {preset}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {optionTypes.map((ot, i) => (
+                        <div
+                          key={i}
+                          className="border border-slate-200 rounded-xl overflow-hidden"
+                        >
+                          <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200">
+                            <span className="w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0">
+                              {i + 1}
+                            </span>
+                            <input
+                              type="text"
+                              value={ot.name}
+                              onChange={(e) => updateOptionTypeName(i, e.target.value)}
+                              placeholder="Nombre del atributo (ej: Color)"
+                              className="flex-1 bg-transparent text-sm font-semibold text-slate-900 focus:outline-none placeholder:font-normal placeholder:text-slate-400"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => removeOptionType(i)}
+                              className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
+
+                          <div className="px-4 py-4 space-y-3">
+                            {ot.values.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {ot.values.map((val) => (
+                                  <span
+                                    key={val}
+                                    className="flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full"
+                                  >
+                                    {val}
+                                    <button
+                                      type="button"
+                                      onClick={() => removeOptionValue(i, val)}
+                                      className="hover:text-red-500 transition-colors"
+                                    >
+                                      <X className="w-3 h-3" />
+                                    </button>
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+
+                            {getPresetValues(ot.name).length > 0 && (
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-xs text-slate-400">Sugerencias:</span>
+                                {getPresetValues(ot.name)
+                                  .filter((v) => !ot.values.includes(v))
+                                  .map((v) => (
+                                    <button
+                                      key={v}
+                                      type="button"
+                                      onClick={() => addPresetValue(i, v)}
+                                      className="text-xs px-2.5 py-1 rounded-full border border-slate-200 bg-white hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                    >
+                                      + {v}
+                                    </button>
+                                  ))}
+                              </div>
+                            )}
+
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={ot.newValue}
+                                onChange={(e) =>
+                                  setOptionTypes((prev) =>
+                                    prev.map((o, j) =>
+                                      j === i ? { ...o, newValue: e.target.value } : o
+                                    )
+                                  )
+                                }
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    e.preventDefault();
+                                    addOptionValue(i);
+                                  }
+                                }}
+                                placeholder="Escribe un valor y presiona Enter…"
+                                className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => addOptionValue(i)}
+                                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors"
+                              >
+                                <Plus className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={addOptionType}
+                    className="w-full py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-sm font-medium text-slate-500 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Agregar atributo
+                  </button>
+                </div>
+
+                {optionTypes.some((ot) => ot.name && ot.values.length > 0) && (
+                  <div className="pt-1">
+                    <button
+                      type="button"
+                      onClick={generateCombinations}
+                      className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <Boxes className="w-4 h-4" />
+                      {combinations.length > 0 ? "Actualizar combinaciones" : "Generar combinaciones"}
+                    </button>
+                    {combinations.length === 0 && (
+                      <p className="text-xs text-slate-400 text-center mt-2">
+                        Genera las combinaciones una vez hayas cargado todos los valores
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {combinations.length > 0 && (
+                  <div className="border border-slate-200 rounded-xl overflow-hidden overflow-x-auto no-scrollbar">
+                    <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
+                        {combinations.length} combinación{combinations.length !== 1 ? "es" : ""}
+                      </span>
+                      {!form.manage_stock_by_variant && (
+                        <span className="text-xs text-slate-400">
+                          Activa el stock por variante para editar unidades
+                        </span>
+                      )}
+                    </div>
+                    <table className="w-full text-sm">
+                      <thead className="border-b border-slate-200">
+                        <tr className="bg-white">
+                          <th className="px-4 py-2.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Combinación</th>
+                          <th className="px-4 py-2.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Stock</th>
+                          <th className="px-4 py-2.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Precio</th>
+                          <th className="px-4 py-2.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">SKU</th>
+                          <th className="px-4 py-2.5 text-left text-xs font-bold text-slate-500 uppercase tracking-wide">Activo</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-100">
+                        {combinations.map((c, idx) => (
+                          <tr
+                            key={idx}
+                            className={`hover:bg-slate-50 transition-colors ${!c.is_active ? "opacity-50" : ""}`}
+                          >
+                            <td className="px-4 py-3">
+                              <div className="flex flex-wrap gap-1">
+                                {c.values.map((v) => (
+                                  <span
+                                    key={v}
+                                    className="inline-block bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-md font-medium"
+                                  >
+                                    {v}
+                                  </span>
+                                ))}
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <input
+                                type="number"
+                                value={c.stock}
+                                onChange={(e) => updateCombination(idx, "stock", e.target.value)}
+                                className="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                disabled={!form.manage_stock_by_variant}
+                                min="0"
+                              />
+                            </td>
+                            <td className="px-4 py-3">
+                              <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all w-28">
+                                <span className="text-slate-400 text-xs px-2 border-r border-slate-200 py-1.5 font-mono">
+                                  {currency}
+                                </span>
+                                <input
+                                  type="number"
+                                  value={c.price}
+                                  onChange={(e) => updateCombination(idx, "price", e.target.value)}
+                                  placeholder={form.price || "0"}
+                                  className="flex-1 px-2 py-1.5 text-sm bg-transparent focus:outline-none min-w-0"
+                                  min="0"
+                                />
+                              </div>
+                            </td>
+                            <td className="px-4 py-3">
+                              <input
+                                type="text"
+                                value={c.sku}
+                                onChange={(e) => updateCombination(idx, "sku", e.target.value)}
+                                placeholder="SKU-001"
+                                className="w-24 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                              />
+                            </td>
+                            <td className="px-4 py-3">
+                              <Toggle
+                                checked={c.is_active}
+                                onToggle={() => updateCombination(idx, "is_active", !c.is_active)}
+                              />
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
+          </section>
+        </div>
+
+        {/* ── RIGHT COLUMN ─────────────────────────────────────────────────── */}
+        <div className="space-y-5 lg:sticky lg:top-8 h-fit">
+
+          {/* A. Precio */}
+          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+            <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+              <DollarSign className="w-4 h-4 text-blue-500" />
+              Precio
+            </h2>
+
+            <div className="space-y-1.5">
+              <label className="block text-sm font-semibold text-slate-700">
+                Precio de venta
+              </label>
+              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
+                <span className="text-slate-500 text-sm px-3 flex items-center border-r border-slate-200 font-mono bg-slate-100/50">
+                  {currency}
+                </span>
+                <input
+                  type="number"
+                  value={form.price}
+                  onChange={(e) => handleChange("price", e.target.value)}
+                  placeholder="0"
+                  min="0"
+                  className="flex-1 px-3 py-2.5 text-sm bg-transparent focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-semibold text-slate-700">
+                  Precio anterior
+                  <span className="text-slate-400 font-normal ml-1">(opcional)</span>
+                </label>
+                {discountPct && (
+                  <span className="text-xs font-bold bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full">
+                    -{discountPct}%
+                  </span>
+                )}
+              </div>
+              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
+                <span className="text-slate-500 text-sm px-3 flex items-center border-r border-slate-200 font-mono bg-slate-100/50">
+                  {currency}
+                </span>
+                <input
+                  type="number"
+                  value={form.compare_at_price}
+                  onChange={(e) => handleChange("compare_at_price", e.target.value)}
+                  placeholder="0"
+                  min="0"
+                  className="flex-1 px-3 py-2.5 text-sm bg-transparent focus:outline-none"
+                />
+              </div>
+              <p className="text-xs text-slate-400">
+                Se mostrará tachado para indicar descuento
+              </p>
+            </div>
+
+            <label className="flex items-center gap-3 cursor-pointer pt-1">
+              <Toggle
+                checked={form.show_price}
+                onToggle={() => handleChange("show_price", !form.show_price)}
+              />
+              <span className="text-sm font-medium text-slate-700">
+                {form.show_price ? "Precio visible" : "Precio oculto (Consultar)"}
+              </span>
+            </label>
+          </section>
+
+          {/* B. Inventario */}
+          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-display text-base font-bold text-slate-900">
+                Inventario
+              </h2>
+              {stockBadge && (
+                <span className={`text-xs font-semibold px-2.5 py-1 rounded-full border ${stockBadge.color}`}>
+                  {stockBadge.label}
+                </span>
               )}
             </div>
 
-            {/* Thumbnails Row */}
-            <div className="flex gap-3 overflow-x-auto pb-2 no-scrollbar px-1 items-center">
-              {images.map((img, i) => (
-                <div
-                  key={i}
-                  className={`w-[72px] h-[72px] shrink-0 rounded-[16px] overflow-hidden border-[1.5px] cursor-pointer transition-all relative group bg-[#f4f4f4] ${img.is_primary ? "border-slate-800" : "border-slate-200 hover:border-slate-300"
-                    }`}
-                  onClick={() => setPrimary(i)}
-                >
-                  <img
-                    src={img.url}
-                    alt=""
-                    className="w-full h-full object-cover p-1 rounded-2xl"
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Toggle
+                checked={form.track_inventory}
+                onToggle={() => handleChange("track_inventory", !form.track_inventory)}
+              />
+              <div>
+                <span className="text-sm font-semibold text-slate-700 block">
+                  Controlar inventario exacto
+                </span>
+                <span className="text-xs text-slate-500">
+                  Lleva la cuenta de unidades disponibles
+                </span>
+              </div>
+            </label>
+
+            {form.track_inventory && (!form.has_variants || !form.manage_stock_by_variant) && (
+              <div className="space-y-4 animate-fade-in pl-4 border-l-2 border-blue-100">
+                <div>
+                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                    Unidades disponibles
+                  </label>
+                  <input
+                    type="number"
+                    value={form.stock_quantity}
+                    onChange={(e) => handleChange("stock_quantity", e.target.value)}
+                    placeholder="Ej: 15"
+                    min="0"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
                   />
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeImage(i);
-                    }}
-                    className="absolute -top-1 -right-1 w-5 h-5 bg-white text-slate-700 hover:text-red-500 border border-slate-200 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
                 </div>
-              ))}
 
-              <button
-                onClick={() => fileRef.current?.click()}
-                className="w-[72px] h-[72px] shrink-0 rounded-[16px] border-[1.5px] border-dashed border-green-200 hover:border-green-400 focus:outline-none flex flex-col items-center justify-center transition-colors bg-white group"
-              >
-                <div className="w-6 h-6 rounded-full bg-green-100/50 flex items-center justify-center text-green-500 group-hover:bg-green-500 group-hover:text-white transition-colors">
-                  <Plus className="w-3.5 h-3.5 font-bold" />
-                </div>
-              </button>
-            </div>
-          </div>
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <Toggle
+                    checked={form.allow_backorder}
+                    onToggle={() => handleChange("allow_backorder", !form.allow_backorder)}
+                  />
+                  <div>
+                    <span className="text-sm font-medium text-slate-700 block">
+                      Permitir ventas sin stock
+                    </span>
+                    <span className="text-xs text-slate-500">
+                      Los clientes podrán comprar aunque llegue a 0
+                    </span>
+                  </div>
+                </label>
+              </div>
+            )}
 
-          {/* Category (Reference Mode) */}
-          <div className="bg-white rounded-[24px] border border-slate-100 shadow-sm p-6 space-y-4">
-            <h2 className="font-display text-lg font-bold text-slate-900">
-              Categoría
+            {form.has_variants && form.track_inventory && (
+              <div className="animate-fade-in p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-xs flex gap-2">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                <span>
+                  Con variantes activas, la disponibilidad se calcula por el stock de cada combinación.
+                </span>
+              </div>
+            )}
+          </section>
+
+          {/* C. Organización */}
+          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+            <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
+              <Boxes className="w-4 h-4 text-blue-500" />
+              Organización
             </h2>
 
             <CategorySelector
@@ -883,176 +1199,108 @@ export default function ProductForm({
               onChange={(val) => handleChange("category_id", val)}
             />
 
-
-          </div>
-          {/* Price */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
-            <h2 className="font-display text-lg font-bold text-gray-900 flex items-center gap-2">
-              <DollarSign className="w-5 h-5 text-green-500" />
-              Precio
-            </h2>
-
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Precio ({currency})
-              </label>
-              <input
-                type="number"
-                value={form.price}
-                onChange={(e) => handleChange("price", e.target.value)}
-                placeholder="0"
-                min="0"
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 transition-all"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                Precio anterior (opcional)
-              </label>
-              <input
-                type="number"
-                value={form.compare_at_price}
-                onChange={(e) =>
-                  handleChange("compare_at_price", e.target.value)
-                }
-                placeholder="0"
-                min="0"
-                className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 transition-all"
-              />
-            </div>
-
-            <label className="flex items-center gap-3 cursor-pointer">
-              <div
-                onClick={() => handleChange("show_price", !form.show_price)}
-                className={`w-10 h-5 rounded-full transition-colors relative ${form.show_price ? "bg-blue-500" : "bg-gray-300"
-                  }`}
-              >
-                <div
-                  className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.show_price ? "translate-x-5" : ""
-                    }`}
-                />
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-semibold text-slate-700 flex items-center gap-1.5">
+                  <Hash className="w-3.5 h-3.5 text-slate-400" />
+                  Etiquetas
+                </label>
               </div>
-              <span className="text-sm font-medium text-gray-700">
-                {form.show_price ? "Precio visible" : "Precio oculto (Consultar)"}
-              </span>
-            </label>
-          </div>
 
-
-
-          {/* Status */}
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
-            <h2 className="font-display text-lg font-bold text-gray-900">
-              Estado
-            </h2>
-
-            <div>
-              <DashSelect
-                label="Visibilidad"
-                value={form.visibility}
-                onChange={(val) => handleChange("visibility", val)}
-                options={[
-                  { value: "visible", label: "Visible" },
-                  { value: "hidden", label: "Oculto" },
-                ]}
-              />
-            </div>
-
-            {/* Detailed Inventory Tracking */}
-            <div className="pt-2 border-t border-gray-100 mt-4 space-y-4">
-              <label className="flex items-center gap-3 cursor-pointer">
-                <div
-                  onClick={() => handleChange("track_inventory", !form.track_inventory)}
-                  className={`w-10 h-5 rounded-full transition-colors relative ${form.track_inventory ? "bg-blue-500" : "bg-gray-300"
-                    }`}
-                >
-                  <div
-                    className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.track_inventory ? "translate-x-5" : ""
-                      }`}
-                  />
-                </div>
-                <span className="text-sm font-medium text-gray-700">
-                  Controlar inventario EXACTO
-                </span>
-              </label>
-
-              {form.track_inventory && (!form.has_variants || !form.manage_stock_by_variant) && (
-                <div className="space-y-4 animate-fade-in pl-2 border-l-2 border-blue-100">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                      Unidades disponibles
-                    </label>
-                    <input
-                      type="number"
-                      value={form.stock_quantity}
-                      onChange={(e) => handleChange("stock_quantity", e.target.value)}
-                      placeholder="Ej: 15"
-                      min="0"
-                      className="w-full border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-blue-400 transition-all bg-white"
-                    />
-                  </div>
-
-                  <label className="flex items-center gap-3 cursor-pointer">
-                    <div
-                      onClick={() => handleChange("allow_backorder", !form.allow_backorder)}
-                      className={`w-10 h-5 rounded-full transition-colors relative ${form.allow_backorder ? "bg-purple-500" : "bg-gray-300"
-                        }`}
+              {form.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {form.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="flex items-center gap-1 bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-full"
                     >
-                      <div
-                        className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.allow_backorder ? "translate-x-5" : ""
-                          }`}
-                      />
-                    </div>
-                    <div>
-                      <span className="text-sm font-medium text-gray-700 block">
-                        Permitir ventas sin stock
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        Los clientes podrán comprar aunque el stock llegue a 0.
-                      </span>
-                    </div>
-                  </label>
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() => removeTag(tag)}
+                        className="hover:text-red-500 transition-colors ml-0.5"
+                      >
+                        <X className="w-2.5 h-2.5" />
+                      </button>
+                    </span>
+                  ))}
                 </div>
               )}
 
-              {form.has_variants && form.track_inventory && (
-                <div className="animate-fade-in p-3 bg-amber-50 rounded-lg border border-amber-200 text-amber-800 text-sm">
-                  <strong>Atención:</strong> Como este producto tiene variantes, la disponibilidad general se calculará basándose en el stock que tenga cada variante.
-                </div>
-              )}
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={form.newTag}
+                  onChange={(e) => handleChange("newTag", e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      addTag();
+                    }
+                  }}
+                  placeholder="Agregar etiqueta…"
+                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={addTag}
+                  className="px-3 py-2 border border-slate-200 bg-white rounded-xl text-sm hover:bg-slate-50 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </section>
+
+          {/* D. Visibilidad */}
+          <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+            <h2 className="font-display text-base font-bold text-slate-900">
+              Visibilidad
+            </h2>
+
+            {/* Pill toggle: Visible / Oculto */}
+            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+              <button
+                type="button"
+                onClick={() => handleChange("visibility", "visible")}
+                className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  form.visibility === "visible"
+                    ? "bg-white shadow-sm text-emerald-700"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                <CheckCircle2 className={`w-3.5 h-3.5 ${form.visibility === "visible" ? "text-emerald-500" : "text-slate-300"}`} />
+                Activo
+              </button>
+              <button
+                type="button"
+                onClick={() => handleChange("visibility", "hidden")}
+                className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-semibold transition-all ${
+                  form.visibility === "hidden"
+                    ? "bg-white shadow-sm text-slate-700"
+                    : "text-slate-500 hover:text-slate-700"
+                }`}
+              >
+                <EyeOff className={`w-3.5 h-3.5 ${form.visibility === "hidden" ? "text-slate-500" : "text-slate-300"}`} />
+                Oculto
+              </button>
             </div>
 
             <label className="flex items-center gap-3 cursor-pointer">
-              <div
-                onClick={() => handleChange("is_featured", !form.is_featured)}
-                className={`w-10 h-5 rounded-full transition-colors relative ${form.is_featured ? "bg-blue-500" : "bg-gray-300"
-                  }`}
-              >
-                <div
-                  className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${form.is_featured ? "translate-x-5" : ""
-                    }`}
-                />
+              <Toggle
+                checked={form.is_featured}
+                onToggle={() => handleChange("is_featured", !form.is_featured)}
+              />
+              <div>
+                <span className="text-sm font-semibold text-slate-700 block">
+                  Destacado en tienda
+                </span>
+                <span className="text-xs text-slate-500">
+                  Aparece en la sección de productos destacados
+                </span>
               </div>
-              <span className="text-sm font-medium text-gray-700">
-                Destacado en tienda
-              </span>
             </label>
-          </div>
-
-          {/* Save button */}
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full flex items-center justify-center gap-2 gradient-brand text-white font-bold py-3.5 rounded-xl hover:shadow-glow transition-all hover:scale-[1.02] disabled:opacity-50 disabled:scale-100"
-          >
-            {saving ? (
-              <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <Save className="w-5 h-5" />
-            )}
-            {saving ? "Guardando..." : "Guardar producto"}
-          </button>
+          </section>
         </div>
       </div>
     </div>
