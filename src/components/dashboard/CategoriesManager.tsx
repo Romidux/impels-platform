@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import {
   Plus,
   Pencil,
@@ -12,7 +11,6 @@ import {
   X,
   Tags,
   ChevronRight,
-  ChevronDown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { createClient } from "@/lib/supabase/client";
@@ -29,12 +27,15 @@ interface CategoriesManagerProps {
   productCounts?: Record<string, number>;
 }
 
+/* ─── Grid column template (shared by header + rows) ─────────────────────── */
+const GRID_COLS =
+  "grid grid-cols-[1fr_90px_120px_136px] sm:grid-cols-[1fr_100px_130px_148px]";
+
 export default function CategoriesManager({
   storeId,
   categories: initialCategories,
   productCounts = {},
 }: CategoriesManagerProps) {
-  const router = useRouter();
   const [categories, setCategories] = useState(initialCategories);
   const [adding, setAdding] = useState(false);
   const [addingSubOf, setAddingSubOf] = useState<string | null>(null);
@@ -42,7 +43,7 @@ export default function CategoriesManager({
   const [newName, setNewName] = useState("");
   const [editName, setEditName] = useState("");
   const [saving, setSaving] = useState(false);
-  
+
   // Accordion state
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
@@ -55,20 +56,19 @@ export default function CategoriesManager({
   // Auto-expand when adding subcategory
   useEffect(() => {
     if (addingSubOf && !expandedIds.includes(addingSubOf)) {
-      setExpandedIds(prev => [...prev, addingSubOf]);
+      setExpandedIds((prev) => [...prev, addingSubOf]);
     }
   }, [addingSubOf, expandedIds]);
 
   const toggleExpand = (id: string, e: React.MouseEvent) => {
-    // Evitar toggle si se clickea en botones de acción o inputs
     const target = e.target as HTMLElement;
-    if (target.closest('button') || target.closest('input')) return;
-    
-    setExpandedIds(prev => 
-      prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]
+    if (target.closest("button") || target.closest("input")) return;
+    setExpandedIds((prev) =>
+      prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]
     );
   };
 
+  /* ─── CRUD handlers ────────────────────────────────────────────────────── */
   const handleAdd = async (parentId?: string) => {
     if (!newName.trim()) {
       toast.error("Ingresa un nombre");
@@ -114,9 +114,7 @@ export default function CategoriesManager({
         .eq("id", id);
       if (error) throw error;
       setCategories((prev) =>
-        prev.map((c) =>
-          c.id === id ? { ...c, name: editName.trim() } : c
-        )
+        prev.map((c) => (c.id === id ? { ...c, name: editName.trim() } : c))
       );
       toast.success("Categoría actualizada");
       setEditingId(null);
@@ -128,11 +126,7 @@ export default function CategoriesManager({
   };
 
   const handleDelete = async (id: string) => {
-    if (
-      !confirm(
-        "¿Eliminar esta categoría? Los productos no serán eliminados."
-      )
-    )
+    if (!confirm("¿Eliminar esta categoría? Los productos no serán eliminados."))
       return;
     try {
       const { error } = await supabase
@@ -140,71 +134,87 @@ export default function CategoriesManager({
         .delete()
         .eq("id", id);
       if (error) throw error;
-      setCategories((prev) => prev.filter((c) => c.id !== id && c.parent_id !== id));
+      setCategories((prev) =>
+        prev.filter((c) => c.id !== id && c.parent_id !== id)
+      );
       toast.success("Categoría eliminada");
     } catch {
       toast.error("Error al eliminar");
     }
   };
 
+  /* ─── Category Row ─────────────────────────────────────────────────────── */
   const CategoryRow = ({
     category,
     isSubcategory = false,
-    isLast = false,
     hasChildren = false,
     isExpanded = false,
-    onToggle = () => {},
+    subcategoryCount = 0,
+    onToggle = () => { },
   }: {
     category: Category;
     isSubcategory?: boolean;
-    isLast?: boolean;
     hasChildren?: boolean;
     isExpanded?: boolean;
+    subcategoryCount?: number;
     onToggle?: (e: React.MouseEvent) => void;
-  }) => (
-    <div
-      onClick={!isSubcategory ? onToggle : undefined}
-      className={cn(
-        "flex items-center gap-2 group transition-all duration-200",
-        isSubcategory 
-          ? "pl-12 py-2.5 hover:bg-slate-50/40" 
-          : "px-4 py-4 hover:bg-slate-50/70 border-b border-slate-100/50 cursor-pointer select-none"
-      )}
-    >
-      {isSubcategory ? (
-        <div className="relative self-stretch flex items-center pr-4">
-          <div className={cn(
-            "absolute left-[-22px] top-0 w-[1px] bg-slate-200",
-            isLast ? "h-1/2" : "h-full"
-          )} />
-          <div className="absolute left-[-22px] top-1/2 w-[22px] h-[1px] bg-slate-200" />
-          <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-dash-accent transition-colors shrink-0" />
-        </div>
-      ) : (
-        <div className="flex items-center gap-3 pr-1">
-          {/* Chevron */}
-          <div className="w-5 flex justify-center">
-            {hasChildren ? (
-              <motion.div
-                animate={{ rotate: isExpanded ? 90 : 0 }}
-                transition={{ duration: 0.2 }}
-                className="text-slate-400"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </motion.div>
-            ) : (
-              <div className="w-4 h-4" />
-            )}
-          </div>
-          <div className="p-2 rounded-lg bg-slate-100 text-slate-700 shrink-0 group-hover:bg-dash-primary/10 group-hover:text-dash-primary transition-all duration-300">
-            <FolderOpen className="w-4 h-4" />
-          </div>
-        </div>
-      )}
+  }) => {
+    const count = productCounts[category.id] ?? 0;
+    const isEditing = editingId === category.id;
+    const isExpandable = !isSubcategory && hasChildren;
 
-      <div className="flex-1 flex items-center gap-4">
-        {editingId === category.id ? (
-          <div className="flex-1 flex items-center gap-2">
+    return (
+      <div
+        onClick={!isSubcategory ? onToggle : undefined}
+        className={cn(
+          GRID_COLS,
+          "items-center group transition-colors duration-100",
+          isSubcategory
+            ? "bg-[#FAFAFA] hover:bg-[#F5F5F7]"
+            : "hover:bg-[#F7F7F8]",
+          isExpandable ? "cursor-pointer select-none" : !isSubcategory ? "cursor-default select-none" : ""
+        )}
+      >
+        {/* ── Col 1: Categoría ──────────────────────────────────────────── */}
+        <div
+          className={cn(
+            "flex items-center gap-3 py-4 pr-4",
+            isSubcategory ? "pl-[3.25rem]" : "pl-6"
+          )}
+        >
+          {/* Chevron — solo padres, solo si tiene hijos */}
+          {!isSubcategory && (
+            <div className="w-5 flex items-center justify-center flex-shrink-0">
+              {hasChildren ? (
+                <motion.div
+                  animate={{ rotate: isExpanded ? 90 : 0 }}
+                  transition={{ duration: 0.18, ease: "easeInOut" }}
+                  className="text-[#0071E3] group-hover:text-[#0063CC] transition-colors"
+                >
+                  <ChevronRight className="w-[18px] h-[18px]" strokeWidth={2.2} />
+                </motion.div>
+              ) : (
+                /* placeholder para mantener alineación */
+                <div className="w-[18px] h-[18px]" />
+              )}
+            </div>
+          )}
+
+          {/* Icono / bullet */}
+          {isSubcategory ? (
+            /* Bullet con línea vertical árbol */
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <div className="w-px h-5 bg-[#D1D1D6] rounded-full flex-shrink-0" />
+              <div className="w-1.5 h-1.5 rounded-full bg-[#C7C7CC] group-hover:bg-[#0071E3] transition-colors flex-shrink-0" />
+            </div>
+          ) : (
+            <div className="w-9 h-9 rounded-[10px] bg-[#F5F5F7] flex items-center justify-center flex-shrink-0 group-hover:bg-[#E8F0FE] transition-colors duration-150">
+              <FolderOpen className="w-4 h-4 text-[#86868B] group-hover:text-[#0071E3] transition-colors duration-150" />
+            </div>
+          )}
+
+          {/* Nombre / input edición */}
+          {isEditing ? (
             <input
               autoFocus
               value={editName}
@@ -213,158 +223,204 @@ export default function CategoriesManager({
                 if (e.key === "Enter") handleEdit(category.id);
                 if (e.key === "Escape") setEditingId(null);
               }}
-              className="flex-1 dash-input py-1 text-sm h-9"
+              className="flex-1 min-w-0 bg-white border border-[#E5E5EA] rounded-[10px] px-3 py-1.5 text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0071E3]/25 focus:border-[#0071E3] transition-all"
             />
-          </div>
-        ) : (
-          <>
-            <span className={cn(
-              "font-medium transition-colors",
-              isSubcategory 
-                ? "text-sm text-slate-500 group-hover:text-slate-900" 
-                : "text-[15px] font-semibold text-slate-900 group-hover:text-dash-primary"
-            )}>
-              {category.name}
-            </span>
-            {(productCounts[category.id] ?? 0) > 0 && (
-              <span className="text-[11px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                {productCounts[category.id]} prod.
-              </span>
-            )}
-          </>
-        )}
-      </div>
-
-      <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-3 group-hover:translate-x-0 pr-2">
-        {editingId === category.id ? (
-          <>
-            <button
-              onClick={() => handleEdit(category.id)}
-              disabled={saving}
-              className="h-8 w-8 flex items-center justify-center rounded-lg bg-white border border-slate-200 shadow-sm text-green-600 hover:bg-green-50 hover:border-green-200 hover:text-green-700 transition-all duration-150"
-            >
-              <Check className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setEditingId(null)}
-              className="h-8 w-8 flex items-center justify-center rounded-lg bg-white border border-slate-200 shadow-sm text-slate-400 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-600 transition-all duration-150"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </>
-        ) : (
-          <>
-            {!isSubcategory && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setAddingSubOf(category.id);
-                  setAdding(false);
-                  setNewName("");
-                }}
-                className="h-8 w-8 flex items-center justify-center rounded-lg bg-white border border-slate-200 shadow-sm text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-dash-primary transition-all duration-150"
-                title="Agregar subcategoría"
+          ) : (
+            <div className="flex items-center gap-2 min-w-0">
+              <span
+                className={cn(
+                  "truncate transition-colors duration-100",
+                  isSubcategory
+                    ? "text-sm text-[#6E6E73] group-hover:text-[#3A3A3C]"
+                    : "text-sm font-semibold text-[#1D1D1F] group-hover:text-[#0071E3]"
+                )}
               >
-                <FolderPlus className="w-3.5 h-3.5" />
-              </button>
-            )}
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setEditingId(category.id);
-                setEditName(category.name);
-              }}
-              className={cn(
-                "h-8 w-8 flex items-center justify-center rounded-lg transition-all duration-150",
-                isSubcategory
-                  ? "bg-transparent border border-transparent text-slate-400 hover:bg-slate-50 hover:border-slate-200 hover:text-dash-primary"
-                  : "bg-white border border-slate-200 shadow-sm text-slate-500 hover:bg-slate-50 hover:border-slate-300 hover:text-dash-primary"
+                {category.name}
+              </span>
+              {!isSubcategory && subcategoryCount > 0 && (
+                <span className="ml-0.5 text-[11px] font-medium text-[#86868B] bg-[#F0F0F2] px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0 leading-none">
+                  {subcategoryCount} sub
+                </span>
               )}
-              title="Editar"
-            >
-              <Pencil className="w-3.5 h-3.5" />
-            </button>
-            <button
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete(category.id);
-              }}
-              className={cn(
-                "h-8 w-8 flex items-center justify-center rounded-lg transition-all duration-150",
-                isSubcategory
-                  ? "bg-transparent border border-transparent text-slate-400 hover:bg-red-50 hover:border-red-200 hover:text-red-600"
-                  : "bg-white border border-slate-200 shadow-sm text-slate-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600"
-              )}
-              title="Eliminar"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
-          </>
-        )}
-      </div>
-    </div>
-  );
+            </div>
+          )}
+        </div>
 
+        {/* ── Col 2: Productos ──────────────────────────────────────────── */}
+        <div className="px-6 py-4">
+          <span className="text-sm text-[#6E6E73] tabular-nums">{count}</span>
+        </div>
+
+        {/* ── Col 3: Visibilidad ────────────────────────────────────────── */}
+        <div className="px-6 py-4">
+          <span
+            className={cn(
+              "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border",
+              category.is_active
+                ? "bg-[#F0FFF4] text-[#1A7F4B] border-[#1A7F4B]/15"
+                : "bg-[#F5F5F7] text-[#86868B] border-[#E5E5EA]"
+            )}
+          >
+            <span
+              className={cn(
+                "w-1.5 h-1.5 rounded-full flex-shrink-0",
+                category.is_active ? "bg-[#34C759]" : "bg-[#C7C7CC]"
+              )}
+            />
+            {category.is_active ? "Activa" : "Inactiva"}
+          </span>
+        </div>
+
+        {/* ── Col 4: Acciones ───────────────────────────────────────────── */}
+        <div className="pr-6 py-4">
+          <div className="flex items-center justify-end gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+            {isEditing ? (
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEdit(category.id);
+                  }}
+                  disabled={saving}
+                  title="Guardar"
+                  className="p-2 rounded-[8px] text-[#1A7F4B] hover:bg-[#F0FFF4] transition-colors duration-150 disabled:opacity-50"
+                >
+                  <Check className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingId(null);
+                  }}
+                  title="Cancelar"
+                  className="p-2 rounded-[8px] text-[#86868B] hover:text-[#1D1D1F] hover:bg-[#F0F0F2] transition-colors duration-150"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </>
+            ) : (
+              <>
+                {!isSubcategory && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setAddingSubOf(category.id);
+                      setAdding(false);
+                      setNewName("");
+                    }}
+                    title="Agregar subcategoría"
+                    className="p-2 rounded-[8px] text-[#86868B] hover:text-[#0071E3] hover:bg-[#E8F0FE] transition-colors duration-150"
+                  >
+                    <FolderPlus className="w-4 h-4" />
+                  </button>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingId(category.id);
+                    setEditName(category.name);
+                  }}
+                  title="Editar"
+                  className="p-2 rounded-[8px] text-[#86868B] hover:text-[#1D1D1F] hover:bg-[#F0F0F2] transition-colors duration-150"
+                >
+                  <Pencil className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(category.id);
+                  }}
+                  title="Eliminar"
+                  className="p-2 rounded-[8px] text-[#86868B] hover:text-[#FF3B30] hover:bg-[#FFF2F2] transition-colors duration-150"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  /* ─── Add Row ──────────────────────────────────────────────────────────── */
   const AddRow = ({
     parentId,
     onCancel,
-    isLastInTree = false,
   }: {
     parentId?: string;
     onCancel: () => void;
-    isLastInTree?: boolean;
   }) => (
     <div
       className={cn(
-        "flex items-center gap-3 group animate-fade-in",
-        parentId ? "pl-12 py-3 mr-4" : "px-4 py-4 border-b border-slate-100/50"
+        GRID_COLS,
+        "items-center",
+        parentId ? "bg-[#FAFAFA]" : ""
       )}
     >
-      {parentId ? (
-        <div className="relative self-stretch flex items-center pr-4">
-          <div className={cn(
-            "absolute left-[-22px] top-0 w-[1px] bg-slate-200",
-            isLastInTree ? "h-1/2" : "h-full"
-          )} />
-          <div className="absolute left-[-22px] top-1/2 w-[22px] h-[1px] bg-slate-200" />
-          <Plus className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+      {/* Col 1: Input */}
+      <div
+        className={cn(
+          "flex items-center gap-3 py-3 pr-4",
+          parentId ? "pl-[3.25rem]" : "pl-6"
+        )}
+      >
+        {/* Alineación con filas normales */}
+        {!parentId && <div className="w-5 flex-shrink-0" />}
+
+        {parentId ? (
+          <div className="flex items-center gap-2 flex-shrink-0">
+            <div className="w-px h-5 bg-[#D1D1D6] rounded-full flex-shrink-0" />
+            <Plus className="w-3.5 h-3.5 text-[#86868B] flex-shrink-0" />
+          </div>
+        ) : (
+          <div className="w-9 h-9 rounded-[10px] bg-[#F5F5F7] flex items-center justify-center flex-shrink-0">
+            <Plus className="w-4 h-4 text-[#86868B]" />
+          </div>
+        )}
+
+        <input
+          autoFocus
+          value={newName}
+          onChange={(e) => setNewName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleAdd(parentId);
+            if (e.key === "Escape") onCancel();
+          }}
+          placeholder={
+            parentId ? "Nueva subcategoría..." : "Nombre de la categoría..."
+          }
+          className="flex-1 min-w-0 bg-white border border-[#E5E5EA] rounded-[10px] px-3 py-1.5 text-sm text-[#1D1D1F] placeholder:text-[#C7C7CC] focus:outline-none focus:ring-2 focus:ring-[#0071E3]/25 focus:border-[#0071E3] transition-all"
+        />
+      </div>
+
+      {/* Col 2 & 3: vacíos */}
+      <div className="px-6 py-3" />
+      <div className="px-6 py-3" />
+
+      {/* Col 4: Guardar / Cancelar */}
+      <div className="pr-6 py-3">
+        <div className="flex items-center justify-end gap-1">
+          <button
+            onClick={() => handleAdd(parentId)}
+            disabled={saving || !newName.trim()}
+            className="inline-flex items-center gap-1.5 bg-[#0071E3] hover:bg-[#0063CC] active:bg-[#0055B3] text-white text-xs font-semibold px-3 py-1.5 rounded-[10px] transition-colors duration-150 disabled:opacity-50"
+          >
+            <Check className="w-3.5 h-3.5" />
+            Guardar
+          </button>
+          <button
+            onClick={onCancel}
+            className="p-2 rounded-[8px] text-[#86868B] hover:text-[#1D1D1F] hover:bg-[#F0F0F2] transition-colors duration-150"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
-      ) : (
-        <div className="p-2 rounded-lg bg-slate-100 text-slate-700 shrink-0">
-          <Plus className="w-4 h-4 font-bold" />
-        </div>
-      )}
-      
-      <input
-        autoFocus
-        value={newName}
-        onChange={(e) => setNewName(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") handleAdd(parentId);
-          if (e.key === "Escape") onCancel();
-        }}
-        placeholder={parentId ? "Nueva subcategoría..." : "Nombre de la categoría principal..."}
-        className="flex-1 dash-input h-9 text-sm"
-      />
-      <div className="flex items-center gap-1.5">
-        <button
-          onClick={() => handleAdd(parentId)}
-          disabled={saving || !newName.trim()}
-          className="flex items-center gap-1.5 bg-dash-primary hover:bg-dash-hover text-white text-xs font-bold px-3 py-1.5 rounded-xl transition-all disabled:opacity-50"
-        >
-          <Check className="w-3.5 h-3.5" />
-          <span>Guardar</span>
-        </button>
-        <button
-          onClick={onCancel}
-          className="p-1.5 text-slate-400 hover:bg-slate-100 rounded-xl transition-colors"
-        >
-          <X className="w-4 h-4" />
-        </button>
       </div>
     </div>
   );
 
+  /* ─── Render ───────────────────────────────────────────────────────────── */
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader
@@ -384,73 +440,98 @@ export default function CategoriesManager({
         }
       />
 
-      <div className="dash-card overflow-hidden bg-white shadow-sm ring-1 ring-slate-200/50">
-        <div className="flex flex-col">
-          {adding && (
-            <AddRow onCancel={() => { setAdding(false); setNewName(""); }} />
-          )}
-
-          {parentCategories.length === 0 && !adding ? (
-            <div className="p-20 text-center bg-slate-50/30">
-              <div className="w-24 h-24 rounded-[2.5rem] bg-white border border-slate-100 shadow-sm flex items-center justify-center mx-auto mb-6 transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-                <Tags className="w-10 h-10 text-dash-accent" />
-              </div>
-              <h3 className="font-display text-2xl font-bold text-slate-900 mb-2">
-                Sin categorías aún
-              </h3>
-              <p className="text-slate-500 mb-8 max-w-sm mx-auto text-sm leading-relaxed">
-                Organiza tu tienda estructurando tus productos en categorías. Mejora la experiencia de tus clientes.
-              </p>
-              <Button
-                onClick={() => setAdding(true)}
-                className="px-8"
-                icon={<Plus className="w-5 h-5" />}
-              >
-                Crear primera categoría
-              </Button>
+      <div className="bg-white border border-[#E5E5EA] rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        {parentCategories.length === 0 && !adding ? (
+          /* ── Empty state ────────────────────────────────────────────── */
+          <div className="p-20 text-center bg-[#FAFAFA]">
+            <div className="w-24 h-24 rounded-[2.5rem] bg-white border border-[#E5E5EA] shadow-sm flex items-center justify-center mx-auto mb-6 -rotate-3 hover:rotate-0 transition-transform duration-300">
+              <Tags className="w-10 h-10 text-[#0071E3]" />
             </div>
-          ) : (
-            <div className="flex flex-col">
+            <h3 className="text-2xl font-semibold text-[#1D1D1F] mb-2">
+              Sin categorías aún
+            </h3>
+            <p className="text-[#6E6E73] mb-8 max-w-sm mx-auto text-sm leading-relaxed">
+              Organiza tu tienda estructurando tus productos en categorías.
+              Mejora la experiencia de tus clientes.
+            </p>
+            <Button
+              onClick={() => setAdding(true)}
+              className="px-8"
+              icon={<Plus className="w-5 h-5" />}
+            >
+              Crear primera categoría
+            </Button>
+          </div>
+        ) : (
+          <>
+            {/* ── Table header ──────────────────────────────────────────── */}
+            <div className={cn(GRID_COLS, "bg-[#F5F5F7] border-b border-[#E5E5EA]")}>
+              <div className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide pl-6 py-4">
+                Categoría
+              </div>
+              <div className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-6 py-4">
+                Productos
+              </div>
+              <div className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-6 py-4">
+                Visibilidad
+              </div>
+              <div className="text-right text-xs font-medium text-[#86868B] uppercase tracking-wide pr-6 py-4">
+                Acciones
+              </div>
+            </div>
+
+            {/* ── Add row (top-level) ────────────────────────────────────── */}
+            {adding && (
+              <div className="border-b border-[#F5F5F7]">
+                <AddRow
+                  onCancel={() => {
+                    setAdding(false);
+                    setNewName("");
+                  }}
+                />
+              </div>
+            )}
+
+            {/* ── Rows ──────────────────────────────────────────────────── */}
+            <div className="divide-y divide-[#F5F5F7]">
               {parentCategories.map((cat) => {
                 const subcats = getSubcategories(cat.id);
                 const isSearchingSub = addingSubOf === cat.id;
                 const isExpanded = expandedIds.includes(cat.id);
-                
+
                 return (
-                  <motion.div layout key={cat.id} className="flex flex-col">
-                    <CategoryRow 
-                      category={cat} 
+                  <div key={cat.id}>
+                    {/* Parent row */}
+                    <CategoryRow
+                      category={cat}
                       hasChildren={subcats.length > 0}
                       isExpanded={isExpanded}
+                      subcategoryCount={subcats.length}
                       onToggle={(e) => toggleExpand(cat.id, e)}
                     />
-                    
-                    {/* Container for sub-levels with Animation */}
+
+                    {/* Subcategories — animated */}
                     <AnimatePresence initial={false}>
                       {(isExpanded || isSearchingSub) && (
                         <motion.div
-                          key="content"
+                          key="subcats"
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
                           exit={{ height: 0, opacity: 0 }}
                           transition={{ duration: 0.2, ease: "easeInOut" }}
-                          className="overflow-hidden flex flex-col bg-slate-50/20"
-                          layout
+                          className="overflow-hidden"
                         >
-                          <div className="py-1.5 flex flex-col">
-                            {subcats.map((sub, sIdx) => (
+                          <div className="border-t border-[#F5F5F7] divide-y divide-[#F5F5F7]">
+                            {subcats.map((sub) => (
                               <CategoryRow
                                 key={sub.id}
                                 category={sub}
                                 isSubcategory
-                                isLast={sIdx === subcats.length - 1 && !isSearchingSub}
                               />
                             ))}
-                            
                             {isSearchingSub && (
                               <AddRow
                                 parentId={cat.id}
-                                isLastInTree={true}
                                 onCancel={() => {
                                   setAddingSubOf(null);
                                   setNewName("");
@@ -461,12 +542,12 @@ export default function CategoriesManager({
                         </motion.div>
                       )}
                     </AnimatePresence>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </div>
   );
