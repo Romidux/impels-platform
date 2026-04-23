@@ -3,29 +3,72 @@ import { createServerClient } from "@supabase/ssr";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
-// Rate limiter — only active when Upstash env vars are set
-const ratelimit =
-  process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN
-    ? new Ratelimit({
-        redis: Redis.fromEnv(),
-        limiter: Ratelimit.slidingWindow(10, "60 s"),
-        analytics: false,
-      })
-    : null;
+const hasUpstash =
+  !!process.env.UPSTASH_REDIS_REST_URL &&
+  !!process.env.UPSTASH_REDIS_REST_TOKEN;
+
+// Fires once per cold start. Visible in Vercel logs so a missing
+// rate limiter in production cannot go unnoticed.
+if (process.env.NODE_ENV === "production" && !hasUpstash) {
+  console.error(
+    "[middleware] CRITICAL: rate limiting is using the in-memory fallback " +
+      "in production. Set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN " +
+      "to enable distributed rate limiting."
+  );
+}
+
+const ratelimit = hasUpstash
+  ? new Ratelimit({
+      redis: Redis.fromEnv(),
+      limiter: Ratelimit.slidingWindow(10, "60 s"),
+      analytics: false,
+    })
+  : null;
+
+// Per-isolate fallback. Not distributed, but prevents a single attacker
+// on one instance from brute-forcing when Upstash is unavailable.
+const fallbackHits = new Map<string, number[]>();
+const FALLBACK_LIMIT = 10;
+const FALLBACK_WINDOW_MS = 60_000;
+
+function fallbackRateLimit(key: string): boolean {
+  const now = Date.now();
+  const hits = (fallbackHits.get(key) ?? []).filter(
+    (t) => now - t < FALLBACK_WINDOW_MS
+  );
+  if (hits.length >= FALLBACK_LIMIT) return false;
+  hits.push(now);
+  fallbackHits.set(key, hits);
+  return true;
+}
 
 const RATE_LIMITED_PATHS = ["/login", "/register", "/api/export"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Rate limiting for sensitive routes
-  if (ratelimit && RATE_LIMITED_PATHS.some((p) => pathname.startsWith(p))) {
+  // Always on. If Upstash is unreachable or unconfigured, fall back to
+  // the in-memory limiter rather than letting requests through unchecked.
+  if (RATE_LIMITED_PATHS.some((p) => pathname.startsWith(p))) {
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
       request.headers.get("x-real-ip") ??
       "anonymous";
-    const { success } = await ratelimit.limit(`rl:${ip}`);
-    if (!success) {
+    const key = `rl:${ip}`;
+
+    let allowed: boolean;
+    if (ratelimit) {
+      try {
+        allowed = (await ratelimit.limit(key)).success;
+      } catch (err) {
+        console.error("[middleware] Upstash failure, using fallback:", err);
+        allowed = fallbackRateLimit(key);
+      }
+    } else {
+      allowed = fallbackRateLimit(key);
+    }
+
+    if (!allowed) {
       return new NextResponse("Too many requests", { status: 429 });
     }
   }
