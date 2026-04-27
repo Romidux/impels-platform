@@ -15,7 +15,6 @@ import {
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import { Order, OrderItem, OrderStatus } from "@/lib/types";
-import OrderStatusBadge from "@/components/dashboard/OrderStatusBadge";
 import OrderStatusChanger from "@/components/dashboard/OrderStatusChanger";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
@@ -84,16 +83,16 @@ export default async function OrderDetailPage({
 
       {/* Status Timeline */}
       {!isCancelled && (
-        <div className="dash-card p-5">
-          <div className="flex items-center justify-between">
+        <div className="dash-card px-5 py-4">
+          <div className="flex items-center">
             {STATUS_TIMELINE.map((step, i) => {
               const isCompleted = i <= statusIndex;
               const isCurrent = i === statusIndex;
               return (
                 <div key={step.status} className="flex-1 flex items-center">
-                  <div className="flex flex-col items-center gap-1.5 relative z-10">
+                  <div className="flex flex-col items-center gap-1 relative z-10">
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
                         isCompleted
                           ? "bg-brand-600 text-white shadow-sm shadow-brand-200"
                           : "bg-slate-100 text-slate-400 border border-slate-200"
@@ -111,7 +110,7 @@ export default async function OrderDetailPage({
                   </div>
                   {i < STATUS_TIMELINE.length - 1 && (
                     <div
-                      className={`flex-1 h-0.5 mx-2 rounded-full transition-all ${
+                      className={`flex-1 h-0.5 mx-2 rounded-full transition-all mb-4 ${
                         i < statusIndex ? "bg-brand-600" : "bg-slate-200"
                       }`}
                     />
@@ -224,6 +223,18 @@ export default async function OrderDetailPage({
 
         {/* Right sidebar */}
         <div className="space-y-5">
+          {/* Status changer — first so it's always visible */}
+          <div className="dash-card p-5 space-y-3 border-2 border-brand-100">
+            <h3 className="font-semibold text-sm text-slate-900 flex items-center gap-2">
+              <Clock className="w-4 h-4 text-brand-600" />
+              Cambiar estado
+            </h3>
+            <OrderStatusChanger
+              orderId={order.id}
+              currentStatus={order.status as OrderStatus}
+            />
+          </div>
+
           {/* Customer info */}
           <div className="dash-card p-5 space-y-4">
             <h3 className="font-semibold text-sm text-slate-900 flex items-center gap-2">
@@ -293,21 +304,6 @@ export default async function OrderDetailPage({
                 Contactar por WhatsApp
               </a>
             )}
-          </div>
-
-          {/* Status changer */}
-          <div className="dash-card p-5 space-y-3">
-            <h3 className="font-semibold text-sm text-slate-900 flex items-center gap-2">
-              <Clock className="w-4 h-4 text-brand-600" />
-              Estado del pedido
-            </h3>
-            <div className="flex items-center gap-2">
-              <OrderStatusBadge status={order.status as OrderStatus} />
-            </div>
-            <OrderStatusChanger
-              orderId={order.id}
-              currentStatus={order.status as OrderStatus}
-            />
           </div>
 
           {/* Order metadata */}

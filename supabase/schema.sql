@@ -1,7 +1,16 @@
 -- ================================================================
--- IMPELS COMMERCE — Complete Database Schema (Clean Version)
--- Run this in Supabase SQL Editor for a fresh install.
+-- IMPELS COMMERCE — Complete Database Schema (Canonical)
+-- Run this in Supabase SQL Editor for a FRESH install only.
 -- ================================================================
+--
+-- ⚠️  WARNING: This is a DESTRUCTIVE fresh-install script.
+--     It drops and recreates the entire public schema.
+--     DO NOT run this against an existing database with real data.
+--     For incremental changes, use migration files in supabase/migrations/.
+--
+-- Fresh install: aplicar este schema + todas las migraciones
+-- numeradas en supabase/migrations/ (en orden numérico ascendente).
+--
 
 -- 🚨 RESETEO LIMPIO: Borra todo para evitar errores de "already exists"
 DROP SCHEMA public CASCADE;
@@ -151,6 +160,7 @@ CREATE TABLE public.store_settings (
   benefits_bar_items jsonb NULL DEFAULT '[]'::jsonb,
   google_analytics_id text NULL,
   meta_pixel_id text NULL,
+  product_image_ratio text NOT NULL DEFAULT '4:5',
   CONSTRAINT store_settings_pkey PRIMARY KEY (id),
   CONSTRAINT store_settings_store_id_key UNIQUE (store_id),
   CONSTRAINT store_settings_store_id_fkey FOREIGN KEY (store_id) REFERENCES stores (id) ON DELETE CASCADE,
@@ -528,20 +538,32 @@ CREATE POLICY "Owner admin manage navigation"
   USING (public.has_store_access(store_id, auth.uid()))
   WITH CHECK (public.has_store_access(store_id, auth.uid()));
 
--- ── CATEGORIES ──────────────────────────────────────────────────
+-- ── CATEGORIES (hardened — requires active store) ───────────────
 CREATE POLICY "Public can view categories"
   ON categories FOR SELECT
-  USING (is_active = TRUE);
+  USING (
+    is_active = TRUE
+    AND EXISTS (
+      SELECT 1 FROM public.stores s
+      WHERE s.id = categories.store_id AND s.is_active = TRUE
+    )
+  );
 
 CREATE POLICY "Store members can manage categories"
   ON categories FOR ALL
   USING (public.has_store_access(store_id, auth.uid()))
   WITH CHECK (public.has_store_access(store_id, auth.uid()));
 
--- ── PRODUCTS ────────────────────────────────────────────────────
+-- ── PRODUCTS (hardened — requires active store) ─────────────────
 CREATE POLICY "Public can view visible products"
   ON products FOR SELECT
-  USING (visibility = 'visible');
+  USING (
+    visibility = 'visible'
+    AND EXISTS (
+      SELECT 1 FROM public.stores s
+      WHERE s.id = products.store_id AND s.is_active = TRUE
+    )
+  );
 
 CREATE POLICY "Store members can manage products"
   ON products FOR ALL
@@ -655,32 +677,66 @@ CREATE POLICY "Store members can update orders"
   WITH CHECK (public.has_store_access(store_id, auth.uid()));
 
 -- ================================================================
--- 6. STORAGE BUCKETS
+-- 6. STORAGE BUCKETS (hardened — multi-tenant isolation)
 -- ================================================================
 
 INSERT INTO storage.buckets (id, name, public)
 VALUES ('product-images', 'product-images', TRUE)
 ON CONFLICT (id) DO NOTHING;
 
+-- Public read: anyone can view images (bucket is public)
 DROP POLICY IF EXISTS "Public can view product images" ON storage.objects;
 CREATE POLICY "Public can view product images"
   ON storage.objects FOR SELECT
   USING (bucket_id = 'product-images');
 
+-- Upload: authenticated user must have access to the store matching the path prefix
+--
+-- ⚠️  MANDATORY PATH CONVENTION:
+--     All uploads MUST use path: {store_id}/{filename}
+--     Example: "a1b2c3d4-e5f6-.../1712345678-0.jpg"
+--     The first folder segment is extracted and validated as UUID.
+--     If the path is flat (no folder) or the prefix is not a valid UUID,
+--     the policy will DENY the operation silently.
+--
+-- This is enforced in ProductForm.tsx line 272:
+--     const path = `${storeId}/${Date.now()}-${index}.${ext}`;
 DROP POLICY IF EXISTS "Authenticated users can upload product images" ON storage.objects;
-CREATE POLICY "Authenticated users can upload product images"
+DROP POLICY IF EXISTS "Store owners can upload product images" ON storage.objects;
+CREATE POLICY "Store owners can upload product images"
   ON storage.objects FOR INSERT
   WITH CHECK (
     bucket_id = 'product-images'
     AND auth.role() = 'authenticated'
+    -- Guard: path must have at least one folder segment
+    AND array_length(storage.foldername(name), 1) >= 1
+    -- Guard: first segment must be a valid UUID (store_id)
+    AND (storage.foldername(name))[1]::text ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    -- Ownership: user must have access to that store
+    AND public.has_store_access(
+      (storage.foldername(name))[1]::uuid,
+      auth.uid()
+    )
   );
 
+-- Delete: authenticated user must have access to the store matching the path prefix
+-- Same defensive guards as upload above.
 DROP POLICY IF EXISTS "Users can delete own product images" ON storage.objects;
-CREATE POLICY "Users can delete own product images"
+DROP POLICY IF EXISTS "Store owners can delete own images" ON storage.objects;
+CREATE POLICY "Store owners can delete own images"
   ON storage.objects FOR DELETE
   USING (
     bucket_id = 'product-images'
     AND auth.uid() IS NOT NULL
+    -- Guard: path must have at least one folder segment
+    AND array_length(storage.foldername(name), 1) >= 1
+    -- Guard: first segment must be a valid UUID
+    AND (storage.foldername(name))[1]::text ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
+    -- Ownership: user must have access to that store
+    AND public.has_store_access(
+      (storage.foldername(name))[1]::uuid,
+      auth.uid()
+    )
   );
 
 -- ================================================================

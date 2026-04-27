@@ -282,6 +282,20 @@ export default function ProductForm({
     setSaving(true);
     const supabase = createClient();
 
+    // Check plan limit for new products only
+    if (!product && storePlan === "free") {
+      const { count } = await supabase
+        .from("products")
+        .select("*", { count: "exact", head: true })
+        .eq("store_id", storeId);
+      if ((count ?? 0) >= 10) {
+        toast.error("Alcanzaste el límite de 10 productos del plan Gratis.");
+        router.push("/dashboard/plan?reason=limit");
+        setSaving(false);
+        return;
+      }
+    }
+
     try {
       const uploadedImages = await Promise.all(
         images.map(async (img, index) => {

@@ -30,7 +30,7 @@ export default function DashboardHeader({
   };
 
   return (
-    <header className="sticky top-0 z-50 h-14 bg-[#e8ecf4] px-4 flex items-center justify-between">
+    <header className="sticky top-0 z-50 h-14 bg-[#F5F5F7] px-4 flex items-center justify-between">
       {/* Left: Logo */}
       <div className="flex-1 flex items-center min-w-0">
         <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
@@ -58,7 +58,7 @@ export default function DashboardHeader({
         {/* Notifications */}
         <button className="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-white/60 rounded-xl transition-colors flex-shrink-0">
           <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500 border-2 border-[#e8ecf4]"></span>
+          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500 border-2 border-[#F5F5F7]"></span>
         </button>
 
         <div className="relative ml-1">
