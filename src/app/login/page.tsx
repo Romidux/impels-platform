@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Zap, Mail, Lock, Eye, EyeOff, ArrowRight } from "lucide-react";
@@ -18,16 +18,8 @@ function GoogleIcon() {
   );
 }
 
-export default function LoginPage() {
-  const router = useRouter();
+function ErrorToast() {
   const searchParams = useSearchParams();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
-  const [isPending, startTransition] = useTransition();
-
   useEffect(() => {
     const error = searchParams.get("error");
     if (error === "auth_failed") {
@@ -36,6 +28,17 @@ export default function LoginPage() {
       toast.error("Error en el flujo de autenticación. Intenta de nuevo.");
     }
   }, [searchParams]);
+  return null;
+}
+
+function LoginForm() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -207,5 +210,14 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <ErrorToast />
+      <LoginForm />
+    </Suspense>
   );
 }
