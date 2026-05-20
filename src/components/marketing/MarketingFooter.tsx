@@ -73,8 +73,8 @@ export default function MarketingFooter() {
             <ul className="space-y-3 text-sm">
               {[
                 ["Ayuda", "#"],
-                ["Términos de uso", "#"],
-                ["Política de privacidad", "#"],
+                ["Términos de uso", "/terms"],
+                ["Política de privacidad", "/privacy"],
                 ["Contacto", "#"],
               ].map(([label, href]) => (
                 <li key={label}>
