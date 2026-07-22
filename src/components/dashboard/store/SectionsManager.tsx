@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Layers, Save, GripVertical, Sparkles } from "lucide-react";
+import { Layers, Save, ChevronUp, ChevronDown, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, StoreSection } from "@/lib/types";
@@ -131,27 +131,23 @@ export default function SectionsManager({
               className="rounded-[22px] border border-slate-200 bg-slate-50/70 px-4 py-3"
             >
               <div className="flex items-center gap-3">
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-0.5">
                   <button
                     type="button"
                     onClick={() => moveSection(index, "up")}
                     disabled={index === 0}
-                    className="flex h-5 w-5 items-center justify-center rounded text-xs text-slate-400 transition-colors hover:bg-white hover:text-slate-700 disabled:opacity-30"
+                    className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white hover:text-slate-700 disabled:opacity-25"
                   >
-                    ▲
+                    <ChevronUp className="h-4 w-4" />
                   </button>
                   <button
                     type="button"
                     onClick={() => moveSection(index, "down")}
                     disabled={index === orderedSections.length - 1}
-                    className="flex h-5 w-5 items-center justify-center rounded text-xs text-slate-400 transition-colors hover:bg-white hover:text-slate-700 disabled:opacity-30"
+                    className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white hover:text-slate-700 disabled:opacity-25"
                   >
-                    ▼
+                    <ChevronDown className="h-4 w-4" />
                   </button>
-                </div>
-
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-slate-400 shadow-sm">
-                  <GripVertical className="h-4 w-4" />
                 </div>
 
                 <div className="min-w-0 flex-1">

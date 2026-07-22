@@ -8,11 +8,12 @@ import {
   Phone,
   ExternalLink,
   CheckCircle2,
-  Sparkles,
+  AlertCircle,
   ArrowRight,
+  Copy,
+  Globe,
 } from "lucide-react";
 import { getStoreUrl } from "@/lib/utils";
-import { PageHeader } from "@/components/ui/PageHeader";
 import { StoreStudioDesktopPreview, StoreStudioMobilePreview } from "@/components/dashboard/store/StoreStudioPreview";
 import { getStoreStudioData } from "./_lib/getStoreStudioData";
 
@@ -31,39 +32,6 @@ const tabRedirects: Record<string, string> = {
   footer: "/dashboard/store/sales",
 };
 
-const studioLinks = [
-  {
-    label: "Identidad",
-    description: "Nombre, descripcion y enlace publico",
-    href: "/dashboard/store/identity",
-    icon: StoreIcon,
-  },
-  {
-    label: "Apariencia",
-    description: "Template base y color principal",
-    href: "/dashboard/store/appearance",
-    icon: Palette,
-  },
-  {
-    label: "Inicio",
-    description: "Hero, banner y mensaje principal",
-    href: "/dashboard/store/home",
-    icon: Home,
-  },
-  {
-    label: "Secciones",
-    description: "Orden y visibilidad de bloques",
-    href: "/dashboard/store/sections",
-    icon: Layers,
-  },
-  {
-    label: "Ventas y contacto",
-    description: "WhatsApp, pagos, envios y redes",
-    href: "/dashboard/store/sales",
-    icon: Phone,
-  },
-] as const;
-
 export default async function StoreHubPage({
   searchParams,
 }: {
@@ -76,142 +44,202 @@ export default async function StoreHubPage({
     redirect(tabRedirects[requestedTab]);
   }
 
-  const { store, settings, sections } = await getStoreStudioData();
+  const { store, settings, branding, sections } = await getStoreStudioData();
   const storeUrl = getStoreUrl(store.slug);
+
+  const heroReady = Boolean(settings?.hero_title || settings?.hero_subtitle);
+  const hasHeroImage = Boolean(branding?.hero_banner_url);
+  const hasWhatsApp = Boolean(settings?.whatsapp_number);
+  const hasPayments = (settings?.payment_methods?.length ?? 0) > 0;
+  const templateLabel = TEMPLATE_LABELS[settings?.template || "minimal"] || "Minimal";
+  const primaryColor = settings?.primary_color || "#2563eb";
   const visibleSections =
     sections.length > 0
-      ? sections.filter((section) => section.is_visible).length
+      ? sections.filter((s) => s.is_visible).length
       : 6;
-  const heroReady = Boolean(settings?.hero_title || settings?.hero_subtitle);
-  const templateLabel =
-    TEMPLATE_LABELS[settings?.template || "modern"] || "Modern";
-  const primaryColor = settings?.primary_color || "#2563eb";
-  const hasWhatsApp = Boolean(settings?.whatsapp_number);
+
+  // Per-section completion
+  const sectionStatus = [
+    {
+      label: "Identidad",
+      description: "Nombre, descripción y enlace público",
+      href: "/dashboard/store/identity",
+      icon: StoreIcon,
+      color: "text-brand-600",
+      bg: "bg-brand-50",
+      done: Boolean(store.name && store.slug),
+      detail: store.name || "Sin nombre",
+    },
+    {
+      label: "Apariencia",
+      description: "Plantilla base y color principal",
+      href: "/dashboard/store/appearance",
+      icon: Palette,
+      color: "text-violet-600",
+      bg: "bg-violet-50",
+      done: Boolean(settings?.template && settings?.primary_color),
+      detail: settings?.template ? templateLabel : "Sin configurar",
+    },
+    {
+      label: "Portada",
+      description: "Hero, banner y mensaje principal",
+      href: "/dashboard/store/home",
+      icon: Home,
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
+      done: heroReady && hasHeroImage,
+      detail: heroReady ? (settings?.hero_title || "Título listo") : "Falta el mensaje principal",
+    },
+    {
+      label: "Secciones",
+      description: "Orden y visibilidad de bloques",
+      href: "/dashboard/store/sections",
+      icon: Layers,
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+      done: visibleSections > 0,
+      detail: `${visibleSections} secciones visibles`,
+    },
+    {
+      label: "Ventas y contacto",
+      description: "WhatsApp, pagos, envíos y redes",
+      href: "/dashboard/store/sales",
+      icon: Phone,
+      color: "text-rose-600",
+      bg: "bg-rose-50",
+      done: hasWhatsApp && hasPayments,
+      detail: hasWhatsApp ? "WhatsApp configurado" : "Falta WhatsApp",
+    },
+  ] as const;
+
+  const completedCount = sectionStatus.filter((s) => s.done).length;
+  const totalCount = sectionStatus.length;
+  const progressPct = Math.round((completedCount / totalCount) * 100);
+  const allDone = completedCount === totalCount;
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col gap-6 pb-6 animate-fade-in">
-      <PageHeader
-        title="Mi Tienda"
-        subtitle="Centraliza la identidad, el diseno y el contenido de tu tienda en un solo lugar."
-        actions={
-          <a
-            href={storeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-blue-200 hover:text-blue-700"
-          >
-            <ExternalLink className="h-4 w-4" />
-            Ver tienda
-          </a>
-        }
-      />
-
-      <section className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-4 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-            Template actual
+      {/* Store identity banner */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-4xl font-semibold text-[#1D1D1F] tracking-tight leading-none">
+            Mi Tienda
+          </h1>
+          <p className="mt-2 text-base text-[#6E6E73] font-normal">
+            Gestiona la identidad, el diseño y el contenido de tu tienda.
           </p>
-          <p className="mt-2 font-display text-2xl font-black text-slate-950">
-            {templateLabel}
-          </p>
-          <p className="mt-1 text-sm text-slate-500">Base visual de la tienda</p>
         </div>
+        <a
+          href={storeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-blue-200 hover:text-blue-700 flex-shrink-0"
+        >
+          <ExternalLink className="h-4 w-4" />
+          Ver tienda
+        </a>
+      </div>
 
-        <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-4 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-            Color principal
-          </p>
-          <div className="mt-2 flex items-center gap-3">
-            <span
-              className="h-8 w-8 rounded-2xl border border-slate-200 shadow-sm"
-              style={{ backgroundColor: primaryColor }}
-            />
-            <span className="text-sm font-semibold text-slate-900">
-              {primaryColor}
-            </span>
+      {/* Store URL + progress */}
+      <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-slate-100">
+              <Globe className="h-5 w-5 text-slate-500" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+                Enlace público
+              </p>
+              <p className="mt-0.5 truncate text-sm font-semibold text-slate-900">
+                {storeUrl}
+              </p>
+            </div>
           </div>
-          <p className="mt-1 text-sm text-slate-500">Botones y acentos</p>
-        </div>
 
-        <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-4 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-            Estado portada
-          </p>
-          <p className="mt-2 flex items-center gap-2 text-sm font-semibold text-slate-900">
-            <CheckCircle2
-              className={`h-4 w-4 ${
-                heroReady ? "text-emerald-500" : "text-slate-300"
-              }`}
-            />
-            {heroReady ? "Mensaje principal listo" : "Falta completar portada"}
-          </p>
-          <p className="mt-1 text-sm text-slate-500">Hero y mensaje inicial</p>
+          <div className="flex items-center gap-4 flex-shrink-0">
+            {/* Progress ring */}
+            <div className="flex items-center gap-3">
+              <div className="relative flex h-12 w-12 items-center justify-center">
+                <svg className="h-12 w-12 -rotate-90" viewBox="0 0 44 44">
+                  <circle
+                    cx="22"
+                    cy="22"
+                    r="18"
+                    fill="none"
+                    stroke="#f1f5f9"
+                    strokeWidth="4"
+                  />
+                  <circle
+                    cx="22"
+                    cy="22"
+                    r="18"
+                    fill="none"
+                    stroke={allDone ? "#10b981" : "#3b82f6"}
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeDasharray={`${2 * Math.PI * 18}`}
+                    strokeDashoffset={`${2 * Math.PI * 18 * (1 - progressPct / 100)}`}
+                    style={{ transition: "stroke-dashoffset 0.5s ease" }}
+                  />
+                </svg>
+                <span className="absolute text-[11px] font-bold text-slate-700">
+                  {progressPct}%
+                </span>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">
+                  {allDone ? "Tienda completa" : `${completedCount} de ${totalCount}`}
+                </p>
+                <p className="text-xs text-slate-400">
+                  {allDone ? "Todo configurado ✓" : "secciones listas"}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-
-        <div className="rounded-[24px] border border-slate-200 bg-white px-4 py-4 shadow-sm">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
-            Venta activa
-          </p>
-          <p className="mt-2 text-sm font-semibold text-slate-900">
-            {hasWhatsApp ? "WhatsApp configurado" : "WhatsApp pendiente"}
-          </p>
-          <p className="mt-1 text-sm text-slate-500">
-            {visibleSections} secciones visibles
-          </p>
-        </div>
-      </section>
+      </div>
 
       <StoreStudioMobilePreview slug={store.slug} />
 
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1fr,360px]">
-        <div className="space-y-6">
-          <section className="rounded-[30px] border border-slate-200 bg-white p-5 shadow-sm">
-            <div className="flex items-start gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-50 text-blue-700 shadow-sm">
-                <Sparkles className="h-4 w-4" />
-              </div>
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-slate-400">
-                  Centro de personalizacion
-                </p>
-                <h2 className="mt-1 font-display text-xl font-bold text-slate-950">
-                  Edita tu tienda por bloques claros
-                </h2>
-                <p className="mt-1 text-sm leading-relaxed text-slate-500">
-                  Entra a cada area para trabajar una parte especifica de la tienda sin repetir contenido ni perder contexto.
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-5 space-y-3">
-              {studioLinks.map((item) => {
-                const Icon = item.icon;
-
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className="group flex items-center justify-between rounded-[24px] border border-slate-200 bg-slate-50/70 px-4 py-4 transition-all hover:border-slate-300 hover:bg-white hover:shadow-sm"
+        {/* Section links */}
+        <div className="space-y-3">
+          {sectionStatus.map((item) => {
+            const Icon = item.icon;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="group flex items-center justify-between rounded-[24px] border border-slate-200 bg-white px-4 py-4 shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+              >
+                <div className="flex min-w-0 items-center gap-4">
+                  <div
+                    className={`flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl ${item.bg} ${item.color} transition-transform group-hover:scale-105`}
                   >
-                    <div className="flex min-w-0 items-center gap-3">
-                      <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-white text-slate-500 shadow-sm transition-colors group-hover:text-blue-600">
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-900">
-                          {item.label}
-                        </p>
-                        <p className="mt-1 text-sm text-slate-500">
-                          {item.description}
-                        </p>
-                      </div>
-                    </div>
-                    <ArrowRight className="h-4 w-4 flex-shrink-0 text-slate-300 transition-colors group-hover:text-blue-600" />
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-900">
+                      {item.label}
+                    </p>
+                    <p className="mt-0.5 text-xs text-slate-400 truncate">
+                      {item.detail}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-shrink-0 items-center gap-3">
+                  {item.done ? (
+                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4 text-amber-400" />
+                  )}
+                  <ArrowRight className="h-4 w-4 text-slate-300 transition-colors group-hover:text-slate-600" />
+                </div>
+              </Link>
+            );
+          })}
         </div>
 
         <StoreStudioDesktopPreview slug={store.slug} />

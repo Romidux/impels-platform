@@ -17,7 +17,17 @@
       "Bash(rm:*)",
       "Bash(xargs grep:*)",
       "Bash(npx next *)",
-      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('next:', p.dependencies.next, '\\\\nreact:', p.dependencies.react\\)\")"
+      "Bash(node -e \"const p = require\\('./package.json'\\); console.log\\('next:', p.dependencies.next, '\\\\nreact:', p.dependencies.react\\)\")",
+      "Bash(xargs ls -lh)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts|json|config|env|next\\)$\")",
+      "Bash(echo \"EXIT: $?\")",
+      "Bash(awk -F'=' '{print $1\"=\"substr\\($2,1,6\\)\"...\\(len:\"length\\($2\\)\"\\)\"}' .env.local)",
+      "Bash(git check-ignore *)",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "mcp__claude-in-chrome__computer",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)"
     ]
   }
 }
