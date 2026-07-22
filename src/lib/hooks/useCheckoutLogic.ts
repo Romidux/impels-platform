@@ -6,6 +6,7 @@ import { useCartStore } from "@/lib/store";
 import { createClient } from "@/lib/supabase/client";
 import { buildWhatsAppMessage, formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
+import { sendNewOrderNotification } from "@/lib/events";
 
 interface UseCheckoutLogicProps {
   storeId: string;
@@ -13,6 +14,7 @@ interface UseCheckoutLogicProps {
   whatsappNumber?: string;
   currency: string;
   storeName?: string;
+  notificationEmail?: string;
 }
 
 export function useCheckoutLogic({
@@ -21,6 +23,7 @@ export function useCheckoutLogic({
   whatsappNumber,
   currency,
   storeName,
+  notificationEmail,
 }: UseCheckoutLogicProps) {
   const router = useRouter();
   const { items, getTotalPrice, clearCart } = useCartStore();
@@ -165,6 +168,10 @@ export function useCheckoutLogic({
       );
 
       if (error) throw error;
+
+      if (notificationEmail) {
+        sendNewOrderNotification(notificationEmail, orderId, form.name).catch(console.error);
+      }
 
       if (whatsappNumber) {
         const message = buildWhatsAppMessage(items, form, subtotal, discountAmount, total, currency, appliedCoupon?.code, orderId, storeName);

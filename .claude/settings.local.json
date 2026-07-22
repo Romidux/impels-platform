@@ -27,7 +27,10 @@
       "mcp__claude-in-chrome__tabs_context_mcp",
       "mcp__claude-in-chrome__computer",
       "Bash(git add *)",
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(node \"C:/Users/romin/AppData/Local/Temp/claude/C--Users-romin-OneDrive-Desktop-impels-platform/93756a94-1391-4aa5-ab1d-4161cb2a00f8/scratchpad/test-resend.mjs\")",
+      "Bash(node scratch-test-resend.mjs)"
     ]
   }
 }

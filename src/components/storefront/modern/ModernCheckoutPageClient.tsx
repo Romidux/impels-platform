@@ -26,6 +26,7 @@ interface CheckoutPageClientProps {
   primaryColor: string;
   paymentMethods: string[];
   shippingMethods: string[];
+  notificationEmail?: string;
 }
 
 export default function CheckoutPageClient({
@@ -37,6 +38,7 @@ export default function CheckoutPageClient({
   primaryColor,
   paymentMethods,
   shippingMethods,
+  notificationEmail,
 }: CheckoutPageClientProps) {
   const {
     items,
@@ -57,7 +59,7 @@ export default function CheckoutPageClient({
     removeCoupon,
     subtotal,
     discountAmount
-  } = useCheckoutLogic({ storeId, storeSlug, whatsappNumber, currency, storeName });
+  } = useCheckoutLogic({ storeId, storeSlug, whatsappNumber, currency, storeName, notificationEmail });
 
   // Auto-select when only one option is available
   useEffect(() => {
