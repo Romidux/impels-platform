@@ -2,7 +2,19 @@
 
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let resend: Resend | null = null;
+
+function getResendClient(): Resend | null {
+  if (resend) return resend;
+  if (!process.env.RESEND_API_KEY) {
+    console.error(
+      "[EVENT_DISPATCH] RESEND_API_KEY is not set — emails are disabled."
+    );
+    return null;
+  }
+  resend = new Resend(process.env.RESEND_API_KEY);
+  return resend;
+}
 
 // Dirección de prueba de Resend — no requiere dominio verificado.
 // Cambiar a algo como "Impels Commerce <pedidos@impelspy.com>" una vez
@@ -22,8 +34,10 @@ function emailShell(title: string, bodyHtml: string) {
 }
 
 export async function sendWelcomeEmail(email: string, storeName: string) {
+  const client = getResendClient();
+  if (!client) return false;
   try {
-    await resend.emails.send({
+    await client.emails.send({
       from: FROM_EMAIL,
       to: email,
       subject: `¡Bienvenido a Impels Commerce!`,
@@ -44,8 +58,10 @@ export async function sendNewOrderNotification(
   orderId: string,
   customerName: string
 ) {
+  const client = getResendClient();
+  if (!client) return false;
   try {
-    await resend.emails.send({
+    await client.emails.send({
       from: FROM_EMAIL,
       to: storeEmail,
       subject: `🎉 Nuevo pedido de ${customerName}`,
@@ -64,8 +80,10 @@ export async function sendNewOrderNotification(
 }
 
 export async function sendSubscriptionWarning(email: string, daysLeft: number) {
+  const client = getResendClient();
+  if (!client) return false;
   try {
-    await resend.emails.send({
+    await client.emails.send({
       from: FROM_EMAIL,
       to: email,
       subject: `Tu plan Pro vence en ${daysLeft} días`,
