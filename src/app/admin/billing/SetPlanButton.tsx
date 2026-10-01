@@ -17,7 +17,7 @@ export function SetPlanButton({ storeId, currentPlan, storeName }: SetPlanButton
   const label = currentPlan === "free" ? "Activar Pro" : "Bajar a Free";
   const variant =
     currentPlan === "free"
-      ? "bg-blue-600 hover:bg-blue-700 text-white"
+      ? "bg-brand-600 hover:bg-brand-700 text-white"
       : "bg-slate-100 hover:bg-slate-200 text-slate-700";
 
   const handleClick = async () => {

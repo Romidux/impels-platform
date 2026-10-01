@@ -109,7 +109,7 @@ export default async function AdminBillingPage() {
                 No hay suscripciones Pro
               </div>
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-slate-50">
                 {proStores.slice(0, 7).map((store) => (
                   <Link
                     key={store.id}
@@ -168,7 +168,7 @@ export default async function AdminBillingPage() {
                     <td className="px-5 py-3.5">
                       <Link
                         href={`/admin/stores/${store.id}`}
-                        className="font-semibold text-slate-900 hover:text-blue-600 transition-colors"
+                        className="font-semibold text-slate-900 hover:text-brand-600 transition-colors"
                       >
                         {store.name}
                       </Link>

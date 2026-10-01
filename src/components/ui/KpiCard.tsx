@@ -10,6 +10,8 @@ interface KpiCardProps {
     value: string;
     positive: boolean;
   };
+  /** Ocupa la misma esquina que `trend`; usar cuando hace falta un Badge propio. */
+  badge?: React.ReactNode;
   href?: string;
   className?: string;
   iconClassName?: string;
@@ -20,17 +22,18 @@ export function KpiCard({
   label,
   value,
   trend,
+  badge,
   href,
   className,
   iconClassName = "bg-brand-50",
 }: KpiCardProps) {
   const content = (
     <>
-      <div className="flex items-start justify-between mb-4">
-        <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center transition-transform", iconClassName)}>
+      <div className="flex items-start justify-between gap-2 mb-4">
+        <div className={cn("w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0", iconClassName)}>
           {icon}
         </div>
-        {trend && (
+        {badge ?? (trend && (
           <div
             className={cn(
               "flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full max-w-[150px] truncate",
@@ -46,12 +49,12 @@ export function KpiCard({
             )}
             <span className="truncate">{trend.value}</span>
           </div>
-        )}
+        ))}
       </div>
-      <div className="font-display text-4xl font-bold text-slate-900 mb-1 tracking-tight">
+      <div className="text-3xl font-semibold text-slate-900 mb-1 tracking-tight truncate">
         {value}
       </div>
-      <div className="text-sm font-medium text-slate-400">{label}</div>
+      <div className="text-sm font-medium text-slate-500">{label}</div>
     </>
   );
 

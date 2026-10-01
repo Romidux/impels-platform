@@ -68,7 +68,7 @@ export default async function AppsPage() {
         {/* Meta Pixel App Card */}
         <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm flex flex-col">
           <div className="p-6 border-b border-slate-100 flex gap-4 items-start">
-            <div className="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+            <div className="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center flex-shrink-0">
               <Code className="w-6 h-6" />
             </div>
             <div>
@@ -99,7 +99,7 @@ export default async function AppsPage() {
                   name="pixelId"
                   defaultValue={metaPixel}
                   placeholder="Ej. 123456789012345"
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all font-mono"
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all font-mono"
                 />
               </div>
               <Button type="submit" variant="secondary" className="w-full justify-center">

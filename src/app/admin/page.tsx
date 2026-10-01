@@ -211,7 +211,7 @@ export default async function AdminOverviewPage() {
                 <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
                   {card.label}
                 </p>
-                <p className="mt-2 font-display text-3xl font-black text-slate-950">
+                <p className="mt-2 font-display text-3xl font-semibold text-slate-950">
                   {card.value}
                 </p>
                 <p className="mt-2 text-sm text-slate-500">{card.helper}</p>

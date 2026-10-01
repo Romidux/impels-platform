@@ -91,11 +91,11 @@ export default function DashSelect({
         type="button"
         disabled={disabled || loading}
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between bg-[#f4f4f4] border border-transparent rounded-2xl px-4 py-3.5 text-[14px] font-semibold text-left transition-all group ${
+        className={`w-full flex items-center justify-between bg-slate-100 border border-transparent rounded-2xl px-4 py-3.5 text-[14px] font-semibold text-left transition-all group ${
           disabled || loading
             ? "opacity-60 cursor-not-allowed"
-            : "hover:bg-[#eeeeee] focus:bg-white focus:border-[#d9d9d9] focus:ring-4 focus:ring-slate-100 cursor-pointer"
-        } ${isOpen ? "bg-white border-[#d9d9d9] ring-4 ring-slate-100" : ""}`}
+            : "hover:bg-slate-200 focus:bg-white focus:border-slate-300 focus:ring-2 focus:ring-slate-100 cursor-pointer"
+        } ${isOpen ? "bg-white border-slate-300 ring-4 ring-slate-100" : ""}`}
       >
         <div className="flex items-center gap-2 truncate">
           {icon && <span className="text-slate-500">{icon}</span>}
@@ -161,12 +161,12 @@ export default function DashSelect({
                         }}
                         className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-left text-sm font-medium transition-colors ${
                           isSelected
-                            ? "bg-blue-50 text-blue-700"
+                            ? "bg-brand-50 text-brand-700"
                             : "text-slate-700 hover:bg-slate-100/80 hover:text-slate-900"
                         }`}
                       >
                         {opt.label}
-                        {isSelected && <Check className="w-4 h-4 text-blue-600" strokeWidth={3} />}
+                        {isSelected && <Check className="w-4 h-4 text-brand-600" strokeWidth={3} />}
                       </button>
                     );
                   })

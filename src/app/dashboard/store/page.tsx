@@ -122,10 +122,10 @@ export default async function StoreHubPage({
       {/* Store identity banner */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-4xl font-semibold text-[#1D1D1F] tracking-tight leading-none">
+          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight leading-tight">
             Mi Tienda
           </h1>
-          <p className="mt-2 text-base text-[#6E6E73] font-normal">
+          <p className="mt-2 text-base text-slate-500 font-normal">
             Gestiona la identidad, el diseño y el contenido de tu tienda.
           </p>
         </div>
@@ -133,7 +133,7 @@ export default async function StoreHubPage({
           href={storeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-blue-200 hover:text-blue-700 flex-shrink-0"
+          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-brand-200 hover:text-brand-700 flex-shrink-0"
         >
           <ExternalLink className="h-4 w-4" />
           Ver tienda

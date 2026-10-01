@@ -120,7 +120,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           id={inputId}
           ref={ref}
           className={cn(
-            "w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 bg-white transition-colors outline-none",
+            "dash-select pr-9 w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 bg-white transition-colors outline-none",
             "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10",
             className
           )}

@@ -14,8 +14,8 @@ const STATUS_CONFIG: Record<
 > = {
   new: {
     label: "Nuevo",
-    pill: "bg-blue-50 text-blue-800 border-blue-200/60 hover:bg-blue-100",
-    dot: "bg-blue-500",
+    pill: "bg-brand-50 text-brand-800 border-brand-200/60 hover:bg-brand-100",
+    dot: "bg-brand-500",
   },
   confirmed: {
     label: "Confirmado",
@@ -118,13 +118,13 @@ export default function OrderStatusChanger({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-[14px] border border-[#E5E5EA] shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 min-w-[148px] py-1.5">
+        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-[14px] border border-slate-200 shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 min-w-[148px] py-1.5">
           {ALL_STATUSES.map(([status, cfg]) => (
             <button
               key={status}
               type="button"
               onClick={() => handleChange(status)}
-              className="w-full flex items-center justify-between px-3 py-2 text-sm text-[#1D1D1F] hover:bg-[#F5F5F7] transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 text-sm text-slate-900 hover:bg-slate-50 transition-colors"
             >
               <span className="flex items-center gap-2">
                 <span

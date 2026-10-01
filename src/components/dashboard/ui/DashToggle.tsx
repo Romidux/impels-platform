@@ -42,7 +42,7 @@ export function DashToggle({
         onClick={() => !disabled && onChange(!checked)}
         className={cn(
           "relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0",
-          checked ? "bg-green-600" : "bg-gray-300"
+          checked ? "bg-green-600" : "bg-slate-300"
         )}
       >
         <span

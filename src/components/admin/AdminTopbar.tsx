@@ -74,7 +74,7 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
   }
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30">
+    <header className="bg-white border-b border-slate-200 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30">
       <div className="flex items-center gap-1.5 text-sm">
         {breadcrumbs.map((bc, i) => (
           <div key={bc.href} className="flex items-center gap-1.5">
@@ -221,14 +221,14 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
           </div>
         )}
 
-        <button className="relative p-2 rounded-lg hover:bg-gray-50 transition-colors text-slate-400">
+        <button className="relative p-2 rounded-lg hover:bg-slate-50 transition-colors text-slate-400">
           <Bell className="w-4.5 h-4.5" />
         </button>
 
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 hover:bg-gray-50 pl-2 pr-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-2 hover:bg-slate-50 pl-2 pr-3 py-1.5 rounded-lg transition-colors"
           >
             <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center">
               <span className="text-white text-xs font-bold">
@@ -248,8 +248,8 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
                 className="fixed inset-0 z-10"
                 onClick={() => setMenuOpen(false)}
               />
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-20 overflow-hidden animate-scale-in">
-                <div className="p-3 border-b border-gray-100">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 z-20 overflow-hidden animate-scale-in">
+                <div className="p-3 border-b border-slate-100">
                   <p className="text-xs text-slate-500 truncate">
                     {user.email}
                   </p>

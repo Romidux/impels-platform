@@ -84,21 +84,21 @@ function BulkActionModal({
         onClick={onCancel}
       />
       {/* Modal */}
-      <div className="relative bg-white rounded-[20px] shadow-[0_24px_64px_rgba(0,0,0,0.16)] border border-[#E5E5EA] w-full max-w-md animate-fade-in">
+      <div className="relative bg-white rounded-[20px] shadow-[0_24px_64px_rgba(0,0,0,0.16)] border border-slate-200 w-full max-w-md animate-fade-in">
         <div className="p-6 space-y-5">
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="font-display text-lg font-bold text-[#1D1D1F]">
+              <h3 className="font-display text-lg font-bold text-slate-900">
                 {titles[action]}
               </h3>
-              <p className="text-sm text-[#86868B] mt-1">
+              <p className="text-sm text-slate-400 mt-1">
                 {descriptions[action]}
               </p>
             </div>
             <button
               onClick={onCancel}
-              className="p-1.5 text-[#86868B] hover:text-[#1D1D1F] hover:bg-[#F5F5F7] rounded-[10px] transition-colors"
+              className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -107,7 +107,7 @@ function BulkActionModal({
           {/* Input (for set and adjust) */}
           {action !== "zero" && (
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-[#1D1D1F]">
+              <label className="block text-sm font-semibold text-slate-900">
                 {action === "set" ? "Nuevo stock" : "Cantidad a ajustar"}
               </label>
               <div className="flex items-center gap-2">
@@ -115,9 +115,9 @@ function BulkActionModal({
                   <button
                     type="button"
                     onClick={() => setValue((v) => v - 1)}
-                    className="w-10 h-10 rounded-[10px] bg-[#F5F5F7] hover:bg-[#EBEBED] flex items-center justify-center transition-colors"
+                    className="w-10 h-10 rounded-lg bg-slate-50 hover:bg-slate-200 flex items-center justify-center transition-colors"
                   >
-                    <Minus className="w-4 h-4 text-[#1D1D1F]" />
+                    <Minus className="w-4 h-4 text-slate-900" />
                   </button>
                 )}
                 <input
@@ -130,7 +130,7 @@ function BulkActionModal({
                         : parseInt(e.target.value) || 0
                     )
                   }
-                  className="flex-1 h-10 px-4 border border-[#E5E5EA] rounded-[10px] bg-white text-sm text-[#1D1D1F] text-center font-bold tabular-nums focus:outline-none focus:border-[#0071E3] focus:ring-2 focus:ring-[#0071E3]/10 transition-all"
+                  className="flex-1 h-10 px-4 border border-slate-200 rounded-lg bg-white text-sm text-slate-900 text-center font-bold tabular-nums focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                   autoFocus
                   min={action === "set" ? 0 : undefined}
                 />
@@ -138,14 +138,14 @@ function BulkActionModal({
                   <button
                     type="button"
                     onClick={() => setValue((v) => v + 1)}
-                    className="w-10 h-10 rounded-[10px] bg-[#F5F5F7] hover:bg-[#EBEBED] flex items-center justify-center transition-colors"
+                    className="w-10 h-10 rounded-lg bg-slate-50 hover:bg-slate-200 flex items-center justify-center transition-colors"
                   >
-                    <Plus className="w-4 h-4 text-[#1D1D1F]" />
+                    <Plus className="w-4 h-4 text-slate-900" />
                   </button>
                 )}
               </div>
               {action === "adjust" && (
-                <p className="text-xs text-[#86868B]">
+                <p className="text-xs text-slate-400">
                   {value > 0
                     ? `Se sumarán ${value} unidades a cada producto`
                     : value < 0
@@ -176,7 +176,7 @@ function BulkActionModal({
           <div className="flex items-center gap-3 pt-1">
             <button
               onClick={onCancel}
-              className="flex-1 h-10 rounded-[12px] border border-[#E5E5EA] text-sm font-medium text-[#1D1D1F] hover:bg-[#F5F5F7] transition-colors"
+              className="flex-1 h-10 rounded-lg border border-slate-200 text-sm font-medium text-slate-900 hover:bg-slate-50 transition-colors"
             >
               Cancelar
             </button>
@@ -184,10 +184,10 @@ function BulkActionModal({
               onClick={() => onConfirm(action === "zero" ? undefined : value)}
               disabled={isPending || (action === "adjust" && value === 0)}
               className={cn(
-                "flex-1 h-10 rounded-[12px] text-sm font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2",
+                "flex-1 h-10 rounded-lg text-sm font-medium text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2",
                 action === "zero"
                   ? "bg-red-500 hover:bg-red-600"
-                  : "bg-[#0071E3] hover:bg-[#0077ED]"
+                  : "bg-brand-600 hover:bg-brand-500"
               )}
             >
               {isPending ? (
@@ -249,7 +249,7 @@ function VariantStockEditor({ variantId, currentStock }: { variantId: string; cu
   return (
     <div className="flex items-center gap-1">
       <button onClick={() => setValue(Math.max(0, value - 1))} className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 flex items-center justify-center"><Minus className="w-3 h-3 text-slate-600" /></button>
-      <input type="number" value={value} onChange={(e) => setValue(Math.max(0, parseInt(e.target.value) || 0))} onKeyDown={(e) => { if (e.key === "Enter") handleSave(); if (e.key === "Escape") { setValue(currentStock); setEditing(false); }}} autoFocus min={0} className="w-14 h-7 text-center text-sm font-bold border border-brand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-200 bg-white" />
+      <input type="number" value={value} onChange={(e) => setValue(Math.max(0, parseInt(e.target.value) || 0))} onKeyDown={(e) => { if (e.key === "Enter") handleSave(); if (e.key === "Escape") { setValue(currentStock); setEditing(false); }}} autoFocus min={0} className="w-14 h-7 text-center text-sm font-bold border border-brand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500/10 bg-white" />
       <button onClick={() => setValue(value + 1)} className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 flex items-center justify-center"><Plus className="w-3 h-3 text-slate-600" /></button>
       <button onClick={handleSave} disabled={saving} className="w-6 h-6 rounded-md bg-green-100 hover:bg-green-200 flex items-center justify-center disabled:opacity-50"><Check className="w-3 h-3 text-green-700" /></button>
       <button onClick={() => { setValue(currentStock); setEditing(false); }} className="w-6 h-6 rounded-md bg-red-50 hover:bg-red-100 flex items-center justify-center"><X className="w-3 h-3 text-red-500" /></button>
@@ -347,11 +347,11 @@ export default function InventoryTable({
 
   return (
     <>
-      <div className="bg-white border border-[#E5E5EA] rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+      <div className="bg-white border border-slate-200 rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="sticky top-0 z-10">
-              <tr className="bg-[#F5F5F7] border-b border-[#E5E5EA]">
+              <tr className="bg-slate-50 border-b border-slate-200">
                 {/* Checkbox header */}
                 <th className="pl-5 py-4 w-12">
                   <label className="flex items-center justify-center cursor-pointer">
@@ -362,35 +362,35 @@ export default function InventoryTable({
                         if (el) el.indeterminate = isSomeSelected;
                       }}
                       onChange={toggleSelectAll}
-                      className="w-4 h-4 rounded-md border-[#D1D1D6] text-[#0071E3] focus:ring-[#0071E3]/20 focus:ring-offset-0 cursor-pointer accent-[#0071E3]"
+                      className="w-4 h-4 rounded-md border-slate-300 text-brand-600 focus:ring-brand-500/10 focus:ring-offset-0 cursor-pointer accent-brand-600"
                     />
                   </label>
                 </th>
                 <th className="pl-2 py-4 w-14" />
-                <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-4 py-4">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide px-4 py-4">
                   Producto
                 </th>
-                <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-4 py-4 hidden sm:table-cell">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide px-4 py-4 hidden sm:table-cell">
                   Categoría
                 </th>
-                <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-4 py-4">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide px-4 py-4">
                   Stock
                 </th>
-                <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-4 py-4 hidden md:table-cell w-36">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide px-4 py-4 hidden md:table-cell w-36">
                   Nivel
                 </th>
-                <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-4 py-4 hidden lg:table-cell">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide px-4 py-4 hidden lg:table-cell">
                   Valor
                 </th>
-                <th className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-4 py-4">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide px-4 py-4">
                   Estado
                 </th>
-                <th className="text-right text-xs font-medium text-[#86868B] uppercase tracking-wide pr-6 py-4">
+                <th className="text-right text-xs font-medium text-slate-400 uppercase tracking-wide pr-6 py-4">
                   Acciones
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F5F5F7]">
+            <tbody className="divide-y divide-slate-50">
               {products.map((product) => {
                 const isLow = product.stock_quantity > 0 && product.stock_quantity <= 5;
                 const isOut = product.stock_quantity <= 0;
@@ -407,22 +407,22 @@ export default function InventoryTable({
                     key={product.id}
                     className={cn(
                       "transition-colors duration-100 group",
-                      isSelected ? "bg-[#F0F6FF]/60" : "hover:bg-[#F7F7F8]"
+                      isSelected ? "bg-brand-50/60" : "hover:bg-slate-50"
                     )}
                   >
                     {/* Checkbox */}
                     <td className="pl-5 py-3 w-12">
                       <label className="flex items-center justify-center cursor-pointer">
-                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(product.id)} className="w-4 h-4 rounded-md border-[#D1D1D6] text-[#0071E3] focus:ring-[#0071E3]/20 focus:ring-offset-0 cursor-pointer accent-[#0071E3]" />
+                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(product.id)} className="w-4 h-4 rounded-md border-slate-300 text-brand-600 focus:ring-brand-500/10 focus:ring-offset-0 cursor-pointer accent-brand-600" />
                       </label>
                     </td>
                     {/* Image */}
                     <td className="pl-2 py-3 w-14">
-                      <div className="w-10 h-10 rounded-[10px] overflow-hidden bg-[#F5F5F7] flex-shrink-0">
+                      <div className="w-10 h-10 rounded-lg overflow-hidden bg-slate-50 flex-shrink-0">
                         {product.imageUrl ? (
                           <img src={product.imageUrl} alt={product.name} className="w-full h-full object-cover" />
                         ) : (
-                          <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-4 h-4 text-[#C7C7CC]" /></div>
+                          <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-4 h-4 text-slate-300" /></div>
                         )}
                       </div>
                     </td>
@@ -430,44 +430,44 @@ export default function InventoryTable({
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-1.5">
                         {hasExpandableVariants && (
-                          <button onClick={() => toggleExpand(product.id)} className="p-0.5 hover:bg-[#F0F0F2] rounded-md transition-colors flex-shrink-0">
-                            <ChevronRight className={cn("w-4 h-4 text-[#86868B] transition-transform", isExpanded && "rotate-90")} />
+                          <button onClick={() => toggleExpand(product.id)} className="p-0.5 hover:bg-slate-100 rounded-md transition-colors flex-shrink-0">
+                            <ChevronRight className={cn("w-4 h-4 text-slate-400 transition-transform", isExpanded && "rotate-90")} />
                           </button>
                         )}
                         <div>
-                          <Link href={`/dashboard/products/${product.id}`} className="font-semibold text-sm text-[#1D1D1F] hover:text-[#0071E3] transition-colors">
+                          <Link href={`/dashboard/products/${product.id}`} className="font-semibold text-sm text-slate-900 hover:text-brand-600 transition-colors">
                             {product.name}
                           </Link>
                           {hasExpandableVariants && (
-                            <span className="ml-2 text-[10px] font-medium text-[#0071E3] bg-[#F0F6FF] px-1.5 py-0.5 rounded-md cursor-pointer" onClick={() => toggleExpand(product.id)}>
+                            <span className="ml-2 text-[10px] font-medium text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded-md cursor-pointer" onClick={() => toggleExpand(product.id)}>
                               {product.variants.length} variantes
                             </span>
                           )}
                           {product.has_variants && !product.manage_stock_by_variant && (
-                            <span className="ml-2 text-[10px] font-medium text-[#86868B] bg-[#F5F5F7] px-1.5 py-0.5 rounded-md">Variantes</span>
+                            <span className="ml-2 text-[10px] font-medium text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded-md">Variantes</span>
                           )}
                         </div>
                       </div>
                     </td>
                     {/* Category */}
-                    <td className="px-4 py-3.5 hidden sm:table-cell"><span className="text-sm text-[#86868B]">{product.categoryName || "—"}</span></td>
+                    <td className="px-4 py-3.5 hidden sm:table-cell"><span className="text-sm text-slate-400">{product.categoryName || "—"}</span></td>
                     {/* Stock editor */}
                     <td className="px-4 py-3.5">
                       {hasExpandableVariants ? (
-                        <span className="text-sm font-bold tabular-nums text-[#1D1D1F]">{product.stock_quantity}<span className="text-[10px] font-normal text-[#86868B] ml-1">total</span></span>
+                        <span className="text-sm font-bold tabular-nums text-slate-900">{product.stock_quantity}<span className="text-[10px] font-normal text-slate-400 ml-1">total</span></span>
                       ) : (
                         <InlineStockEditor productId={product.id} currentStock={product.stock_quantity} />
                       )}
                     </td>
                     {/* Stock bar */}
                     <td className="px-4 py-3.5 hidden md:table-cell w-36">
-                      <div className="flex-1 h-2 bg-[#F5F5F7] rounded-full overflow-hidden">
+                      <div className="flex-1 h-2 bg-slate-50 rounded-full overflow-hidden">
                         <div className={`h-full rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${stockPct}%` }} />
                       </div>
                     </td>
                     {/* Value */}
                     <td className="px-4 py-3.5 hidden lg:table-cell">
-                      <span className="text-sm font-medium text-[#1D1D1F] tabular-nums whitespace-nowrap">{formatCurrency(stockValue, currency)}</span>
+                      <span className="text-sm font-medium text-slate-900 tabular-nums whitespace-nowrap">{formatCurrency(stockValue, currency)}</span>
                     </td>
                     {/* Status badge */}
                     <td className="px-4 py-3.5">
@@ -477,7 +477,7 @@ export default function InventoryTable({
                     </td>
                     {/* Actions */}
                     <td className="pr-6 py-3.5 text-right">
-                      <Link href={`/dashboard/products/${product.id}`} className="p-2 text-[#86868B] hover:text-[#0071E3] hover:bg-[#F0F6FF] rounded-[10px] transition-colors inline-flex" title="Editar producto">
+                      <Link href={`/dashboard/products/${product.id}`} className="p-2 text-slate-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors inline-flex" title="Editar producto">
                         <Edit className="w-4 h-4" />
                       </Link>
                     </td>
@@ -487,18 +487,18 @@ export default function InventoryTable({
                     const vOut = v.stock <= 0;
                     const vLow = v.stock > 0 && v.stock <= 5;
                     return (
-                      <tr key={v.id} className="bg-[#FAFBFC] border-t border-[#F0F0F2] animate-fade-in">
+                      <tr key={v.id} className="bg-slate-50 border-t border-slate-100 animate-fade-in">
                         <td className="pl-5 py-2 w-12" />
                         <td className="pl-2 py-2 w-14" />
                         <td className="px-4 py-2" colSpan={1}>
                           <div className="flex items-center gap-2 pl-6">
-                            <div className="w-1 h-4 bg-[#E5E5EA] rounded-full" />
+                            <div className="w-1 h-4 bg-slate-200 rounded-full" />
                             <div className="flex flex-wrap gap-1">
                               {v.label.split(" / ").map((val, i) => (
-                                <span key={i} className="inline-block bg-[#F0F0F2] text-[#6E6E73] text-[11px] font-medium px-2 py-0.5 rounded-md">{val}</span>
+                                <span key={i} className="inline-block bg-slate-100 text-slate-500 text-[11px] font-medium px-2 py-0.5 rounded-md">{val}</span>
                               ))}
                             </div>
-                            {v.sku && <span className="text-[10px] text-[#86868B] font-mono">{v.sku}</span>}
+                            {v.sku && <span className="text-[10px] text-slate-400 font-mono">{v.sku}</span>}
                             {!v.is_active && <Badge variant="neutral" size="sm">Inactivo</Badge>}
                           </div>
                         </td>
@@ -526,10 +526,10 @@ export default function InventoryTable({
       {/* ── Floating Bulk Actions Bar ── */}
       {selected.size > 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-slide-up">
-          <div className="bg-[#1D1D1F] text-white rounded-[16px] shadow-[0_16px_48px_rgba(0,0,0,0.24)] border border-white/10 px-5 py-3 flex items-center gap-4">
+          <div className="bg-slate-900 text-white rounded-[16px] shadow-[0_16px_48px_rgba(0,0,0,0.24)] border border-white/10 px-5 py-3 flex items-center gap-4">
             {/* Selection count */}
             <div className="flex items-center gap-2 pr-4 border-r border-white/15">
-              <div className="w-6 h-6 rounded-full bg-[#0071E3] flex items-center justify-center text-xs font-bold">
+              <div className="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-xs font-bold">
                 {selected.size}
               </div>
               <span className="text-sm font-medium whitespace-nowrap">
@@ -541,21 +541,21 @@ export default function InventoryTable({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setBulkAction("adjust")}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-[10px] bg-white/10 hover:bg-white/20 transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-white/10 hover:bg-white/20 transition-colors whitespace-nowrap"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Ajustar
               </button>
               <button
                 onClick={() => setBulkAction("set")}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-[10px] bg-white/10 hover:bg-white/20 transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-white/10 hover:bg-white/20 transition-colors whitespace-nowrap"
               >
                 <Package className="w-3.5 h-3.5" />
                 Establecer
               </button>
               <button
                 onClick={() => setBulkAction("zero")}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-[10px] bg-red-500/80 hover:bg-red-500 transition-colors whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-red-500/80 hover:bg-red-500 transition-colors whitespace-nowrap"
               >
                 <AlertTriangle className="w-3.5 h-3.5" />
                 Sin stock

@@ -170,8 +170,8 @@ export default function CategoriesManager({
           GRID_COLS,
           "items-center group transition-colors duration-100",
           isSubcategory
-            ? "bg-[#FAFAFA] hover:bg-[#F5F5F7]"
-            : "hover:bg-[#F7F7F8]",
+            ? "bg-white hover:bg-slate-50"
+            : "hover:bg-slate-50",
           isExpandable ? "cursor-pointer select-none" : !isSubcategory ? "cursor-default select-none" : ""
         )}
       >
@@ -189,7 +189,7 @@ export default function CategoriesManager({
                 <motion.div
                   animate={{ rotate: isExpanded ? 90 : 0 }}
                   transition={{ duration: 0.18, ease: "easeInOut" }}
-                  className="text-[#0071E3] group-hover:text-[#0063CC] transition-colors"
+                  className="text-brand-600 group-hover:text-brand-700 transition-colors"
                 >
                   <ChevronRight className="w-[18px] h-[18px]" strokeWidth={2.2} />
                 </motion.div>
@@ -204,12 +204,12 @@ export default function CategoriesManager({
           {isSubcategory ? (
             /* Bullet con línea vertical árbol */
             <div className="flex items-center gap-2 flex-shrink-0">
-              <div className="w-px h-5 bg-[#D1D1D6] rounded-full flex-shrink-0" />
-              <div className="w-1.5 h-1.5 rounded-full bg-[#C7C7CC] group-hover:bg-[#0071E3] transition-colors flex-shrink-0" />
+              <div className="w-px h-5 bg-slate-300 rounded-full flex-shrink-0" />
+              <div className="w-1.5 h-1.5 rounded-full bg-slate-300 group-hover:bg-brand-600 transition-colors flex-shrink-0" />
             </div>
           ) : (
-            <div className="w-9 h-9 rounded-[10px] bg-[#F5F5F7] flex items-center justify-center flex-shrink-0 group-hover:bg-[#E8F0FE] transition-colors duration-150">
-              <FolderOpen className="w-4 h-4 text-[#86868B] group-hover:text-[#0071E3] transition-colors duration-150" />
+            <div className="w-9 h-9 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0 group-hover:bg-brand-100 transition-colors duration-150">
+              <FolderOpen className="w-4 h-4 text-slate-400 group-hover:text-brand-600 transition-colors duration-150" />
             </div>
           )}
 
@@ -223,7 +223,7 @@ export default function CategoriesManager({
                 if (e.key === "Enter") handleEdit(category.id);
                 if (e.key === "Escape") setEditingId(null);
               }}
-              className="flex-1 min-w-0 bg-white border border-[#E5E5EA] rounded-[10px] px-3 py-1.5 text-sm text-[#1D1D1F] focus:outline-none focus:ring-2 focus:ring-[#0071E3]/25 focus:border-[#0071E3] transition-all"
+              className="flex-1 min-w-0 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all"
             />
           ) : (
             <div className="flex items-center gap-2 min-w-0">
@@ -231,14 +231,14 @@ export default function CategoriesManager({
                 className={cn(
                   "truncate transition-colors duration-100",
                   isSubcategory
-                    ? "text-sm text-[#6E6E73] group-hover:text-[#3A3A3C]"
-                    : "text-sm font-semibold text-[#1D1D1F] group-hover:text-[#0071E3]"
+                    ? "text-sm text-slate-500 group-hover:text-slate-700"
+                    : "text-sm font-semibold text-slate-900 group-hover:text-brand-600"
                 )}
               >
                 {category.name}
               </span>
               {!isSubcategory && subcategoryCount > 0 && (
-                <span className="ml-0.5 text-[11px] font-medium text-[#86868B] bg-[#F0F0F2] px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0 leading-none">
+                <span className="ml-0.5 text-[11px] font-medium text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0 leading-none">
                   {subcategoryCount} sub
                 </span>
               )}
@@ -248,7 +248,7 @@ export default function CategoriesManager({
 
         {/* ── Col 2: Productos ──────────────────────────────────────────── */}
         <div className="px-6 py-4">
-          <span className="text-sm text-[#6E6E73] tabular-nums">{count}</span>
+          <span className="text-sm text-slate-500 tabular-nums">{count}</span>
         </div>
 
         {/* ── Col 3: Visibilidad ────────────────────────────────────────── */}
@@ -257,14 +257,14 @@ export default function CategoriesManager({
             className={cn(
               "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border",
               category.is_active
-                ? "bg-[#F0FFF4] text-[#1A7F4B] border-[#1A7F4B]/15"
-                : "bg-[#F5F5F7] text-[#86868B] border-[#E5E5EA]"
+                ? "bg-emerald-50 text-emerald-700 border-emerald-700/15"
+                : "bg-slate-50 text-slate-400 border-slate-200"
             )}
           >
             <span
               className={cn(
                 "w-1.5 h-1.5 rounded-full flex-shrink-0",
-                category.is_active ? "bg-[#34C759]" : "bg-[#C7C7CC]"
+                category.is_active ? "bg-emerald-500" : "bg-slate-300"
               )}
             />
             {category.is_active ? "Activa" : "Inactiva"}
@@ -283,7 +283,7 @@ export default function CategoriesManager({
                   }}
                   disabled={saving}
                   title="Guardar"
-                  className="p-2 rounded-[8px] text-[#1A7F4B] hover:bg-[#F0FFF4] transition-colors duration-150 disabled:opacity-50"
+                  className="p-2 rounded-[8px] text-emerald-700 hover:bg-emerald-50 transition-colors duration-150 disabled:opacity-50"
                 >
                   <Check className="w-4 h-4" />
                 </button>
@@ -293,7 +293,7 @@ export default function CategoriesManager({
                     setEditingId(null);
                   }}
                   title="Cancelar"
-                  className="p-2 rounded-[8px] text-[#86868B] hover:text-[#1D1D1F] hover:bg-[#F0F0F2] transition-colors duration-150"
+                  className="p-2 rounded-[8px] text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-150"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -309,7 +309,7 @@ export default function CategoriesManager({
                       setNewName("");
                     }}
                     title="Agregar subcategoría"
-                    className="p-2 rounded-[8px] text-[#86868B] hover:text-[#0071E3] hover:bg-[#E8F0FE] transition-colors duration-150"
+                    className="p-2 rounded-[8px] text-slate-400 hover:text-brand-600 hover:bg-brand-100 transition-colors duration-150"
                   >
                     <FolderPlus className="w-4 h-4" />
                   </button>
@@ -321,7 +321,7 @@ export default function CategoriesManager({
                     setEditName(category.name);
                   }}
                   title="Editar"
-                  className="p-2 rounded-[8px] text-[#86868B] hover:text-[#1D1D1F] hover:bg-[#F0F0F2] transition-colors duration-150"
+                  className="p-2 rounded-[8px] text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-150"
                 >
                   <Pencil className="w-4 h-4" />
                 </button>
@@ -331,7 +331,7 @@ export default function CategoriesManager({
                     handleDelete(category.id);
                   }}
                   title="Eliminar"
-                  className="p-2 rounded-[8px] text-[#86868B] hover:text-[#FF3B30] hover:bg-[#FFF2F2] transition-colors duration-150"
+                  className="p-2 rounded-[8px] text-slate-400 hover:text-red-600 hover:bg-red-50 transition-colors duration-150"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -355,7 +355,7 @@ export default function CategoriesManager({
       className={cn(
         GRID_COLS,
         "items-center",
-        parentId ? "bg-[#FAFAFA]" : ""
+        parentId ? "bg-white" : ""
       )}
     >
       {/* Col 1: Input */}
@@ -370,12 +370,12 @@ export default function CategoriesManager({
 
         {parentId ? (
           <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="w-px h-5 bg-[#D1D1D6] rounded-full flex-shrink-0" />
-            <Plus className="w-3.5 h-3.5 text-[#86868B] flex-shrink-0" />
+            <div className="w-px h-5 bg-slate-300 rounded-full flex-shrink-0" />
+            <Plus className="w-3.5 h-3.5 text-slate-400 flex-shrink-0" />
           </div>
         ) : (
-          <div className="w-9 h-9 rounded-[10px] bg-[#F5F5F7] flex items-center justify-center flex-shrink-0">
-            <Plus className="w-4 h-4 text-[#86868B]" />
+          <div className="w-9 h-9 rounded-lg bg-slate-50 flex items-center justify-center flex-shrink-0">
+            <Plus className="w-4 h-4 text-slate-400" />
           </div>
         )}
 
@@ -390,7 +390,7 @@ export default function CategoriesManager({
           placeholder={
             parentId ? "Nueva subcategoría..." : "Nombre de la categoría..."
           }
-          className="flex-1 min-w-0 bg-white border border-[#E5E5EA] rounded-[10px] px-3 py-1.5 text-sm text-[#1D1D1F] placeholder:text-[#C7C7CC] focus:outline-none focus:ring-2 focus:ring-[#0071E3]/25 focus:border-[#0071E3] transition-all"
+          className="flex-1 min-w-0 bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-sm text-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all"
         />
       </div>
 
@@ -404,14 +404,14 @@ export default function CategoriesManager({
           <button
             onClick={() => handleAdd(parentId)}
             disabled={saving || !newName.trim()}
-            className="inline-flex items-center gap-1.5 bg-[#0071E3] hover:bg-[#0063CC] active:bg-[#0055B3] text-white text-xs font-semibold px-3 py-1.5 rounded-[10px] transition-colors duration-150 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors duration-150 disabled:opacity-50"
           >
             <Check className="w-3.5 h-3.5" />
             Guardar
           </button>
           <button
             onClick={onCancel}
-            className="p-2 rounded-[8px] text-[#86868B] hover:text-[#1D1D1F] hover:bg-[#F0F0F2] transition-colors duration-150"
+            className="p-2 rounded-[8px] text-slate-400 hover:text-slate-900 hover:bg-slate-100 transition-colors duration-150"
           >
             <X className="w-4 h-4" />
           </button>
@@ -440,17 +440,17 @@ export default function CategoriesManager({
         }
       />
 
-      <div className="bg-white border border-[#E5E5EA] rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+      <div className="bg-white border border-slate-200 rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
         {parentCategories.length === 0 && !adding ? (
           /* ── Empty state ────────────────────────────────────────────── */
-          <div className="p-20 text-center bg-[#FAFAFA]">
-            <div className="w-24 h-24 rounded-[2.5rem] bg-white border border-[#E5E5EA] shadow-sm flex items-center justify-center mx-auto mb-6 -rotate-3 hover:rotate-0 transition-transform duration-300">
-              <Tags className="w-10 h-10 text-[#0071E3]" />
+          <div className="p-20 text-center bg-white">
+            <div className="w-24 h-24 rounded-[2.5rem] bg-white border border-slate-200 shadow-sm flex items-center justify-center mx-auto mb-6 -rotate-3 hover:rotate-0 transition-transform duration-300">
+              <Tags className="w-10 h-10 text-brand-600" />
             </div>
-            <h3 className="text-2xl font-semibold text-[#1D1D1F] mb-2">
+            <h3 className="text-2xl font-semibold text-slate-900 mb-2">
               Sin categorías aún
             </h3>
-            <p className="text-[#6E6E73] mb-8 max-w-sm mx-auto text-sm leading-relaxed">
+            <p className="text-slate-500 mb-8 max-w-sm mx-auto text-sm leading-relaxed">
               Organiza tu tienda estructurando tus productos en categorías.
               Mejora la experiencia de tus clientes.
             </p>
@@ -465,24 +465,24 @@ export default function CategoriesManager({
         ) : (
           <>
             {/* ── Table header ──────────────────────────────────────────── */}
-            <div className={cn(GRID_COLS, "bg-[#F5F5F7] border-b border-[#E5E5EA]")}>
-              <div className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide pl-6 py-4">
+            <div className={cn(GRID_COLS, "bg-slate-50 border-b border-slate-200")}>
+              <div className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide pl-6 py-4">
                 Categoría
               </div>
-              <div className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-6 py-4">
+              <div className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide px-6 py-4">
                 Productos
               </div>
-              <div className="text-left text-xs font-medium text-[#86868B] uppercase tracking-wide px-6 py-4">
+              <div className="text-left text-xs font-medium text-slate-400 uppercase tracking-wide px-6 py-4">
                 Visibilidad
               </div>
-              <div className="text-right text-xs font-medium text-[#86868B] uppercase tracking-wide pr-6 py-4">
+              <div className="text-right text-xs font-medium text-slate-400 uppercase tracking-wide pr-6 py-4">
                 Acciones
               </div>
             </div>
 
             {/* ── Add row (top-level) ────────────────────────────────────── */}
             {adding && (
-              <div className="border-b border-[#F5F5F7]">
+              <div className="border-b border-slate-50">
                 <AddRow
                   onCancel={() => {
                     setAdding(false);
@@ -493,7 +493,7 @@ export default function CategoriesManager({
             )}
 
             {/* ── Rows ──────────────────────────────────────────────────── */}
-            <div className="divide-y divide-[#F5F5F7]">
+            <div className="divide-y divide-slate-50">
               {parentCategories.map((cat) => {
                 const subcats = getSubcategories(cat.id);
                 const isSearchingSub = addingSubOf === cat.id;
@@ -521,7 +521,7 @@ export default function CategoriesManager({
                           transition={{ duration: 0.2, ease: "easeInOut" }}
                           className="overflow-hidden"
                         >
-                          <div className="border-t border-[#F5F5F7] divide-y divide-[#F5F5F7]">
+                          <div className="border-t border-slate-50 divide-y divide-slate-50">
                             {subcats.map((sub) => (
                               <CategoryRow
                                 key={sub.id}

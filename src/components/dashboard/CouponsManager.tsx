@@ -142,7 +142,7 @@ export default function CouponsManager({
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight flex items-center gap-2">
             <Ticket className="w-6 h-6 text-brand-600" />
             Cupones de Descuento
           </h1>
@@ -186,7 +186,7 @@ export default function CouponsManager({
               } p-6 flex flex-col`}
             >
               <div className="flex justify-between items-start mb-4">
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 rounded-lg text-slate-900 font-black tracking-wider text-lg border border-slate-200">
+                <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 rounded-lg text-slate-900 font-semibold tracking-wider text-lg border border-slate-200">
                   {coupon.code}
                 </div>
                 <button
@@ -259,7 +259,7 @@ export default function CouponsManager({
                   type="text"
                   value={form.code}
                   onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-slate-900 uppercase font-bold focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-slate-900 uppercase font-bold focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-colors"
                   placeholder="INVIERNO20"
                   required
                 />
@@ -273,7 +273,7 @@ export default function CouponsManager({
                   <select
                     value={form.type}
                     onChange={(e) => setForm({ ...form, type: e.target.value, value: e.target.value === 'percentage' ? 10 : 50000 })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
+                    className="dash-select pr-9 w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-colors"
                   >
                     <option value="percentage">Porcentaje (%)</option>
                     <option value="fixed">Monto Fijo (Gs)</option>
@@ -292,7 +292,7 @@ export default function CouponsManager({
                       min="1"
                       value={form.value}
                       onChange={(e) => setForm({ ...form, value: Number(e.target.value) })}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
+                      className="w-full bg-white border border-slate-200 rounded-lg pl-10 pr-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-colors"
                       required
                     />
                   </div>
@@ -309,7 +309,7 @@ export default function CouponsManager({
                   value={form.max_uses}
                   onChange={(e) => setForm({ ...form, max_uses: e.target.value })}
                   placeholder="Ej. Los primeros 100 usuarios"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-colors"
                 />
               </div>
 
@@ -323,7 +323,7 @@ export default function CouponsManager({
                   value={form.min_purchase || ""}
                   onChange={(e) => setForm({ ...form, min_purchase: Number(e.target.value) })}
                   placeholder="Ej. 150000"
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 transition-colors"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-colors"
                 />
               </div>
 

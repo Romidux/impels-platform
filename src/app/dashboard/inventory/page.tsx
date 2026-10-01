@@ -10,6 +10,7 @@ import {
   Boxes,
 } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { KpiCard } from "@/components/ui/KpiCard";
 import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import InventoryFilters from "@/components/dashboard/InventoryFilters";
@@ -213,73 +214,46 @@ export default async function InventoryPage({
 
       {/* ── KPI Cards ── */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Total units */}
-        <div className="dash-card p-5">
-          <div className="flex items-start justify-between mb-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#F0F6FF] flex items-center justify-center">
-              <Boxes className="w-5 h-5 text-[#0071E3]" />
-            </div>
-          </div>
-          <div className="font-display text-3xl font-bold text-[#1D1D1F] tracking-tight mb-0.5">
-            {totalUnits.toLocaleString("es-PY")}
-          </div>
-          <div className="text-sm font-medium text-[#86868B]">Unidades totales</div>
-        </div>
-
-        {/* Low stock */}
-        <Link
+        <KpiCard
+          icon={<Boxes className="w-5 h-5 text-brand-600" />}
+          iconClassName="bg-brand-50"
+          label="Unidades totales"
+          value={totalUnits.toLocaleString("es-PY")}
+        />
+        <KpiCard
+          icon={<AlertTriangle className="w-5 h-5 text-amber-500" />}
+          iconClassName="bg-amber-50"
+          label="Stock bajo"
+          value={lowStockProducts.length}
           href={buildUrl({ status: "low", page: "1" })}
-          className="dash-card-hover p-5 group block"
-        >
-          <div className="flex items-start justify-between mb-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-50 flex items-center justify-center">
-              <AlertTriangle className="w-5 h-5 text-amber-500" />
-            </div>
-            {lowStockProducts.length > 0 && (
+          badge={
+            lowStockProducts.length > 0 ? (
               <Badge variant="warning" size="sm">
                 ≤ 5 uds
               </Badge>
-            )}
-          </div>
-          <div className="font-display text-3xl font-bold text-[#1D1D1F] tracking-tight mb-0.5">
-            {lowStockProducts.length}
-          </div>
-          <div className="text-sm font-medium text-[#86868B]">Stock bajo</div>
-        </Link>
-
-        {/* Out of stock */}
-        <Link
+            ) : undefined
+          }
+        />
+        <KpiCard
+          icon={<TrendingDown className="w-5 h-5 text-red-500" />}
+          iconClassName="bg-red-50"
+          label="Sin stock"
+          value={outOfStockProducts.length}
           href={buildUrl({ status: "out", page: "1" })}
-          className="dash-card-hover p-5 group block"
-        >
-          <div className="flex items-start justify-between mb-3">
-            <div className="w-10 h-10 rounded-2xl bg-red-50 flex items-center justify-center">
-              <TrendingDown className="w-5 h-5 text-red-500" />
-            </div>
-            {outOfStockProducts.length >= 3 && (
+          badge={
+            outOfStockProducts.length >= 3 ? (
               <Badge variant="error" size="sm">
                 Urgente
               </Badge>
-            )}
-          </div>
-          <div className="font-display text-3xl font-bold text-[#1D1D1F] tracking-tight mb-0.5">
-            {outOfStockProducts.length}
-          </div>
-          <div className="text-sm font-medium text-[#86868B]">Sin stock</div>
-        </Link>
-
-        {/* Inventory value */}
-        <div className="dash-card p-5">
-          <div className="flex items-start justify-between mb-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-50 flex items-center justify-center">
-              <DollarSign className="w-5 h-5 text-emerald-600" />
-            </div>
-          </div>
-          <div className="font-display text-3xl font-bold text-[#1D1D1F] tracking-tight mb-0.5 truncate">
-            {formatCurrency(inventoryValue, currency)}
-          </div>
-          <div className="text-sm font-medium text-[#86868B]">Valor del inventario</div>
-        </div>
+            ) : undefined
+          }
+        />
+        <KpiCard
+          icon={<DollarSign className="w-5 h-5 text-emerald-600" />}
+          iconClassName="bg-emerald-50"
+          label="Valor del inventario"
+          value={formatCurrency(inventoryValue, currency)}
+        />
       </div>
 
       {/* ── Filters ── */}
@@ -304,17 +278,17 @@ export default async function InventoryPage({
 
       {/* ── Inventory Table ── */}
       {allProducts.length === 0 ? (
-        <div className="bg-white border border-[#E5E5EA] rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="bg-white border border-slate-200 rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <EmptyState
-            icon={<Warehouse className="w-8 h-8 text-[#0071E3]" />}
+            icon={<Warehouse className="w-8 h-8 text-brand-600" />}
             heading="Sin seguimiento de inventario"
             description="Activa el seguimiento de stock en tus productos para verlos aquí. Puedes hacerlo desde la edición de cada producto."
           />
         </div>
       ) : paginatedProducts.length === 0 ? (
-        <div className="bg-white border border-[#E5E5EA] rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="bg-white border border-slate-200 rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <EmptyState
-            icon={<Package className="w-8 h-8 text-[#86868B]" />}
+            icon={<Package className="w-8 h-8 text-slate-400" />}
             heading="Sin resultados"
             description="No se encontraron productos con los filtros seleccionados"
           />
@@ -329,7 +303,7 @@ export default async function InventoryPage({
 
           {/* ── Pagination ── */}
           {totalPages > 1 && (
-            <div className="bg-white border border-[#E5E5EA] rounded-[16px] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-sm text-[#6E6E73] gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="bg-white border border-slate-200 rounded-[16px] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500 gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               <span>
                 Página {page} de {totalPages} ({totalCount} productos)
               </span>
@@ -337,7 +311,7 @@ export default async function InventoryPage({
                 {page > 1 && (
                   <Link
                     href={buildUrl({ page: String(page - 1) })}
-                    className="px-4 py-2 rounded-[10px] border border-[#E5E5EA] text-xs font-medium text-[#1D1D1F] hover:bg-[#F5F5F7] transition-colors"
+                    className="px-4 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-900 hover:bg-slate-50 transition-colors"
                   >
                     ← Anterior
                   </Link>
@@ -345,7 +319,7 @@ export default async function InventoryPage({
                 {page < totalPages && (
                   <Link
                     href={buildUrl({ page: String(page + 1) })}
-                    className="px-4 py-2 rounded-[10px] border border-[#E5E5EA] text-xs font-medium text-[#1D1D1F] hover:bg-[#F5F5F7] transition-colors"
+                    className="px-4 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-900 hover:bg-slate-50 transition-colors"
                   >
                     Siguiente →
                   </Link>

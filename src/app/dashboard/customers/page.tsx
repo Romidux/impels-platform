@@ -136,7 +136,7 @@ export default async function CustomersPage({
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-[#F2F4F6] border-b border-slate-100">
+                <tr className="bg-slate-100 border-b border-slate-100">
                   <th className="text-left text-xs font-semibold text-slate-500 px-6 py-3">
                     Cliente
                   </th>

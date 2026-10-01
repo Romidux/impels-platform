@@ -497,8 +497,8 @@ export default function ProductForm({
       role="switch"
       aria-checked={checked}
       onClick={onToggle}
-      className={`w-10 h-5 rounded-full transition-colors relative flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-blue-500/30 ${
-        checked ? "bg-blue-500" : "bg-slate-300"
+      className={`w-10 h-5 rounded-full transition-colors relative flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-brand-500/10 ${
+        checked ? "bg-brand-500" : "bg-slate-300"
       }`}
     >
       <div
@@ -560,7 +560,7 @@ export default function ProductForm({
           {/* 1. Información básica */}
           <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
             <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
-              <Package className="w-4 h-4 text-blue-500" />
+              <Package className="w-4 h-4 text-brand-500" />
               Información básica
             </h2>
 
@@ -573,7 +573,7 @@ export default function ProductForm({
                 value={form.name}
                 onChange={(e) => handleChange("name", e.target.value)}
                 placeholder="Ej: Camiseta de Algodón Premium"
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
               />
             </div>
 
@@ -592,7 +592,7 @@ export default function ProductForm({
                 placeholder="Describe los beneficios, materiales, medidas…"
                 rows={4}
                 maxLength={1000}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all resize-none"
+                className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all resize-none"
               />
             </div>
 
@@ -614,7 +614,7 @@ export default function ProductForm({
                   <label className="block text-sm font-semibold text-slate-700">
                     URL amigable (Slug)
                   </label>
-                  <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
+                  <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
                     <span className="text-slate-400 text-sm px-4 flex items-center border-r border-slate-200 font-mono">
                       /p/
                     </span>
@@ -641,7 +641,7 @@ export default function ProductForm({
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
-                  <Image className="w-4 h-4 text-blue-500" />
+                  <Image className="w-4 h-4 text-brand-500" />
                   Imágenes
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
@@ -653,7 +653,7 @@ export default function ProductForm({
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-colors"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Agregar
@@ -673,9 +673,9 @@ export default function ProductForm({
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="w-full aspect-[16/7] border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-3 text-slate-400 hover:border-blue-400 hover:text-blue-500 hover:bg-blue-50/30 transition-all group"
+                className="w-full aspect-[16/7] border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-3 text-slate-400 hover:border-brand-400 hover:text-brand-500 hover:bg-brand-50/30 transition-all group"
               >
-                <div className="w-12 h-12 rounded-2xl bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-slate-100 group-hover:bg-brand-100 flex items-center justify-center transition-colors">
                   <Image className="w-6 h-6 opacity-60 group-hover:opacity-100" />
                 </div>
                 <div className="text-center">
@@ -711,7 +711,7 @@ export default function ProductForm({
                       key={i}
                       className={`w-[72px] h-[72px] shrink-0 rounded-xl overflow-hidden border-2 cursor-pointer transition-all relative group bg-slate-50 ${
                         img.is_primary
-                          ? "border-blue-500 ring-2 ring-blue-500/20"
+                          ? "border-brand-500 ring-2 ring-brand-500/20"
                           : "border-slate-200 hover:border-slate-300"
                       }`}
                       onClick={() => setPrimary(i)}
@@ -737,10 +737,10 @@ export default function ProductForm({
                   <button
                     type="button"
                     onClick={() => fileRef.current?.click()}
-                    className="w-[72px] h-[72px] shrink-0 rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 flex items-center justify-center transition-colors bg-white group"
+                    className="w-[72px] h-[72px] shrink-0 rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-400 hover:bg-brand-50/50 flex items-center justify-center transition-colors bg-white group"
                     aria-label="Agregar imagen"
                   >
-                    <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                    <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-brand-500 group-hover:text-white transition-colors">
                       <Plus className="w-3.5 h-3.5" />
                     </div>
                   </button>
@@ -752,7 +752,7 @@ export default function ProductForm({
           {/* 3. Variantes */}
           <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-7 space-y-6">
             <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
-              <Tag className="w-4 h-4 text-blue-500" />
+              <Tag className="w-4 h-4 text-brand-500" />
               Variantes
             </h2>
 
@@ -784,7 +784,7 @@ export default function ProductForm({
                       onClick={() => handleChange("manage_stock_by_variant", false)}
                       className={`p-3.5 rounded-xl border-2 text-left transition-all ${
                         !form.manage_stock_by_variant
-                          ? "border-blue-500 bg-blue-50"
+                          ? "border-brand-500 bg-brand-50"
                           : "border-slate-200 hover:border-slate-300 bg-white"
                       }`}
                     >
@@ -796,7 +796,7 @@ export default function ProductForm({
                       onClick={() => handleChange("manage_stock_by_variant", true)}
                       className={`p-3.5 rounded-xl border-2 text-left transition-all ${
                         form.manage_stock_by_variant
-                          ? "border-blue-500 bg-blue-50"
+                          ? "border-brand-500 bg-brand-50"
                           : "border-slate-200 hover:border-slate-300 bg-white"
                       }`}
                     >
@@ -832,7 +832,7 @@ export default function ProductForm({
                                 { name: preset, values: [], newValue: "" },
                               ])
                             }
-                            className="text-xs font-medium border border-slate-200 bg-white px-3.5 py-1.5 rounded-full hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                            className="text-xs font-medium border border-slate-200 bg-white px-3.5 py-1.5 rounded-full hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
                           >
                             + {preset}
                           </button>
@@ -847,7 +847,7 @@ export default function ProductForm({
                           className="border border-slate-200 rounded-xl overflow-hidden"
                         >
                           <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200">
-                            <span className="w-6 h-6 bg-blue-600 text-white rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0">
+                            <span className="w-6 h-6 bg-brand-600 text-white rounded-full text-xs font-bold flex items-center justify-center flex-shrink-0">
                               {i + 1}
                             </span>
                             <input
@@ -872,7 +872,7 @@ export default function ProductForm({
                                 {ot.values.map((val) => (
                                   <span
                                     key={val}
-                                    className="flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full"
+                                    className="flex items-center gap-1.5 bg-brand-50 border border-brand-100 text-brand-700 text-sm px-3 py-1 rounded-full"
                                   >
                                     {val}
                                     <button
@@ -897,7 +897,7 @@ export default function ProductForm({
                                       key={v}
                                       type="button"
                                       onClick={() => addPresetValue(i, v)}
-                                      className="text-xs px-2.5 py-1 rounded-full border border-slate-200 bg-white hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                                      className="text-xs px-2.5 py-1 rounded-full border border-slate-200 bg-white hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
                                     >
                                       + {v}
                                     </button>
@@ -923,12 +923,12 @@ export default function ProductForm({
                                   }
                                 }}
                                 placeholder="Escribe un valor y presiona Enter…"
-                                className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                               />
                               <button
                                 type="button"
                                 onClick={() => addOptionValue(i)}
-                                className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm transition-colors"
+                                className="px-3 py-2 bg-brand-600 hover:bg-brand-700 text-white rounded-lg text-sm transition-colors"
                               >
                                 <Plus className="w-4 h-4" />
                               </button>
@@ -942,7 +942,7 @@ export default function ProductForm({
                   <button
                     type="button"
                     onClick={addOptionType}
-                    className="w-full py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-sm font-medium text-slate-500 hover:border-blue-400 hover:text-blue-600 hover:bg-blue-50 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-sm font-medium text-slate-500 hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-all flex items-center justify-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
                     Agregar atributo
@@ -954,7 +954,7 @@ export default function ProductForm({
                     <button
                       type="button"
                       onClick={generateCombinations}
-                      className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 shadow-sm"
+                      className="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-sm font-bold transition-colors flex items-center justify-center gap-2 shadow-sm"
                     >
                       <Boxes className="w-4 h-4" />
                       {combinations.length > 0 ? "Actualizar combinaciones" : "Generar combinaciones"}
@@ -1012,13 +1012,13 @@ export default function ProductForm({
                                 type="number"
                                 value={c.stock}
                                 onChange={(e) => updateCombination(idx, "stock", e.target.value)}
-                                className="w-20 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                className="w-20 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 disabled={!form.manage_stock_by_variant}
                                 min="0"
                               />
                             </td>
                             <td className="px-4 py-3">
-                              <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all w-28">
+                              <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden bg-slate-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all w-28">
                                 <span className="text-slate-400 text-xs px-2 border-r border-slate-200 py-1.5 font-mono">
                                   {currency}
                                 </span>
@@ -1038,7 +1038,7 @@ export default function ProductForm({
                                 value={c.sku}
                                 onChange={(e) => updateCombination(idx, "sku", e.target.value)}
                                 placeholder="SKU-001"
-                                className="w-24 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                className="w-24 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                               />
                             </td>
                             <td className="px-4 py-3">
@@ -1064,7 +1064,7 @@ export default function ProductForm({
           {/* A. Precio */}
           <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
             <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-blue-500" />
+              <DollarSign className="w-4 h-4 text-brand-500" />
               Precio
             </h2>
 
@@ -1072,7 +1072,7 @@ export default function ProductForm({
               <label className="block text-sm font-semibold text-slate-700">
                 Precio de venta
               </label>
-              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
+              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
                 <span className="text-slate-500 text-sm px-3 flex items-center border-r border-slate-200 font-mono bg-slate-100/50">
                   {currency}
                 </span>
@@ -1099,7 +1099,7 @@ export default function ProductForm({
                   </span>
                 )}
               </div>
-              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:bg-white focus-within:border-blue-500 focus-within:ring-4 focus-within:ring-blue-500/10 transition-all">
+              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
                 <span className="text-slate-500 text-sm px-3 flex items-center border-r border-slate-200 font-mono bg-slate-100/50">
                   {currency}
                 </span>
@@ -1157,7 +1157,7 @@ export default function ProductForm({
             </label>
 
             {form.track_inventory && (!form.has_variants || !form.manage_stock_by_variant) && (
-              <div className="space-y-4 animate-fade-in pl-4 border-l-2 border-blue-100">
+              <div className="space-y-4 animate-fade-in pl-4 border-l-2 border-brand-100">
                 <div>
                   <label className="block text-sm font-semibold text-slate-700 mb-1.5">
                     Unidades disponibles
@@ -1168,7 +1168,7 @@ export default function ProductForm({
                     onChange={(e) => handleChange("stock_quantity", e.target.value)}
                     placeholder="Ej: 15"
                     min="0"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                   />
                 </div>
 
@@ -1202,7 +1202,7 @@ export default function ProductForm({
           {/* C. Organización */}
           <section className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
             <h2 className="font-display text-base font-bold text-slate-900 flex items-center gap-2">
-              <Boxes className="w-4 h-4 text-blue-500" />
+              <Boxes className="w-4 h-4 text-brand-500" />
               Organización
             </h2>
 
@@ -1253,7 +1253,7 @@ export default function ProductForm({
                     }
                   }}
                   placeholder="Agregar etiqueta…"
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                  className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                 />
                 <button
                   type="button"

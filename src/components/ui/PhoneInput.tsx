@@ -30,6 +30,19 @@ function extractLocal(value: string, prefix: string) {
   return value;
 }
 
+/**
+ * Parte el número completo que maneja PhoneInput ("595981234567") en el código
+ * de país y el número local. Los formularios guardan ambos por separado, pero el
+ * input solo emite el completo.
+ */
+export function splitPhone(fullNumber: string) {
+  const country = detectCountry(fullNumber || "");
+  return {
+    countryCode: `+${country.prefix}`,
+    local: extractLocal(fullNumber || "", country.prefix),
+  };
+}
+
 interface PhoneInputProps {
   /** Full number without + sign, e.g. "595981234567" */
   value: string;
@@ -94,11 +107,11 @@ export function PhoneInput({
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="flex items-center gap-1 px-3 border border-r-0 border-gray-200 rounded-l-xl bg-gray-50 hover:bg-gray-100 transition-colors shrink-0"
+          className="flex items-center gap-1 px-3 border border-r-0 border-slate-200 rounded-l-xl bg-slate-50 hover:bg-slate-100 transition-colors shrink-0"
         >
           <span className="text-base leading-none">{country.flag}</span>
-          <span className="text-xs font-semibold text-gray-500">+{country.prefix}</span>
-          <ChevronDown className="w-3 h-3 text-gray-400" />
+          <span className="text-xs font-semibold text-slate-500">+{country.prefix}</span>
+          <ChevronDown className="w-3 h-3 text-slate-400" />
         </button>
 
         {/* Phone number input */}
@@ -110,31 +123,31 @@ export function PhoneInput({
           required={required}
           className={
             inputClassName ||
-            "flex-1 w-full border border-gray-200 rounded-r-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100 transition-all"
+            "flex-1 w-full border border-slate-200 rounded-r-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
           }
         />
 
         {/* Dropdown */}
         {open && (
-          <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto w-64 py-1">
+          <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg z-50 max-h-60 overflow-y-auto w-64 py-1">
             {COUNTRIES.map((c) => (
               <button
                 key={c.code}
                 type="button"
                 onClick={() => handleSelect(c)}
-                className={`w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-gray-50 transition-colors ${
-                  c.code === country.code ? "bg-blue-50 text-blue-700 font-semibold" : "text-gray-700"
+                className={`w-full flex items-center gap-3 px-3 py-2 text-sm hover:bg-slate-50 transition-colors ${
+                  c.code === country.code ? "bg-brand-50 text-brand-700 font-semibold" : "text-slate-700"
                 }`}
               >
                 <span className="text-base">{c.flag}</span>
                 <span className="flex-1 text-left">{c.name}</span>
-                <span className="text-xs text-gray-400 font-mono">+{c.prefix}</span>
+                <span className="text-xs text-slate-400 font-mono">+{c.prefix}</span>
               </button>
             ))}
           </div>
         )}
       </div>
-      {hint && <p className="mt-1.5 text-xs text-gray-400">{hint}</p>}
+      {hint && <p className="mt-1.5 text-xs text-slate-400">{hint}</p>}
     </div>
   );
 }

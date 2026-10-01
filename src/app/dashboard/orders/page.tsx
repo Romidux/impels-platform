@@ -19,6 +19,7 @@ import { formatCurrency } from "@/lib/utils";
 import { Order, OrderStatus } from "@/lib/types";
 import OrderStatusChanger from "@/components/dashboard/OrderStatusChanger";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { KpiCard } from "@/components/ui/KpiCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 import { OrdersSearchBar } from "@/components/dashboard/OrdersSearchBar";
@@ -146,7 +147,6 @@ export default async function OrdersPage({
       value: formatCurrency(totalRevenue, currency),
       icon: <TrendingUp className="w-5 h-5" />,
       color: "text-purple-600 bg-purple-50",
-      small: true,
     },
   ];
 
@@ -174,23 +174,15 @@ export default async function OrdersPage({
       />
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {kpis.map((kpi) => (
-          <div key={kpi.label} className="dash-card p-4 flex items-center gap-3">
-            <div
-              className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${kpi.color}`}
-            >
-              {kpi.icon}
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs text-slate-500 font-medium">{kpi.label}</p>
-              <p
-                className={`font-display font-black leading-tight text-slate-900 ${kpi.small ? "text-base" : "text-2xl"}`}
-              >
-                {kpi.value}
-              </p>
-            </div>
-          </div>
+          <KpiCard
+            key={kpi.label}
+            icon={kpi.icon}
+            label={kpi.label}
+            value={kpi.value}
+            iconClassName={kpi.color}
+          />
         ))}
       </div>
 
@@ -205,7 +197,7 @@ export default async function OrdersPage({
             href={ordersUrl({ status, q, view: "list" })}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold transition-colors ${
               view !== "kanban"
-                ? "bg-blue-600 text-white shadow-apple-sm hover:bg-blue-700 active:bg-blue-800"
+                ? "bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 active:bg-brand-800"
                 : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
             }`}
           >
@@ -216,7 +208,7 @@ export default async function OrdersPage({
             href={ordersUrl({ status, q, view: "kanban" })}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold transition-colors ${
               view === "kanban"
-                ? "bg-blue-600 text-white shadow-apple-sm hover:bg-blue-700 active:bg-blue-800"
+                ? "bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 active:bg-brand-800"
                 : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
             }`}
           >
@@ -234,7 +226,7 @@ export default async function OrdersPage({
             href={ordersUrl({ status: f.value || undefined, q, view })}
             className={`text-sm font-semibold px-4 py-2 rounded-xl transition-colors ${
               status === f.value || (!status && !f.value)
-                ? "bg-blue-600 text-white shadow-apple-sm hover:bg-blue-700 active:bg-blue-800"
+                ? "bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 active:bg-brand-800"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800"
             }`}
           >
@@ -371,7 +363,7 @@ function ListView({
                       </p>
                     </td>
                     <td className="px-4 py-3.5 text-right">
-                      <span className="font-display font-black text-slate-900">
+                      <span className="font-display font-semibold text-slate-900">
                         {formatCurrency(order.total, currency)}
                       </span>
                     </td>
@@ -450,7 +442,7 @@ function ListView({
                       })}
                     </p>
                   </div>
-                  <span className="font-display font-black text-slate-900">
+                  <span className="font-display font-semibold text-slate-900">
                     {formatCurrency(order.total, currency)}
                   </span>
                 </div>
@@ -548,7 +540,7 @@ function KanbanView({
               return (
                 <div
                   key={col.value}
-                  className="hidden lg:flex flex-col w-full min-w-[300px] bg-[#F5F5F7] rounded-2xl p-3"
+                  className="hidden lg:flex flex-col w-full min-w-[300px] bg-slate-50 rounded-2xl p-3"
                 >
                   <div className="flex items-center justify-between mb-3 px-1">
                     <h3 className="font-semibold text-slate-700 text-sm">
@@ -570,7 +562,7 @@ function KanbanView({
             return (
               <div
                 key={col.value}
-                className="flex flex-col flex-1 w-full lg:min-w-[320px] bg-transparent lg:bg-[#F5F5F7] lg:p-3 lg:rounded-2xl gap-3"
+                className="flex flex-col flex-1 w-full lg:min-w-[320px] bg-transparent lg:bg-slate-50 lg:p-3 lg:rounded-2xl gap-3"
               >
                 <div className="hidden lg:flex items-center justify-between mb-1 px-1">
                   <h3 className="font-semibold text-slate-600 text-sm">
@@ -604,7 +596,7 @@ function KanbanView({
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-display font-black text-lg text-slate-900 leading-none mb-1">
+                          <p className="font-display font-semibold text-lg text-slate-900 leading-none mb-1">
                             {formatCurrency(order.total, currency)}
                           </p>
                           <p className="text-xs text-slate-400 flex items-center justify-end gap-1">

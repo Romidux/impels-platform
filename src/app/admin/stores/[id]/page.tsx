@@ -111,7 +111,7 @@ function getSignalColor(variant: "success" | "warning" | "error" | "info" | "neu
     case "error":
       return "bg-red-500";
     case "info":
-      return "bg-blue-500";
+      return "bg-brand-500";
     default:
       return "bg-slate-300";
   }
@@ -284,13 +284,13 @@ export default async function AdminStoreDetailPage({
             <div className="flex-1 min-w-0 space-y-5">
               <div className="flex items-start gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-[24px] border border-slate-200 bg-white shadow-sm flex-shrink-0">
-                  <span className="text-2xl font-black text-slate-700">
+                  <span className="text-2xl font-semibold text-slate-700">
                     {typedStore.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center flex-wrap gap-2 sm:gap-3">
-                    <h1 className="font-display text-[28px] font-black leading-tight text-slate-950">
+                    <h1 className="font-display text-[28px] font-semibold leading-tight text-slate-950">
                       {typedStore.name}
                     </h1>
                     <Badge variant={typedStore.is_active ? "success" : "error"} dot>
@@ -387,7 +387,7 @@ export default async function AdminStoreDetailPage({
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
                 {card.label}
               </p>
-              <p className="mt-2 font-display text-[28px] font-black leading-tight text-slate-950">
+              <p className="mt-2 font-display text-[28px] font-semibold leading-tight text-slate-950">
                 {card.value}
               </p>
               <p className="mt-2 text-sm text-slate-500">{card.helper}</p>

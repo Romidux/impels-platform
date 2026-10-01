@@ -193,7 +193,7 @@ export default function CategorySelector({
         <label className="block text-[13px] font-bold text-slate-700">Categoría Principal</label>
         
         {isCreatingParent ? (
-          <div className="flex animate-fade-in items-center gap-2 bg-[#f4f4f4] rounded-2xl p-1.5 border border-[#d9d9d9] shadow-inner">
+          <div className="flex animate-fade-in items-center gap-2 bg-slate-100 rounded-2xl p-1.5 border border-slate-300 shadow-inner">
             <input
               autoFocus
               type="text"
@@ -240,7 +240,7 @@ export default function CategorySelector({
                     setIsCreatingChild(false);
                     setNewChildName("");
                   }}
-                  className="w-full text-left px-3 py-2 text-[14px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 flex items-center gap-2 rounded-xl transition-colors"
+                  className="w-full text-left px-3 py-2 text-[14px] font-bold text-brand-600 hover:text-brand-700 hover:bg-brand-50 flex items-center gap-2 rounded-xl transition-colors"
                 >
                   <Plus className="w-4 h-4" strokeWidth={3} />
                   Añadir nueva categoría
@@ -257,7 +257,7 @@ export default function CategorySelector({
           <label className="block text-[13px] font-bold text-slate-700">Subcategoría (Opcional)</label>
           
           {isCreatingChild ? (
-            <div className="flex animate-fade-in items-center gap-2 bg-[#f4f4f4] rounded-2xl p-1.5 border border-[#d9d9d9] shadow-inner">
+            <div className="flex animate-fade-in items-center gap-2 bg-slate-100 rounded-2xl p-1.5 border border-slate-300 shadow-inner">
               <input
                 autoFocus
                 type="text"
@@ -308,7 +308,7 @@ export default function CategorySelector({
                         setIsCreatingParent(false);
                         setNewParentName("");
                       }}
-                      className="w-full text-left px-3 py-2 text-[14px] font-bold text-blue-600 hover:text-blue-700 hover:bg-blue-50 flex items-center gap-2 rounded-xl transition-colors"
+                      className="w-full text-left px-3 py-2 text-[14px] font-bold text-brand-600 hover:text-brand-700 hover:bg-brand-50 flex items-center gap-2 rounded-xl transition-colors"
                     >
                       <Plus className="w-4 h-4" strokeWidth={3} />
                       Añadir nueva subcategoría

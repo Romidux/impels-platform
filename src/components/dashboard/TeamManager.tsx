@@ -9,7 +9,7 @@ import { Store, StoreMember, UserRole } from "@/lib/types";
 
 const ROLE_CONFIG: Record<UserRole, { label: string; icon: React.ElementType; color: string }> = {
   owner: { label: "Propietario", icon: Crown, color: "text-yellow-600 bg-yellow-50" },
-  admin: { label: "Admin", icon: Shield, color: "text-blue-600 bg-blue-50" },
+  admin: { label: "Admin", icon: Shield, color: "text-brand-600 bg-brand-50" },
   editor: { label: "Editor", icon: Pencil, color: "text-green-600 bg-green-50" },
 };
 
@@ -82,10 +82,10 @@ export default function TeamManager({
     <div className="space-y-6 animate-fade-in max-w-2xl">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
             Equipo
           </h1>
-          <p className="text-gray-500 mt-1">
+          <p className="text-slate-500 mt-1">
             Gestiona los colaboradores de tu tienda
           </p>
         </div>
@@ -101,11 +101,11 @@ export default function TeamManager({
       </div>
 
       {!isPro && (
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5">
-          <p className="text-blue-800 font-semibold mb-2">
+        <div className="bg-brand-50 border border-brand-200 rounded-2xl p-5">
+          <p className="text-brand-800 font-semibold mb-2">
             🔒 Equipo — Función Pro
           </p>
-          <p className="text-blue-600 text-sm">
+          <p className="text-brand-600 text-sm">
             Con el plan Pro puedes agregar hasta 5 colaboradores a tu tienda con
             diferentes roles (Admin, Editor).
           </p>
@@ -115,19 +115,19 @@ export default function TeamManager({
       {/* Invite form */}
       {showInviteForm && isPro && (
         <div className="card-flat p-5 space-y-4">
-          <h3 className="font-bold text-gray-900">Invitar colaborador</h3>
+          <h3 className="font-bold text-slate-900">Invitar colaborador</h3>
           <div className="flex gap-3">
             <input
               type="email"
               value={inviteEmail}
               onChange={(e) => setInviteEmail(e.target.value)}
               placeholder="email@ejemplo.com"
-              className="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400"
+              className="flex-1 border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500"
             />
             <select
               value={inviteRole}
               onChange={(e) => setInviteRole(e.target.value as UserRole)}
-              className="border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none bg-white"
+              className="dash-select pr-9 border border-slate-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none bg-white"
             >
               <option value="admin">Admin</option>
               <option value="editor">Editor</option>
@@ -143,7 +143,7 @@ export default function TeamManager({
             </button>
             <button
               onClick={() => setShowInviteForm(false)}
-              className="border border-gray-200 text-gray-600 font-semibold py-2.5 px-4 rounded-xl hover:bg-gray-50"
+              className="border border-slate-200 text-slate-600 font-semibold py-2.5 px-4 rounded-xl hover:bg-slate-50"
             >
               Cancelar
             </button>
@@ -153,20 +153,20 @@ export default function TeamManager({
 
       {/* Members list */}
       <div className="card-flat overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100">
-          <h3 className="font-bold text-gray-900">
+        <div className="px-6 py-4 border-b border-slate-100">
+          <h3 className="font-bold text-slate-900">
             Miembros ({members.length + 1})
           </h3>
         </div>
 
         {/* Owner (always first) */}
-        <div className="flex items-center gap-4 px-6 py-4 border-b border-gray-50">
+        <div className="flex items-center gap-4 px-6 py-4 border-b border-slate-50">
           <div className="w-10 h-10 rounded-full gradient-brand flex items-center justify-center">
             <span className="text-white font-bold text-sm">T</span>
           </div>
           <div className="flex-1">
-            <p className="font-semibold text-sm text-gray-900">Tú</p>
-            <p className="text-xs text-gray-400">Propietario de la tienda</p>
+            <p className="font-semibold text-sm text-slate-900">Tú</p>
+            <p className="text-xs text-slate-400">Propietario de la tienda</p>
           </div>
           <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full text-yellow-600 bg-yellow-50">
             <Crown className="w-3.5 h-3.5" />
@@ -176,7 +176,7 @@ export default function TeamManager({
 
         {/* Other members */}
         {members.length === 0 ? (
-          <div className="p-10 text-center text-gray-400">
+          <div className="p-10 text-center text-slate-400">
             <Users className="w-10 h-10 mx-auto mb-3 opacity-30" />
             <p className="font-medium">Sin colaboradores todavía</p>
             <p className="text-sm mt-1">
@@ -189,18 +189,18 @@ export default function TeamManager({
             return (
               <div
                 key={member.id}
-                className="flex items-center gap-4 px-6 py-4 border-b border-gray-50 last:border-0"
+                className="flex items-center gap-4 px-6 py-4 border-b border-slate-50 last:border-0"
               >
-                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
-                  <span className="text-gray-600 font-bold text-sm">
+                <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
+                  <span className="text-slate-600 font-bold text-sm">
                     {member.user_id.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-sm text-gray-900">
+                  <p className="font-semibold text-sm text-slate-900">
                     {member.user_id}
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-slate-400">
                     Desde{" "}
                     {new Date(member.created_at).toLocaleDateString("es-PY")}
                   </p>
@@ -214,7 +214,7 @@ export default function TeamManager({
                 {member.user_id !== currentUserId && (
                   <button
                     onClick={() => handleRemoveMember(member.id)}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -227,14 +227,14 @@ export default function TeamManager({
 
       {/* Role descriptions */}
       <div className="card-flat p-5 space-y-3">
-        <h3 className="font-bold text-gray-900 text-sm">Descripción de roles</h3>
+        <h3 className="font-bold text-slate-900 text-sm">Descripción de roles</h3>
         {Object.entries(ROLE_CONFIG).map(([role, config]) => (
           <div key={role} className="flex items-start gap-3">
             <span className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${config.color} flex-shrink-0`}>
               <config.icon className="w-3 h-3" />
               {config.label}
             </span>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-slate-500">
               {role === "owner"
                 ? "Control total. Puede gestionar la suscripción, el equipo y todos los datos."
                 : role === "admin"

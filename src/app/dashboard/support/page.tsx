@@ -68,7 +68,7 @@ export default async function SupportPage() {
                   name="subject"
                   required
                   placeholder="Ej. Mi pasarela de pagos no funciona"
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all"
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all"
                 />
               </div>
               
@@ -79,7 +79,7 @@ export default async function SupportPage() {
                   required
                   rows={4}
                   placeholder="Explica qué estaba pasando cuando ocurrió el error..."
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all resize-none"
+                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all resize-none"
                 ></textarea>
               </div>
 
@@ -112,7 +112,7 @@ export default async function SupportPage() {
                       {ticket.status === 'open' ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-100">Abierto</span>
                       ) : ticket.status === 'in_progress' ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">En Proceso</span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-brand-50 text-brand-600 border border-brand-100">En Proceso</span>
                       ) : (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-green-50 text-green-600 border border-green-100">Resuelto</span>
                       )}

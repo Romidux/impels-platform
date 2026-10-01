@@ -198,7 +198,7 @@ export default async function AdminStoresPage({
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
                 {item.label}
               </p>
-              <p className="mt-1 font-display text-2xl font-black text-slate-950">
+              <p className="mt-1 font-display text-2xl font-semibold text-slate-950">
                 {item.value}
               </p>
             </div>

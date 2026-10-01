@@ -92,7 +92,7 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
                 <h3 className="font-display text-xl font-bold text-slate-900">
                   {plan.name}
                 </h3>
-                <p className="font-display text-2xl font-black text-slate-900 mt-2">
+                <p className="font-display text-2xl font-semibold text-slate-900 mt-2">
                   {plan.price}
                   {"priceSuffix" in plan && (
                     <span className="text-base font-semibold text-slate-500">

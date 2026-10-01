@@ -120,13 +120,13 @@ function MethodSelector({ label, icon, options, selected, onChange, hint }: Meth
           {customItems.map((item) => (
             <span
               key={item}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-blue-50 text-blue-700 border border-blue-100"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm bg-brand-50 text-brand-700 border border-brand-100"
             >
               {item}
               <button
                 type="button"
                 onClick={() => removeCustom(item)}
-                className="hover:text-blue-900 transition-colors"
+                className="hover:text-brand-900 transition-colors"
               >
                 <X className="w-3 h-3" />
               </button>

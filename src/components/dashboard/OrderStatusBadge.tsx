@@ -4,7 +4,7 @@ const STATUS_CONFIG: Record<
   OrderStatus,
   { label: string; classes: string }
 > = {
-  new: { label: "Nuevo", classes: "bg-blue-50 text-blue-800" },
+  new: { label: "Nuevo", classes: "bg-brand-50 text-brand-800" },
   confirmed: { label: "Confirmado", classes: "bg-brand-50 text-brand-900" },
   processing: { label: "En proceso", classes: "bg-amber-50 text-amber-800" },
   delivered: { label: "Entregado", classes: "bg-emerald-50 text-emerald-800" },

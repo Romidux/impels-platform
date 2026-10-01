@@ -138,7 +138,7 @@ export default async function AdminTicketDetailPage({
               {ticket.status === 'open' ? (
                 <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-semibold bg-amber-50 text-amber-700 border border-amber-200 w-full justify-center">Pendiente / Abierto</span>
               ) : ticket.status === 'in_progress' ? (
-                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-semibold bg-blue-50 text-blue-700 border border-blue-200 w-full justify-center">En Proceso</span>
+                <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-semibold bg-brand-50 text-brand-700 border border-brand-200 w-full justify-center">En Proceso</span>
               ) : (
                 <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-semibold bg-green-50 text-green-700 border border-green-200 w-full justify-center">Resuelto</span>
               )}

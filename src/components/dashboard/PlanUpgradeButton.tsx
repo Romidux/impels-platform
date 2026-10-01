@@ -29,7 +29,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="mt-5 w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+        className="mt-5 w-full bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
       >
         <Zap className="w-4 h-4" />
         Actualizar a Pro
@@ -48,11 +48,11 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
       >
         <div className="space-y-5">
           {/* Precio */}
-          <div className="bg-blue-50 border border-blue-100 rounded-2xl p-4 text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-blue-500 mb-1">
+          <div className="bg-brand-50 border border-brand-100 rounded-2xl p-4 text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-brand-500 mb-1">
               Plan Pro
             </p>
-            <p className="font-display text-3xl font-black text-slate-900">
+            <p className="font-display text-3xl font-semibold text-slate-900">
               {priceFormatted}
             </p>
             <p className="text-sm text-slate-500 mt-1">por mes</p>
@@ -101,9 +101,9 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
           </div>
 
           {/* Paso siguiente */}
-          <div className="border border-dashed border-blue-200 rounded-2xl p-4 space-y-3">
+          <div className="border border-dashed border-brand-200 rounded-2xl p-4 space-y-3">
             <div className="flex items-start gap-2.5">
-              <Mail className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" />
+              <Mail className="w-4 h-4 text-brand-500 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-slate-700">
                 Una vez realizado el pago, enviá el comprobante a{" "}
                 <span className="font-semibold text-slate-900">

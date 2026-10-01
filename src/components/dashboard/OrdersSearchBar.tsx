@@ -36,7 +36,7 @@ export function OrdersSearchBar({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Buscar por cliente o ID de pedido..."
-        className={`w-full pl-9 py-2.5 rounded-xl border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-300 focus:border-brand-400 transition-all ${value ? "pr-9" : "pr-4"} ${isPending ? "opacity-70" : ""}`}
+        className={`w-full pl-9 py-2.5 rounded-lg border border-slate-200 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all ${value ? "pr-9" : "pr-4"} ${isPending ? "opacity-70" : ""}`}
       />
       {value && (
         <button
