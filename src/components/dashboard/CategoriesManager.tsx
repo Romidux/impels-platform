@@ -21,6 +21,7 @@ import { slugify, cn } from "@/lib/utils";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { SearchInput } from "./SearchInput";
+import { EmptyState } from "@/components/ui/EmptyState";
 
 interface CategoriesManagerProps {
   storeId: string;
@@ -475,25 +476,19 @@ export default function CategoriesManager({
       <div className="bg-white border border-neutral-200 rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
         {parentCategories.length === 0 && !adding ? (
           /* ── Empty state ────────────────────────────────────────────── */
-          <div className="p-20 text-center bg-white">
-            <div className="w-24 h-24 rounded-[2.5rem] bg-white border border-neutral-200 shadow-sm flex items-center justify-center mx-auto mb-6 -rotate-3 hover:rotate-0 transition-transform duration-300">
-              <Tags className="w-10 h-10 text-brand-600" />
-            </div>
-            <h3 className="text-2xl font-semibold text-neutral-900 mb-2">
-              Sin categorías aún
-            </h3>
-            <p className="text-neutral-500 mb-8 max-w-sm mx-auto text-sm leading-relaxed">
-              Organiza tu tienda estructurando tus productos en categorías.
-              Mejora la experiencia de tus clientes.
-            </p>
-            <Button
-              onClick={() => setAdding(true)}
-              className="px-8"
-              icon={<Plus className="w-5 h-5" />}
-            >
-              Crear primera categoría
-            </Button>
-          </div>
+          <EmptyState
+            icon={<Tags className="w-7 h-7" />}
+            heading="Sin categorías aún"
+            description="Organiza tu tienda estructurando tus productos en categorías. Mejora la experiencia de tus clientes."
+            action={
+              <Button
+                onClick={() => setAdding(true)}
+                icon={<Plus className="w-4 h-4" />}
+              >
+                Crear primera categoría
+              </Button>
+            }
+          />
         ) : (
           <>
             {/* ── Table header ──────────────────────────────────────────── */}
@@ -527,14 +522,16 @@ export default function CategoriesManager({
             {/* ── Rows ──────────────────────────────────────────────────── */}
             <div className="divide-y divide-neutral-50">
               {term && visibleParents.length === 0 && (
-                <div className="py-16 text-center">
-                  <h3 className="text-sm font-medium text-neutral-800">
-                    Sin resultados
-                  </h3>
-                  <p className="mt-1 text-sm text-neutral-400">
-                    Ninguna categoría coincide con &ldquo;{query}&rdquo;.
-                  </p>
-                </div>
+                <EmptyState
+                  icon={<Tags className="w-7 h-7" />}
+                  heading="Sin resultados"
+                  description={`Ninguna categoría coincide con "${query}". Prueba con otro nombre.`}
+                  action={
+                    <Button variant="secondary" onClick={() => setQuery("")}>
+                      Ver todas las categorías
+                    </Button>
+                  }
+                />
               )}
               {visibleParents.map((cat) => {
                 const subcats = getVisibleSubcategories(cat);

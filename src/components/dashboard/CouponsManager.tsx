@@ -8,6 +8,8 @@ import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
 import * as Dialog from "@radix-ui/react-dialog";
 import { SearchInput } from "./SearchInput";
+import { EmptyState } from "@/components/ui/EmptyState";
+import { Button } from "@/components/ui/Button";
 
 interface CouponsManagerProps {
   storeId: string;
@@ -179,29 +181,33 @@ export default function CouponsManager({
 
       {/* Grid */}
       {coupons.length === 0 ? (
-        <div className="bg-white border border-neutral-200 text-center py-20 rounded-2xl shadow-apple-sm">
-          <div className="w-16 h-16 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Ticket className="w-8 h-8" />
-          </div>
-          <h3 className="text-lg font-semibold text-neutral-800">No hay cupones</h3>
-          <p className="text-neutral-400 mt-1 max-w-sm mx-auto mb-6">
-            Crea códigos de descuento para compartir en tus redes sociales y aumentar tus ventas.
-          </p>
-          <button
-            onClick={() => handleOpenModal()}
-            className="text-brand-600 font-semibold hover:text-brand-700"
-          >
-            Crear mi primer cupón &rarr;
-          </button>
+        <div className="dash-card">
+          <EmptyState
+            icon={<Ticket className="w-7 h-7" />}
+            heading="No hay cupones"
+            description="Crea códigos de descuento para compartir en tus redes sociales y aumentar tus ventas."
+            action={
+              <Button
+                onClick={() => handleOpenModal()}
+                icon={<Plus className="w-4 h-4" />}
+              >
+                Crear mi primer cupón
+              </Button>
+            }
+          />
         </div>
       ) : visibleCoupons.length === 0 ? (
-        <div className="dash-card py-20 text-center">
-          <h3 className="text-lg font-semibold text-neutral-800">
-            Sin resultados
-          </h3>
-          <p className="mt-1 text-neutral-400">
-            Ningún cupón coincide con &ldquo;{query}&rdquo;.
-          </p>
+        <div className="dash-card">
+          <EmptyState
+            icon={<Ticket className="w-7 h-7" />}
+            heading="Sin resultados"
+            description={`Ningún cupón coincide con "${query}". Prueba con otro código.`}
+            action={
+              <Button variant="secondary" onClick={() => setQuery("")}>
+                Ver todos los cupones
+              </Button>
+            }
+          />
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

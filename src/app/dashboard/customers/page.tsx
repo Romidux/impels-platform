@@ -166,7 +166,7 @@ export default async function CustomersPage({
               <EmptyState
                 icon={<Users className="w-10 h-10 text-neutral-300" />}
                 heading="Sin resultados"
-                description={`Ningún cliente coincide con "${q}". Probá con otro nombre, teléfono o ciudad.`}
+                description={`Ningún cliente coincide con "${q}". Prueba con otro nombre, teléfono o ciudad.`}
                 action={
                   <Link href="/dashboard/customers">
                     <Button variant="secondary">Ver todos los clientes</Button>
@@ -206,7 +206,7 @@ export default async function CustomersPage({
                     key={customer.id}
                     className="hover:bg-neutral-50/80 transition-colors group cursor-default"
                   >
-                    <td className="px-6 py-4">
+                    <td className="px-6 py-3">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center flex-shrink-0 group-hover:border-brand-200 group-hover:bg-brand-50 transition-colors">
                           <span className="text-sm font-semibold text-neutral-600 group-hover:text-brand-700">
@@ -225,29 +225,29 @@ export default async function CustomersPage({
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3">
                       <span className="text-sm text-neutral-600 font-medium whitespace-nowrap">
                         {customer.phone_number}
                       </span>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3">
                       <span className="text-sm text-neutral-500">
                         {customer.city || "-"}
                       </span>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3">
                       <div className="flex justify-center">
                         <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-neutral-100 text-2xs font-semibold text-neutral-600 border border-neutral-200/50">
                           {customer.orderCount}
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-4">
+                    <td className="px-4 py-3">
                       <span className="text-sm font-semibold text-neutral-900">
                         {formatCurrency(customer.totalSpent, currency)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-6 py-3 text-right">
                       {customer.lastOrderDate ? (
                         <div className="inline-flex items-center gap-1.5 text-xs text-neutral-400 font-medium bg-neutral-50 px-2 py-1 rounded-md border border-neutral-100 transition-colors group-hover:border-neutral-200">
                           <Clock className="w-3 h-3" />

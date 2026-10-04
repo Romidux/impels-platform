@@ -143,25 +143,25 @@ export default async function ProductsPage({
                 <table className="w-full">
                   <thead className="sticky top-0 z-10">
                     <tr className="bg-neutral-50 border-b border-neutral-200">
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide pl-6 py-4 w-20">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide pl-6 py-3 w-20">
                         Imagen
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
                         Producto
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
                         Categoría
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
                         Precio
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
                         Stock
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
                         Visibilidad
                       </th>
-                      <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-4">
+                      <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
                         Acciones
                       </th>
                     </tr>
@@ -193,7 +193,7 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Producto */}
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-3">
                             <Link href={editHref} className="flex items-center h-full">
                               <span className="font-medium text-sm text-neutral-900 group-hover:text-brand-600 transition-colors">
                                 {product.name}
@@ -201,7 +201,7 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Categoría */}
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-3">
                             <Link href={editHref} className="flex items-center h-full">
                               <span className="text-sm text-neutral-400">
                                 {product.category?.name || "—"}
@@ -209,7 +209,7 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Precio */}
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-3">
                             <Link href={editHref} className="flex items-center h-full">
                               <span className="text-sm font-medium text-neutral-900 whitespace-nowrap">
                                 {product.show_price && product.price > 0
@@ -219,7 +219,7 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Stock */}
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-3">
                             <Link href={editHref} className="flex items-center h-full">
                               <span className="text-sm text-neutral-500">
                                 {product.has_variants
@@ -233,14 +233,14 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Visibilidad */}
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-3">
                             <VisibilityDropdown
                               productId={product.id}
                               currentVisibility={product.visibility}
                             />
                           </td>
                           {/* Acciones */}
-                          <td className="pr-6 py-4">
+                          <td className="pr-6 py-3">
                             <ProductsActions productId={product.id} />
                           </td>
                         </tr>

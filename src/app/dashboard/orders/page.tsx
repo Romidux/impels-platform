@@ -344,12 +344,12 @@ function ListView({
                     key={order.id}
                     className="hover:bg-neutral-50/50 transition-colors"
                   >
-                    <td className="px-5 py-3.5">
+                    <td className="px-5 py-3">
                       <p className="font-mono text-xs font-semibold text-neutral-700">
                         #{order.id.slice(0, 8).toUpperCase()}
                       </p>
                     </td>
-                    <td className="px-4 py-3.5">
+                    <td className="px-4 py-3">
                       <Link
                         href={`/dashboard/orders/${order.id}`}
                         className="font-semibold text-neutral-900 hover:text-brand-600 transition-colors"
@@ -357,20 +357,20 @@ function ListView({
                         {order.customer_name}
                       </Link>
                     </td>
-                    <td className="px-4 py-3.5 hidden lg:table-cell max-w-[240px]">
+                    <td className="px-4 py-3 hidden lg:table-cell max-w-[240px]">
                       <p className="text-xs text-neutral-500 truncate">
                         {itemSummary}
                       </p>
                     </td>
-                    <td className="px-4 py-3.5 text-right">
+                    <td className="px-4 py-3 text-right">
                       <span className="font-display font-semibold text-neutral-900">
                         {formatCurrency(order.total, currency)}
                       </span>
                     </td>
-                    <td className="px-4 py-3.5">
+                    <td className="px-4 py-3">
                       <OrderStatusChanger orderId={order.id} currentStatus={order.status as OrderStatus} />
                     </td>
-                    <td className="px-4 py-3.5 hidden md:table-cell">
+                    <td className="px-4 py-3 hidden md:table-cell">
                       <p className="text-xs text-neutral-500 flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {new Date(order.created_at).toLocaleString("es-PY", {
@@ -381,7 +381,7 @@ function ListView({
                         })}
                       </p>
                     </td>
-                    <td className="px-4 py-3.5">
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-3 justify-end">
                         {whatsappLink && (
                           <a

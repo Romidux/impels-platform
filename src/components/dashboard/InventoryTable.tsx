@@ -353,7 +353,7 @@ export default function InventoryTable({
             <thead className="sticky top-0 z-10">
               <tr className="bg-neutral-50 border-b border-neutral-200">
                 {/* Checkbox header */}
-                <th className="pl-5 py-4 w-12">
+                <th className="pl-5 py-3 w-12">
                   <label className="flex items-center justify-center cursor-pointer">
                     <input
                       type="checkbox"
@@ -366,26 +366,26 @@ export default function InventoryTable({
                     />
                   </label>
                 </th>
-                <th className="pl-2 py-4 w-14" />
-                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4">
+                <th className="pl-2 py-3 w-14" />
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                   Producto
                 </th>
-                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4 hidden sm:table-cell">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3 hidden sm:table-cell">
                   Categoría
                 </th>
-                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                   Stock
                 </th>
-                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4 hidden md:table-cell w-36">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3 hidden md:table-cell w-36">
                   Nivel
                 </th>
-                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4 hidden lg:table-cell">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3 hidden lg:table-cell">
                   Valor
                 </th>
-                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                   Estado
                 </th>
-                <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-4">
+                <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
                   Acciones
                 </th>
               </tr>
@@ -427,7 +427,7 @@ export default function InventoryTable({
                       </div>
                     </td>
                     {/* Product name */}
-                    <td className="px-4 py-3.5">
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5">
                         {hasExpandableVariants && (
                           <button onClick={() => toggleExpand(product.id)} className="p-0.5 hover:bg-neutral-100 rounded-md transition-colors flex-shrink-0">
@@ -450,9 +450,9 @@ export default function InventoryTable({
                       </div>
                     </td>
                     {/* Category */}
-                    <td className="px-4 py-3.5 hidden sm:table-cell"><span className="text-sm text-neutral-400">{product.categoryName || "—"}</span></td>
+                    <td className="px-4 py-3 hidden sm:table-cell"><span className="text-sm text-neutral-400">{product.categoryName || "—"}</span></td>
                     {/* Stock editor */}
-                    <td className="px-4 py-3.5">
+                    <td className="px-4 py-3">
                       {hasExpandableVariants ? (
                         <span className="text-sm font-semibold tabular-nums text-neutral-900">{product.stock_quantity}<span className="text-2xs font-normal text-neutral-400 ml-1">total</span></span>
                       ) : (
@@ -460,23 +460,23 @@ export default function InventoryTable({
                       )}
                     </td>
                     {/* Stock bar */}
-                    <td className="px-4 py-3.5 hidden md:table-cell w-36">
+                    <td className="px-4 py-3 hidden md:table-cell w-36">
                       <div className="flex-1 h-2 bg-neutral-50 rounded-full overflow-hidden">
                         <div className={`h-full rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${stockPct}%` }} />
                       </div>
                     </td>
                     {/* Value */}
-                    <td className="px-4 py-3.5 hidden lg:table-cell">
+                    <td className="px-4 py-3 hidden lg:table-cell">
                       <span className="text-sm font-medium text-neutral-900 tabular-nums whitespace-nowrap">{formatCurrency(stockValue, currency)}</span>
                     </td>
                     {/* Status badge */}
-                    <td className="px-4 py-3.5">
+                    <td className="px-4 py-3">
                       <Badge variant={isOut ? "error" : isLow ? "warning" : "success"} dot>
                         {isOut ? "Sin stock" : isLow ? "Bajo" : "OK"}
                       </Badge>
                     </td>
                     {/* Actions */}
-                    <td className="pr-6 py-3.5 text-right">
+                    <td className="pr-6 py-3 text-right">
                       <Link href={`/dashboard/products/${product.id}`} className="p-2 text-neutral-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors inline-flex" title="Editar producto">
                         <Edit className="w-4 h-4" />
                       </Link>
