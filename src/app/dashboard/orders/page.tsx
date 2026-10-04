@@ -304,7 +304,7 @@ function ListView({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-neutral-100 bg-neutral-50/50">
-                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wider px-5 py-3 w-28">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wider px-6 py-3 w-28">
                   Pedido
                 </th>
                 <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
@@ -344,7 +344,7 @@ function ListView({
                     key={order.id}
                     className="hover:bg-neutral-50/50 transition-colors"
                   >
-                    <td className="px-5 py-3">
+                    <td className="px-6 py-3">
                       <p className="font-mono text-xs font-semibold text-neutral-700">
                         #{order.id.slice(0, 8).toUpperCase()}
                       </p>

@@ -2,7 +2,7 @@ export default function CouponsLoading() {
   return (
     <div className="space-y-5">
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div className="space-y-2">
           <div className="h-7 w-28 bg-neutral-200 rounded-xl animate-pulse" />
           <div className="h-4 w-44 bg-neutral-100 rounded-lg animate-pulse" />

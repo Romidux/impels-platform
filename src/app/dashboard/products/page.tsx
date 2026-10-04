@@ -146,19 +146,19 @@ export default async function ProductsPage({
                       <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide pl-6 py-3 w-20">
                         Imagen
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                         Producto
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
+                      <th className="hidden lg:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                         Categoría
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                         Precio
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
+                      <th className="hidden sm:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                         Stock
                       </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-3">
+                      <th className="hidden md:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                         Visibilidad
                       </th>
                       <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
@@ -193,7 +193,7 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Producto */}
-                          <td className="px-6 py-3">
+                          <td className="px-4 py-3">
                             <Link href={editHref} className="flex items-center h-full">
                               <span className="font-medium text-sm text-neutral-900 group-hover:text-brand-600 transition-colors">
                                 {product.name}
@@ -201,7 +201,7 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Categoría */}
-                          <td className="px-6 py-3">
+                          <td className="hidden lg:table-cell px-4 py-3">
                             <Link href={editHref} className="flex items-center h-full">
                               <span className="text-sm text-neutral-400">
                                 {product.category?.name || "—"}
@@ -209,7 +209,7 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Precio */}
-                          <td className="px-6 py-3">
+                          <td className="px-4 py-3">
                             <Link href={editHref} className="flex items-center h-full">
                               <span className="text-sm font-medium text-neutral-900 whitespace-nowrap">
                                 {product.show_price && product.price > 0
@@ -219,7 +219,7 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Stock */}
-                          <td className="px-6 py-3">
+                          <td className="hidden sm:table-cell px-4 py-3">
                             <Link href={editHref} className="flex items-center h-full">
                               <span className="text-sm text-neutral-500">
                                 {product.has_variants
@@ -233,7 +233,7 @@ export default async function ProductsPage({
                             </Link>
                           </td>
                           {/* Visibilidad */}
-                          <td className="px-6 py-3">
+                          <td className="hidden md:table-cell px-4 py-3">
                             <VisibilityDropdown
                               productId={product.id}
                               currentVisibility={product.visibility}

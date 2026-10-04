@@ -1,7 +1,7 @@
 export default function TeamLoading() {
   return (
     <div className="space-y-6 animate-fade-in max-w-3xl">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="h-8 w-28 bg-neutral-200 rounded-xl animate-pulse" />
           <div className="h-4 w-48 bg-neutral-100 rounded-lg animate-pulse mt-2" />

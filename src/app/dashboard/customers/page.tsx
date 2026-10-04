@@ -186,16 +186,16 @@ export default async function CustomersPage({
                   <th className="text-left text-xs font-medium text-neutral-500 px-4 py-3">
                     WhatsApp / Tel
                   </th>
-                  <th className="text-left text-xs font-medium text-neutral-500 px-4 py-3">
+                  <th className="hidden lg:table-cell text-left text-xs font-medium text-neutral-500 px-4 py-3">
                     Ciudad
                   </th>
-                  <th className="text-left text-xs font-medium text-neutral-500 px-4 py-3 text-center">
+                  <th className="hidden sm:table-cell text-left text-xs font-medium text-neutral-500 px-4 py-3 text-center">
                     Pedidos
                   </th>
-                  <th className="text-left text-xs font-medium text-neutral-500 px-4 py-3">
+                  <th className="hidden md:table-cell text-left text-xs font-medium text-neutral-500 px-4 py-3">
                     Inversión total
                   </th>
-                  <th className="text-right text-xs font-medium text-neutral-500 px-6 py-3">
+                  <th className="hidden lg:table-cell text-right text-xs font-medium text-neutral-500 px-6 py-3">
                     Última actividad
                   </th>
                 </tr>
@@ -230,24 +230,24 @@ export default async function CustomersPage({
                         {customer.phone_number}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="hidden lg:table-cell px-4 py-3">
                       <span className="text-sm text-neutral-500">
                         {customer.city || "-"}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="hidden sm:table-cell px-4 py-3">
                       <div className="flex justify-center">
                         <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-neutral-100 text-2xs font-semibold text-neutral-600 border border-neutral-200/50">
                           {customer.orderCount}
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="hidden md:table-cell px-4 py-3">
                       <span className="text-sm font-semibold text-neutral-900">
                         {formatCurrency(customer.totalSpent, currency)}
                       </span>
                     </td>
-                    <td className="px-6 py-3 text-right">
+                    <td className="hidden lg:table-cell px-6 py-3 text-right">
                       {customer.lastOrderDate ? (
                         <div className="inline-flex items-center gap-1.5 text-xs text-neutral-400 font-medium bg-neutral-50 px-2 py-1 rounded-md border border-neutral-100 transition-colors group-hover:border-neutral-200">
                           <Clock className="w-3 h-3" />
