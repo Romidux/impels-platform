@@ -122,10 +122,10 @@ export default async function StoreHubPage({
       {/* Store identity banner */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight leading-tight">
+          <h1 className="text-2xl font-semibold text-neutral-900 tracking-tight leading-tight">
             Mi Tienda
           </h1>
-          <p className="mt-2 text-base text-slate-500 font-normal">
+          <p className="mt-2 text-base text-neutral-500 font-normal">
             Gestiona la identidad, el diseño y el contenido de tu tienda.
           </p>
         </div>
@@ -133,7 +133,7 @@ export default async function StoreHubPage({
           href={storeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-all hover:border-brand-200 hover:text-brand-700 flex-shrink-0"
+          className="inline-flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-4 py-2.5 text-sm font-medium text-neutral-700 shadow-sm transition-all hover:border-brand-200 hover:text-brand-700 flex-shrink-0"
         >
           <ExternalLink className="h-4 w-4" />
           Ver tienda
@@ -141,17 +141,17 @@ export default async function StoreHubPage({
       </div>
 
       {/* Store URL + progress */}
-      <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-sm">
+      <div className="rounded-[28px] border border-neutral-200 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-slate-100">
-              <Globe className="h-5 w-5 text-slate-500" />
+            <div className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-2xl bg-neutral-100">
+              <Globe className="h-5 w-5 text-neutral-500" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-400">
                 Enlace público
               </p>
-              <p className="mt-0.5 truncate text-sm font-medium text-slate-900">
+              <p className="mt-0.5 truncate text-sm font-medium text-neutral-900">
                 {storeUrl}
               </p>
             </div>
@@ -183,15 +183,15 @@ export default async function StoreHubPage({
                     style={{ transition: "stroke-dashoffset 0.5s ease" }}
                   />
                 </svg>
-                <span className="absolute text-[11px] font-semibold text-slate-700">
+                <span className="absolute text-[11px] font-semibold text-neutral-700">
                   {progressPct}%
                 </span>
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-900">
+                <p className="text-sm font-medium text-neutral-900">
                   {allDone ? "Tienda completa" : `${completedCount} de ${totalCount}`}
                 </p>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs text-neutral-400">
                   {allDone ? "Todo configurado ✓" : "secciones listas"}
                 </p>
               </div>
@@ -211,7 +211,7 @@ export default async function StoreHubPage({
               <Link
                 key={item.href}
                 href={item.href}
-                className="group flex items-center justify-between rounded-[24px] border border-slate-200 bg-white px-4 py-4 shadow-sm transition-all hover:border-slate-300 hover:shadow-md"
+                className="group flex items-center justify-between rounded-[24px] border border-neutral-200 bg-white px-4 py-4 shadow-sm transition-all hover:border-neutral-300 hover:shadow-md"
               >
                 <div className="flex min-w-0 items-center gap-4">
                   <div
@@ -220,10 +220,10 @@ export default async function StoreHubPage({
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-slate-900">
+                    <p className="text-sm font-medium text-neutral-900">
                       {item.label}
                     </p>
-                    <p className="mt-0.5 text-xs text-slate-400 truncate">
+                    <p className="mt-0.5 text-xs text-neutral-400 truncate">
                       {item.detail}
                     </p>
                   </div>
@@ -235,7 +235,7 @@ export default async function StoreHubPage({
                   ) : (
                     <AlertCircle className="h-4 w-4 text-amber-400" />
                   )}
-                  <ArrowRight className="h-4 w-4 text-slate-300 transition-colors group-hover:text-slate-600" />
+                  <ArrowRight className="h-4 w-4 text-neutral-300 transition-colors group-hover:text-neutral-600" />
                 </div>
               </Link>
             );

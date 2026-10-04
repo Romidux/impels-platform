@@ -63,8 +63,8 @@ export function SetupWizard({
   const activeStepIdx = steps.findIndex((s) => !s.isDone);
 
   return (
-    <div className="bg-white border border-slate-200 rounded-2xl shadow-apple-sm overflow-hidden mb-8 relative">
-      <div className="absolute top-0 left-0 w-full h-1 bg-slate-100/60">
+    <div className="bg-white border border-neutral-200 rounded-2xl shadow-apple-sm overflow-hidden mb-8 relative">
+      <div className="absolute top-0 left-0 w-full h-1 bg-neutral-100/60">
         <div
           className="h-full bg-brand-600 transition-all duration-1000"
           style={{ width: `${progressPercent}%` }}
@@ -77,10 +77,10 @@ export function SetupWizard({
           <div className="flex items-center gap-4">
             <ProgressRing progress={progressPercent} size={56} />
             <div>
-              <h2 className="font-display text-xl font-semibold text-slate-800 tracking-tight">
+              <h2 className="font-display text-xl font-semibold text-neutral-800 tracking-tight">
                 Tu tienda está {progressPercent}% lista
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-neutral-400 mt-1">
                 Completa estos pasos básicos para empezar a vender.
               </p>
             </div>
@@ -95,7 +95,7 @@ export function SetupWizard({
                     ? "border-green-100 bg-green-50/50" 
                     : idx === activeStepIdx 
                     ? "border-brand-200 bg-brand-50/30 shadow-sm ring-1 ring-brand-100" 
-                    : "border-slate-100 opacity-60 grayscale"
+                    : "border-neutral-100 opacity-60 grayscale"
                 }`}
               >
                 <div className={`mt-0.5 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
@@ -103,16 +103,16 @@ export function SetupWizard({
                     ? "bg-green-500 text-white" 
                     : idx === activeStepIdx 
                     ? "bg-brand-100 text-brand-600" 
-                    : "bg-slate-100 text-slate-400"
+                    : "bg-neutral-100 text-neutral-400"
                 }`}>
                   {step.isDone ? <Check className="w-4 h-4" /> : step.icon}
                 </div>
                 
                 <div className="flex-1">
-                  <h3 className={`font-medium text-sm ${step.isDone ? "text-green-900" : "text-slate-900"}`}>
+                  <h3 className={`font-medium text-sm ${step.isDone ? "text-green-900" : "text-neutral-900"}`}>
                     {step.title}
                   </h3>
-                  <p className="text-sm text-slate-500 mt-1 mb-3">
+                  <p className="text-sm text-neutral-500 mt-1 mb-3">
                     {step.description}
                   </p>
                   
@@ -134,8 +134,8 @@ export function SetupWizard({
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md mb-4">
             <Rocket className="w-8 h-8 text-brand-500" />
           </div>
-          <h4 className="font-semibold text-slate-900 mb-2">Ya casi publicas</h4>
-          <p className="text-xs text-slate-500">
+          <h4 className="font-semibold text-neutral-900 mb-2">Ya casi publicas</h4>
+          <p className="text-xs text-neutral-500">
             Una tienda con productos claros y un método de contacto rápido vende un 300% más rápido.
           </p>
         </div>

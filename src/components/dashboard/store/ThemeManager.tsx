@@ -15,7 +15,7 @@ const TEMPLATES = [
     name: "Minimal",
     description: "Catalogo limpio y directo, ideal para mostrar productos sin distracciones.",
     preview: "bg-gradient-to-br from-slate-100 via-white to-slate-200",
-    accent: "border-slate-200",
+    accent: "border-neutral-200",
     tier: "Activo",
     available: true,
   },
@@ -116,10 +116,10 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-sm font-medium text-neutral-900">
               Capa visual base
             </p>
-            <p className="mt-1 text-sm leading-relaxed text-slate-600">
+            <p className="mt-1 text-sm leading-relaxed text-neutral-600">
               En esta etapa puedes definir la plantilla base y el color principal.
               Luego ajustas portada, secciones y textos en las siguientes capas.
             </p>
@@ -151,13 +151,13 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                 }}
                 className={`relative overflow-hidden rounded-[24px] border bg-white text-left transition-all ${isSelected
                     ? "border-brand-300 shadow-[0_12px_32px_rgba(37,99,235,0.14)]"
-                    : `border-slate-200 hover:border-slate-300 ${templateOption.accent}`
+                    : `border-neutral-200 hover:border-neutral-300 ${templateOption.accent}`
                   } ${locked ? "opacity-75" : ""}`}
               >
                 <div className={`h-24 ${templateOption.preview}`} />
                 <div className="space-y-2 p-4">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="font-display text-lg font-semibold text-slate-900">
+                    <p className="font-display text-lg font-semibold text-neutral-900">
                       {templateOption.name}
                     </p>
                     <span
@@ -169,7 +169,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                       {templateOption.tier}
                     </span>
                   </div>
-                  <p className="text-sm leading-relaxed text-slate-500">
+                  <p className="text-sm leading-relaxed text-neutral-500">
                     {templateOption.description}
                   </p>
                 </div>
@@ -197,21 +197,21 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
               type="color"
               value={primaryColor}
               onChange={(e) => setPrimaryColor(e.target.value)}
-              className="h-14 w-14 cursor-pointer rounded-2xl border border-slate-200 bg-white"
+              className="h-14 w-14 cursor-pointer rounded-2xl border border-neutral-200 bg-white"
             />
 
             <div>
-              <p className="text-sm font-medium text-slate-900">
+              <p className="text-sm font-medium text-neutral-900">
                 {primaryColor}
               </p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-neutral-500">
                 Este color se usa en botones, enlaces y acentos principales.
               </p>
             </div>
           </div>
 
           <div>
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-slate-400">
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
               Presets rapidos
             </p>
             <div className="flex flex-wrap gap-2">
@@ -239,7 +239,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
         }}
       >
         <div className="space-y-3">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-neutral-500">
             Define el aspect ratio de las imágenes en tu catálogo.
           </p>
           <div className="grid grid-cols-2 gap-4">
@@ -255,17 +255,17 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                   className={`relative flex flex-col items-center gap-3 rounded-2xl border p-5 transition-all ${
                     isSelected
                       ? "border-brand-300 bg-brand-50/50 shadow-[0_8px_24px_rgba(37,99,235,0.1)]"
-                      : "border-slate-200 bg-white hover:border-slate-300"
+                      : "border-neutral-200 bg-white hover:border-neutral-300"
                   }`}
                 >
                   <div
-                    className={`rounded-lg bg-slate-100 border border-slate-200 ${
+                    className={`rounded-lg bg-neutral-100 border border-neutral-200 ${
                       ratio === "1:1" ? "w-16 h-16" : "w-14 h-[70px]"
                     }`}
                   />
                   <div className="text-center">
-                    <p className="text-sm font-semibold text-slate-900">{label}</p>
-                    <p className="text-xs text-slate-400">{sublabel}</p>
+                    <p className="text-sm font-semibold text-neutral-900">{label}</p>
+                    <p className="text-xs text-neutral-400">{sublabel}</p>
                   </div>
                   {isSelected && (
                     <div className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-white">

@@ -234,8 +234,8 @@ export default function ManualOrderForm({
         {/* Left Column: Items */}
         <div className="lg:col-span-2 space-y-6">
           <Card className="p-0 overflow-hidden">
-            <div className="p-5 border-b border-slate-100 flex items-center justify-between">
-              <h2 className="font-semibold text-slate-900">Productos del pedido</h2>
+            <div className="p-5 border-b border-neutral-100 flex items-center justify-between">
+              <h2 className="font-semibold text-neutral-900">Productos del pedido</h2>
               {!showProductSelector && (
                 <button
                   onClick={() => setShowProductSelector(true)}
@@ -249,23 +249,23 @@ export default function ManualOrderForm({
 
             {/* In-line Product Selector */}
             {showProductSelector && (
-              <div className="p-5 bg-slate-50 border-b border-slate-100 space-y-4">
+              <div className="p-5 bg-neutral-50 border-b border-neutral-100 space-y-4">
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                   <input
                     type="text"
                     placeholder="Buscar producto..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     autoFocus
-                    className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all bg-white"
+                    className="w-full pl-9 pr-4 py-2 border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all bg-white"
                   />
                 </div>
 
                 {selectedProductForVariant ? (
                   <div className="space-y-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-slate-900">
+                      <span className="text-sm font-medium text-neutral-900">
                         Selecciona variante de {selectedProductForVariant.name}
                       </span>
                       <button
@@ -285,14 +285,14 @@ export default function ManualOrderForm({
                             disabled={vOut}
                             onClick={() => handleAddProduct(selectedProductForVariant, variant)}
                             className={`flex flex-col text-left p-3 rounded-lg border transition-all ${
-                              vOut ? "opacity-50 border-slate-100 bg-slate-50" : "bg-white border-slate-200 hover:border-brand-300 hover:shadow-sm"
+                              vOut ? "opacity-50 border-neutral-100 bg-neutral-50" : "bg-white border-neutral-200 hover:border-brand-300 hover:shadow-sm"
                             }`}
                           >
-                            <span className="text-sm font-medium text-slate-900">
+                            <span className="text-sm font-medium text-neutral-900">
                               {variant.option_values.join(" / ")}
                             </span>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs font-semibold text-slate-700">
+                              <span className="text-xs font-semibold text-neutral-700">
                                 {formatCurrency(variant.price ?? selectedProductForVariant.price, currency)}
                               </span>
                               {selectedProductForVariant.track_inventory && (
@@ -307,9 +307,9 @@ export default function ManualOrderForm({
                     </div>
                   </div>
                 ) : (
-                  <div className="max-h-64 overflow-y-auto border border-slate-100 rounded-xl bg-white divide-y divide-slate-50">
+                  <div className="max-h-64 overflow-y-auto border border-neutral-100 rounded-xl bg-white divide-y divide-neutral-50">
                     {filteredProducts.length === 0 ? (
-                      <p className="p-4 text-sm text-center text-slate-500">No se encontraron productos.</p>
+                      <p className="p-4 text-sm text-center text-neutral-500">No se encontraron productos.</p>
                     ) : (
                       filteredProducts.map((product) => {
                         const out = product.track_inventory && product.stock_quantity <= 0 && !product.has_variants;
@@ -318,17 +318,17 @@ export default function ManualOrderForm({
                             key={product.id}
                             disabled={out}
                             onClick={() => handleAddProduct(product)}
-                            className="w-full text-left p-3 flex items-center justify-between hover:bg-slate-50 transition-colors disabled:opacity-50 group"
+                            className="w-full text-left p-3 flex items-center justify-between hover:bg-neutral-50 transition-colors disabled:opacity-50 group"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0">
+                              <div className="w-10 h-10 rounded-lg bg-neutral-100 overflow-hidden flex-shrink-0">
                                 {product.images[0]?.url && (
                                   <img src={product.images[0].url} alt="" className="w-full h-full object-cover" />
                                 )}
                               </div>
                               <div>
-                                <p className="text-sm font-medium text-slate-900">{product.name}</p>
-                                <span className="text-xs font-semibold text-slate-500">
+                                <p className="text-sm font-medium text-neutral-900">{product.name}</p>
+                                <span className="text-xs font-semibold text-neutral-500">
                                   {product.has_variants ? "Múltiples variantes" : formatCurrency(product.price, currency)}
                                 </span>
                               </div>
@@ -339,7 +339,7 @@ export default function ManualOrderForm({
                                   Stock: {product.stock_quantity}
                                 </span>
                               )}
-                              <Plus className="w-4 h-4 text-slate-400 group-hover:text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
+                              <Plus className="w-4 h-4 text-neutral-400 group-hover:text-brand-500 opacity-0 group-hover:opacity-100 transition-opacity mt-1" />
                             </div>
                           </button>
                         );
@@ -349,7 +349,7 @@ export default function ManualOrderForm({
                 )}
                 
                 <div className="flex justify-end pt-2">
-                  <button onClick={() => setShowProductSelector(false)} className="text-xs font-medium text-slate-500 hover:text-slate-700">
+                  <button onClick={() => setShowProductSelector(false)} className="text-xs font-medium text-neutral-500 hover:text-neutral-700">
                     Cancelar
                   </button>
                 </div>
@@ -358,12 +358,12 @@ export default function ManualOrderForm({
 
             {/* Cart Items */}
             {items.length === 0 ? (
-              <div className="p-8 text-center bg-slate-50/50">
-                <p className="text-sm text-slate-500 mb-4">No hay productos en el pedido</p>
+              <div className="p-8 text-center bg-neutral-50/50">
+                <p className="text-sm text-neutral-500 mb-4">No hay productos en el pedido</p>
                 {!showProductSelector && (
                   <button
                     onClick={() => setShowProductSelector(true)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-dashed border-slate-300 rounded-xl text-sm font-medium text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-dashed border-neutral-300 rounded-xl text-sm font-medium text-neutral-600 hover:text-brand-600 hover:border-brand-300 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     Buscar productos
@@ -371,49 +371,49 @@ export default function ManualOrderForm({
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-slate-50">
+              <div className="divide-y divide-neutral-50">
                 {items.map((item) => (
                   <div key={item.id} className="p-4 flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0">
+                    <div className="w-12 h-12 rounded-lg bg-neutral-100 overflow-hidden flex-shrink-0">
                       {item.product_image && <img src={item.product_image} alt="" className="w-full h-full object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-900 truncate">{item.product_name}</p>
+                      <p className="text-sm font-semibold text-neutral-900 truncate">{item.product_name}</p>
                       {item.variant_label && (
-                        <p className="text-xs font-medium text-slate-500">{item.variant_label}</p>
+                        <p className="text-xs font-medium text-neutral-500">{item.variant_label}</p>
                       )}
                       <p className="text-xs text-brand-600 font-semibold mt-0.5">
                         {formatCurrency(item.price, currency)} c/u
                       </p>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center border border-slate-200 rounded-lg bg-white h-8 overflow-hidden">
+                      <div className="flex items-center border border-neutral-200 rounded-lg bg-white h-8 overflow-hidden">
                         <button
                           onClick={() => handleUpdateItemQuantity(item.id, -1)}
-                          className="w-8 h-full flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                          className="w-8 h-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 transition-colors disabled:opacity-50"
                           disabled={item.quantity <= 1}
                         >
                           -
                         </button>
-                        <span className="w-8 text-center text-sm font-semibold text-slate-900 text-sm">
+                        <span className="w-8 text-center text-sm font-semibold text-neutral-900 text-sm">
                           {item.quantity}
                         </span>
                         <button
                           onClick={() => handleUpdateItemQuantity(item.id, 1)}
-                          className="w-8 h-full flex items-center justify-center text-slate-500 hover:bg-slate-50 transition-colors disabled:opacity-50"
+                          className="w-8 h-full flex items-center justify-center text-neutral-500 hover:bg-neutral-50 transition-colors disabled:opacity-50"
                           disabled={item.track_inventory && item.quantity >= item.stock}
                         >
                           +
                         </button>
                       </div>
                       <div className="w-24 text-right">
-                        <p className="text-sm font-semibold text-slate-900">
+                        <p className="text-sm font-semibold text-neutral-900">
                           {formatCurrency(item.price * item.quantity, currency)}
                         </p>
                       </div>
                       <button
                         onClick={() => handleRemoveItem(item.id)}
-                        className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        className="p-1.5 text-neutral-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -425,12 +425,12 @@ export default function ManualOrderForm({
             
             {/* Totals */}
             {items.length > 0 && (
-              <div className="p-5 border-t border-slate-100 bg-slate-50 space-y-2">
-                <div className="flex justify-between items-center text-sm font-medium text-slate-500">
+              <div className="p-5 border-t border-neutral-100 bg-neutral-50 space-y-2">
+                <div className="flex justify-between items-center text-sm font-medium text-neutral-500">
                   <span>Subtotal ({items.length} productos)</span>
                   <span>{formatCurrency(subtotal, currency)}</span>
                 </div>
-                <div className="flex justify-between items-center text-lg font-semibold text-slate-900 pt-2 border-t border-slate-200/60">
+                <div className="flex justify-between items-center text-lg font-semibold text-neutral-900 pt-2 border-t border-neutral-200/60">
                   <span>Total</span>
                   <span>{formatCurrency(total, currency)}</span>
                 </div>
@@ -442,14 +442,14 @@ export default function ManualOrderForm({
         {/* Right Column: Customer Details */}
         <div className="space-y-6">
           <Card className="p-5 space-y-4">
-            <h2 className="font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="font-semibold text-neutral-900 flex items-center gap-2">
               <User className="w-5 h-5 text-brand-600" />
               Datos del cliente
             </h2>
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Nombre *</label>
+                <label className="block text-xs font-medium text-neutral-700 mb-1">Nombre *</label>
                 <input
                   type="text"
                   value={customer.name}
@@ -460,7 +460,7 @@ export default function ManualOrderForm({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">WhatsApp *</label>
+                <label className="block text-xs font-medium text-neutral-700 mb-1">WhatsApp *</label>
                 <PhoneInput
                   value={customer.phone_full}
                   onChange={(val) => handleUpdateCustomer("phone_full", val)}
@@ -469,7 +469,7 @@ export default function ManualOrderForm({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Dirección (Opcional)</label>
+                <label className="block text-xs font-medium text-neutral-700 mb-1">Dirección (Opcional)</label>
                 <textarea
                   value={customer.address}
                   onChange={(e) => handleUpdateCustomer("address", e.target.value)}
@@ -480,7 +480,7 @@ export default function ManualOrderForm({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1">Notas internas (Opcional)</label>
+                <label className="block text-xs font-medium text-neutral-700 mb-1">Notas internas (Opcional)</label>
                 <textarea
                   value={customer.notes}
                   onChange={(e) => handleUpdateCustomer("notes", e.target.value)}

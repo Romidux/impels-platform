@@ -57,29 +57,29 @@ export default async function SupportPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Form Column */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-6">
-            <h3 className="font-semibold text-slate-900 text-lg mb-1">Nuevo Ticket</h3>
-            <p className="text-sm text-slate-500 mb-5">Describe tu problema detalladamente.</p>
+          <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm p-6">
+            <h3 className="font-semibold text-neutral-900 text-lg mb-1">Nuevo Ticket</h3>
+            <p className="text-sm text-neutral-500 mb-5">Describe tu problema detalladamente.</p>
             
             <form action={createTicket} className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Asunto</label>
+                <label className="block text-xs font-medium text-neutral-700 mb-1.5">Asunto</label>
                 <input
                   name="subject"
                   required
                   placeholder="Ej. Mi pasarela de pagos no funciona"
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all"
+                  className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all"
                 />
               </div>
               
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Mensaje</label>
+                <label className="block text-xs font-medium text-neutral-700 mb-1.5">Mensaje</label>
                 <textarea
                   name="message"
                   required
                   rows={4}
                   placeholder="Explica qué estaba pasando cuando ocurrió el error..."
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all resize-none"
+                  className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/10 focus:border-brand-500 transition-all resize-none"
                 ></textarea>
               </div>
 
@@ -92,10 +92,10 @@ export default async function SupportPage() {
 
         {/* Tickets List Column */}
         <div className="lg:col-span-2 space-y-4">
-          <h3 className="font-semibold text-slate-900 text-lg px-1">Historial de Tickets</h3>
+          <h3 className="font-semibold text-neutral-900 text-lg px-1">Historial de Tickets</h3>
           
           {!tickets || tickets.length === 0 ? (
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+            <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm">
               <EmptyState 
                 icon={<HelpCircle className="w-8 h-8" />}
                 heading="Sin tickets recientes"
@@ -105,10 +105,10 @@ export default async function SupportPage() {
           ) : (
             <div className="space-y-3">
               {tickets.map((ticket) => (
-                <div key={ticket.id} className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-5 flex flex-col sm:flex-row sm:items-start gap-4">
+                <div key={ticket.id} className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm p-5 flex flex-col sm:flex-row sm:items-start gap-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="font-semibold text-slate-900">{ticket.subject}</h4>
+                      <h4 className="font-semibold text-neutral-900">{ticket.subject}</h4>
                       {ticket.status === 'open' ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-600 border border-amber-100">Abierto</span>
                       ) : ticket.status === 'in_progress' ? (
@@ -117,7 +117,7 @@ export default async function SupportPage() {
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-600 border border-green-100">Resuelto</span>
                       )}
                     </div>
-                    <p className="text-sm text-slate-600 line-clamp-2">{ticket.message}</p>
+                    <p className="text-sm text-neutral-600 line-clamp-2">{ticket.message}</p>
                     
                     {ticket.admin_notes && (
                       <div className="mt-4 p-3 bg-brand-50 rounded-lg border border-brand-100">
@@ -126,7 +126,7 @@ export default async function SupportPage() {
                       </div>
                     )}
                   </div>
-                  <div className="text-xs text-slate-400 whitespace-nowrap flex items-center gap-1">
+                  <div className="text-xs text-neutral-400 whitespace-nowrap flex items-center gap-1">
                     <Clock className="w-3 h-3" />
                     {new Date(ticket.created_at).toLocaleDateString('es-ES')}
                   </div>

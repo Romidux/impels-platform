@@ -107,10 +107,10 @@ export default function SectionsManager({
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-sm font-medium text-neutral-900">
               Orden de la portada
             </p>
-            <p className="mt-1 text-sm leading-relaxed text-slate-600">
+            <p className="mt-1 text-sm leading-relaxed text-neutral-600">
               Activa o desactiva bloques y usa las flechas para cambiar el orden en que aparecen dentro de tu tienda.
             </p>
           </div>
@@ -121,14 +121,14 @@ export default function SectionsManager({
         header={{
           title: "Bloques visibles",
           icon: <Layers className="h-5 w-5 text-emerald-600" />,
-          action: <span className="text-xs text-slate-400">Usa las flechas para ordenar</span>,
+          action: <span className="text-xs text-neutral-400">Usa las flechas para ordenar</span>,
         }}
       >
         <div className="space-y-3">
           {orderedSections.map((item, index) => (
             <div
               key={item.key}
-              className="rounded-[22px] border border-slate-200 bg-slate-50/70 px-4 py-3"
+              className="rounded-[22px] border border-neutral-200 bg-neutral-50/70 px-4 py-3"
             >
               <div className="flex items-center gap-3">
                 <div className="flex flex-col gap-0.5">
@@ -136,7 +136,7 @@ export default function SectionsManager({
                     type="button"
                     onClick={() => moveSection(index, "up")}
                     disabled={index === 0}
-                    className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white hover:text-slate-700 disabled:opacity-25"
+                    className="flex h-6 w-6 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-white hover:text-neutral-700 disabled:opacity-25"
                   >
                     <ChevronUp className="h-4 w-4" />
                   </button>
@@ -144,17 +144,17 @@ export default function SectionsManager({
                     type="button"
                     onClick={() => moveSection(index, "down")}
                     disabled={index === orderedSections.length - 1}
-                    className="flex h-6 w-6 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-white hover:text-slate-700 disabled:opacity-25"
+                    className="flex h-6 w-6 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-white hover:text-neutral-700 disabled:opacity-25"
                   >
                     <ChevronDown className="h-4 w-4" />
                   </button>
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-slate-900">
+                  <p className="text-sm font-medium text-neutral-900">
                     {SECTION_LABELS[item.key] || item.key}
                   </p>
-                  <p className="mt-0.5 text-xs text-slate-500">
+                  <p className="mt-0.5 text-xs text-neutral-500">
                     {sections[item.key] ? "Visible en la tienda" : "Oculta por ahora"}
                   </p>
                 </div>

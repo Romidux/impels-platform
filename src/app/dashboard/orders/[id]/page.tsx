@@ -95,14 +95,14 @@ export default async function OrderDetailPage({
                       className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
                         isCompleted
                           ? "bg-brand-600 text-white shadow-sm shadow-brand-200"
-                          : "bg-slate-100 text-slate-400 border border-slate-200"
+                          : "bg-neutral-100 text-neutral-400 border border-neutral-200"
                       } ${isCurrent ? "ring-4 ring-brand-100 scale-110" : ""}`}
                     >
                       {i + 1}
                     </div>
                     <span
                       className={`text-xs font-medium ${
-                        isCompleted ? "text-brand-600" : "text-slate-400"
+                        isCompleted ? "text-brand-600" : "text-neutral-400"
                       }`}
                     >
                       {step.label}
@@ -111,7 +111,7 @@ export default async function OrderDetailPage({
                   {i < STATUS_TIMELINE.length - 1 && (
                     <div
                       className={`flex-1 h-0.5 mx-2 rounded-full transition-all mb-4 ${
-                        i < statusIndex ? "bg-brand-600" : "bg-slate-200"
+                        i < statusIndex ? "bg-brand-600" : "bg-neutral-200"
                       }`}
                     />
                   )}
@@ -136,20 +136,20 @@ export default async function OrderDetailPage({
         <div className="lg:col-span-2 space-y-5">
           {/* Items */}
           <div className="dash-card overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-2">
+            <div className="px-5 py-3.5 border-b border-neutral-100 flex items-center gap-2">
               <Package className="w-4 h-4 text-brand-600" />
-              <h3 className="font-medium text-sm text-slate-900">
+              <h3 className="font-medium text-sm text-neutral-900">
                 Productos ({items.length})
               </h3>
             </div>
-            <div className="divide-y divide-slate-50">
+            <div className="divide-y divide-neutral-50">
               {items.map((item, i) => (
                 <div
                   key={i}
-                  className="flex items-center gap-4 px-5 py-3.5 hover:bg-slate-50/50 transition-colors"
+                  className="flex items-center gap-4 px-5 py-3.5 hover:bg-neutral-50/50 transition-colors"
                 >
                   {/* Product image */}
-                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+                  <div className="w-12 h-12 rounded-lg overflow-hidden bg-neutral-100 flex-shrink-0">
                     {item.product_image ? (
                       <img
                         src={item.product_image}
@@ -158,26 +158,26 @@ export default async function OrderDetailPage({
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Package className="w-5 h-5 text-slate-300" />
+                        <Package className="w-5 h-5 text-neutral-300" />
                       </div>
                     )}
                   </div>
                   {/* Details */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-900 truncate">
+                    <p className="text-sm font-medium text-neutral-900 truncate">
                       {item.product_name}
                     </p>
                     {item.variant_label && (
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-neutral-500">
                         {item.variant_label}
                       </p>
                     )}
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-neutral-400 mt-0.5">
                       {formatCurrency(item.unit_price, currency)} × {item.quantity}
                     </p>
                   </div>
                   {/* Total */}
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-semibold text-neutral-900">
                     {formatCurrency(item.unit_price * item.quantity, currency)}
                   </p>
                 </div>
@@ -185,8 +185,8 @@ export default async function OrderDetailPage({
             </div>
 
             {/* Totals */}
-            <div className="border-t border-slate-200 px-5 py-4 space-y-2 bg-slate-50/30">
-              <div className="flex justify-between text-sm text-slate-500">
+            <div className="border-t border-neutral-200 px-5 py-4 space-y-2 bg-neutral-50/30">
+              <div className="flex justify-between text-sm text-neutral-500">
                 <span>Subtotal</span>
                 <span>{formatCurrency(order.subtotal, currency)}</span>
               </div>
@@ -196,7 +196,7 @@ export default async function OrderDetailPage({
                   <span>-{formatCurrency(order.discount_amount, currency)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-base font-semibold text-slate-900 pt-2 border-t border-slate-100">
+              <div className="flex justify-between text-base font-semibold text-neutral-900 pt-2 border-t border-neutral-100">
                 <span>Total</span>
                 <span className="text-lg">
                   {formatCurrency(order.total, currency)}
@@ -210,11 +210,11 @@ export default async function OrderDetailPage({
             <div className="dash-card p-5">
               <div className="flex items-center gap-2 mb-2">
                 <StickyNote className="w-4 h-4 text-amber-500" />
-                <h3 className="font-medium text-sm text-slate-900">
+                <h3 className="font-medium text-sm text-neutral-900">
                   Notas del cliente
                 </h3>
               </div>
-              <p className="text-sm text-slate-600 leading-relaxed bg-amber-50/50 rounded-lg p-3 border border-amber-100">
+              <p className="text-sm text-neutral-600 leading-relaxed bg-amber-50/50 rounded-lg p-3 border border-amber-100">
                 {order.customer_notes}
               </p>
             </div>
@@ -225,7 +225,7 @@ export default async function OrderDetailPage({
         <div className="space-y-5">
           {/* Status changer — first so it's always visible */}
           <div className="dash-card p-5 space-y-3 border-2 border-brand-100">
-            <h3 className="font-medium text-sm text-slate-900 flex items-center gap-2">
+            <h3 className="font-medium text-sm text-neutral-900 flex items-center gap-2">
               <Clock className="w-4 h-4 text-brand-600" />
               Cambiar estado
             </h3>
@@ -237,43 +237,43 @@ export default async function OrderDetailPage({
 
           {/* Customer info */}
           <div className="dash-card p-5 space-y-4">
-            <h3 className="font-medium text-sm text-slate-900 flex items-center gap-2">
+            <h3 className="font-medium text-sm text-neutral-900 flex items-center gap-2">
               <User className="w-4 h-4 text-brand-600" />
               Cliente
             </h3>
             <div className="space-y-3">
               <div className="flex items-center gap-3 text-sm">
-                <User className="w-4 h-4 text-slate-400 flex-shrink-0" />
-                <span className="text-slate-700 font-medium">
+                <User className="w-4 h-4 text-neutral-400 flex-shrink-0" />
+                <span className="text-neutral-700 font-medium">
                   {order.customer_name}
                 </span>
               </div>
               <div className="flex items-center gap-3 text-sm">
-                <Phone className="w-4 h-4 text-slate-400 flex-shrink-0" />
-                <span className="text-slate-700">{order.customer_phone}</span>
+                <Phone className="w-4 h-4 text-neutral-400 flex-shrink-0" />
+                <span className="text-neutral-700">{order.customer_phone}</span>
               </div>
               {order.customer_email && (
                 <div className="flex items-center gap-3 text-sm">
-                  <Mail className="w-4 h-4 text-slate-400 flex-shrink-0" />
-                  <span className="text-slate-700 truncate">
+                  <Mail className="w-4 h-4 text-neutral-400 flex-shrink-0" />
+                  <span className="text-neutral-700 truncate">
                     {order.customer_email}
                   </span>
                 </div>
               )}
               {order.customer_address && (
                 <div className="flex items-start gap-3 text-sm">
-                  <MapPin className="w-4 h-4 text-slate-400 flex-shrink-0 mt-0.5" />
-                  <span className="text-slate-700">
+                  <MapPin className="w-4 h-4 text-neutral-400 flex-shrink-0 mt-0.5" />
+                  <span className="text-neutral-700">
                     {order.customer_address}
                   </span>
                 </div>
               )}
               {order.shipping_method && (
-                <div className="flex items-start gap-3 mt-4 pt-4 border-t border-slate-100 text-sm">
+                <div className="flex items-start gap-3 mt-4 pt-4 border-t border-neutral-100 text-sm">
                   <Package className="w-4 h-4 text-brand-600 flex-shrink-0" />
                   <div>
-                    <span className="text-xs text-slate-500 block uppercase tracking-wider font-semibold">Entrega</span>
-                    <span className="text-slate-800 font-medium">
+                    <span className="text-xs text-neutral-500 block uppercase tracking-wider font-semibold">Entrega</span>
+                    <span className="text-neutral-800 font-medium">
                       {order.shipping_method}
                     </span>
                   </div>
@@ -283,8 +283,8 @@ export default async function OrderDetailPage({
                 <div className="flex items-start gap-3 text-sm">
                   <div className="w-4 h-4 text-brand-600 flex-shrink-0 flex items-center justify-center font-semibold">₲</div>
                   <div>
-                    <span className="text-xs text-slate-500 block uppercase tracking-wider font-semibold">Pago</span>
-                    <span className="text-slate-800 font-medium">
+                    <span className="text-xs text-neutral-500 block uppercase tracking-wider font-semibold">Pago</span>
+                    <span className="text-neutral-800 font-medium">
                       {order.payment_method}
                     </span>
                   </div>
@@ -308,19 +308,19 @@ export default async function OrderDetailPage({
 
           {/* Order metadata */}
           <div className="dash-card p-5 space-y-3">
-            <h3 className="font-medium text-sm text-slate-900">
+            <h3 className="font-medium text-sm text-neutral-900">
               Información
             </h3>
-            <div className="space-y-2 text-xs text-slate-500">
+            <div className="space-y-2 text-xs text-neutral-500">
               <div className="flex justify-between">
                 <span>ID Pedido</span>
-                <span className="font-mono text-slate-700">
+                <span className="font-mono text-neutral-700">
                   {order.id.slice(0, 8).toUpperCase()}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span>Creado</span>
-                <span className="text-slate-700">
+                <span className="text-neutral-700">
                   {new Date(order.created_at).toLocaleString("es-PY", {
                     dateStyle: "short",
                     timeStyle: "short",
@@ -329,7 +329,7 @@ export default async function OrderDetailPage({
               </div>
               <div className="flex justify-between">
                 <span>Actualizado</span>
-                <span className="text-slate-700">
+                <span className="text-neutral-700">
                   {new Date(order.updated_at).toLocaleString("es-PY", {
                     dateStyle: "short",
                     timeStyle: "short",

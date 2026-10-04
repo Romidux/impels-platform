@@ -109,11 +109,11 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
       {/* Fake Search Bar Button */}
       <button
         onClick={() => setOpen(true)}
-        className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-lg text-sm transition-all border border-slate-200 hover:border-slate-300 w-full group"
+        className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-500 rounded-lg text-sm transition-all border border-neutral-200 hover:border-neutral-300 w-full group"
       >
-        <Search className="w-4 h-4 text-slate-400 group-hover:text-slate-600" />
-        <span className="flex-1 text-left text-slate-400">Buscar productos, órdenes, clientes...</span>
-        <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-white text-slate-400 border border-slate-300 rounded shadow-sm">
+        <Search className="w-4 h-4 text-neutral-400 group-hover:text-neutral-600" />
+        <span className="flex-1 text-left text-neutral-400">Buscar productos, órdenes, clientes...</span>
+        <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-white text-neutral-400 border border-neutral-300 rounded shadow-sm">
           <span className="text-xs">CTRL</span>K
         </kbd>
       </button>
@@ -121,7 +121,7 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
       {/* Mobile Search Button */}
       <button
         onClick={() => setOpen(true)}
-        className="md:hidden p-2 text-slate-500 hover:text-slate-700 hover:bg-slate-100 rounded-lg transition-colors"
+        className="md:hidden p-2 text-neutral-500 hover:text-neutral-700 hover:bg-neutral-100 rounded-lg transition-colors"
       >
         <Search className="w-5 h-5" />
       </button>
@@ -136,7 +136,7 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100]"
+              className="fixed inset-0 bg-neutral-900/40 backdrop-blur-sm z-[100]"
             />
 
             {/* Dialog */}
@@ -145,16 +145,16 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -20 }}
               transition={{ duration: 0.15, ease: "easeOut" }}
-              className="fixed left-1/2 top-20 md:top-32 -translate-x-1/2 w-[90%] md:w-[600px] bg-white rounded-2xl shadow-2xl border border-slate-100 overflow-hidden z-[101]"
+              className="fixed left-1/2 top-20 md:top-32 -translate-x-1/2 w-[90%] md:w-[600px] bg-white rounded-2xl shadow-2xl border border-neutral-100 overflow-hidden z-[101]"
             >
               {/* Search Header */}
-              <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100">
-                <Search className="w-5 h-5 text-slate-400" />
+              <div className="flex items-center gap-3 px-4 py-3 border-b border-neutral-100">
+                <Search className="w-5 h-5 text-neutral-400" />
                 <input
                   ref={inputRef}
                   type="text"
                   placeholder="Buscar productos, clientes, pedidos..."
-                  className="flex-1 bg-transparent border-none focus:outline-none focus:ring-0 text-base py-2 placeholder-slate-400"
+                  className="flex-1 bg-transparent border-none focus:outline-none focus:ring-0 text-base py-2 placeholder-neutral-400"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   onKeyDown={(e) => {
@@ -163,7 +163,7 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
                 />
                 <button
                   onClick={() => setOpen(false)}
-                  className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+                  className="p-1 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 rounded-md transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -172,19 +172,19 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
               {/* Results Body */}
               <div className="max-h-[60vh] overflow-y-auto p-2">
                 {!query.trim() && (
-                  <div className="p-8 text-center text-sm text-slate-500">
+                  <div className="p-8 text-center text-sm text-neutral-500">
                     Escribe para empezar a buscar.
                   </div>
                 )}
 
                 {query.trim() && loading && results.length === 0 && (
-                  <div className="p-8 flex justify-center text-slate-400">
+                  <div className="p-8 flex justify-center text-neutral-400">
                     <Loader2 className="w-5 h-5 animate-spin" />
                   </div>
                 )}
 
                 {query.trim() && !loading && results.length === 0 && (
-                  <div className="p-8 text-center text-sm text-slate-500">
+                  <div className="p-8 text-center text-sm text-neutral-500">
                     No hay resultados para "{query}"
                   </div>
                 )}
@@ -197,25 +197,25 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
                         onClick={() => handleSelect(result)}
                         className="w-full text-left flex items-center gap-3 p-3 hover:bg-brand-50 rounded-xl group transition-colors"
                       >
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-brand-100 group-hover:text-brand-600">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 group-hover:bg-brand-100 group-hover:text-brand-600">
                           {result.type === "product" && <Package className="w-4 h-4" />}
                           {result.type === "order" && <ShoppingCart className="w-4 h-4" />}
                           {result.type === "customer" && <User className="w-4 h-4" />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-slate-900 group-hover:text-brand-700 truncate">
+                          <p className="text-sm font-medium text-neutral-900 group-hover:text-brand-700 truncate">
                             {result.type === "product" && result.item.name}
                             {result.type === "order" && `${result.item.customer_name} (Pedido)`}
                             {result.type === "customer" && `${result.item.full_name} (Cliente)`}
                           </p>
-                          <p className="text-xs text-slate-500 truncate mt-0.5">
+                          <p className="text-xs text-neutral-500 truncate mt-0.5">
                             {result.type === "product" && `Slug: ${result.item.slug}`}
                             {result.type === "order" && `Tel: ${result.item.customer_phone}`}
                             {result.type === "customer" && `Email: ${result.item.email || "No email"}`}
                           </p>
                         </div>
                         {result.type === "order" && (
-                          <div className="text-xs font-mono text-slate-400">
+                          <div className="text-xs font-mono text-neutral-400">
                             #{result.item.id.slice(0, 8).toUpperCase()}
                           </div>
                         )}

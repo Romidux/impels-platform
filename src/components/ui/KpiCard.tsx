@@ -51,10 +51,10 @@ export function KpiCard({
           </div>
         ))}
       </div>
-      <div className="text-3xl font-semibold text-slate-900 mb-1 tracking-tight truncate">
+      <div className="text-3xl font-semibold text-neutral-900 mb-1 tracking-tight truncate">
         {value}
       </div>
-      <div className="text-sm font-medium text-slate-500">{label}</div>
+      <div className="text-sm font-medium text-neutral-500">{label}</div>
     </>
   );
 

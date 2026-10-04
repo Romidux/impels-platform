@@ -30,15 +30,15 @@ export function EmptyState({
           "flex items-center justify-center mb-5",
           illustrationMode
             ? "w-32 h-32 opacity-90 transition-transform hover:scale-105 duration-300"
-            : "w-14 h-14 rounded-2xl bg-slate-50 text-slate-400"
+            : "w-14 h-14 rounded-2xl bg-neutral-50 text-neutral-400"
         )}
       >
         {icon}
       </div>
-      <h3 className="font-display text-lg font-semibold text-slate-900 mb-2">
+      <h3 className="font-display text-lg font-semibold text-neutral-900 mb-2">
         {heading}
       </h3>
-      <p className="text-sm text-slate-500 max-w-sm mx-auto mb-6">
+      <p className="text-sm text-neutral-500 max-w-sm mx-auto mb-6">
         {description}
       </p>
       {action && <div>{action}</div>}

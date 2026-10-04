@@ -86,7 +86,7 @@ function MethodSelector({ label, icon, options, selected, onChange, hint }: Meth
 
   return (
     <div className="space-y-3">
-      <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+      <label className="flex items-center gap-2 text-sm font-medium text-neutral-700">
         {icon}
         {label}
       </label>
@@ -104,7 +104,7 @@ function MethodSelector({ label, icon, options, selected, onChange, hint }: Meth
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm border transition-all duration-150 select-none",
                 active
                   ? "bg-brand-600 text-white border-brand-600"
-                  : "bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50"
+                  : "bg-white text-neutral-600 border-neutral-200 hover:border-neutral-300 hover:bg-neutral-50"
               )}
             >
               {active && <Check className="w-3 h-3 shrink-0" />}
@@ -153,14 +153,14 @@ function MethodSelector({ label, icon, options, selected, onChange, hint }: Meth
           type="button"
           onClick={addCustom}
           disabled={!customInput.trim()}
-          className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-40 transition-all"
+          className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-neutral-600 border border-neutral-200 rounded-xl hover:bg-neutral-50 disabled:opacity-40 transition-all"
         >
           <Plus className="w-3.5 h-3.5" />
           Agregar
         </button>
       </div>
 
-      {hint && <p className="text-xs text-slate-400">{hint}</p>}
+      {hint && <p className="text-xs text-neutral-400">{hint}</p>}
     </div>
   );
 }
@@ -279,15 +279,15 @@ export default function StoreSettingsForm({
             />
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-slate-700">
+              <label className="block text-sm font-medium text-neutral-700">
                 URL publica
               </label>
-              <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-                <span className="block px-4 py-3 text-sm text-slate-500">
+              <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50">
+                <span className="block px-4 py-3 text-sm text-neutral-500">
                   {`${origin}/store/${store.slug}`}
                 </span>
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-neutral-400">
                 El slug no puede cambiarse una vez creado.
               </p>
             </div>
@@ -305,7 +305,7 @@ export default function StoreSettingsForm({
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                   Numero de WhatsApp
                 </label>
                 <PhoneInput
@@ -347,22 +347,22 @@ export default function StoreSettingsForm({
                 ]}
               />
 
-              <div className="h-px bg-slate-100" />
+              <div className="h-px bg-neutral-100" />
 
               <MethodSelector
                 label="Métodos de pago"
-                icon={<CreditCard className="w-4 h-4 text-slate-400" />}
+                icon={<CreditCard className="w-4 h-4 text-neutral-400" />}
                 options={PAYMENT_OPTIONS}
                 selected={form.payment_methods}
                 onChange={(next) => setForm((prev) => ({ ...prev, payment_methods: next }))}
                 hint="Seleccioná los métodos que aceptás. Los clientes verán estas opciones al pagar."
               />
 
-              <div className="h-px bg-slate-100" />
+              <div className="h-px bg-neutral-100" />
 
               <MethodSelector
                 label="Métodos de envío o entrega"
-                icon={<ShoppingBag className="w-4 h-4 text-slate-400" />}
+                icon={<ShoppingBag className="w-4 h-4 text-neutral-400" />}
                 options={SHIPPING_OPTIONS}
                 selected={form.shipping_methods}
                 onChange={(next) => setForm((prev) => ({ ...prev, shipping_methods: next }))}

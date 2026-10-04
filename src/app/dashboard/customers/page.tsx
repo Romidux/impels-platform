@@ -114,7 +114,7 @@ export default async function CustomersPage({
       {total === 0 ? (
         <div className="dash-card p-12">
           <EmptyState
-            icon={<Users className="w-10 h-10 text-slate-300" />}
+            icon={<Users className="w-10 h-10 text-neutral-300" />}
             heading="Aún no tienes clientes"
             description="Aquí aparecerán las personas que compren en tu tienda o que agregues manualmente."
             action={
@@ -128,54 +128,54 @@ export default async function CustomersPage({
         </div>
       ) : (
         <div className="dash-card overflow-hidden">
-          <div className="p-4 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-slate-700 px-1">
+          <div className="p-4 border-b border-neutral-100 bg-neutral-50/30 flex items-center justify-between">
+            <h3 className="text-sm font-medium text-neutral-700 px-1">
               Todos los clientes
             </h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="bg-slate-100 border-b border-slate-100">
-                  <th className="text-left text-xs font-medium text-slate-500 px-6 py-3">
+                <tr className="bg-neutral-100 border-b border-neutral-100">
+                  <th className="text-left text-xs font-medium text-neutral-500 px-6 py-3">
                     Cliente
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">
+                  <th className="text-left text-xs font-medium text-neutral-500 px-4 py-3">
                     WhatsApp / Tel
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">
+                  <th className="text-left text-xs font-medium text-neutral-500 px-4 py-3">
                     Ciudad
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 px-4 py-3 text-center">
+                  <th className="text-left text-xs font-medium text-neutral-500 px-4 py-3 text-center">
                     Pedidos
                   </th>
-                  <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">
+                  <th className="text-left text-xs font-medium text-neutral-500 px-4 py-3">
                     Inversión total
                   </th>
-                  <th className="text-right text-xs font-medium text-slate-500 px-6 py-3">
+                  <th className="text-right text-xs font-medium text-neutral-500 px-6 py-3">
                     Última actividad
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-neutral-50">
                 {customers.map((customer) => (
                   <tr
                     key={customer.id}
-                    className="hover:bg-slate-50/80 transition-colors group cursor-default"
+                    className="hover:bg-neutral-50/80 transition-colors group cursor-default"
                   >
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center flex-shrink-0 group-hover:border-brand-200 group-hover:bg-brand-50 transition-colors">
-                          <span className="text-sm font-semibold text-slate-600 group-hover:text-brand-700">
+                        <div className="w-10 h-10 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center flex-shrink-0 group-hover:border-brand-200 group-hover:bg-brand-50 transition-colors">
+                          <span className="text-sm font-semibold text-neutral-600 group-hover:text-brand-700">
                             {customer.full_name?.charAt(0).toUpperCase()}
                           </span>
                         </div>
                         <div>
-                          <p className="font-semibold text-sm text-slate-900 group-hover:text-brand-700 transition-colors">
+                          <p className="font-semibold text-sm text-neutral-900 group-hover:text-brand-700 transition-colors">
                             {customer.full_name}
                           </p>
                           {customer.email && (
-                            <p className="text-xs text-slate-400 font-medium">
+                            <p className="text-xs text-neutral-400 font-medium">
                               {customer.email}
                             </p>
                           )}
@@ -183,37 +183,37 @@ export default async function CustomersPage({
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm text-slate-600 font-medium whitespace-nowrap">
+                      <span className="text-sm text-neutral-600 font-medium whitespace-nowrap">
                         {customer.phone_number}
                       </span>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm text-slate-500">
+                      <span className="text-sm text-neutral-500">
                         {customer.city || "-"}
                       </span>
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex justify-center">
-                        <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-slate-100 text-[11px] font-semibold text-slate-600 border border-slate-200/50">
+                        <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-neutral-100 text-[11px] font-semibold text-neutral-600 border border-neutral-200/50">
                           {customer.orderCount}
                         </span>
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm font-semibold text-slate-900">
+                      <span className="text-sm font-semibold text-neutral-900">
                         {formatCurrency(customer.totalSpent, currency)}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       {customer.lastOrderDate ? (
-                        <div className="inline-flex items-center gap-1.5 text-xs text-slate-400 font-medium bg-slate-50 px-2 py-1 rounded-md border border-slate-100 transition-colors group-hover:border-slate-200">
+                        <div className="inline-flex items-center gap-1.5 text-xs text-neutral-400 font-medium bg-neutral-50 px-2 py-1 rounded-md border border-neutral-100 transition-colors group-hover:border-neutral-200">
                           <Clock className="w-3 h-3" />
                           {new Date(customer.lastOrderDate).toLocaleDateString(
                             "es-PY"
                           )}
                         </div>
                       ) : (
-                        <span className="text-xs text-slate-300">-</span>
+                        <span className="text-xs text-neutral-300">-</span>
                       )}
                     </td>
                   </tr>
@@ -224,10 +224,10 @@ export default async function CustomersPage({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 bg-slate-50/30">
-              <p className="text-sm text-slate-500">
+            <div className="flex items-center justify-between px-6 py-4 border-t border-neutral-100 bg-neutral-50/30">
+              <p className="text-sm text-neutral-500">
                 Página {page} de {totalPages}
-                <span className="text-slate-400 ml-1">· {total} clientes</span>
+                <span className="text-neutral-400 ml-1">· {total} clientes</span>
               </p>
               <div className="flex items-center gap-2">
                 {page > 1 ? (

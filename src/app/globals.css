@@ -35,8 +35,8 @@
      (rgba(80,100,200,…)): una sombra teñida del color de marca no existe en
      ningún producto real y era lo que daba el aire de plantilla. La profundidad
      la aporta el borde de 1px, no la sombra. */
-  --shadow-apple-sm: 0 1px 2px rgba(15,23,42,0.06);
-  --shadow-apple-md: 0 2px 6px rgba(15,23,42,0.08);
+  --shadow-apple-sm: 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-apple-md: 0 2px 6px rgba(0,0,0,0.08);
 
   /* ── Radios ──
      Sobrescriben la escala de Tailwind a propósito. Antes vivían en :root, donde
@@ -63,19 +63,23 @@
     --brand-gradient: linear-gradient(135deg, #5b6fff 0%, #7c3aed 100%);
 
     /* ── Surface / Neutral ──
-       Espejo de la escala `slate` de Tailwind: es la única familia de grises de
-       la app, para que estas clases y las utilidades digan siempre lo mismo. */
-    --color-surface-bg: #f8fafc;     /* slate-50  */
+       Espejo de la escala `neutral` de Tailwind: es la única familia de grises
+       del dashboard, para que estas clases y las utilidades digan siempre lo
+       mismo. Antes era `slate`, que tira a azul: con el acento índigo encima,
+       los grises, las sombras y el acento empujaban todos hacia el mismo lado y
+       la pantalla quedaba monocroma sin querer. En gris neutro, el índigo es lo
+       único con color y por eso se lee como acento. */
+    --color-surface-bg: #fafafa;     /* neutral-50  */
     --color-surface-sidebar: #ffffff;
     --color-surface-card: #ffffff;
-    --color-surface-border: #e2e8f0; /* slate-200 */
-    --color-surface-hover: #f1f5f9;  /* slate-100 */
-    --color-surface-muted: #f8fafc;  /* slate-50  */
+    --color-surface-border: #e5e5e5; /* neutral-200 */
+    --color-surface-hover: #f5f5f5;  /* neutral-100 */
+    --color-surface-muted: #fafafa;  /* neutral-50  */
 
     /* ── Text ── */
-    --color-text-primary: #0f172a;   /* slate-900 */
-    --color-text-secondary: #64748b; /* slate-500 */
-    --color-text-muted: #94a3b8;     /* slate-400 */
+    --color-text-primary: #171717;   /* neutral-900 */
+    --color-text-secondary: #737373; /* neutral-500 */
+    --color-text-muted: #a3a3a3;     /* neutral-400 */
     --color-text-inverse: #ffffff;
 
     /* ── Semantic ── */
@@ -152,7 +156,7 @@
      anterior movía el contenido 1px en cada pasada del mouse sobre una grilla de
      KPIs, y esa flotación es de las cosas que más delatan una UI de plantilla. */
   .dash-card-hover:hover {
-    border-color: #cbd5e1; /* slate-300 */
+    border-color: #d4d4d4; /* neutral-300 */
     box-shadow: var(--shadow-card-sm);
   }
 
@@ -187,7 +191,7 @@
   .dash-select {
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     padding-right: 2.25rem;

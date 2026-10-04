@@ -29,15 +29,15 @@ export default function OrderNotificationListener({ storeId }: { storeId: string
 
           toast.success(
             <div className="flex flex-col gap-1.5 w-full pr-2">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+              <div className="flex items-center gap-2 text-sm font-semibold text-neutral-900">
                 <BellRing className="w-4 h-4 text-brand-600 animate-pulse" />
                 ¡Nuevo pedido recibido!
               </div>
-              <p className="text-xs text-slate-600">
+              <p className="text-xs text-neutral-600">
                 Cliente: <span className="font-semibold">{newOrder.customer_name}</span>
               </p>
               <div className="flex justify-between items-end mt-1">
-                <span className="text-xs text-slate-500 font-mono">
+                <span className="text-xs text-neutral-500 font-mono">
                   #{newOrder.id.slice(0, 8).toUpperCase()}
                 </span>
                 <button

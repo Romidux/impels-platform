@@ -192,13 +192,13 @@ export default async function OrdersPage({
           <OrdersSearchBar defaultValue={q} status={status} view={view} />
         </div>
         {/* View toggle */}
-        <div className="flex rounded-xl border border-slate-200 bg-white overflow-hidden flex-shrink-0">
+        <div className="flex rounded-xl border border-neutral-200 bg-white overflow-hidden flex-shrink-0">
           <Link
             href={ordersUrl({ status, q, view: "list" })}
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors ${
               view !== "kanban"
                 ? "bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 active:bg-brand-800"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
             }`}
           >
             <LayoutList className="w-3.5 h-3.5" />
@@ -209,7 +209,7 @@ export default async function OrdersPage({
             className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors ${
               view === "kanban"
                 ? "bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 active:bg-brand-800"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-700"
             }`}
           >
             <Columns3 className="w-3.5 h-3.5" />
@@ -227,7 +227,7 @@ export default async function OrdersPage({
             className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${
               status === f.value || (!status && !f.value)
                 ? "bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 active:bg-brand-800"
-                : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800"
+                : "bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50 hover:text-neutral-800"
             }`}
           >
             {f.label}
@@ -303,29 +303,29 @@ function ListView({
         <div className="hidden sm:block overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/50">
-                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-5 py-3 w-28">
+              <tr className="border-b border-neutral-100 bg-neutral-50/50">
+                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-5 py-3 w-28">
                   Pedido
                 </th>
-                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
                   Cliente
                 </th>
-                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3 hidden lg:table-cell">
+                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3 hidden lg:table-cell">
                   Productos
                 </th>
-                <th className="text-right text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3">
+                <th className="text-right text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
                   Total
                 </th>
-                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
                   Estado
                 </th>
-                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3 hidden md:table-cell">
+                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3 hidden md:table-cell">
                   Fecha
                 </th>
                 <th className="px-4 py-3 w-20" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-50">
+            <tbody className="divide-y divide-neutral-50">
               {orders.map((order) => {
                 const whatsappLink = order.customer_phone
                   ? `https://wa.me/${order.customer_phone.replace(/\D/g, "")}?text=Hola+${encodeURIComponent(order.customer_name)}+somos+${encodeURIComponent(storeName)},+les+escribimos+sobre+su+pedido.`
@@ -342,28 +342,28 @@ function ListView({
                 return (
                   <tr
                     key={order.id}
-                    className="hover:bg-slate-50/50 transition-colors"
+                    className="hover:bg-neutral-50/50 transition-colors"
                   >
                     <td className="px-5 py-3.5">
-                      <p className="font-mono text-xs font-semibold text-slate-700">
+                      <p className="font-mono text-xs font-semibold text-neutral-700">
                         #{order.id.slice(0, 8).toUpperCase()}
                       </p>
                     </td>
                     <td className="px-4 py-3.5">
                       <Link
                         href={`/dashboard/orders/${order.id}`}
-                        className="font-semibold text-slate-900 hover:text-brand-600 transition-colors"
+                        className="font-semibold text-neutral-900 hover:text-brand-600 transition-colors"
                       >
                         {order.customer_name}
                       </Link>
                     </td>
                     <td className="px-4 py-3.5 hidden lg:table-cell max-w-[240px]">
-                      <p className="text-xs text-slate-500 truncate">
+                      <p className="text-xs text-neutral-500 truncate">
                         {itemSummary}
                       </p>
                     </td>
                     <td className="px-4 py-3.5 text-right">
-                      <span className="font-display font-semibold text-slate-900">
+                      <span className="font-display font-semibold text-neutral-900">
                         {formatCurrency(order.total, currency)}
                       </span>
                     </td>
@@ -371,7 +371,7 @@ function ListView({
                       <OrderStatusChanger orderId={order.id} currentStatus={order.status as OrderStatus} />
                     </td>
                     <td className="px-4 py-3.5 hidden md:table-cell">
-                      <p className="text-xs text-slate-500 flex items-center gap-1">
+                      <p className="text-xs text-neutral-500 flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {new Date(order.created_at).toLocaleString("es-PY", {
                           month: "short",
@@ -396,7 +396,7 @@ function ListView({
                         )}
                         <Link
                           href={`/dashboard/orders/${order.id}`}
-                          className="text-slate-400 hover:text-brand-600 transition-colors"
+                          className="text-neutral-400 hover:text-brand-600 transition-colors"
                           title="Ver detalle"
                         >
                           <ArrowRight className="w-4 h-4" />
@@ -411,7 +411,7 @@ function ListView({
         </div>
 
         {/* Mobile card list */}
-        <div className="sm:hidden divide-y divide-slate-50">
+        <div className="sm:hidden divide-y divide-neutral-50">
           {orders.map((order) => {
             const whatsappLink = order.customer_phone
               ? `https://wa.me/${order.customer_phone.replace(/\D/g, "")}?text=Hola+${encodeURIComponent(order.customer_name)}+somos+${encodeURIComponent(storeName)},+les+escribimos+sobre+su+pedido.`
@@ -428,11 +428,11 @@ function ListView({
                   <div>
                     <Link
                       href={`/dashboard/orders/${order.id}`}
-                      className="font-semibold text-slate-900 hover:text-brand-600 transition-colors"
+                      className="font-semibold text-neutral-900 hover:text-brand-600 transition-colors"
                     >
                       {order.customer_name}
                     </Link>
-                    <p className="text-xs text-slate-400 mt-0.5">
+                    <p className="text-xs text-neutral-400 mt-0.5">
                       #{order.id.slice(0, 8).toUpperCase()} ·{" "}
                       {new Date(order.created_at).toLocaleString("es-PY", {
                         month: "short",
@@ -442,19 +442,19 @@ function ListView({
                       })}
                     </p>
                   </div>
-                  <span className="font-display font-semibold text-slate-900">
+                  <span className="font-display font-semibold text-neutral-900">
                     {formatCurrency(order.total, currency)}
                   </span>
                 </div>
-                <div className="bg-slate-50 rounded-xl px-3 py-2 space-y-1">
+                <div className="bg-neutral-50 rounded-xl px-3 py-2 space-y-1">
                   {items.map((item, i) => (
-                    <p key={i} className="text-xs text-slate-600 truncate">
+                    <p key={i} className="text-xs text-neutral-600 truncate">
                       <span className="font-semibold text-brand-600">
                         {item.quantity}×
                       </span>{" "}
                       {item.product_name}
                       {item.variant_label && (
-                        <span className="text-slate-400">
+                        <span className="text-neutral-400">
                           {" "}
                           ({item.variant_label})
                         </span>
@@ -477,7 +477,7 @@ function ListView({
                     )}
                     <Link
                       href={`/dashboard/orders/${order.id}`}
-                      className="text-slate-400 hover:text-brand-600 transition-colors"
+                      className="text-neutral-400 hover:text-brand-600 transition-colors"
                     >
                       <ArrowRight className="w-4 h-4" />
                     </Link>
@@ -540,18 +540,18 @@ function KanbanView({
               return (
                 <div
                   key={col.value}
-                  className="hidden lg:flex flex-col w-full min-w-[300px] bg-slate-50 rounded-2xl p-3"
+                  className="hidden lg:flex flex-col w-full min-w-[300px] bg-neutral-50 rounded-2xl p-3"
                 >
                   <div className="flex items-center justify-between mb-3 px-1">
-                    <h3 className="font-medium text-slate-700 text-sm">
+                    <h3 className="font-medium text-neutral-700 text-sm">
                       {col.label}
                     </h3>
-                    <span className="text-xs font-semibold text-slate-400 bg-slate-200 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-semibold text-neutral-400 bg-neutral-200 px-2 py-0.5 rounded-full">
                       0
                     </span>
                   </div>
-                  <div className="flex-1 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center py-10">
-                    <p className="text-xs text-slate-400 font-medium tracking-wide">
+                  <div className="flex-1 border-2 border-dashed border-neutral-200 rounded-xl flex items-center justify-center py-10">
+                    <p className="text-xs text-neutral-400 font-medium tracking-wide">
                       Vacío
                     </p>
                   </div>
@@ -562,13 +562,13 @@ function KanbanView({
             return (
               <div
                 key={col.value}
-                className="flex flex-col flex-1 w-full lg:min-w-[320px] bg-transparent lg:bg-slate-50 lg:p-3 lg:rounded-2xl gap-3"
+                className="flex flex-col flex-1 w-full lg:min-w-[320px] bg-transparent lg:bg-neutral-50 lg:p-3 lg:rounded-2xl gap-3"
               >
                 <div className="hidden lg:flex items-center justify-between mb-1 px-1">
-                  <h3 className="font-medium text-slate-600 text-sm">
+                  <h3 className="font-medium text-neutral-600 text-sm">
                     {col.label}
                   </h3>
-                  <span className="text-xs font-semibold text-slate-600 bg-white shadow-sm border border-slate-200 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold text-neutral-600 bg-white shadow-sm border border-neutral-200 px-2 py-0.5 rounded-full">
                     {columnOrders.length}
                   </span>
                 </div>
@@ -588,18 +588,18 @@ function KanbanView({
                         className="flex items-start justify-between group"
                       >
                         <div>
-                          <span className="font-semibold text-slate-900 group-hover:text-brand-600 transition-colors">
+                          <span className="font-semibold text-neutral-900 group-hover:text-brand-600 transition-colors">
                             {order.customer_name}
                           </span>
-                          <p className="text-xs text-slate-500 font-medium mt-0.5">
+                          <p className="text-xs text-neutral-500 font-medium mt-0.5">
                             #{order.id.slice(0, 8).toUpperCase()}
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-display font-semibold text-lg text-slate-900 leading-none mb-1">
+                          <p className="font-display font-semibold text-lg text-neutral-900 leading-none mb-1">
                             {formatCurrency(order.total, currency)}
                           </p>
-                          <p className="text-xs text-slate-400 flex items-center justify-end gap-1">
+                          <p className="text-xs text-neutral-400 flex items-center justify-end gap-1">
                             <Clock className="w-3 h-3" />
                             {new Date(order.created_at).toLocaleString(
                               "es-PY",
@@ -614,7 +614,7 @@ function KanbanView({
                         </div>
                       </Link>
 
-                      <div className="bg-slate-50 rounded-lg p-3 space-y-1.5 border border-slate-100">
+                      <div className="bg-neutral-50 rounded-lg p-3 space-y-1.5 border border-neutral-100">
                         {(
                           order.items as {
                             product_name: string;
@@ -624,7 +624,7 @@ function KanbanView({
                         ).map((item, i) => (
                           <div
                             key={i}
-                            className="text-xs text-slate-600 flex items-start gap-2"
+                            className="text-xs text-neutral-600 flex items-start gap-2"
                           >
                             <span className="font-semibold text-brand-600">
                               {item.quantity}×
@@ -632,7 +632,7 @@ function KanbanView({
                             <span className="truncate flex-1">
                               {item.product_name}
                               {item.variant_label && (
-                                <span className="text-slate-400 ml-1">
+                                <span className="text-neutral-400 ml-1">
                                   ({item.variant_label})
                                 </span>
                               )}
@@ -641,7 +641,7 @@ function KanbanView({
                         ))}
                       </div>
 
-                      <div className="flex items-center justify-between mt-1 pt-3 border-t border-slate-100 gap-2">
+                      <div className="flex items-center justify-between mt-1 pt-3 border-t border-neutral-100 gap-2">
                         {whatsappLink ? (
                           <Button
                             asChild
@@ -715,7 +715,7 @@ function PaginationBar({
   if (totalPages <= 1) return null;
   return (
     <div
-      className={`dash-card flex items-center justify-between px-5 py-3 text-sm text-slate-500 ${className}`}
+      className={`dash-card flex items-center justify-between px-5 py-3 text-sm text-neutral-500 ${className}`}
     >
       <span>
         Página {page} de {totalPages} ({filteredCount} pedidos)
@@ -724,7 +724,7 @@ function PaginationBar({
         {page > 1 && (
           <Link
             href={ordersUrl({ status, q, view, page: page - 1 })}
-            className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium hover:bg-slate-50 transition-colors"
+            className="px-3 py-1.5 rounded-lg border border-neutral-200 text-xs font-medium hover:bg-neutral-50 transition-colors"
           >
             ← Anterior
           </Link>
@@ -732,7 +732,7 @@ function PaginationBar({
         {page < totalPages && (
           <Link
             href={ordersUrl({ status, q, view, page: page + 1 })}
-            className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-medium hover:bg-slate-50 transition-colors"
+            className="px-3 py-1.5 rounded-lg border border-neutral-200 text-xs font-medium hover:bg-neutral-50 transition-colors"
           >
             Siguiente →
           </Link>

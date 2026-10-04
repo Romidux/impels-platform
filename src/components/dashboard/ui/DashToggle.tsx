@@ -27,10 +27,10 @@ export function DashToggle({
       {(label || description) && (
         <div className="flex-1 min-w-0">
           {label && (
-            <span className="text-sm font-medium text-slate-700">{label}</span>
+            <span className="text-sm font-medium text-neutral-700">{label}</span>
           )}
           {description && (
-            <p className="text-xs text-slate-400 mt-0.5">{description}</p>
+            <p className="text-xs text-neutral-400 mt-0.5">{description}</p>
           )}
         </div>
       )}
@@ -42,7 +42,7 @@ export function DashToggle({
         onClick={() => !disabled && onChange(!checked)}
         className={cn(
           "relative inline-flex h-6 w-11 items-center rounded-full transition-colors flex-shrink-0",
-          checked ? "bg-green-600" : "bg-slate-300"
+          checked ? "bg-green-600" : "bg-neutral-300"
         )}
       >
         <span

@@ -52,47 +52,47 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
             <p className="text-xs font-medium uppercase tracking-widest text-brand-500 mb-1">
               Plan Pro
             </p>
-            <p className="font-display text-3xl font-semibold text-slate-900">
+            <p className="font-display text-3xl font-semibold text-neutral-900">
               {priceFormatted}
             </p>
-            <p className="text-sm text-slate-500 mt-1">por mes</p>
+            <p className="text-sm text-neutral-500 mt-1">por mes</p>
           </div>
 
           {/* Instrucciones */}
           <div>
-            <p className="text-sm font-medium text-slate-700 mb-3">
+            <p className="text-sm font-medium text-neutral-700 mb-3">
               Realizá una transferencia bancaria con los siguientes datos:
             </p>
             <div className="space-y-2.5">
-              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                <Building2 className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
+                <Building2 className="w-4 h-4 text-neutral-400 flex-shrink-0" />
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
                     Banco
                   </p>
-                  <p className="text-sm font-medium text-slate-800">
+                  <p className="text-sm font-medium text-neutral-800">
                     {process.env.NEXT_PUBLIC_BILLING_BANK ?? "— completar —"}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                <CreditCard className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
+                <CreditCard className="w-4 h-4 text-neutral-400 flex-shrink-0" />
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
                     Cuenta / CBU
                   </p>
-                  <p className="text-sm font-medium text-slate-800">
+                  <p className="text-sm font-medium text-neutral-800">
                     {process.env.NEXT_PUBLIC_BILLING_ACCOUNT ?? "— completar —"}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
-                <CreditCard className="w-4 h-4 text-slate-400 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
+                <CreditCard className="w-4 h-4 text-neutral-400 flex-shrink-0" />
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
                     Titular
                   </p>
-                  <p className="text-sm font-medium text-slate-800">
+                  <p className="text-sm font-medium text-neutral-800">
                     {process.env.NEXT_PUBLIC_BILLING_HOLDER ?? "— completar —"}
                   </p>
                 </div>
@@ -104,19 +104,19 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
           <div className="border border-dashed border-brand-200 rounded-2xl p-4 space-y-3">
             <div className="flex items-start gap-2.5">
               <Mail className="w-4 h-4 text-brand-500 mt-0.5 flex-shrink-0" />
-              <p className="text-sm text-slate-700">
+              <p className="text-sm text-neutral-700">
                 Una vez realizado el pago, enviá el comprobante a{" "}
-                <span className="font-semibold text-slate-900">
+                <span className="font-semibold text-neutral-900">
                   {process.env.NEXT_PUBLIC_BILLING_EMAIL ?? "soporte@impels.com"}
                 </span>{" "}
                 con el siguiente asunto:
               </p>
             </div>
-            <div className="flex items-center justify-between gap-3 bg-slate-900 text-white rounded-xl px-4 py-3">
+            <div className="flex items-center justify-between gap-3 bg-neutral-900 text-white rounded-xl px-4 py-3">
               <code className="text-sm font-mono">{emailSubject}</code>
               <button
                 onClick={copySubject}
-                className="flex items-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 text-xs font-medium text-neutral-300 hover:text-white transition-colors flex-shrink-0"
               >
                 {copied ? (
                   <Check className="w-3.5 h-3.5 text-green-400" />
@@ -126,7 +126,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
                 {copied ? "Copiado" : "Copiar"}
               </button>
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-neutral-500">
               Tu plan Pro se activará en un plazo de 24 horas hábiles tras la confirmación del pago.
             </p>
           </div>

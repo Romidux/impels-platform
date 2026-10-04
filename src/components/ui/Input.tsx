@@ -18,14 +18,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-slate-700 mb-1.5"
+            className="block text-sm font-medium text-neutral-700 mb-1.5"
           >
             {label}
           </label>
         )}
         <div className="relative">
           {icon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
               {icon}
             </div>
           )}
@@ -33,8 +33,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             ref={ref}
             className={cn(
-              "w-full h-10 border border-slate-200 rounded-lg px-3.5 text-sm text-slate-900 transition-colors outline-none",
-              "placeholder:text-slate-400",
+              "w-full h-10 border border-neutral-200 rounded-lg px-3.5 text-sm text-neutral-900 transition-colors outline-none",
+              "placeholder:text-neutral-400",
               "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10",
               error && "border-red-300 focus:border-red-500 focus:ring-red-500/10",
               icon && "pl-10",
@@ -47,7 +47,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <p className="mt-1.5 text-xs text-red-600 font-medium">{error}</p>
         )}
         {hint && !error && (
-          <p className="mt-1.5 text-xs text-slate-400">{hint}</p>
+          <p className="mt-1.5 text-xs text-neutral-400">{hint}</p>
         )}
       </div>
     );
@@ -72,7 +72,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-slate-700">
+          <label htmlFor={inputId} className="block text-sm font-medium text-neutral-700">
             {label}
           </label>
         )}
@@ -80,8 +80,8 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={inputId}
           ref={ref}
           className={cn(
-            "w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm text-slate-900 transition-colors outline-none resize-none",
-            "placeholder:text-slate-400",
+            "w-full border border-neutral-200 rounded-lg px-3.5 py-2.5 text-sm text-neutral-900 transition-colors outline-none resize-none",
+            "placeholder:text-neutral-400",
             "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10",
             error && "border-red-300 focus:border-red-500 focus:ring-red-500/10",
             className
@@ -89,7 +89,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           {...props}
         />
         {error && <p className="text-xs text-red-500 font-medium">{error}</p>}
-        {hint && !error && <p className="text-xs text-slate-400">{hint}</p>}
+        {hint && !error && <p className="text-xs text-neutral-400">{hint}</p>}
       </div>
     );
   }
@@ -112,7 +112,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-slate-700">
+          <label htmlFor={inputId} className="block text-sm font-medium text-neutral-700">
             {label}
           </label>
         )}
@@ -120,7 +120,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           id={inputId}
           ref={ref}
           className={cn(
-            "dash-select pr-9 w-full h-10 border border-slate-200 rounded-lg px-3.5 text-sm text-slate-900 bg-white transition-colors outline-none",
+            "dash-select pr-9 w-full h-10 border border-neutral-200 rounded-lg px-3.5 text-sm text-neutral-900 bg-white transition-colors outline-none",
             "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10",
             className
           )}
@@ -132,7 +132,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
             </option>
           ))}
         </select>
-        {hint && <p className="text-xs text-slate-400">{hint}</p>}
+        {hint && <p className="text-xs text-neutral-400">{hint}</p>}
       </div>
     );
   }

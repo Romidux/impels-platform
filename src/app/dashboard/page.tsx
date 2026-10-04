@@ -178,33 +178,33 @@ export default async function DashboardPage() {
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-100/60">
-                    <th className="text-left text-xs font-medium text-slate-400 py-3.5 px-6">Cliente</th>
-                    <th className="text-left text-xs font-medium text-slate-400 py-3.5 px-5">Fecha</th>
-                    <th className="text-left text-xs font-medium text-slate-400 py-3.5 px-5">Estado</th>
-                    <th className="text-right text-xs font-medium text-slate-400 py-3.5 px-6">Total</th>
+                  <tr className="border-b border-neutral-100/60">
+                    <th className="text-left text-xs font-medium text-neutral-400 py-3.5 px-6">Cliente</th>
+                    <th className="text-left text-xs font-medium text-neutral-400 py-3.5 px-5">Fecha</th>
+                    <th className="text-left text-xs font-medium text-neutral-400 py-3.5 px-5">Estado</th>
+                    <th className="text-right text-xs font-medium text-neutral-400 py-3.5 px-6">Total</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-100/60">
+                <tbody className="divide-y divide-neutral-100/60">
                   {recentOrders.map((order) => (
-                    <tr key={order.id} className="hover:bg-slate-50/40 transition-colors cursor-pointer group">
+                    <tr key={order.id} className="hover:bg-neutral-50/40 transition-colors cursor-pointer group">
                       <td className="py-4 px-6">
                         <Link href={`/dashboard/orders?status=${order.status}`} className="block">
-                          <p className="text-sm font-medium text-slate-800 group-hover:text-brand-500 transition-colors">
+                          <p className="text-sm font-medium text-neutral-800 group-hover:text-brand-500 transition-colors">
                             {order.customer_name || "Cliente"}
                           </p>
-                          <p className="text-xs text-slate-400 mt-0.5">
+                          <p className="text-xs text-neutral-400 mt-0.5">
                             {order.customer_phone || ""}
                           </p>
                         </Link>
                       </td>
-                      <td className="py-4 px-5 text-sm text-slate-400">
+                      <td className="py-4 px-5 text-sm text-neutral-400">
                         {new Date(order.created_at).toLocaleDateString("es-PY")}
                       </td>
                       <td className="py-4 px-5">
                         <OrderStatusBadge status={order.status as OrderStatus} />
                       </td>
-                      <td className="py-4 px-6 text-sm font-semibold text-slate-800 text-right">
+                      <td className="py-4 px-6 text-sm font-semibold text-neutral-800 text-right">
                         {formatCurrency(order.total || 0)}
                       </td>
                     </tr>
@@ -246,35 +246,35 @@ export default async function DashboardPage() {
 
           {/* Settings Shortcuts */}
           <Card padding={false} className="overflow-hidden">
-            <div className="px-5 py-3 border-b border-slate-100/60">
-              <h3 className="text-[10px] font-medium uppercase tracking-widest text-slate-400">
+            <div className="px-5 py-3 border-b border-neutral-100/60">
+              <h3 className="text-[10px] font-medium uppercase tracking-widest text-neutral-400">
                 Ajustes rápidos
               </h3>
             </div>
-            <div className="divide-y divide-slate-100/60">
+            <div className="divide-y divide-neutral-100/60">
               <Link
                 href="/dashboard/store/appearance"
-                className="flex items-center justify-between p-4 hover:bg-slate-50/60 group transition-colors"
+                className="flex items-center justify-between p-4 hover:bg-neutral-50/60 group transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100/80 flex items-center justify-center text-slate-500 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors">
+                  <div className="w-8 h-8 rounded-xl bg-neutral-100/80 flex items-center justify-center text-neutral-500 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors">
                     <Paintbrush className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-brand-600 transition-colors">Diseño</span>
+                  <span className="text-sm font-medium text-neutral-700 group-hover:text-brand-600 transition-colors">Diseño</span>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-brand-400 transition-colors" />
+                <ArrowRight className="w-4 h-4 text-neutral-300 group-hover:text-brand-400 transition-colors" />
               </Link>
               <Link
                 href="/dashboard/store/identity"
-                className="flex items-center justify-between p-4 hover:bg-slate-50/60 group transition-colors"
+                className="flex items-center justify-between p-4 hover:bg-neutral-50/60 group transition-colors"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-xl bg-slate-100/80 flex items-center justify-center text-slate-500 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors">
+                  <div className="w-8 h-8 rounded-xl bg-neutral-100/80 flex items-center justify-center text-neutral-500 group-hover:bg-brand-50 group-hover:text-brand-500 transition-colors">
                     <Settings className="w-4 h-4" />
                   </div>
-                  <span className="text-sm font-medium text-slate-700 group-hover:text-brand-600 transition-colors">General</span>
+                  <span className="text-sm font-medium text-neutral-700 group-hover:text-brand-600 transition-colors">General</span>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-brand-400 transition-colors" />
+                <ArrowRight className="w-4 h-4 text-neutral-300 group-hover:text-brand-400 transition-colors" />
               </Link>
             </div>
           </Card>

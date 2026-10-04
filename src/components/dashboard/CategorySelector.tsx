@@ -190,10 +190,10 @@ export default function CategorySelector({
     <div className="space-y-4">
       {/* Categoria Principal */}
       <div className="space-y-1.5 relative z-20">
-        <label className="block text-[13px] font-semibold text-slate-700">Categoría Principal</label>
+        <label className="block text-[13px] font-semibold text-neutral-700">Categoría Principal</label>
         
         {isCreatingParent ? (
-          <div className="flex animate-fade-in items-center gap-2 bg-slate-100 rounded-2xl p-1.5 border border-slate-300 shadow-inner">
+          <div className="flex animate-fade-in items-center gap-2 bg-neutral-100 rounded-2xl p-1.5 border border-neutral-300 shadow-inner">
             <input
               autoFocus
               type="text"
@@ -201,7 +201,7 @@ export default function CategorySelector({
               value={newParentName}
               onChange={(e) => setNewParentName(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleSaveParent()}
-              className="flex-1 bg-transparent px-3 py-2 text-[14px] font-medium text-slate-700 focus:outline-none"
+              className="flex-1 bg-transparent px-3 py-2 text-[14px] font-medium text-neutral-700 focus:outline-none"
               disabled={isSavingParent}
             />
             <button
@@ -216,7 +216,7 @@ export default function CategorySelector({
               type="button"
               onClick={() => { setIsCreatingParent(false); setNewParentName(""); }}
               disabled={isSavingParent}
-              className="p-2 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-slate-50 disabled:opacity-50 transition-colors shadow-sm"
+              className="p-2 bg-white border border-neutral-200 text-neutral-500 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-colors shadow-sm"
             >
               <X className="w-4 h-4" />
             </button>
@@ -254,10 +254,10 @@ export default function CategorySelector({
       {/* Subcategoría */}
       {selectedParent && (
         <div className="space-y-1.5 mt-3 animate-fade-in">
-          <label className="block text-[13px] font-semibold text-slate-700">Subcategoría (Opcional)</label>
+          <label className="block text-[13px] font-semibold text-neutral-700">Subcategoría (Opcional)</label>
           
           {isCreatingChild ? (
-            <div className="flex animate-fade-in items-center gap-2 bg-slate-100 rounded-2xl p-1.5 border border-slate-300 shadow-inner">
+            <div className="flex animate-fade-in items-center gap-2 bg-neutral-100 rounded-2xl p-1.5 border border-neutral-300 shadow-inner">
               <input
                 autoFocus
                 type="text"
@@ -265,7 +265,7 @@ export default function CategorySelector({
                 value={newChildName}
                 onChange={(e) => setNewChildName(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && handleSaveChild()}
-                className="flex-1 bg-transparent px-3 py-2 text-[14px] font-medium text-slate-700 focus:outline-none"
+                className="flex-1 bg-transparent px-3 py-2 text-[14px] font-medium text-neutral-700 focus:outline-none"
                 disabled={isSavingChild}
               />
               <button
@@ -280,7 +280,7 @@ export default function CategorySelector({
                 type="button"
                 onClick={() => { setIsCreatingChild(false); setNewChildName(""); }}
                 disabled={isSavingChild}
-                className="p-2 bg-white border border-slate-200 text-slate-500 rounded-xl hover:bg-slate-50 disabled:opacity-50 transition-colors shadow-sm"
+                className="p-2 bg-white border border-neutral-200 text-neutral-500 rounded-xl hover:bg-neutral-50 disabled:opacity-50 transition-colors shadow-sm"
               >
                 <X className="w-4 h-4" />
               </button>

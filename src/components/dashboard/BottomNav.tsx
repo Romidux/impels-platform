@@ -102,15 +102,15 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
             onClick={() => setMoreOpen(false)}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg max-h-[70vh] overflow-y-auto animate-slide-up">
-            <div className="flex items-center justify-between p-4 border-b border-slate-100">
-              <h3 className="font-display font-semibold text-base text-slate-900">
+            <div className="flex items-center justify-between p-4 border-b border-neutral-100">
+              <h3 className="font-display font-semibold text-base text-neutral-900">
                 Más opciones
               </h3>
               <button
                 onClick={() => setMoreOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors"
               >
-                <X className="w-5 h-5 text-slate-400" />
+                <X className="w-5 h-5 text-neutral-400" />
               </button>
             </div>
 
@@ -137,7 +137,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                     "flex flex-col items-center gap-2 p-3 rounded-xl transition-all duration-200 text-center",
                     isActive(item.href)
                       ? "bg-brand-50 text-brand-800"
-                      : "text-slate-500 hover:bg-slate-50"
+                      : "text-neutral-500 hover:bg-neutral-50"
                   )}
                 >
                   <item.icon className="w-5 h-5" />
@@ -149,13 +149,13 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
             </div>
 
             {/* Perfil y logout */}
-            <div className="px-3 pb-3 pt-1 border-t border-slate-100 mt-1 space-y-1">
+            <div className="px-3 pb-3 pt-1 border-t border-neutral-100 mt-1 space-y-1">
               <Link
                 href="/dashboard/store/identity"
                 onClick={() => setMoreOpen(false)}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 hover:bg-neutral-50 transition-colors"
               >
-                <User className="w-5 h-5 text-slate-400" />
+                <User className="w-5 h-5 text-neutral-400" />
                 Mi perfil
               </Link>
               <button
@@ -178,21 +178,21 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
             onClick={() => setShareOpen(false)}
           />
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg animate-slide-up">
-            <div className="flex items-center justify-between p-4 border-b border-slate-100">
-              <h3 className="font-display font-semibold text-base text-slate-900">
+            <div className="flex items-center justify-between p-4 border-b border-neutral-100">
+              <h3 className="font-display font-semibold text-base text-neutral-900">
                 Compartir tienda
               </h3>
               <button
                 onClick={() => setShareOpen(false)}
-                className="p-1.5 rounded-lg hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg hover:bg-neutral-100 transition-colors"
               >
-                <X className="w-5 h-5 text-slate-400" />
+                <X className="w-5 h-5 text-neutral-400" />
               </button>
             </div>
             <div className="p-4 space-y-3 pb-[calc(1rem+env(safe-area-inset-bottom))]">
               {/* URL display */}
-              <div className="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-                <span className="text-sm text-slate-600 flex-1 truncate font-medium">
+              <div className="flex items-center gap-2 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3">
+                <span className="text-sm text-neutral-600 flex-1 truncate font-medium">
                   {storeUrl}
                 </span>
               </div>
@@ -217,7 +217,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setShareOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-sm border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-sm border border-neutral-200 text-neutral-700 hover:bg-neutral-50 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
                 Abrir tienda
@@ -228,7 +228,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
       )}
 
       {/* Bottom navigation bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 pb-[env(safe-area-inset-bottom)]">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/95 backdrop-blur-md border-t border-neutral-200 px-2 pb-[env(safe-area-inset-bottom)]">
         <div className="flex items-center justify-around h-16">
           {mainItems.map((item) => {
             const active = isActive(item.href, item.exact);
@@ -238,7 +238,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                 href={item.href}
                 className={cn(
                   "flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 min-w-[60px] relative",
-                  active ? "text-brand-600" : "text-slate-400"
+                  active ? "text-brand-600" : "text-neutral-400"
                 )}
               >
                 <item.icon className={cn("w-5 h-5", active && "text-brand-600")} />
@@ -257,7 +257,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
             onClick={() => setMoreOpen(true)}
             className={cn(
               "flex flex-col items-center gap-1 px-3 py-1.5 rounded-xl transition-all duration-200 min-w-[60px]",
-              isMoreActive ? "text-brand-600" : "text-slate-400"
+              isMoreActive ? "text-brand-600" : "text-neutral-400"
             )}
           >
             <MoreHorizontal className="w-5 h-5" />

@@ -118,13 +118,13 @@ export default function OrderStatusChanger({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-[14px] border border-slate-200 shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 min-w-[148px] py-1.5">
+        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-[14px] border border-neutral-200 shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 min-w-[148px] py-1.5">
           {ALL_STATUSES.map(([status, cfg]) => (
             <button
               key={status}
               type="button"
               onClick={() => handleChange(status)}
-              className="w-full flex items-center justify-between px-3 py-2 text-sm text-slate-900 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-50 transition-colors"
             >
               <span className="flex items-center gap-2">
                 <span
@@ -136,7 +136,7 @@ export default function OrderStatusChanger({
                 {cfg.label}
               </span>
               {status === value && (
-                <Check className="w-3.5 h-3.5 text-slate-400" />
+                <Check className="w-3.5 h-3.5 text-neutral-400" />
               )}
             </button>
           ))}

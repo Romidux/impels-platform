@@ -164,7 +164,7 @@ export default function DashboardSidebar({
   };
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 z-40 hidden w-64 flex-col bg-white border-r border-slate-200/60 md:flex">
+    <aside className="fixed left-0 top-0 bottom-0 z-40 hidden w-64 flex-col bg-white border-r border-neutral-200/60 md:flex">
       {/* Logo */}
       <div className="px-6 pt-5 pb-4">
         <Link href="/dashboard" className="flex items-center gap-2.5">
@@ -172,7 +172,7 @@ export default function DashboardSidebar({
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>
-            <span className="font-display font-semibold text-base text-slate-900">
+            <span className="font-display font-semibold text-base text-neutral-900">
               Impels
             </span>
             <span className="text-brand-600 font-display font-semibold text-base ml-0.5">
@@ -183,13 +183,13 @@ export default function DashboardSidebar({
       </div>
 
       {/* Store section */}
-      <div className="px-4 pb-3 border-b border-slate-200/60">
+      <div className="px-4 pb-3 border-b border-neutral-200/60">
         <div className="flex items-center justify-between gap-2 px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-500 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white border border-neutral-200 text-neutral-500 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               <StoreIcon className="h-4 w-4" />
             </div>
-            <p className="truncate text-sm font-medium leading-tight text-slate-900">
+            <p className="truncate text-sm font-medium leading-tight text-neutral-900">
               {store.name}
             </p>
           </div>
@@ -197,7 +197,7 @@ export default function DashboardSidebar({
             href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
             title="Ver tienda"
           >
             <ExternalLink className="h-3.5 w-3.5" />
@@ -210,7 +210,7 @@ export default function DashboardSidebar({
         {navGroups.map((group, groupIdx) => (
           <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-6")}>
             {group.label && (
-              <p className="px-3 pb-1.5 pt-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-slate-400">
+              <p className="px-3 pb-1.5 pt-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-400">
                 {group.label}
               </p>
             )}
@@ -234,14 +234,14 @@ export default function DashboardSidebar({
                       "relative flex items-center gap-2.5 px-3 py-2 text-sm transition-all duration-150 rounded-xl",
                       active
                         ? "bg-brand-50 text-brand-700 font-medium"
-                        : "font-normal text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                        : "font-normal text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
                     )}
                   >
                     <div className="flex h-5 w-5 items-center justify-center">
                       <item.icon
                         className={cn(
                           "h-4 w-4 flex-shrink-0",
-                          active ? "text-brand-600" : "text-slate-400"
+                          active ? "text-brand-600" : "text-neutral-400"
                         )}
                       />
                     </div>
@@ -258,7 +258,7 @@ export default function DashboardSidebar({
                     {ParentLink}
 
                     {isOpen && (
-                      <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-slate-200 pl-3">
+                      <div className="ml-3 mt-1 flex flex-col gap-0.5 border-l border-neutral-200 pl-3">
                         {item.children?.map((child) => {
                           const isActive = isChildActive(child.href);
 
@@ -267,7 +267,7 @@ export default function DashboardSidebar({
                               key={child.href}
                               href={child.href}
                               className={cn(
-                                "relative flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm text-slate-500 transition-all duration-150 hover:bg-slate-100 hover:text-slate-900",
+                                "relative flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm text-neutral-500 transition-all duration-150 hover:bg-neutral-100 hover:text-neutral-900",
                                 isActive &&
                                   "bg-brand-50 font-medium text-brand-700"
                               )}
@@ -287,15 +287,15 @@ export default function DashboardSidebar({
       </nav>
 
       {/* User section */}
-      <div className="border-t border-slate-200/60 px-3 py-3" ref={userMenuRef}>
+      <div className="border-t border-neutral-200/60 px-3 py-3" ref={userMenuRef}>
         <div className="relative">
           <button
             onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="flex items-center gap-3 w-full px-3 py-2 rounded-xl hover:bg-slate-100 transition-colors"
+            className="flex items-center gap-3 w-full px-3 py-2 rounded-xl hover:bg-neutral-100 transition-colors"
           >
             {/* Notification bell */}
             <div className="relative flex-shrink-0">
-              <Bell className="w-4 h-4 text-slate-400" />
+              <Bell className="w-4 h-4 text-neutral-400" />
               <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-600 border-2 border-white" />
             </div>
 
@@ -307,28 +307,28 @@ export default function DashboardSidebar({
             </div>
 
             {/* Email */}
-            <p className="text-xs font-normal text-slate-500 truncate flex-1 text-left">
+            <p className="text-xs font-normal text-neutral-500 truncate flex-1 text-left">
               {user.email}
             </p>
 
             <ChevronDown className={cn(
-              "w-3.5 h-3.5 text-slate-400 flex-shrink-0 transition-transform",
+              "w-3.5 h-3.5 text-neutral-400 flex-shrink-0 transition-transform",
               userMenuOpen && "rotate-180"
             )} />
           </button>
 
           {/* User dropdown */}
           {userMenuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-white rounded-[14px] shadow-[0_8px_24px_rgba(0,0,0,0.10)] border border-slate-200 z-50 overflow-hidden">
+            <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-white rounded-[14px] shadow-[0_8px_24px_rgba(0,0,0,0.10)] border border-neutral-200 z-50 overflow-hidden">
               <div className="p-1.5">
                 <button
                   onClick={() => {
                     setUserMenuOpen(false);
                     router.push("/dashboard/store/identity");
                   }}
-                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-slate-900 hover:bg-slate-50 rounded-xl transition-colors"
+                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-50 rounded-xl transition-colors"
                 >
-                  <User className="w-4 h-4 text-slate-400" />
+                  <User className="w-4 h-4 text-neutral-400" />
                   Mi perfil
                 </button>
                 <button

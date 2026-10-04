@@ -498,7 +498,7 @@ export default function ProductForm({
       aria-checked={checked}
       onClick={onToggle}
       className={`w-10 h-5 rounded-full transition-colors relative flex-shrink-0 focus:outline-none focus:ring-2 focus:ring-brand-500/10 ${
-        checked ? "bg-brand-500" : "bg-slate-300"
+        checked ? "bg-brand-500" : "bg-neutral-300"
       }`}
     >
       <div
@@ -528,7 +528,7 @@ export default function ProductForm({
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 form.visibility === "visible"
                   ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
-                  : "bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200"
+                  : "bg-neutral-100 text-neutral-500 border-neutral-200 hover:bg-neutral-200"
               }`}
             >
               {form.visibility === "visible" ? (
@@ -559,13 +559,13 @@ export default function ProductForm({
 
           {/* 1. Información básica */}
           <section className="dash-card p-7 space-y-6">
-            <h2 className="font-display text-base font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="font-display text-base font-semibold text-neutral-900 flex items-center gap-2">
               <Package className="w-4 h-4 text-brand-500" />
               Información básica
             </h2>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-slate-700">
+              <label className="block text-sm font-medium text-neutral-700">
                 Nombre del producto <span className="text-red-500">*</span>
               </label>
               <input
@@ -573,16 +573,16 @@ export default function ProductForm({
                 value={form.name}
                 onChange={(e) => handleChange("name", e.target.value)}
                 placeholder="Ej: Camiseta de Algodón Premium"
-                className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                className="w-full bg-white border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
               />
             </div>
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-neutral-700">
                   Descripción
                 </label>
-                <span className="text-xs text-slate-400 tabular-nums">
+                <span className="text-xs text-neutral-400 tabular-nums">
                   {form.description.length} / 1000
                 </span>
               </div>
@@ -592,7 +592,7 @@ export default function ProductForm({
                 placeholder="Describe los beneficios, materiales, medidas…"
                 rows={4}
                 maxLength={1000}
-                className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all resize-none"
+                className="w-full bg-white border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all resize-none"
               />
             </div>
 
@@ -601,7 +601,7 @@ export default function ProductForm({
               <button
                 type="button"
                 onClick={() => setShowAdvanced(!showAdvanced)}
-                className="flex items-center gap-1.5 text-xs font-medium text-slate-400 hover:text-slate-600 transition-colors"
+                className="flex items-center gap-1.5 text-xs font-medium text-neutral-400 hover:text-neutral-600 transition-colors"
               >
                 <ChevronDown
                   className={`w-3.5 h-3.5 transition-transform ${showAdvanced ? "rotate-180" : ""}`}
@@ -611,11 +611,11 @@ export default function ProductForm({
 
               {showAdvanced && (
                 <div className="mt-3 space-y-1.5 animate-fade-in">
-                  <label className="block text-sm font-medium text-slate-700">
+                  <label className="block text-sm font-medium text-neutral-700">
                     URL amigable (Slug)
                   </label>
-                  <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
-                    <span className="text-slate-400 text-sm px-4 flex items-center border-r border-slate-200 font-mono">
+                  <div className="flex rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
+                    <span className="text-neutral-400 text-sm px-4 flex items-center border-r border-neutral-200 font-mono">
                       /p/
                     </span>
                     <input
@@ -627,7 +627,7 @@ export default function ProductForm({
                     />
                   </div>
                   {form.slug && (
-                    <p className="text-xs text-slate-400 font-mono truncate">
+                    <p className="text-xs text-neutral-400 font-mono truncate">
                       tutienda.com/p/{form.slug}
                     </p>
                   )}
@@ -640,11 +640,11 @@ export default function ProductForm({
           <section className="dash-card p-7 space-y-5">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="font-display text-base font-semibold text-slate-900 flex items-center gap-2">
+                <h2 className="font-display text-base font-semibold text-neutral-900 flex items-center gap-2">
                   <Image className="w-4 h-4 text-brand-500" />
                   Imágenes
                 </h2>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-neutral-400 mt-0.5">
                   {images.length > 0
                     ? `${images.length} imagen${images.length !== 1 ? "es" : ""} · toca una para marcarla como principal`
                     : "Agrega fotos del producto"}
@@ -673,9 +673,9 @@ export default function ProductForm({
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="w-full aspect-[16/7] border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-3 text-slate-400 hover:border-brand-400 hover:text-brand-500 hover:bg-brand-50/30 transition-all group"
+                className="w-full aspect-[16/7] border-2 border-dashed border-neutral-200 rounded-2xl flex flex-col items-center justify-center gap-3 text-neutral-400 hover:border-brand-400 hover:text-brand-500 hover:bg-brand-50/30 transition-all group"
               >
-                <div className="w-12 h-12 rounded-2xl bg-slate-100 group-hover:bg-brand-100 flex items-center justify-center transition-colors">
+                <div className="w-12 h-12 rounded-2xl bg-neutral-100 group-hover:bg-brand-100 flex items-center justify-center transition-colors">
                   <Image className="w-6 h-6 opacity-60 group-hover:opacity-100" />
                 </div>
                 <div className="text-center">
@@ -687,7 +687,7 @@ export default function ProductForm({
               <div className="grid grid-cols-[1fr_auto] gap-3">
                 {/* Main preview */}
                 <div
-                  className="relative aspect-square rounded-2xl overflow-hidden bg-slate-50 border border-slate-200 cursor-pointer group"
+                  className="relative aspect-square rounded-2xl overflow-hidden bg-neutral-50 border border-neutral-200 cursor-pointer group"
                   onClick={() => fileRef.current?.click()}
                 >
                   {primaryImage && (
@@ -698,7 +698,7 @@ export default function ProductForm({
                     />
                   )}
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                  <span className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm text-slate-700 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">
+                  <span className="absolute top-3 left-3 flex items-center gap-1 bg-white/95 backdrop-blur-sm text-neutral-700 text-xs font-medium px-2.5 py-1 rounded-full shadow-sm">
                     <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
                     Principal
                   </span>
@@ -709,10 +709,10 @@ export default function ProductForm({
                   {images.map((img, i) => (
                     <div
                       key={i}
-                      className={`w-[72px] h-[72px] shrink-0 rounded-xl overflow-hidden border-2 cursor-pointer transition-all relative group bg-slate-50 ${
+                      className={`w-[72px] h-[72px] shrink-0 rounded-xl overflow-hidden border-2 cursor-pointer transition-all relative group bg-neutral-50 ${
                         img.is_primary
                           ? "border-brand-500 ring-2 ring-brand-500/20"
-                          : "border-slate-200 hover:border-slate-300"
+                          : "border-neutral-200 hover:border-neutral-300"
                       }`}
                       onClick={() => setPrimary(i)}
                     >
@@ -727,7 +727,7 @@ export default function ProductForm({
                           e.stopPropagation();
                           removeImage(i);
                         }}
-                        className="absolute -top-1 -right-1 w-5 h-5 bg-white text-slate-700 hover:text-red-500 border border-slate-200 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10"
+                        className="absolute -top-1 -right-1 w-5 h-5 bg-white text-neutral-700 hover:text-red-500 border border-neutral-200 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all z-10"
                       >
                         <X className="w-3 h-3" />
                       </button>
@@ -737,10 +737,10 @@ export default function ProductForm({
                   <button
                     type="button"
                     onClick={() => fileRef.current?.click()}
-                    className="w-[72px] h-[72px] shrink-0 rounded-xl border-2 border-dashed border-slate-200 hover:border-brand-400 hover:bg-brand-50/50 flex items-center justify-center transition-colors bg-white group"
+                    className="w-[72px] h-[72px] shrink-0 rounded-xl border-2 border-dashed border-neutral-200 hover:border-brand-400 hover:bg-brand-50/50 flex items-center justify-center transition-colors bg-white group"
                     aria-label="Agregar imagen"
                   >
-                    <div className="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 group-hover:bg-brand-500 group-hover:text-white transition-colors">
+                    <div className="w-6 h-6 rounded-full bg-neutral-100 flex items-center justify-center text-neutral-500 group-hover:bg-brand-500 group-hover:text-white transition-colors">
                       <Plus className="w-3.5 h-3.5" />
                     </div>
                   </button>
@@ -751,21 +751,21 @@ export default function ProductForm({
 
           {/* 3. Variantes */}
           <section className="dash-card p-7 space-y-6">
-            <h2 className="font-display text-base font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="font-display text-base font-semibold text-neutral-900 flex items-center gap-2">
               <Tag className="w-4 h-4 text-brand-500" />
               Variantes
             </h2>
 
-            <label className="flex items-start gap-3 cursor-pointer bg-slate-50 p-4 rounded-xl border border-slate-200 hover:border-slate-300 transition-colors">
+            <label className="flex items-start gap-3 cursor-pointer bg-neutral-50 p-4 rounded-xl border border-neutral-200 hover:border-neutral-300 transition-colors">
               <Toggle
                 checked={form.has_variants}
                 onToggle={() => handleChange("has_variants", !form.has_variants)}
               />
               <div>
-                <span className="text-sm font-semibold text-slate-900 block">
+                <span className="text-sm font-semibold text-neutral-900 block">
                   Este producto tiene múltiples opciones
                 </span>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-neutral-500">
                   Como diferentes tallas, colores o modelos
                 </span>
               </div>
@@ -775,7 +775,7 @@ export default function ProductForm({
               <>
                 {/* Stock mode */}
                 <div className="space-y-3">
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
                     Control de stock
                   </p>
                   <div className="grid grid-cols-2 gap-3">
@@ -785,11 +785,11 @@ export default function ProductForm({
                       className={`p-3.5 rounded-xl border-2 text-left transition-all ${
                         !form.manage_stock_by_variant
                           ? "border-brand-500 bg-brand-50"
-                          : "border-slate-200 hover:border-slate-300 bg-white"
+                          : "border-neutral-200 hover:border-neutral-300 bg-white"
                       }`}
                     >
-                      <span className="block text-sm font-semibold text-slate-900">Stock general</span>
-                      <span className="text-xs text-slate-500 leading-relaxed">Un solo stock para todo</span>
+                      <span className="block text-sm font-semibold text-neutral-900">Stock general</span>
+                      <span className="text-xs text-neutral-500 leading-relaxed">Un solo stock para todo</span>
                     </button>
                     <button
                       type="button"
@@ -797,28 +797,28 @@ export default function ProductForm({
                       className={`p-3.5 rounded-xl border-2 text-left transition-all ${
                         form.manage_stock_by_variant
                           ? "border-brand-500 bg-brand-50"
-                          : "border-slate-200 hover:border-slate-300 bg-white"
+                          : "border-neutral-200 hover:border-neutral-300 bg-white"
                       }`}
                     >
-                      <span className="block text-sm font-semibold text-slate-900">Stock por variante</span>
-                      <span className="text-xs text-slate-500 leading-relaxed">Individual por combinación</span>
+                      <span className="block text-sm font-semibold text-neutral-900">Stock por variante</span>
+                      <span className="text-xs text-neutral-500 leading-relaxed">Individual por combinación</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Option types */}
                 <div className="space-y-3">
-                  <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">
+                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
                     Atributos del producto
                   </p>
 
                   {optionTypes.length === 0 ? (
-                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center">
-                      <Tag className="w-8 h-8 mx-auto mb-3 text-slate-300" />
-                      <p className="text-sm font-medium text-slate-600 mb-1">
+                    <div className="border-2 border-dashed border-neutral-200 rounded-xl p-8 text-center">
+                      <Tag className="w-8 h-8 mx-auto mb-3 text-neutral-300" />
+                      <p className="text-sm font-medium text-neutral-600 mb-1">
                         Aún no hay atributos
                       </p>
-                      <p className="text-xs text-slate-400 mb-5">
+                      <p className="text-xs text-neutral-400 mb-5">
                         Agrega opciones como Color, Talla o Material
                       </p>
                       <div className="flex flex-wrap gap-2 justify-center">
@@ -832,7 +832,7 @@ export default function ProductForm({
                                 { name: preset, values: [], newValue: "" },
                               ])
                             }
-                            className="text-xs font-medium border border-slate-200 bg-white px-3.5 py-1.5 rounded-full hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                            className="text-xs font-medium border border-neutral-200 bg-white px-3.5 py-1.5 rounded-full hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
                           >
                             + {preset}
                           </button>
@@ -844,9 +844,9 @@ export default function ProductForm({
                       {optionTypes.map((ot, i) => (
                         <div
                           key={i}
-                          className="border border-slate-200 rounded-xl overflow-hidden"
+                          className="border border-neutral-200 rounded-xl overflow-hidden"
                         >
-                          <div className="flex items-center gap-3 px-4 py-3 bg-slate-50 border-b border-slate-200">
+                          <div className="flex items-center gap-3 px-4 py-3 bg-neutral-50 border-b border-neutral-200">
                             <span className="w-6 h-6 bg-brand-600 text-white rounded-full text-xs font-semibold flex items-center justify-center flex-shrink-0">
                               {i + 1}
                             </span>
@@ -855,12 +855,12 @@ export default function ProductForm({
                               value={ot.name}
                               onChange={(e) => updateOptionTypeName(i, e.target.value)}
                               placeholder="Nombre del atributo (ej: Color)"
-                              className="flex-1 bg-transparent text-sm font-medium text-slate-900 focus:outline-none placeholder:font-normal placeholder:text-slate-400"
+                              className="flex-1 bg-transparent text-sm font-medium text-neutral-900 focus:outline-none placeholder:font-normal placeholder:text-neutral-400"
                             />
                             <button
                               type="button"
                               onClick={() => removeOptionType(i)}
-                              className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                              className="p-1.5 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
@@ -889,7 +889,7 @@ export default function ProductForm({
 
                             {getPresetValues(ot.name).length > 0 && (
                               <div className="flex flex-wrap items-center gap-2">
-                                <span className="text-xs text-slate-400">Sugerencias:</span>
+                                <span className="text-xs text-neutral-400">Sugerencias:</span>
                                 {getPresetValues(ot.name)
                                   .filter((v) => !ot.values.includes(v))
                                   .map((v) => (
@@ -897,7 +897,7 @@ export default function ProductForm({
                                       key={v}
                                       type="button"
                                       onClick={() => addPresetValue(i, v)}
-                                      className="text-xs px-2.5 py-1 rounded-full border border-slate-200 bg-white hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
+                                      className="text-xs px-2.5 py-1 rounded-full border border-neutral-200 bg-white hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-colors"
                                     >
                                       + {v}
                                     </button>
@@ -923,7 +923,7 @@ export default function ProductForm({
                                   }
                                 }}
                                 placeholder="Escribe un valor y presiona Enter…"
-                                className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                                className="flex-1 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                               />
                               <button
                                 type="button"
@@ -942,7 +942,7 @@ export default function ProductForm({
                   <button
                     type="button"
                     onClick={addOptionType}
-                    className="w-full py-2.5 border-2 border-dashed border-slate-200 rounded-xl text-sm font-medium text-slate-500 hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-all flex items-center justify-center gap-2"
+                    className="w-full py-2.5 border-2 border-dashed border-neutral-200 rounded-xl text-sm font-medium text-neutral-500 hover:border-brand-400 hover:text-brand-600 hover:bg-brand-50 transition-all flex items-center justify-center gap-2"
                   >
                     <Plus className="w-4 h-4" />
                     Agregar atributo
@@ -960,7 +960,7 @@ export default function ProductForm({
                       {combinations.length > 0 ? "Actualizar combinaciones" : "Generar combinaciones"}
                     </button>
                     {combinations.length === 0 && (
-                      <p className="text-xs text-slate-400 text-center mt-2">
+                      <p className="text-xs text-neutral-400 text-center mt-2">
                         Genera las combinaciones una vez hayas cargado todos los valores
                       </p>
                     )}
@@ -968,39 +968,39 @@ export default function ProductForm({
                 )}
 
                 {combinations.length > 0 && (
-                  <div className="border border-slate-200 rounded-xl overflow-hidden overflow-x-auto no-scrollbar">
-                    <div className="px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-                      <span className="text-xs font-medium text-slate-600 uppercase tracking-wide">
+                  <div className="border border-neutral-200 rounded-xl overflow-hidden overflow-x-auto no-scrollbar">
+                    <div className="px-4 py-3 bg-neutral-50 border-b border-neutral-200 flex items-center justify-between">
+                      <span className="text-xs font-medium text-neutral-600 uppercase tracking-wide">
                         {combinations.length} combinación{combinations.length !== 1 ? "es" : ""}
                       </span>
                       {!form.manage_stock_by_variant && (
-                        <span className="text-xs text-slate-400">
+                        <span className="text-xs text-neutral-400">
                           Activa el stock por variante para editar unidades
                         </span>
                       )}
                     </div>
                     <table className="w-full text-sm">
-                      <thead className="border-b border-slate-200">
+                      <thead className="border-b border-neutral-200">
                         <tr className="bg-white">
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Combinación</th>
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Stock</th>
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Precio</th>
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">SKU</th>
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">Activo</th>
+                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Combinación</th>
+                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Stock</th>
+                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Precio</th>
+                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">SKU</th>
+                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Activo</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-100">
+                      <tbody className="divide-y divide-neutral-100">
                         {combinations.map((c, idx) => (
                           <tr
                             key={idx}
-                            className={`hover:bg-slate-50 transition-colors ${!c.is_active ? "opacity-50" : ""}`}
+                            className={`hover:bg-neutral-50 transition-colors ${!c.is_active ? "opacity-50" : ""}`}
                           >
                             <td className="px-4 py-3">
                               <div className="flex flex-wrap gap-1">
                                 {c.values.map((v) => (
                                   <span
                                     key={v}
-                                    className="inline-block bg-slate-100 text-slate-700 text-xs px-2 py-0.5 rounded-md font-medium"
+                                    className="inline-block bg-neutral-100 text-neutral-700 text-xs px-2 py-0.5 rounded-md font-medium"
                                   >
                                     {v}
                                   </span>
@@ -1012,14 +1012,14 @@ export default function ProductForm({
                                 type="number"
                                 value={c.stock}
                                 onChange={(e) => updateCombination(idx, "stock", e.target.value)}
-                                className="w-20 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                                className="w-20 bg-white border border-neutral-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                                 disabled={!form.manage_stock_by_variant}
                                 min="0"
                               />
                             </td>
                             <td className="px-4 py-3">
-                              <div className="flex items-center rounded-lg border border-slate-200 overflow-hidden bg-slate-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all w-28">
-                                <span className="text-slate-400 text-xs px-2 border-r border-slate-200 py-1.5 font-mono">
+                              <div className="flex items-center rounded-lg border border-neutral-200 overflow-hidden bg-neutral-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all w-28">
+                                <span className="text-neutral-400 text-xs px-2 border-r border-neutral-200 py-1.5 font-mono">
                                   {currency}
                                 </span>
                                 <input
@@ -1038,7 +1038,7 @@ export default function ProductForm({
                                 value={c.sku}
                                 onChange={(e) => updateCombination(idx, "sku", e.target.value)}
                                 placeholder="SKU-001"
-                                className="w-24 bg-white border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                                className="w-24 bg-white border border-neutral-200 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                               />
                             </td>
                             <td className="px-4 py-3">
@@ -1063,17 +1063,17 @@ export default function ProductForm({
 
           {/* A. Precio */}
           <section className="dash-card p-6 space-y-5">
-            <h2 className="font-display text-base font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="font-display text-base font-semibold text-neutral-900 flex items-center gap-2">
               <DollarSign className="w-4 h-4 text-brand-500" />
               Precio
             </h2>
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-slate-700">
+              <label className="block text-sm font-medium text-neutral-700">
                 Precio de venta
               </label>
-              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
-                <span className="text-slate-500 text-sm px-3 flex items-center border-r border-slate-200 font-mono bg-slate-100/50">
+              <div className="flex rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
+                <span className="text-neutral-500 text-sm px-3 flex items-center border-r border-neutral-200 font-mono bg-neutral-100/50">
                   {currency}
                 </span>
                 <input
@@ -1089,9 +1089,9 @@ export default function ProductForm({
 
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-slate-700">
+                <label className="block text-sm font-medium text-neutral-700">
                   Precio anterior
-                  <span className="text-slate-400 font-normal ml-1">(opcional)</span>
+                  <span className="text-neutral-400 font-normal ml-1">(opcional)</span>
                 </label>
                 {discountPct && (
                   <span className="text-xs font-semibold bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full">
@@ -1099,8 +1099,8 @@ export default function ProductForm({
                   </span>
                 )}
               </div>
-              <div className="flex rounded-xl overflow-hidden border border-slate-200 bg-slate-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
-                <span className="text-slate-500 text-sm px-3 flex items-center border-r border-slate-200 font-mono bg-slate-100/50">
+              <div className="flex rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
+                <span className="text-neutral-500 text-sm px-3 flex items-center border-r border-neutral-200 font-mono bg-neutral-100/50">
                   {currency}
                 </span>
                 <input
@@ -1112,7 +1112,7 @@ export default function ProductForm({
                   className="flex-1 px-3 py-2.5 text-sm bg-transparent focus:outline-none"
                 />
               </div>
-              <p className="text-xs text-slate-400">
+              <p className="text-xs text-neutral-400">
                 Se mostrará tachado para indicar descuento
               </p>
             </div>
@@ -1122,7 +1122,7 @@ export default function ProductForm({
                 checked={form.show_price}
                 onToggle={() => handleChange("show_price", !form.show_price)}
               />
-              <span className="text-sm font-medium text-slate-700">
+              <span className="text-sm font-medium text-neutral-700">
                 {form.show_price ? "Precio visible" : "Precio oculto (Consultar)"}
               </span>
             </label>
@@ -1131,7 +1131,7 @@ export default function ProductForm({
           {/* B. Inventario */}
           <section className="dash-card p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-display text-base font-semibold text-slate-900">
+              <h2 className="font-display text-base font-semibold text-neutral-900">
                 Inventario
               </h2>
               {stockBadge && (
@@ -1147,10 +1147,10 @@ export default function ProductForm({
                 onToggle={() => handleChange("track_inventory", !form.track_inventory)}
               />
               <div>
-                <span className="text-sm font-medium text-slate-700 block">
+                <span className="text-sm font-medium text-neutral-700 block">
                   Controlar inventario exacto
                 </span>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-neutral-500">
                   Lleva la cuenta de unidades disponibles
                 </span>
               </div>
@@ -1159,7 +1159,7 @@ export default function ProductForm({
             {form.track_inventory && (!form.has_variants || !form.manage_stock_by_variant) && (
               <div className="space-y-4 animate-fade-in pl-4 border-l-2 border-brand-100">
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                     Unidades disponibles
                   </label>
                   <input
@@ -1168,7 +1168,7 @@ export default function ProductForm({
                     onChange={(e) => handleChange("stock_quantity", e.target.value)}
                     placeholder="Ej: 15"
                     min="0"
-                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                    className="w-full bg-white border border-neutral-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                   />
                 </div>
 
@@ -1178,10 +1178,10 @@ export default function ProductForm({
                     onToggle={() => handleChange("allow_backorder", !form.allow_backorder)}
                   />
                   <div>
-                    <span className="text-sm font-medium text-slate-700 block">
+                    <span className="text-sm font-medium text-neutral-700 block">
                       Permitir ventas sin stock
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-neutral-500">
                       Los clientes podrán comprar aunque llegue a 0
                     </span>
                   </div>
@@ -1201,7 +1201,7 @@ export default function ProductForm({
 
           {/* C. Organización */}
           <section className="dash-card p-6 space-y-5">
-            <h2 className="font-display text-base font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="font-display text-base font-semibold text-neutral-900 flex items-center gap-2">
               <Boxes className="w-4 h-4 text-brand-500" />
               Organización
             </h2>
@@ -1215,8 +1215,8 @@ export default function ProductForm({
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-medium text-slate-700 flex items-center gap-1.5">
-                  <Hash className="w-3.5 h-3.5 text-slate-400" />
+                <label className="block text-sm font-medium text-neutral-700 flex items-center gap-1.5">
+                  <Hash className="w-3.5 h-3.5 text-neutral-400" />
                   Etiquetas
                 </label>
               </div>
@@ -1226,7 +1226,7 @@ export default function ProductForm({
                   {form.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="flex items-center gap-1 bg-slate-100 text-slate-700 text-xs px-2.5 py-1 rounded-full"
+                      className="flex items-center gap-1 bg-neutral-100 text-neutral-700 text-xs px-2.5 py-1 rounded-full"
                     >
                       {tag}
                       <button
@@ -1253,12 +1253,12 @@ export default function ProductForm({
                     }
                   }}
                   placeholder="Agregar etiqueta…"
-                  className="flex-1 bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                  className="flex-1 bg-white border border-neutral-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                 />
                 <button
                   type="button"
                   onClick={addTag}
-                  className="px-3 py-2 border border-slate-200 bg-white rounded-xl text-sm hover:bg-slate-50 transition-colors"
+                  className="px-3 py-2 border border-neutral-200 bg-white rounded-xl text-sm hover:bg-neutral-50 transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                 </button>
@@ -1268,22 +1268,22 @@ export default function ProductForm({
 
           {/* D. Visibilidad */}
           <section className="dash-card p-6 space-y-4">
-            <h2 className="font-display text-base font-semibold text-slate-900">
+            <h2 className="font-display text-base font-semibold text-neutral-900">
               Visibilidad
             </h2>
 
             {/* Pill toggle: Visible / Oculto */}
-            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+            <div className="grid grid-cols-2 gap-2 p-1 bg-neutral-100 rounded-xl">
               <button
                 type="button"
                 onClick={() => handleChange("visibility", "visible")}
                 className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-all ${
                   form.visibility === "visible"
                     ? "bg-white shadow-sm text-emerald-700"
-                    : "text-slate-500 hover:text-slate-700"
+                    : "text-neutral-500 hover:text-neutral-700"
                 }`}
               >
-                <CheckCircle2 className={`w-3.5 h-3.5 ${form.visibility === "visible" ? "text-emerald-500" : "text-slate-300"}`} />
+                <CheckCircle2 className={`w-3.5 h-3.5 ${form.visibility === "visible" ? "text-emerald-500" : "text-neutral-300"}`} />
                 Activo
               </button>
               <button
@@ -1291,11 +1291,11 @@ export default function ProductForm({
                 onClick={() => handleChange("visibility", "hidden")}
                 className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-all ${
                   form.visibility === "hidden"
-                    ? "bg-white shadow-sm text-slate-700"
-                    : "text-slate-500 hover:text-slate-700"
+                    ? "bg-white shadow-sm text-neutral-700"
+                    : "text-neutral-500 hover:text-neutral-700"
                 }`}
               >
-                <EyeOff className={`w-3.5 h-3.5 ${form.visibility === "hidden" ? "text-slate-500" : "text-slate-300"}`} />
+                <EyeOff className={`w-3.5 h-3.5 ${form.visibility === "hidden" ? "text-neutral-500" : "text-neutral-300"}`} />
                 Oculto
               </button>
             </div>
@@ -1306,10 +1306,10 @@ export default function ProductForm({
                 onToggle={() => handleChange("is_featured", !form.is_featured)}
               />
               <div>
-                <span className="text-sm font-medium text-slate-700 block">
+                <span className="text-sm font-medium text-neutral-700 block">
                   Destacado en tienda
                 </span>
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-neutral-500">
                   Aparece en la sección de productos destacados
                 </span>
               </div>

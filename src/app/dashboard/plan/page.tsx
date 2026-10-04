@@ -89,13 +89,13 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
                 </div>
               )}
               <div className="text-center mb-5">
-                <h3 className="font-display text-xl font-semibold text-slate-900">
+                <h3 className="font-display text-xl font-semibold text-neutral-900">
                   {plan.name}
                 </h3>
-                <p className="font-display text-2xl font-semibold text-slate-900 mt-2">
+                <p className="font-display text-2xl font-semibold text-neutral-900 mt-2">
                   {plan.price}
                   {"priceSuffix" in plan && (
-                    <span className="text-base font-semibold text-slate-500">
+                    <span className="text-base font-semibold text-neutral-500">
                       {plan.priceSuffix}
                     </span>
                   )}
@@ -105,7 +105,7 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
                 {plan.features.map((feature) => (
                   <li
                     key={feature}
-                    className="flex items-center gap-2 text-sm text-slate-600"
+                    className="flex items-center gap-2 text-sm text-neutral-600"
                   >
                     <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
                     {feature}
@@ -125,7 +125,7 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
         })}
       </div>
 
-      <p className="text-xs text-slate-400 max-w-3xl">
+      <p className="text-xs text-neutral-400 max-w-3xl">
         El plan Pro se activa manualmente tras la confirmación del pago. Para
         consultas escribí a{" "}
         <span className="font-medium">

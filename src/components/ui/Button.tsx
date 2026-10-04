@@ -16,12 +16,12 @@ const buttonVariants = cva(
       variant: {
         primary:
           "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 transition-colors",
-        // El borde es slate-200, no white/80: antes era un borde blanco sobre
+        // El borde es neutral-200, no white/80: antes era un borde blanco sobre
         // fondo blanco, o sea invisible, y el botón solo existía por la sombra.
         secondary:
-          "bg-white text-slate-700 border border-slate-200 hover:bg-slate-50 hover:border-slate-300 transition-colors",
+          "bg-white text-neutral-700 border border-neutral-200 hover:bg-neutral-50 hover:border-neutral-300 transition-colors",
         ghost:
-          "text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors",
+          "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 transition-colors",
         danger:
           "bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 transition-colors",
         "danger-ghost":

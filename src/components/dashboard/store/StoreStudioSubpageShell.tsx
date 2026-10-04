@@ -19,16 +19,16 @@ export function StoreStudioSubpageShell({
       <div className="flex items-center gap-3 mt-2 sm:mt-4 mb-2">
         <Link
           href="/dashboard/store"
-          className="p-2 -ml-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors flex-shrink-0"
+          className="p-2 -ml-2 rounded-xl hover:bg-neutral-100 text-neutral-400 hover:text-neutral-900 transition-colors flex-shrink-0"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight leading-tight">
+          <h1 className="text-2xl font-semibold text-neutral-900 tracking-tight leading-tight">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-2 text-base text-slate-500 font-normal">{subtitle}</p>
+            <p className="mt-2 text-base text-neutral-500 font-normal">{subtitle}</p>
           )}
         </div>
       </div>

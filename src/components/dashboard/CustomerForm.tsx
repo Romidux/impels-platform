@@ -83,15 +83,15 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
         <div className="flex items-center gap-3">
           <Link
             href="/dashboard/customers"
-            className="p-2 hover:bg-slate-100 rounded-xl transition-colors"
+            className="p-2 hover:bg-neutral-100 rounded-xl transition-colors"
           >
-            <ArrowLeft className="w-5 h-5 text-slate-500" />
+            <ArrowLeft className="w-5 h-5 text-neutral-500" />
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">
+            <h1 className="text-2xl font-semibold text-neutral-900 tracking-tight">
               Nuevo cliente
             </h1>
-            <p className="text-slate-500 mt-0.5 text-sm">
+            <p className="text-neutral-500 mt-0.5 text-sm">
               Registra un cliente manualmente
             </p>
           </div>
@@ -110,13 +110,13 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
         <div className="lg:col-span-2 space-y-6">
           {/* Datos Personales */}
           <div className="dash-card p-6 space-y-5">
-            <h2 className="font-display text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold text-neutral-900 flex items-center gap-2">
               <User className="w-5 h-5 text-brand-500" />
               Datos personales
             </h2>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                 Nombre y apellido *
               </label>
               <input
@@ -124,19 +124,19 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                 value={form.full_name}
                 onChange={(e) => handleChange("full_name", e.target.value)}
                 placeholder="Ej: Juan Pérez"
-                className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                className="w-full border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                   Documento
                 </label>
                 <select
                   value={form.doc_type}
                   onChange={(e) => handleChange("doc_type", e.target.value)}
-                  className="dash-select pr-9 w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all bg-white"
+                  className="dash-select pr-9 w-full border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all bg-white"
                 >
                   <option value="ci">Cédula (CI)</option>
                   <option value="ruc">RUC</option>
@@ -146,7 +146,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
               </div>
               <div className="sm:col-span-2 flex gap-3">
                 <div className="flex-1">
-                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                     Número
                   </label>
                   <input
@@ -154,12 +154,12 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                     value={form.doc_number}
                     onChange={(e) => handleChange("doc_number", e.target.value)}
                     placeholder="Ej: 1234567"
-                    className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                    className="w-full border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                   />
                 </div>
                 {form.doc_type === "ruc" && (
                   <div className="w-20">
-                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                    <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                       DV
                     </label>
                     <input
@@ -168,7 +168,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                       onChange={(e) => handleChange("doc_verifier", e.target.value)}
                       placeholder="0"
                       maxLength={1}
-                      className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm text-center focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                      className="w-full border border-neutral-200 rounded-lg px-4 py-3 text-sm text-center focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                     />
                   </div>
                 )}
@@ -177,7 +177,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                   Teléfono *
                 </label>
                 <PhoneInput
@@ -187,7 +187,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                   Email
                 </label>
                 <input
@@ -195,7 +195,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                   value={form.email}
                   onChange={(e) => handleChange("email", e.target.value)}
                   placeholder="juan@ejemplo.com"
-                  className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                  className="w-full border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                 />
               </div>
             </div>
@@ -203,14 +203,14 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
 
           {/* Dirección */}
           <div className="dash-card p-6 space-y-5">
-            <h2 className="font-display text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold text-neutral-900 flex items-center gap-2">
               <MapPin className="w-5 h-5 text-brand-500" />
               Dirección
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                   Ciudad
                 </label>
                 <input
@@ -218,11 +218,11 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                   value={form.city}
                   onChange={(e) => handleChange("city", e.target.value)}
                   placeholder="Ej: Asunción"
-                  className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                  className="w-full border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                   Barrio
                 </label>
                 <input
@@ -230,13 +230,13 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                   value={form.neighborhood}
                   onChange={(e) => handleChange("neighborhood", e.target.value)}
                   placeholder="Ej: Villa Morra"
-                  className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                  className="w-full border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                 Dirección exacta
               </label>
               <textarea
@@ -244,7 +244,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                 onChange={(e) => handleChange("address", e.target.value)}
                 placeholder="Ej: Av. Mariscal López 1234 casi San Martín"
                 rows={2}
-                className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all resize-none"
+                className="w-full border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all resize-none"
               />
             </div>
           </div>
@@ -253,12 +253,12 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
         {/* Sidebar info / Extra */}
         <div className="space-y-6">
           <div className="dash-card p-6 space-y-5">
-            <h2 className="font-display text-lg font-semibold text-slate-900 flex items-center gap-2">
+            <h2 className="font-display text-lg font-semibold text-neutral-900 flex items-center gap-2">
               <FileText className="w-5 h-5 text-brand-500" />
               Extra
             </h2>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-neutral-700 mb-1.5">
                 Observaciones (opcional)
               </label>
               <textarea
@@ -266,7 +266,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                 onChange={(e) => handleChange("notes", e.target.value)}
                 placeholder="Notas internas sobre este cliente..."
                 rows={5}
-                className="w-full border border-slate-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all resize-none bg-slate-50/50"
+                className="w-full border border-neutral-200 rounded-lg px-4 py-3 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all resize-none bg-neutral-50/50"
               />
             </div>
           </div>

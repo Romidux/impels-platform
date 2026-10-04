@@ -65,12 +65,12 @@ export default function InlineStockEditor({
               ? "text-red-600"
               : currentStock <= 5
               ? "text-amber-600"
-              : "text-slate-900"
+              : "text-neutral-900"
           }`}
         >
           {currentStock}
         </span>
-        <span className="text-[10px] text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">
+        <span className="text-[10px] text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity">
           editar
         </span>
       </button>
@@ -81,9 +81,9 @@ export default function InlineStockEditor({
     <div className="flex items-center gap-1">
       <button
         onClick={() => setValue(Math.max(0, value - 1))}
-        className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors"
       >
-        <Minus className="w-3 h-3 text-slate-600" />
+        <Minus className="w-3 h-3 text-neutral-600" />
       </button>
       <input
         type="number"
@@ -96,9 +96,9 @@ export default function InlineStockEditor({
       />
       <button
         onClick={() => setValue(value + 1)}
-        className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-colors"
+        className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center transition-colors"
       >
-        <Plus className="w-3 h-3 text-slate-600" />
+        <Plus className="w-3 h-3 text-neutral-600" />
       </button>
       <button
         onClick={handleSave}

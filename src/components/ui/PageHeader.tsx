@@ -23,17 +23,17 @@ export function PageHeader({
         {backHref && (
           <Link
             href={backHref}
-            className="p-2 -ml-2 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-900 transition-colors"
+            className="p-2 -ml-2 rounded-xl hover:bg-neutral-100 text-neutral-400 hover:text-neutral-900 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
         )}
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900 tracking-tight leading-tight">
+          <h1 className="text-2xl font-semibold text-neutral-900 tracking-tight leading-tight">
             {title}
           </h1>
           {subtitle && (
-            <p className="text-sm text-slate-500 mt-1 font-normal">{subtitle}</p>
+            <p className="text-sm text-neutral-500 mt-1 font-normal">{subtitle}</p>
           )}
         </div>
       </div>

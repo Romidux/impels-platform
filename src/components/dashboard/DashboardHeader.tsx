@@ -30,7 +30,7 @@ export default function DashboardHeader({
   };
 
   return (
-    <header className="sticky top-0 z-50 h-14 bg-slate-50 px-4 flex items-center justify-between">
+    <header className="sticky top-0 z-50 h-14 bg-neutral-50 px-4 flex items-center justify-between">
       {/* Left: Logo */}
       <div className="flex-1 flex items-center min-w-0">
         <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
@@ -38,7 +38,7 @@ export default function DashboardHeader({
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div className="hidden lg:block">
-            <span className="font-display font-semibold text-base text-slate-800">
+            <span className="font-display font-semibold text-base text-neutral-800">
               Impels
             </span>
             <span className="text-brand-500 font-display font-semibold text-base ml-0.5">
@@ -56,9 +56,9 @@ export default function DashboardHeader({
       {/* Right: Actions */}
       <div className="flex-1 flex items-center justify-end gap-2">
         {/* Notifications */}
-        <button className="relative p-2 text-slate-500 hover:text-slate-700 hover:bg-white/60 rounded-xl transition-colors flex-shrink-0">
+        <button className="relative p-2 text-neutral-500 hover:text-neutral-700 hover:bg-white/60 rounded-xl transition-colors flex-shrink-0">
           <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500 border-2 border-slate-50"></span>
+          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500 border-2 border-neutral-50"></span>
         </button>
 
         <div className="relative ml-1">
@@ -72,11 +72,11 @@ export default function DashboardHeader({
               </span>
             </div>
             <div className="hidden md:block text-left">
-              <p className="text-xs font-medium text-slate-600 truncate max-w-[120px]">
+              <p className="text-xs font-medium text-neutral-600 truncate max-w-[120px]">
                 {user.email}
               </p>
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
           </button>
 
           {menuOpen && (
@@ -85,9 +85,9 @@ export default function DashboardHeader({
                 className="fixed inset-0 z-10"
                 onClick={() => setMenuOpen(false)}
               />
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-apple-md border border-slate-200 z-20 overflow-hidden animate-scale-in">
-                <div className="p-3 border-b border-slate-100/60">
-                  <p className="text-xs text-slate-500 truncate">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-apple-md border border-neutral-200 z-20 overflow-hidden animate-scale-in">
+                <div className="p-3 border-b border-neutral-100/60">
+                  <p className="text-xs text-neutral-500 truncate">
                     {user.email}
                   </p>
                 </div>
@@ -97,9 +97,9 @@ export default function DashboardHeader({
                       setMenuOpen(false);
                       router.push("/dashboard/store/identity");
                     }}
-                    className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-xl transition-colors"
+                    className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-neutral-700 hover:bg-neutral-50 rounded-xl transition-colors"
                   >
-                    <User className="w-4 h-4 text-slate-400" />
+                    <User className="w-4 h-4 text-neutral-400" />
                     Mi perfil
                   </button>
                   <button

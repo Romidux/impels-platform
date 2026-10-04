@@ -278,7 +278,7 @@ export default async function InventoryPage({
 
       {/* ── Inventory Table ── */}
       {allProducts.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="bg-white border border-neutral-200 rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <EmptyState
             icon={<Warehouse className="w-8 h-8 text-brand-600" />}
             heading="Sin seguimiento de inventario"
@@ -286,9 +286,9 @@ export default async function InventoryPage({
           />
         </div>
       ) : paginatedProducts.length === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="bg-white border border-neutral-200 rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <EmptyState
-            icon={<Package className="w-8 h-8 text-slate-400" />}
+            icon={<Package className="w-8 h-8 text-neutral-400" />}
             heading="Sin resultados"
             description="No se encontraron productos con los filtros seleccionados"
           />
@@ -303,7 +303,7 @@ export default async function InventoryPage({
 
           {/* ── Pagination ── */}
           {totalPages > 1 && (
-            <div className="bg-white border border-slate-200 rounded-[16px] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-sm text-slate-500 gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="bg-white border border-neutral-200 rounded-[16px] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-sm text-neutral-500 gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
               <span>
                 Página {page} de {totalPages} ({totalCount} productos)
               </span>
@@ -311,7 +311,7 @@ export default async function InventoryPage({
                 {page > 1 && (
                   <Link
                     href={buildUrl({ page: String(page - 1) })}
-                    className="px-4 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-900 hover:bg-slate-50 transition-colors"
+                    className="px-4 py-2 rounded-lg border border-neutral-200 text-xs font-medium text-neutral-900 hover:bg-neutral-50 transition-colors"
                   >
                     ← Anterior
                   </Link>
@@ -319,7 +319,7 @@ export default async function InventoryPage({
                 {page < totalPages && (
                   <Link
                     href={buildUrl({ page: String(page + 1) })}
-                    className="px-4 py-2 rounded-lg border border-slate-200 text-xs font-medium text-slate-900 hover:bg-slate-50 transition-colors"
+                    className="px-4 py-2 rounded-lg border border-neutral-200 text-xs font-medium text-neutral-900 hover:bg-neutral-50 transition-colors"
                   >
                     Siguiente →
                   </Link>

@@ -96,10 +96,10 @@ export default function HomepageManager({
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-900">
+            <p className="text-sm font-medium text-neutral-900">
               Mensaje de portada
             </p>
-            <p className="mt-1 text-sm leading-relaxed text-slate-600">
+            <p className="mt-1 text-sm leading-relaxed text-neutral-600">
               Aqui controlas el primer impacto de tu tienda: el texto principal de bienvenida y el banner promocional.
             </p>
           </div>

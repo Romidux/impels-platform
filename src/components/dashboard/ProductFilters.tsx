@@ -83,7 +83,7 @@ function FilterDropdown({
           "inline-flex items-center gap-1.5 h-10 px-4 text-sm font-medium rounded-lg transition-colors whitespace-nowrap border-0",
           hasValue
             ? "bg-brand-50 text-brand-600 hover:bg-brand-100"
-            : "bg-slate-50 text-slate-900 hover:bg-slate-200"
+            : "bg-neutral-50 text-neutral-900 hover:bg-neutral-200"
         )}
       >
         {hasValue ? activeLabel : label}
@@ -96,7 +96,7 @@ function FilterDropdown({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-[14px] border border-slate-200 shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 min-w-[160px] py-1.5 animate-fade-in">
+        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-[14px] border border-neutral-200 shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 min-w-[160px] py-1.5 animate-fade-in">
           {options.map((option) => (
             <button
               key={option.value}
@@ -109,7 +109,7 @@ function FilterDropdown({
                 "w-full text-left px-3 py-2 text-sm transition-colors",
                 option.value === value
                   ? "bg-brand-50 text-brand-600 font-medium"
-                  : "text-slate-900 hover:bg-slate-50"
+                  : "text-neutral-900 hover:bg-neutral-50"
               )}
             >
               {option.label}
@@ -263,22 +263,22 @@ export default function ProductFilters({
   return (
     <div className="space-y-3">
       {/* Toolbar */}
-      <div className="bg-white border border-slate-200 rounded-[20px] p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+      <div className="bg-white border border-neutral-200 rounded-[20px] p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
         {/* Search */}
         <div className="relative flex-1 min-w-0">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />
           <input
             type="text"
             value={searchValue}
             onChange={handleSearchChange}
             placeholder="Buscar productos..."
-            className="w-full h-10 pl-9 pr-8 border border-slate-200 rounded-lg bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all duration-200"
+            className="w-full h-10 pl-9 pr-8 border border-neutral-200 rounded-lg bg-white text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all duration-200"
           />
           {searchValue && (
             <button
               type="button"
               onClick={clearSearch}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-900 transition-colors"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-900 transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -309,13 +309,13 @@ export default function ProductFilters({
           />
 
           {/* Divider */}
-          <div className="hidden sm:block w-px h-6 bg-slate-200" />
+          <div className="hidden sm:block w-px h-6 bg-neutral-200" />
 
           {/* Export */}
           <button
             type="button"
             onClick={() => exportToCSV(products, currency)}
-            className="inline-flex items-center gap-1.5 h-10 px-4 text-sm font-medium rounded-lg bg-slate-50 text-slate-500 hover:bg-slate-200 transition-colors whitespace-nowrap border-0"
+            className="inline-flex items-center gap-1.5 h-10 px-4 text-sm font-medium rounded-lg bg-neutral-50 text-neutral-500 hover:bg-neutral-200 transition-colors whitespace-nowrap border-0"
           >
             <Download className="w-3.5 h-3.5" />
             Exportar
@@ -340,7 +340,7 @@ export default function ProductFilters({
           )}
 
           {/* View toggle — segmented control */}
-          <div className="hidden sm:flex items-center rounded-lg bg-slate-50 p-0.5 border border-slate-200 shrink-0">
+          <div className="hidden sm:flex items-center rounded-lg bg-neutral-50 p-0.5 border border-neutral-200 shrink-0">
             <button
               type="button"
               onClick={() => updateFilter("view", "list")}
@@ -348,8 +348,8 @@ export default function ProductFilters({
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-[8px] transition-all duration-150",
                 currentView === "list"
-                  ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
-                  : "text-slate-400 hover:text-slate-900"
+                  ? "bg-white text-neutral-900 shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
+                  : "text-neutral-400 hover:text-neutral-900"
               )}
             >
               <LayoutList className="w-4 h-4" />
@@ -361,8 +361,8 @@ export default function ProductFilters({
               className={cn(
                 "flex h-8 w-8 items-center justify-center rounded-[8px] transition-all duration-150",
                 currentView === "grid"
-                  ? "bg-white text-slate-900 shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
-                  : "text-slate-400 hover:text-slate-900"
+                  ? "bg-white text-neutral-900 shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
+                  : "text-neutral-400 hover:text-neutral-900"
               )}
             >
               <LayoutGrid className="w-4 h-4" />
@@ -395,7 +395,7 @@ export default function ProductFilters({
             <button
               type="button"
               onClick={clearAllFilters}
-              className="text-xs text-slate-500 hover:text-slate-900 font-medium transition-colors"
+              className="text-xs text-neutral-500 hover:text-neutral-900 font-medium transition-colors"
             >
               Limpiar filtros
             </button>

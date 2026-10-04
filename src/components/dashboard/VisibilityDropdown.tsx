@@ -71,7 +71,7 @@ export default function VisibilityDropdown({
           "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer border",
           value === "visible"
             ? "bg-emerald-50 text-emerald-700 border-emerald-700/15 hover:bg-emerald-50"
-            : "bg-slate-50 text-slate-400 border-slate-200 hover:bg-slate-200"
+            : "bg-neutral-50 text-neutral-400 border-neutral-200 hover:bg-neutral-200"
         )}
       >
         {value === "visible" ? "Visible" : "Oculto"}
@@ -81,13 +81,13 @@ export default function VisibilityDropdown({
       </button>
 
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-[14px] border border-slate-200 shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 min-w-[120px] py-1.5">
+        <div className="absolute top-full left-0 mt-1.5 bg-white rounded-[14px] border border-neutral-200 shadow-[0_8px_24px_rgba(0,0,0,0.10)] z-50 min-w-[120px] py-1.5">
           {OPTIONS.map((opt) => (
             <button
               key={opt.value}
               type="button"
               onClick={() => handleChange(opt.value)}
-              className="w-full flex items-center justify-between px-3 py-2 text-sm text-slate-900 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center justify-between px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-50 transition-colors"
             >
               {opt.label}
               {opt.value === value && (
