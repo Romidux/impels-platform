@@ -6,6 +6,7 @@ import { Users, UserPlus, Trash2, Shield, Crown, Pencil } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Store, StoreMember, UserRole } from "@/lib/types";
+import { Button } from "@/components/ui/Button";
 
 const ROLE_CONFIG: Record<UserRole, { label: string; icon: React.ElementType; color: string }> = {
   owner: { label: "Propietario", icon: Crown, color: "text-yellow-600 bg-yellow-50" },
@@ -90,13 +91,12 @@ export default function TeamManager({
           </p>
         </div>
         {isPro && (
-          <button
+          <Button
             onClick={() => setShowInviteForm(!showInviteForm)}
-            className="flex items-center gap-2 gradient-brand text-white font-medium px-5 py-2.5 rounded-xl hover:shadow-glow transition-all hover:scale-105 text-sm"
+            icon={<UserPlus className="w-4 h-4" />}
           >
-            <UserPlus className="w-4 h-4" />
             Invitar colaborador
-          </button>
+          </Button>
         )}
       </div>
 
@@ -134,19 +134,16 @@ export default function TeamManager({
             </select>
           </div>
           <div className="flex gap-3">
-            <button
+            <Button
               onClick={handleInvite}
-              disabled={inviting}
-              className="flex-1 gradient-brand text-white font-semibold py-2.5 rounded-xl"
+              loading={inviting}
+              className="flex-1"
             >
               Enviar invitación
-            </button>
-            <button
-              onClick={() => setShowInviteForm(false)}
-              className="border border-slate-200 text-slate-600 font-semibold py-2.5 px-4 rounded-xl hover:bg-slate-50"
-            >
+            </Button>
+            <Button variant="secondary" onClick={() => setShowInviteForm(false)}>
               Cancelar
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -161,7 +158,7 @@ export default function TeamManager({
 
         {/* Owner (always first) */}
         <div className="flex items-center gap-4 px-6 py-4 border-b border-slate-50">
-          <div className="w-10 h-10 rounded-full gradient-brand flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full bg-brand-600 flex items-center justify-center">
             <span className="text-white font-semibold text-sm">T</span>
           </div>
           <div className="flex-1">

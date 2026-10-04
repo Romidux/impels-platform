@@ -66,7 +66,7 @@ export default function DashboardHeader({
             onClick={() => setMenuOpen(!menuOpen)}
             className="flex items-center gap-2 hover:bg-white/60 px-2 py-1.5 rounded-xl transition-colors"
           >
-            <div className="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shadow-apple-sm">
+            <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center">
               <span className="text-white text-xs font-semibold">
                 {user.email?.charAt(0).toUpperCase()}
               </span>

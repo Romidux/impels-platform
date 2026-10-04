@@ -10,6 +10,7 @@ import { formatCurrency } from "@/lib/utils";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { PhoneInput, splitPhone } from "@/components/ui/PhoneInput";
+import { Button } from "@/components/ui/Button";
 
 interface ManualOrderFormProps {
   storeId: string;
@@ -219,18 +220,14 @@ export default function ManualOrderForm({
           subtitle="Registrar un pedido manualmente"
           backHref="/dashboard/orders"
         />
-        <button
+        <Button
           onClick={handleSaveOrder}
-          disabled={saving || items.length === 0 || !customer.name}
-          className="flex items-center gap-2 gradient-brand text-white font-semibold px-6 py-2.5 rounded-xl hover:shadow-glow transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:translate-y-0"
+          disabled={items.length === 0 || !customer.name}
+          loading={saving}
+          icon={<Save className="w-4 h-4" />}
         >
-          {saving ? (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
           {saving ? "Creando..." : "Crear pedido"}
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

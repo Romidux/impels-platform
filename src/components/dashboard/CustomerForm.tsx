@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import Link from "next/link";
 import { PhoneInput, splitPhone } from "@/components/ui/PhoneInput";
+import { Button } from "@/components/ui/Button";
 
 interface CustomerFormProps {
   storeId: string;
@@ -95,18 +96,13 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
             </p>
           </div>
         </div>
-        <button
+        <Button
           onClick={handleSave}
-          disabled={saving}
-          className="flex items-center gap-2 gradient-brand text-white font-semibold px-6 py-2.5 rounded-xl hover:shadow-glow transition-all hover:scale-105 disabled:opacity-50 disabled:scale-100"
+          loading={saving}
+          icon={<Save className="w-4 h-4" />}
         >
-          {saving ? (
-            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-          ) : (
-            <Save className="w-4 h-4" />
-          )}
           {saving ? "Guardando..." : "Guardar cliente"}
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
