@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import Link from "next/link";
+import { UrlSearchBar } from "@/components/dashboard/UrlSearchBar";
 
 const PAGE_SIZE = 20;
 
@@ -24,7 +25,7 @@ interface EnhancedCustomer {
 export default async function CustomersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; q?: string }>;
 }) {
   const supabase = await createClient();
   const {
@@ -42,16 +43,37 @@ export default async function CustomersPage({
   const params = await searchParams;
   const page = Math.max(1, Number(params.page) || 1);
   const offset = (page - 1) * PAGE_SIZE;
+  const q = params.q?.trim() || "";
 
-  const { data: dbCustomers, count: totalCount } = await supabase
+  let customersQuery = supabase
     .from("customers")
     .select("*, orders(id, total, created_at)", { count: "exact" })
-    .eq("store_id", store.id)
+    .eq("store_id", store.id);
+
+  // El % y el _ son comodines de LIKE, y la coma corta la lista de condiciones
+  // de .or(), así que un nombre con coma rompería la consulta entera.
+  if (q) {
+    const term = q.replace(/[%_,]/g, "");
+    if (term) {
+      customersQuery = customersQuery.or(
+        `full_name.ilike.%${term}%,phone_number.ilike.%${term}%,email.ilike.%${term}%,city.ilike.%${term}%`
+      );
+    }
+  }
+
+  const { data: dbCustomers, count: totalCount } = await customersQuery
     .order("created_at", { ascending: false })
     .range(offset, offset + PAGE_SIZE - 1);
 
   const total = totalCount ?? 0;
   const totalPages = Math.ceil(total / PAGE_SIZE);
+
+  // La paginación tiene que arrastrar la búsqueda: sin esto, pasar a la página 2
+  // de un resultado filtrado devolvía la página 2 de la lista completa.
+  const pageHref = (n: number) =>
+    `/dashboard/customers?${new URLSearchParams(
+      q ? { q, page: String(n) } : { page: String(n) }
+    )}`;
 
   const currency = store.store_settings?.[0]?.currency || "Gs";
 
@@ -111,7 +133,7 @@ export default async function CustomersPage({
         }
       />
 
-      {total === 0 ? (
+      {total === 0 && !q ? (
         <div className="dash-card p-12">
           <EmptyState
             icon={<Users className="w-10 h-10 text-neutral-300" />}
@@ -128,11 +150,32 @@ export default async function CustomersPage({
         </div>
       ) : (
         <div className="dash-card overflow-hidden">
-          <div className="p-4 border-b border-neutral-100 bg-neutral-50/30 flex items-center justify-between">
+          <div className="p-4 border-b border-neutral-100 bg-neutral-50/30 flex items-center justify-between gap-4">
             <h3 className="text-sm font-medium text-neutral-700 px-1">
-              Todos los clientes
+              {q ? `Resultados para "${q}"` : "Todos los clientes"}
             </h3>
+            <UrlSearchBar
+              basePath="/dashboard/customers"
+              defaultValue={q}
+              placeholder="Buscar por nombre, teléfono, email o ciudad..."
+              className="w-full max-w-xs"
+            />
           </div>
+          {total === 0 ? (
+            <div className="p-12">
+              <EmptyState
+                icon={<Users className="w-10 h-10 text-neutral-300" />}
+                heading="Sin resultados"
+                description={`Ningún cliente coincide con "${q}". Probá con otro nombre, teléfono o ciudad.`}
+                action={
+                  <Link href="/dashboard/customers">
+                    <Button variant="secondary">Ver todos los clientes</Button>
+                  </Link>
+                }
+              />
+            </div>
+          ) : (
+          <>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
@@ -231,7 +274,7 @@ export default async function CustomersPage({
               </p>
               <div className="flex items-center gap-2">
                 {page > 1 ? (
-                  <Link href={`/dashboard/customers?page=${page - 1}`}>
+                  <Link href={pageHref(page - 1)}>
                     <Button variant="secondary" size="sm" className="flex items-center gap-1">
                       <ChevronLeft className="w-3.5 h-3.5" />
                       Anterior
@@ -244,7 +287,7 @@ export default async function CustomersPage({
                   </Button>
                 )}
                 {page < totalPages ? (
-                  <Link href={`/dashboard/customers?page=${page + 1}`}>
+                  <Link href={pageHref(page + 1)}>
                     <Button variant="secondary" size="sm" className="flex items-center gap-1">
                       Siguiente
                       <ChevronRight className="w-3.5 h-3.5" />
@@ -258,6 +301,8 @@ export default async function CustomersPage({
                 )}
               </div>
             </div>
+          )}
+          </>
           )}
         </div>
       )}

@@ -20,6 +20,7 @@ import { slugify, cn } from "@/lib/utils";
 
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Button } from "@/components/ui/Button";
+import { SearchInput } from "./SearchInput";
 
 interface CategoriesManagerProps {
   storeId: string;
@@ -44,6 +45,8 @@ export default function CategoriesManager({
   const [editName, setEditName] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const [query, setQuery] = useState("");
+
   // Accordion state
   const [expandedIds, setExpandedIds] = useState<string[]>([]);
 
@@ -52,6 +55,26 @@ export default function CategoriesManager({
   const parentCategories = categories.filter((c) => !c.parent_id);
   const getSubcategories = (parentId: string) =>
     categories.filter((c) => c.parent_id === parentId);
+
+  // Búsqueda en memoria: la página trae el árbol completo, no hay paginación.
+  const term = query.trim().toLowerCase();
+  const matches = (c: Category) => c.name.toLowerCase().includes(term);
+
+  // Una categoría padre queda visible si coincide ella o si coincide alguna de
+  // sus hijas: si no, buscar "remeras" dentro de "Ropa" no encontraría nada.
+  const visibleParents = term
+    ? parentCategories.filter(
+        (p) => matches(p) || getSubcategories(p.id).some(matches)
+      )
+    : parentCategories;
+
+  // Si el padre coincide se muestran todas sus hijas (el match es la rama
+  // entera); si coinciden solo algunas hijas, se muestran únicamente esas.
+  const getVisibleSubcategories = (parent: Category) => {
+    const subs = getSubcategories(parent.id);
+    if (!term || matches(parent)) return subs;
+    return subs.filter(matches);
+  };
 
   // Auto-expand when adding subcategory
   useEffect(() => {
@@ -440,6 +463,15 @@ export default function CategoriesManager({
         }
       />
 
+      {parentCategories.length > 0 && (
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="Buscar categoría o subcategoría..."
+          className="max-w-xs"
+        />
+      )}
+
       <div className="bg-white border border-neutral-200 rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
         {parentCategories.length === 0 && !adding ? (
           /* ── Empty state ────────────────────────────────────────────── */
@@ -494,10 +526,24 @@ export default function CategoriesManager({
 
             {/* ── Rows ──────────────────────────────────────────────────── */}
             <div className="divide-y divide-neutral-50">
-              {parentCategories.map((cat) => {
-                const subcats = getSubcategories(cat.id);
+              {term && visibleParents.length === 0 && (
+                <div className="py-16 text-center">
+                  <h3 className="text-sm font-medium text-neutral-800">
+                    Sin resultados
+                  </h3>
+                  <p className="mt-1 text-sm text-neutral-400">
+                    Ninguna categoría coincide con &ldquo;{query}&rdquo;.
+                  </p>
+                </div>
+              )}
+              {visibleParents.map((cat) => {
+                const subcats = getVisibleSubcategories(cat);
                 const isSearchingSub = addingSubOf === cat.id;
-                const isExpanded = expandedIds.includes(cat.id);
+                // Durante una búsqueda la rama se abre sola: si la coincidencia
+                // está en una hija, dejarla plegada equivale a no encontrarla.
+                const isExpanded =
+                  expandedIds.includes(cat.id) ||
+                  (term.length > 0 && subcats.length > 0);
 
                 return (
                   <div key={cat.id}>

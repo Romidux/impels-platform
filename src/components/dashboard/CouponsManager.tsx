@@ -7,6 +7,7 @@ import { Plus, Ticket, Pencil, Power, Percent, DollarSign, Loader2 } from "lucid
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
 import * as Dialog from "@radix-ui/react-dialog";
+import { SearchInput } from "./SearchInput";
 
 interface CouponsManagerProps {
   storeId: string;
@@ -18,6 +19,14 @@ export default function CouponsManager({
   initialCoupons,
 }: CouponsManagerProps) {
   const [coupons, setCoupons] = useState<Coupon[]>(initialCoupons);
+  // El filtrado es en memoria: la página carga todos los cupones de la tienda de
+  // una, sin paginar, así que no hay nada que ir a buscar al servidor.
+  const [query, setQuery] = useState("");
+  const visibleCoupons = query.trim()
+    ? coupons.filter((c) =>
+        c.code.toLowerCase().includes(query.trim().toLowerCase())
+      )
+    : coupons;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null);
@@ -159,6 +168,15 @@ export default function CouponsManager({
         </button>
       </div>
 
+      {coupons.length > 0 && (
+        <SearchInput
+          value={query}
+          onChange={setQuery}
+          placeholder="Buscar por código..."
+          className="max-w-xs"
+        />
+      )}
+
       {/* Grid */}
       {coupons.length === 0 ? (
         <div className="bg-white border border-neutral-200 text-center py-20 rounded-2xl shadow-apple-sm">
@@ -176,9 +194,18 @@ export default function CouponsManager({
             Crear mi primer cupón &rarr;
           </button>
         </div>
+      ) : visibleCoupons.length === 0 ? (
+        <div className="dash-card py-20 text-center">
+          <h3 className="text-lg font-semibold text-neutral-800">
+            Sin resultados
+          </h3>
+          <p className="mt-1 text-neutral-400">
+            Ningún cupón coincide con &ldquo;{query}&rdquo;.
+          </p>
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {coupons.map((coupon) => (
+          {visibleCoupons.map((coupon) => (
             <div
               key={coupon.id}
               className={`bg-white rounded-2xl border transition-all ${
