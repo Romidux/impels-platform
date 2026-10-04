@@ -232,7 +232,7 @@ export default function CategoriesManager({
                   "truncate transition-colors duration-100",
                   isSubcategory
                     ? "text-sm text-slate-500 group-hover:text-slate-700"
-                    : "text-sm font-semibold text-slate-900 group-hover:text-brand-600"
+                    : "text-sm font-medium text-slate-900 group-hover:text-brand-600"
                 )}
               >
                 {category.name}
@@ -404,7 +404,7 @@ export default function CategoriesManager({
           <button
             onClick={() => handleAdd(parentId)}
             disabled={saving || !newName.trim()}
-            className="inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors duration-150 disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors duration-150 disabled:opacity-50"
           >
             <Check className="w-3.5 h-3.5" />
             Guardar

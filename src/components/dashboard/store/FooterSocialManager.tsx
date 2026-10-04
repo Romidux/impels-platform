@@ -133,7 +133,7 @@ export default function FooterSocialManager({
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-medium text-slate-900">
               Cierre de marca
             </p>
             <p className="mt-1 text-sm leading-relaxed text-slate-600">

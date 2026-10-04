@@ -58,12 +58,12 @@ export default async function SupportPage() {
         {/* Form Column */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm p-6">
-            <h3 className="font-bold text-slate-900 text-lg mb-1">Nuevo Ticket</h3>
+            <h3 className="font-semibold text-slate-900 text-lg mb-1">Nuevo Ticket</h3>
             <p className="text-sm text-slate-500 mb-5">Describe tu problema detalladamente.</p>
             
             <form action={createTicket} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Asunto</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1.5">Asunto</label>
                 <input
                   name="subject"
                   required
@@ -73,7 +73,7 @@ export default async function SupportPage() {
               </div>
               
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Mensaje</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1.5">Mensaje</label>
                 <textarea
                   name="message"
                   required
@@ -92,7 +92,7 @@ export default async function SupportPage() {
 
         {/* Tickets List Column */}
         <div className="lg:col-span-2 space-y-4">
-          <h3 className="font-bold text-slate-900 text-lg px-1">Historial de Tickets</h3>
+          <h3 className="font-semibold text-slate-900 text-lg px-1">Historial de Tickets</h3>
           
           {!tickets || tickets.length === 0 ? (
             <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
@@ -110,18 +110,18 @@ export default async function SupportPage() {
                     <div className="flex items-center gap-2 mb-1">
                       <h4 className="font-semibold text-slate-900">{ticket.subject}</h4>
                       {ticket.status === 'open' ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-100">Abierto</span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-50 text-amber-600 border border-amber-100">Abierto</span>
                       ) : ticket.status === 'in_progress' ? (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-brand-50 text-brand-600 border border-brand-100">En Proceso</span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-brand-50 text-brand-600 border border-brand-100">En Proceso</span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-green-50 text-green-600 border border-green-100">Resuelto</span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-600 border border-green-100">Resuelto</span>
                       )}
                     </div>
                     <p className="text-sm text-slate-600 line-clamp-2">{ticket.message}</p>
                     
                     {ticket.admin_notes && (
                       <div className="mt-4 p-3 bg-brand-50 rounded-lg border border-brand-100">
-                        <p className="text-xs font-bold text-brand-800 mb-1">Respuesta del Soporte:</p>
+                        <p className="text-xs font-semibold text-brand-800 mb-1">Respuesta del Soporte:</p>
                         <p className="text-sm text-brand-900">{ticket.admin_notes}</p>
                       </div>
                     )}

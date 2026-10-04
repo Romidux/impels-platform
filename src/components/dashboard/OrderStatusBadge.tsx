@@ -19,7 +19,7 @@ export default function OrderStatusBadge({
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.new;
   return (
     <span
-      className={`text-xs font-semibold px-2.5 py-1 rounded-full ${config.classes}`}
+      className={`text-xs font-medium px-2.5 py-1 rounded-full ${config.classes}`}
     >
       {config.label}
     </span>

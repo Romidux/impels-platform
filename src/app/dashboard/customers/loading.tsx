@@ -14,7 +14,7 @@ export default function CustomersLoading() {
       </div>
 
       {/* Table card */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="dash-card overflow-hidden">
         <div className="p-4 border-b border-slate-100 bg-slate-50/30">
           <div className="h-5 w-32 bg-slate-200 rounded animate-pulse" />
         </div>

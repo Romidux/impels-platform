@@ -113,14 +113,14 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
         {/* Main column */}
         <div className="lg:col-span-2 space-y-6">
           {/* Datos Personales */}
-          <div className="card-flat p-6 space-y-5">
-            <h2 className="font-display text-lg font-bold text-slate-900 flex items-center gap-2">
+          <div className="dash-card p-6 space-y-5">
+            <h2 className="font-display text-lg font-semibold text-slate-900 flex items-center gap-2">
               <User className="w-5 h-5 text-brand-500" />
               Datos personales
             </h2>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
                 Nombre y apellido *
               </label>
               <input
@@ -134,7 +134,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Documento
                 </label>
                 <select
@@ -150,7 +150,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
               </div>
               <div className="sm:col-span-2 flex gap-3">
                 <div className="flex-1">
-                  <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                  <label className="block text-sm font-medium text-slate-700 mb-1.5">
                     Número
                   </label>
                   <input
@@ -163,7 +163,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                 </div>
                 {form.doc_type === "ruc" && (
                   <div className="w-20">
-                    <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                    <label className="block text-sm font-medium text-slate-700 mb-1.5">
                       DV
                     </label>
                     <input
@@ -181,7 +181,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Teléfono *
                 </label>
                 <PhoneInput
@@ -191,7 +191,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Email
                 </label>
                 <input
@@ -206,15 +206,15 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
           </div>
 
           {/* Dirección */}
-          <div className="card-flat p-6 space-y-5">
-            <h2 className="font-display text-lg font-bold text-slate-900 flex items-center gap-2">
+          <div className="dash-card p-6 space-y-5">
+            <h2 className="font-display text-lg font-semibold text-slate-900 flex items-center gap-2">
               <MapPin className="w-5 h-5 text-brand-500" />
               Dirección
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Ciudad
                 </label>
                 <input
@@ -226,7 +226,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Barrio
                 </label>
                 <input
@@ -240,7 +240,7 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
                 Dirección exacta
               </label>
               <textarea
@@ -256,13 +256,13 @@ export default function CustomerForm({ storeId }: CustomerFormProps) {
 
         {/* Sidebar info / Extra */}
         <div className="space-y-6">
-          <div className="card-flat p-6 space-y-5">
-            <h2 className="font-display text-lg font-bold text-slate-900 flex items-center gap-2">
+          <div className="dash-card p-6 space-y-5">
+            <h2 className="font-display text-lg font-semibold text-slate-900 flex items-center gap-2">
               <FileText className="w-5 h-5 text-brand-500" />
               Extra
             </h2>
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+              <label className="block text-sm font-medium text-slate-700 mb-1.5">
                 Observaciones (opcional)
               </label>
               <textarea

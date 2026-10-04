@@ -92,7 +92,7 @@ export default async function OrderDetailPage({
                 <div key={step.status} className="flex-1 flex items-center">
                   <div className="flex flex-col items-center gap-1 relative z-10">
                     <div
-                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${
+                      className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
                         isCompleted
                           ? "bg-brand-600 text-white shadow-sm shadow-brand-200"
                           : "bg-slate-100 text-slate-400 border border-slate-200"
@@ -124,7 +124,7 @@ export default async function OrderDetailPage({
 
       {isCancelled && (
         <div className="dash-card p-4 bg-red-50 border-red-200">
-          <p className="text-sm font-semibold text-red-700">
+          <p className="text-sm font-medium text-red-700">
             ❌ Este pedido fue cancelado
           </p>
         </div>
@@ -138,7 +138,7 @@ export default async function OrderDetailPage({
           <div className="dash-card overflow-hidden">
             <div className="px-5 py-3.5 border-b border-slate-100 flex items-center gap-2">
               <Package className="w-4 h-4 text-brand-600" />
-              <h3 className="font-semibold text-sm text-slate-900">
+              <h3 className="font-medium text-sm text-slate-900">
                 Productos ({items.length})
               </h3>
             </div>
@@ -177,7 +177,7 @@ export default async function OrderDetailPage({
                     </p>
                   </div>
                   {/* Total */}
-                  <p className="text-sm font-bold text-slate-900">
+                  <p className="text-sm font-semibold text-slate-900">
                     {formatCurrency(item.unit_price * item.quantity, currency)}
                   </p>
                 </div>
@@ -196,7 +196,7 @@ export default async function OrderDetailPage({
                   <span>-{formatCurrency(order.discount_amount, currency)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-100">
+              <div className="flex justify-between text-base font-semibold text-slate-900 pt-2 border-t border-slate-100">
                 <span>Total</span>
                 <span className="text-lg">
                   {formatCurrency(order.total, currency)}
@@ -210,7 +210,7 @@ export default async function OrderDetailPage({
             <div className="dash-card p-5">
               <div className="flex items-center gap-2 mb-2">
                 <StickyNote className="w-4 h-4 text-amber-500" />
-                <h3 className="font-semibold text-sm text-slate-900">
+                <h3 className="font-medium text-sm text-slate-900">
                   Notas del cliente
                 </h3>
               </div>
@@ -225,7 +225,7 @@ export default async function OrderDetailPage({
         <div className="space-y-5">
           {/* Status changer — first so it's always visible */}
           <div className="dash-card p-5 space-y-3 border-2 border-brand-100">
-            <h3 className="font-semibold text-sm text-slate-900 flex items-center gap-2">
+            <h3 className="font-medium text-sm text-slate-900 flex items-center gap-2">
               <Clock className="w-4 h-4 text-brand-600" />
               Cambiar estado
             </h3>
@@ -237,7 +237,7 @@ export default async function OrderDetailPage({
 
           {/* Customer info */}
           <div className="dash-card p-5 space-y-4">
-            <h3 className="font-semibold text-sm text-slate-900 flex items-center gap-2">
+            <h3 className="font-medium text-sm text-slate-900 flex items-center gap-2">
               <User className="w-4 h-4 text-brand-600" />
               Cliente
             </h3>
@@ -272,7 +272,7 @@ export default async function OrderDetailPage({
                 <div className="flex items-start gap-3 mt-4 pt-4 border-t border-slate-100 text-sm">
                   <Package className="w-4 h-4 text-brand-600 flex-shrink-0" />
                   <div>
-                    <span className="text-xs text-slate-500 block uppercase tracking-wider font-bold">Entrega</span>
+                    <span className="text-xs text-slate-500 block uppercase tracking-wider font-semibold">Entrega</span>
                     <span className="text-slate-800 font-medium">
                       {order.shipping_method}
                     </span>
@@ -281,9 +281,9 @@ export default async function OrderDetailPage({
               )}
               {order.payment_method && (
                 <div className="flex items-start gap-3 text-sm">
-                  <div className="w-4 h-4 text-brand-600 flex-shrink-0 flex items-center justify-center font-bold">₲</div>
+                  <div className="w-4 h-4 text-brand-600 flex-shrink-0 flex items-center justify-center font-semibold">₲</div>
                   <div>
-                    <span className="text-xs text-slate-500 block uppercase tracking-wider font-bold">Pago</span>
+                    <span className="text-xs text-slate-500 block uppercase tracking-wider font-semibold">Pago</span>
                     <span className="text-slate-800 font-medium">
                       {order.payment_method}
                     </span>
@@ -298,7 +298,7 @@ export default async function OrderDetailPage({
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-2.5 bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 rounded-xl text-sm font-semibold transition-all"
+                className="flex items-center justify-center gap-2 w-full py-2.5 bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 rounded-xl text-sm font-medium transition-all"
               >
                 <MessageCircle className="w-4 h-4" />
                 Contactar por WhatsApp
@@ -308,7 +308,7 @@ export default async function OrderDetailPage({
 
           {/* Order metadata */}
           <div className="dash-card p-5 space-y-3">
-            <h3 className="font-semibold text-sm text-slate-900">
+            <h3 className="font-medium text-sm text-slate-900">
               Información
             </h3>
             <div className="space-y-2 text-xs text-slate-500">

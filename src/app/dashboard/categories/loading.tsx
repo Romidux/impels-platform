@@ -11,7 +11,7 @@ export default function CategoriesLoading() {
       </div>
 
       {/* Category list card */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="dash-card overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
           <div className="h-5 w-28 bg-slate-200 rounded animate-pulse" />
           <div className="h-8 w-28 bg-slate-100 rounded-xl animate-pulse" />

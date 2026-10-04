@@ -63,7 +63,7 @@ export function SetupWizard({
   const activeStepIdx = steps.findIndex((s) => !s.isDone);
 
   return (
-    <div className="bg-white border border-white/80 rounded-3xl shadow-apple-sm overflow-hidden mb-8 relative">
+    <div className="bg-white border border-slate-200 rounded-2xl shadow-apple-sm overflow-hidden mb-8 relative">
       <div className="absolute top-0 left-0 w-full h-1 bg-slate-100/60">
         <div
           className="h-full bg-brand-600 transition-all duration-1000"
@@ -77,7 +77,7 @@ export function SetupWizard({
           <div className="flex items-center gap-4">
             <ProgressRing progress={progressPercent} size={56} />
             <div>
-              <h2 className="font-display text-xl font-bold text-slate-800 tracking-tight">
+              <h2 className="font-display text-xl font-semibold text-slate-800 tracking-tight">
                 Tu tienda está {progressPercent}% lista
               </h2>
               <p className="text-sm text-slate-400 mt-1">
@@ -109,7 +109,7 @@ export function SetupWizard({
                 </div>
                 
                 <div className="flex-1">
-                  <h3 className={`font-semibold text-sm ${step.isDone ? "text-green-900" : "text-slate-900"}`}>
+                  <h3 className={`font-medium text-sm ${step.isDone ? "text-green-900" : "text-slate-900"}`}>
                     {step.title}
                   </h3>
                   <p className="text-sm text-slate-500 mt-1 mb-3">
@@ -134,7 +134,7 @@ export function SetupWizard({
           <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md mb-4">
             <Rocket className="w-8 h-8 text-brand-500" />
           </div>
-          <h4 className="font-bold text-slate-900 mb-2">Ya casi publicas</h4>
+          <h4 className="font-semibold text-slate-900 mb-2">Ya casi publicas</h4>
           <p className="text-xs text-slate-500">
             Una tienda con productos claros y un método de contacto rápido vende un 300% más rápido.
           </p>

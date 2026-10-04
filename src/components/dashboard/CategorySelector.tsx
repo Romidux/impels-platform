@@ -190,7 +190,7 @@ export default function CategorySelector({
     <div className="space-y-4">
       {/* Categoria Principal */}
       <div className="space-y-1.5 relative z-20">
-        <label className="block text-[13px] font-bold text-slate-700">Categoría Principal</label>
+        <label className="block text-[13px] font-semibold text-slate-700">Categoría Principal</label>
         
         {isCreatingParent ? (
           <div className="flex animate-fade-in items-center gap-2 bg-slate-100 rounded-2xl p-1.5 border border-slate-300 shadow-inner">
@@ -240,7 +240,7 @@ export default function CategorySelector({
                     setIsCreatingChild(false);
                     setNewChildName("");
                   }}
-                  className="w-full text-left px-3 py-2 text-[14px] font-bold text-brand-600 hover:text-brand-700 hover:bg-brand-50 flex items-center gap-2 rounded-xl transition-colors"
+                  className="w-full text-left px-3 py-2 text-[14px] font-semibold text-brand-600 hover:text-brand-700 hover:bg-brand-50 flex items-center gap-2 rounded-xl transition-colors"
                 >
                   <Plus className="w-4 h-4" strokeWidth={3} />
                   Añadir nueva categoría
@@ -254,7 +254,7 @@ export default function CategorySelector({
       {/* Subcategoría */}
       {selectedParent && (
         <div className="space-y-1.5 mt-3 animate-fade-in">
-          <label className="block text-[13px] font-bold text-slate-700">Subcategoría (Opcional)</label>
+          <label className="block text-[13px] font-semibold text-slate-700">Subcategoría (Opcional)</label>
           
           {isCreatingChild ? (
             <div className="flex animate-fade-in items-center gap-2 bg-slate-100 rounded-2xl p-1.5 border border-slate-300 shadow-inner">
@@ -308,7 +308,7 @@ export default function CategorySelector({
                         setIsCreatingParent(false);
                         setNewParentName("");
                       }}
-                      className="w-full text-left px-3 py-2 text-[14px] font-bold text-brand-600 hover:text-brand-700 hover:bg-brand-50 flex items-center gap-2 rounded-xl transition-colors"
+                      className="w-full text-left px-3 py-2 text-[14px] font-semibold text-brand-600 hover:text-brand-700 hover:bg-brand-50 flex items-center gap-2 rounded-xl transition-colors"
                     >
                       <Plus className="w-4 h-4" strokeWidth={3} />
                       Añadir nueva subcategoría

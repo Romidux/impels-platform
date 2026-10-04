@@ -63,7 +63,7 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
         <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3.5 max-w-3xl">
           <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm font-semibold text-amber-900">
+            <p className="text-sm font-medium text-amber-900">
               Alcanzaste el límite de productos del plan Gratis
             </p>
             <p className="text-sm text-amber-700 mt-0.5">
@@ -84,12 +84,12 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
               }`}
             >
               {isCurrent && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
                   Plan actual
                 </div>
               )}
               <div className="text-center mb-5">
-                <h3 className="font-display text-xl font-bold text-slate-900">
+                <h3 className="font-display text-xl font-semibold text-slate-900">
                   {plan.name}
                 </h3>
                 <p className="font-display text-2xl font-semibold text-slate-900 mt-2">
@@ -116,7 +116,7 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
                 <PlanUpgradeButton storeName={store.name} />
               )}
               {plan.slug === "pro" && isCurrent && (
-                <div className="mt-5 w-full text-center text-sm font-semibold text-green-600 py-2.5">
+                <div className="mt-5 w-full text-center text-sm font-medium text-green-600 py-2.5">
                   ✓ Activo
                 </div>
               )}

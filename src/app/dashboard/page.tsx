@@ -155,7 +155,7 @@ export default async function DashboardPage() {
             action: (
               <Link
                 href="/dashboard/orders"
-                className="text-xs font-semibold text-brand-600 hover:text-brand-700 transition-colors"
+                className="text-xs font-medium text-brand-600 hover:text-brand-700 transition-colors"
               >
                 Ver todos
               </Link>
@@ -170,7 +170,7 @@ export default async function DashboardPage() {
               action={
                 <CopyLinkButton
                   url={getStoreUrl(store.slug)}
-                  className="px-5 py-2.5 bg-brand-600 text-white hover:bg-brand-700 inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold transition-colors shadow-apple-sm"
+                  className="px-5 py-2.5 bg-brand-600 text-white hover:bg-brand-700 inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium transition-colors shadow-apple-sm"
                 />
               }
             />
@@ -179,10 +179,10 @@ export default async function DashboardPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-slate-100/60">
-                    <th className="text-left text-xs font-semibold text-slate-400 py-3.5 px-6">Cliente</th>
-                    <th className="text-left text-xs font-semibold text-slate-400 py-3.5 px-5">Fecha</th>
-                    <th className="text-left text-xs font-semibold text-slate-400 py-3.5 px-5">Estado</th>
-                    <th className="text-right text-xs font-semibold text-slate-400 py-3.5 px-6">Total</th>
+                    <th className="text-left text-xs font-medium text-slate-400 py-3.5 px-6">Cliente</th>
+                    <th className="text-left text-xs font-medium text-slate-400 py-3.5 px-5">Fecha</th>
+                    <th className="text-left text-xs font-medium text-slate-400 py-3.5 px-5">Estado</th>
+                    <th className="text-right text-xs font-medium text-slate-400 py-3.5 px-6">Total</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100/60">
@@ -190,7 +190,7 @@ export default async function DashboardPage() {
                     <tr key={order.id} className="hover:bg-slate-50/40 transition-colors cursor-pointer group">
                       <td className="py-4 px-6">
                         <Link href={`/dashboard/orders?status=${order.status}`} className="block">
-                          <p className="text-sm font-semibold text-slate-800 group-hover:text-brand-500 transition-colors">
+                          <p className="text-sm font-medium text-slate-800 group-hover:text-brand-500 transition-colors">
                             {order.customer_name || "Cliente"}
                           </p>
                           <p className="text-xs text-slate-400 mt-0.5">
@@ -204,7 +204,7 @@ export default async function DashboardPage() {
                       <td className="py-4 px-5">
                         <OrderStatusBadge status={order.status as OrderStatus} />
                       </td>
-                      <td className="py-4 px-6 text-sm font-bold text-slate-800 text-right">
+                      <td className="py-4 px-6 text-sm font-semibold text-slate-800 text-right">
                         {formatCurrency(order.total || 0)}
                       </td>
                     </tr>
@@ -232,13 +232,13 @@ export default async function DashboardPage() {
                   href={getStoreUrl(store.slug)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full text-center px-5 py-2.5 bg-white text-brand-600 rounded-xl text-sm font-semibold hover:bg-white/90 transition-colors shadow-apple-sm"
+                  className="w-full text-center px-5 py-2.5 bg-white text-brand-600 rounded-xl text-sm font-medium hover:bg-white/90 transition-colors shadow-apple-sm"
                 >
                   Abrir tienda
                 </a>
                 <CopyLinkButton
                   url={getStoreUrl(store.slug)}
-                  className="w-full text-center px-5 py-2.5 bg-white/15 text-white border border-white/20 rounded-xl text-sm font-semibold hover:bg-white/25 transition-colors"
+                  className="w-full text-center px-5 py-2.5 bg-white/15 text-white border border-white/20 rounded-xl text-sm font-medium hover:bg-white/25 transition-colors"
                 />
               </div>
             </div>
@@ -247,7 +247,7 @@ export default async function DashboardPage() {
           {/* Settings Shortcuts */}
           <Card padding={false} className="overflow-hidden">
             <div className="px-5 py-3 border-b border-slate-100/60">
-              <h3 className="text-[10px] font-semibold uppercase tracking-widest text-slate-400">
+              <h3 className="text-[10px] font-medium uppercase tracking-widest text-slate-400">
                 Ajustes rápidos
               </h3>
             </div>

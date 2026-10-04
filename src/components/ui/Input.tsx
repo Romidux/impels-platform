@@ -33,7 +33,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             ref={ref}
             className={cn(
-              "w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 transition-colors outline-none",
+              "w-full h-10 border border-slate-200 rounded-lg px-3.5 text-sm text-slate-900 transition-colors outline-none",
               "placeholder:text-slate-400",
               "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10",
               error && "border-red-300 focus:border-red-500 focus:ring-red-500/10",
@@ -72,7 +72,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-semibold text-slate-700">
+          <label htmlFor={inputId} className="block text-sm font-medium text-slate-700">
             {label}
           </label>
         )}
@@ -80,7 +80,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           id={inputId}
           ref={ref}
           className={cn(
-            "w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 transition-colors outline-none resize-none",
+            "w-full border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm text-slate-900 transition-colors outline-none resize-none",
             "placeholder:text-slate-400",
             "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10",
             error && "border-red-300 focus:border-red-500 focus:ring-red-500/10",
@@ -112,7 +112,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
     return (
       <div className="w-full space-y-1.5">
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-semibold text-slate-700">
+          <label htmlFor={inputId} className="block text-sm font-medium text-slate-700">
             {label}
           </label>
         )}
@@ -120,7 +120,7 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           id={inputId}
           ref={ref}
           className={cn(
-            "dash-select pr-9 w-full border border-slate-200 rounded-lg px-4 py-2.5 text-sm text-slate-900 bg-white transition-colors outline-none",
+            "dash-select pr-9 w-full h-10 border border-slate-200 rounded-lg px-3.5 text-sm text-slate-900 bg-white transition-colors outline-none",
             "focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10",
             className
           )}

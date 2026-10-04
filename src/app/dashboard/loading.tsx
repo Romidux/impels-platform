@@ -15,7 +15,7 @@ export default function DashboardLoading() {
         {[1, 2, 3].map((i) => (
           <div
             key={i}
-            className="bg-white rounded-2xl border border-slate-100 p-6 space-y-3"
+            className="dash-card p-6 space-y-3"
           >
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 bg-slate-100 rounded-xl animate-pulse" />
@@ -27,7 +27,7 @@ export default function DashboardLoading() {
       </div>
 
       {/* Content skeleton */}
-      <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+      <div className="dash-card overflow-hidden">
         <div className="px-6 py-5 border-b border-slate-100">
           <div className="h-6 w-40 bg-slate-200 rounded-lg animate-pulse" />
         </div>

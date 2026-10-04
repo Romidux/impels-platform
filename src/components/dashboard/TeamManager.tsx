@@ -92,7 +92,7 @@ export default function TeamManager({
         {isPro && (
           <button
             onClick={() => setShowInviteForm(!showInviteForm)}
-            className="flex items-center gap-2 gradient-brand text-white font-semibold px-5 py-2.5 rounded-xl hover:shadow-glow transition-all hover:scale-105 text-sm"
+            className="flex items-center gap-2 gradient-brand text-white font-medium px-5 py-2.5 rounded-xl hover:shadow-glow transition-all hover:scale-105 text-sm"
           >
             <UserPlus className="w-4 h-4" />
             Invitar colaborador
@@ -114,8 +114,8 @@ export default function TeamManager({
 
       {/* Invite form */}
       {showInviteForm && isPro && (
-        <div className="card-flat p-5 space-y-4">
-          <h3 className="font-bold text-slate-900">Invitar colaborador</h3>
+        <div className="dash-card p-5 space-y-4">
+          <h3 className="font-semibold text-slate-900">Invitar colaborador</h3>
           <div className="flex gap-3">
             <input
               type="email"
@@ -152,9 +152,9 @@ export default function TeamManager({
       )}
 
       {/* Members list */}
-      <div className="card-flat overflow-hidden">
+      <div className="dash-card overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100">
-          <h3 className="font-bold text-slate-900">
+          <h3 className="font-semibold text-slate-900">
             Miembros ({members.length + 1})
           </h3>
         </div>
@@ -162,13 +162,13 @@ export default function TeamManager({
         {/* Owner (always first) */}
         <div className="flex items-center gap-4 px-6 py-4 border-b border-slate-50">
           <div className="w-10 h-10 rounded-full gradient-brand flex items-center justify-center">
-            <span className="text-white font-bold text-sm">T</span>
+            <span className="text-white font-semibold text-sm">T</span>
           </div>
           <div className="flex-1">
-            <p className="font-semibold text-sm text-slate-900">Tú</p>
+            <p className="font-medium text-sm text-slate-900">Tú</p>
             <p className="text-xs text-slate-400">Propietario de la tienda</p>
           </div>
-          <span className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full text-yellow-600 bg-yellow-50">
+          <span className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full text-yellow-600 bg-yellow-50">
             <Crown className="w-3.5 h-3.5" />
             Propietario
           </span>
@@ -192,12 +192,12 @@ export default function TeamManager({
                 className="flex items-center gap-4 px-6 py-4 border-b border-slate-50 last:border-0"
               >
                 <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
-                  <span className="text-slate-600 font-bold text-sm">
+                  <span className="text-slate-600 font-semibold text-sm">
                     {member.user_id.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex-1">
-                  <p className="font-semibold text-sm text-slate-900">
+                  <p className="font-medium text-sm text-slate-900">
                     {member.user_id}
                   </p>
                   <p className="text-xs text-slate-400">
@@ -206,7 +206,7 @@ export default function TeamManager({
                   </p>
                 </div>
                 <span
-                  className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${roleConfig.color}`}
+                  className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full ${roleConfig.color}`}
                 >
                   <roleConfig.icon className="w-3.5 h-3.5" />
                   {roleConfig.label}
@@ -226,11 +226,11 @@ export default function TeamManager({
       </div>
 
       {/* Role descriptions */}
-      <div className="card-flat p-5 space-y-3">
-        <h3 className="font-bold text-slate-900 text-sm">Descripción de roles</h3>
+      <div className="dash-card p-5 space-y-3">
+        <h3 className="font-semibold text-slate-900 text-sm">Descripción de roles</h3>
         {Object.entries(ROLE_CONFIG).map(([role, config]) => (
           <div key={role} className="flex items-start gap-3">
-            <span className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full ${config.color} flex-shrink-0`}>
+            <span className={`flex items-center gap-1 text-xs font-medium px-2.5 py-1 rounded-full ${config.color} flex-shrink-0`}>
               <config.icon className="w-3 h-3" />
               {config.label}
             </span>

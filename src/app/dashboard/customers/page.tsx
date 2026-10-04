@@ -112,7 +112,7 @@ export default async function CustomersPage({
       />
 
       {total === 0 ? (
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm p-12">
+        <div className="dash-card p-12">
           <EmptyState
             icon={<Users className="w-10 h-10 text-slate-300" />}
             heading="Aún no tienes clientes"
@@ -127,9 +127,9 @@ export default async function CustomersPage({
           />
         </div>
       ) : (
-        <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="dash-card overflow-hidden">
           <div className="p-4 border-b border-slate-100 bg-slate-50/30 flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-slate-700 px-1">
+            <h3 className="text-sm font-medium text-slate-700 px-1">
               Todos los clientes
             </h3>
           </div>
@@ -137,22 +137,22 @@ export default async function CustomersPage({
             <table className="w-full">
               <thead>
                 <tr className="bg-slate-100 border-b border-slate-100">
-                  <th className="text-left text-xs font-semibold text-slate-500 px-6 py-3">
+                  <th className="text-left text-xs font-medium text-slate-500 px-6 py-3">
                     Cliente
                   </th>
-                  <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
+                  <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">
                     WhatsApp / Tel
                   </th>
-                  <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
+                  <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">
                     Ciudad
                   </th>
-                  <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3 text-center">
+                  <th className="text-left text-xs font-medium text-slate-500 px-4 py-3 text-center">
                     Pedidos
                   </th>
-                  <th className="text-left text-xs font-semibold text-slate-500 px-4 py-3">
+                  <th className="text-left text-xs font-medium text-slate-500 px-4 py-3">
                     Inversión total
                   </th>
-                  <th className="text-right text-xs font-semibold text-slate-500 px-6 py-3">
+                  <th className="text-right text-xs font-medium text-slate-500 px-6 py-3">
                     Última actividad
                   </th>
                 </tr>
@@ -166,12 +166,12 @@ export default async function CustomersPage({
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center flex-shrink-0 group-hover:border-brand-200 group-hover:bg-brand-50 transition-colors">
-                          <span className="text-sm font-bold text-slate-600 group-hover:text-brand-700">
+                          <span className="text-sm font-semibold text-slate-600 group-hover:text-brand-700">
                             {customer.full_name?.charAt(0).toUpperCase()}
                           </span>
                         </div>
                         <div>
-                          <p className="font-bold text-sm text-slate-900 group-hover:text-brand-700 transition-colors">
+                          <p className="font-semibold text-sm text-slate-900 group-hover:text-brand-700 transition-colors">
                             {customer.full_name}
                           </p>
                           {customer.email && (
@@ -194,13 +194,13 @@ export default async function CustomersPage({
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex justify-center">
-                        <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-slate-100 text-[11px] font-bold text-slate-600 border border-slate-200/50">
+                        <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-slate-100 text-[11px] font-semibold text-slate-600 border border-slate-200/50">
                           {customer.orderCount}
                         </span>
                       </div>
                     </td>
                     <td className="px-4 py-4">
-                      <span className="text-sm font-bold text-slate-900">
+                      <span className="text-sm font-semibold text-slate-900">
                         {formatCurrency(customer.totalSpent, currency)}
                       </span>
                     </td>

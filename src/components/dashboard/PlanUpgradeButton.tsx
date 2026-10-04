@@ -29,7 +29,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="mt-5 w-full bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-semibold py-2.5 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+        className="mt-5 w-full bg-brand-600 hover:bg-brand-700 active:bg-brand-800 text-white font-medium py-2.5 rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
       >
         <Zap className="w-4 h-4" />
         Actualizar a Pro
@@ -49,7 +49,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
         <div className="space-y-5">
           {/* Precio */}
           <div className="bg-brand-50 border border-brand-100 rounded-2xl p-4 text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-brand-500 mb-1">
+            <p className="text-xs font-medium uppercase tracking-widest text-brand-500 mb-1">
               Plan Pro
             </p>
             <p className="font-display text-3xl font-semibold text-slate-900">
@@ -60,14 +60,14 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
 
           {/* Instrucciones */}
           <div>
-            <p className="text-sm font-semibold text-slate-700 mb-3">
+            <p className="text-sm font-medium text-slate-700 mb-3">
               Realizá una transferencia bancaria con los siguientes datos:
             </p>
             <div className="space-y-2.5">
               <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
                 <Building2 className="w-4 h-4 text-slate-400 flex-shrink-0" />
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
                     Banco
                   </p>
                   <p className="text-sm font-medium text-slate-800">
@@ -78,7 +78,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
               <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
                 <CreditCard className="w-4 h-4 text-slate-400 flex-shrink-0" />
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
                     Cuenta / CBU
                   </p>
                   <p className="text-sm font-medium text-slate-800">
@@ -89,7 +89,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
               <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl">
                 <CreditCard className="w-4 h-4 text-slate-400 flex-shrink-0" />
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                  <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">
                     Titular
                   </p>
                   <p className="text-sm font-medium text-slate-800">
@@ -116,7 +116,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
               <code className="text-sm font-mono">{emailSubject}</code>
               <button
                 onClick={copySubject}
-                className="flex items-center gap-1.5 text-xs font-semibold text-slate-300 hover:text-white transition-colors flex-shrink-0"
+                className="flex items-center gap-1.5 text-xs font-medium text-slate-300 hover:text-white transition-colors flex-shrink-0"
               >
                 {copied ? (
                   <Check className="w-3.5 h-3.5 text-green-400" />

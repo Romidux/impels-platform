@@ -29,7 +29,7 @@ export default function OrderNotificationListener({ storeId }: { storeId: string
 
           toast.success(
             <div className="flex flex-col gap-1.5 w-full pr-2">
-              <div className="flex items-center gap-2 text-sm font-bold text-slate-900">
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
                 <BellRing className="w-4 h-4 text-brand-600 animate-pulse" />
                 ¡Nuevo pedido recibido!
               </div>
@@ -42,7 +42,7 @@ export default function OrderNotificationListener({ storeId }: { storeId: string
                 </span>
                 <button
                   onClick={() => router.push(`/dashboard/orders/${newOrder.id}`)}
-                  className="flex items-center gap-1 text-xs font-bold text-brand-600 hover:text-brand-700 bg-brand-50 px-2 py-1 rounded"
+                  className="flex items-center gap-1 text-xs font-semibold text-brand-600 hover:text-brand-700 bg-brand-50 px-2 py-1 rounded"
                 >
                   Ver detalle <ExternalLink className="w-3 h-3" />
                 </button>

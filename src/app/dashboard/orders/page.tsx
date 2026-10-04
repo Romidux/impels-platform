@@ -195,7 +195,7 @@ export default async function OrdersPage({
         <div className="flex rounded-xl border border-slate-200 bg-white overflow-hidden flex-shrink-0">
           <Link
             href={ordersUrl({ status, q, view: "list" })}
-            className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors ${
               view !== "kanban"
                 ? "bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 active:bg-brand-800"
                 : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
@@ -206,7 +206,7 @@ export default async function OrdersPage({
           </Link>
           <Link
             href={ordersUrl({ status, q, view: "kanban" })}
-            className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold transition-colors ${
+            className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors ${
               view === "kanban"
                 ? "bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 active:bg-brand-800"
                 : "text-slate-500 hover:bg-slate-50 hover:text-slate-700"
@@ -224,7 +224,7 @@ export default async function OrdersPage({
           <Link
             key={f.value}
             href={ordersUrl({ status: f.value || undefined, q, view })}
-            className={`text-sm font-semibold px-4 py-2 rounded-xl transition-colors ${
+            className={`text-sm font-medium px-4 py-2 rounded-lg transition-colors ${
               status === f.value || (!status && !f.value)
                 ? "bg-brand-600 text-white shadow-apple-sm hover:bg-brand-700 active:bg-brand-800"
                 : "bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800"
@@ -304,22 +304,22 @@ function ListView({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 bg-slate-50/50">
-                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-5 py-3 w-28">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-5 py-3 w-28">
                   Pedido
                 </th>
-                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3">
                   Cliente
                 </th>
-                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3 hidden lg:table-cell">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3 hidden lg:table-cell">
                   Productos
                 </th>
-                <th className="text-right text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
+                <th className="text-right text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3">
                   Total
                 </th>
-                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3">
                   Estado
                 </th>
-                <th className="text-left text-xs font-semibold text-slate-400 uppercase tracking-wider px-4 py-3 hidden md:table-cell">
+                <th className="text-left text-xs font-medium text-slate-400 uppercase tracking-wider px-4 py-3 hidden md:table-cell">
                   Fecha
                 </th>
                 <th className="px-4 py-3 w-20" />
@@ -345,7 +345,7 @@ function ListView({
                     className="hover:bg-slate-50/50 transition-colors"
                   >
                     <td className="px-5 py-3.5">
-                      <p className="font-mono text-xs font-bold text-slate-700">
+                      <p className="font-mono text-xs font-semibold text-slate-700">
                         #{order.id.slice(0, 8).toUpperCase()}
                       </p>
                     </td>
@@ -449,7 +449,7 @@ function ListView({
                 <div className="bg-slate-50 rounded-xl px-3 py-2 space-y-1">
                   {items.map((item, i) => (
                     <p key={i} className="text-xs text-slate-600 truncate">
-                      <span className="font-bold text-brand-600">
+                      <span className="font-semibold text-brand-600">
                         {item.quantity}×
                       </span>{" "}
                       {item.product_name}
@@ -543,10 +543,10 @@ function KanbanView({
                   className="hidden lg:flex flex-col w-full min-w-[300px] bg-slate-50 rounded-2xl p-3"
                 >
                   <div className="flex items-center justify-between mb-3 px-1">
-                    <h3 className="font-semibold text-slate-700 text-sm">
+                    <h3 className="font-medium text-slate-700 text-sm">
                       {col.label}
                     </h3>
-                    <span className="text-xs font-bold text-slate-400 bg-slate-200 px-2 py-0.5 rounded-full">
+                    <span className="text-xs font-semibold text-slate-400 bg-slate-200 px-2 py-0.5 rounded-full">
                       0
                     </span>
                   </div>
@@ -565,10 +565,10 @@ function KanbanView({
                 className="flex flex-col flex-1 w-full lg:min-w-[320px] bg-transparent lg:bg-slate-50 lg:p-3 lg:rounded-2xl gap-3"
               >
                 <div className="hidden lg:flex items-center justify-between mb-1 px-1">
-                  <h3 className="font-semibold text-slate-600 text-sm">
+                  <h3 className="font-medium text-slate-600 text-sm">
                     {col.label}
                   </h3>
-                  <span className="text-xs font-bold text-slate-600 bg-white shadow-sm border border-slate-200 px-2 py-0.5 rounded-full">
+                  <span className="text-xs font-semibold text-slate-600 bg-white shadow-sm border border-slate-200 px-2 py-0.5 rounded-full">
                     {columnOrders.length}
                   </span>
                 </div>
@@ -588,7 +588,7 @@ function KanbanView({
                         className="flex items-start justify-between group"
                       >
                         <div>
-                          <span className="font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
+                          <span className="font-semibold text-slate-900 group-hover:text-brand-600 transition-colors">
                             {order.customer_name}
                           </span>
                           <p className="text-xs text-slate-500 font-medium mt-0.5">
@@ -626,7 +626,7 @@ function KanbanView({
                             key={i}
                             className="text-xs text-slate-600 flex items-start gap-2"
                           >
-                            <span className="font-bold text-brand-600">
+                            <span className="font-semibold text-brand-600">
                               {item.quantity}×
                             </span>
                             <span className="truncate flex-1">
@@ -661,7 +661,7 @@ function KanbanView({
                         ) : (
                           <Link
                             href={`/dashboard/orders/${order.id}`}
-                            className="text-xs font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-colors"
+                            className="text-xs font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1 transition-colors"
                           >
                             Ver detalle
                             <ArrowRight className="w-3 h-3" />

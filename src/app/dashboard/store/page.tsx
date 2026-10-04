@@ -133,7 +133,7 @@ export default async function StoreHubPage({
           href={storeUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition-all hover:border-brand-200 hover:text-brand-700 flex-shrink-0"
+          className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 shadow-sm transition-all hover:border-brand-200 hover:text-brand-700 flex-shrink-0"
         >
           <ExternalLink className="h-4 w-4" />
           Ver tienda
@@ -148,10 +148,10 @@ export default async function StoreHubPage({
               <Globe className="h-5 w-5 text-slate-500" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-400">
+              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-400">
                 Enlace público
               </p>
-              <p className="mt-0.5 truncate text-sm font-semibold text-slate-900">
+              <p className="mt-0.5 truncate text-sm font-medium text-slate-900">
                 {storeUrl}
               </p>
             </div>
@@ -183,12 +183,12 @@ export default async function StoreHubPage({
                     style={{ transition: "stroke-dashoffset 0.5s ease" }}
                   />
                 </svg>
-                <span className="absolute text-[11px] font-bold text-slate-700">
+                <span className="absolute text-[11px] font-semibold text-slate-700">
                   {progressPct}%
                 </span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900">
+                <p className="text-sm font-medium text-slate-900">
                   {allDone ? "Tienda completa" : `${completedCount} de ${totalCount}`}
                 </p>
                 <p className="text-xs text-slate-400">
@@ -220,7 +220,7 @@ export default async function StoreHubPage({
                     <Icon className="h-5 w-5" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-medium text-slate-900">
                       {item.label}
                     </p>
                     <p className="mt-0.5 text-xs text-slate-400 truncate">

@@ -86,7 +86,7 @@ function MethodSelector({ label, icon, options, selected, onChange, hint }: Meth
 
   return (
     <div className="space-y-3">
-      <label className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+      <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
         {icon}
         {label}
       </label>
@@ -147,7 +147,7 @@ function MethodSelector({ label, icon, options, selected, onChange, hint }: Meth
             }
           }}
           placeholder="Otro método..."
-          className="dash-input flex-1 text-sm py-2"
+          className="dash-input flex-1 text-sm"
         />
         <button
           type="button"
@@ -279,7 +279,7 @@ export default function StoreSettingsForm({
             />
 
             <div className="space-y-1.5">
-              <label className="block text-sm font-semibold text-slate-700">
+              <label className="block text-sm font-medium text-slate-700">
                 URL publica
               </label>
               <div className="overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
@@ -305,7 +305,7 @@ export default function StoreSettingsForm({
           >
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-1.5">
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
                   Numero de WhatsApp
                 </label>
                 <PhoneInput

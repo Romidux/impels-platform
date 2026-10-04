@@ -72,17 +72,17 @@ export default async function AppsPage() {
               <Code className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 text-lg">Píxel de Meta</h3>
+              <h3 className="font-semibold text-slate-900 text-lg">Píxel de Meta</h3>
               <p className="text-sm text-slate-500 mt-1 mb-3">
                 Rastrea eventos de Facebook e Instagram (PageViews, AddToCart, Purchase) automáticamente en toda tu tienda.
               </p>
               {metaPixel ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
                   Conectado
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
                   Desconectado
                 </span>
               )}
@@ -91,7 +91,7 @@ export default async function AppsPage() {
           <div className="p-4 bg-slate-50 flex-1">
             <form action={saveMetaPixel} className="flex flex-col gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-medium text-slate-700 mb-1.5">
                   ID del Píxel
                 </label>
                 <input
@@ -116,17 +116,17 @@ export default async function AppsPage() {
               <LineChart className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-900 text-lg">Google Analytics 4</h3>
+              <h3 className="font-semibold text-slate-900 text-lg">Google Analytics 4</h3>
               <p className="text-sm text-slate-500 mt-1 mb-3">
                 Mide de dónde vienen tus visitantes y cuál es tu tasa de conversión con informes detallados de Google.
               </p>
               {googleAnalytics ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium">
                   <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
                   Conectado
                 </span>
               ) : (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-semibold">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-medium">
                   Desconectado
                 </span>
               )}
@@ -135,7 +135,7 @@ export default async function AppsPage() {
           <div className="p-4 bg-slate-50 flex-1">
             <form action={saveGoogleAnalytics} className="flex flex-col gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                <label className="block text-xs font-medium text-slate-700 mb-1.5">
                   ID de Medición (G-XXX...)
                 </label>
                 <input

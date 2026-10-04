@@ -242,7 +242,7 @@ export default function ManualOrderForm({
               {!showProductSelector && (
                 <button
                   onClick={() => setShowProductSelector(true)}
-                  className="text-sm font-semibold text-brand-600 hover:text-brand-700 flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors"
+                  className="text-sm font-medium text-brand-600 hover:text-brand-700 flex items-center gap-1.5 px-3 py-1.5 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors"
                 >
                   <Plus className="w-4 h-4" />
                   Agregar
@@ -273,7 +273,7 @@ export default function ManualOrderForm({
                       </span>
                       <button
                         onClick={() => setSelectedProductForVariant(null)}
-                        className="text-xs text-brand-600 font-semibold"
+                        className="text-xs text-brand-600 font-medium"
                       >
                         Volver
                       </button>
@@ -291,11 +291,11 @@ export default function ManualOrderForm({
                               vOut ? "opacity-50 border-slate-100 bg-slate-50" : "bg-white border-slate-200 hover:border-brand-300 hover:shadow-sm"
                             }`}
                           >
-                            <span className="text-sm font-semibold text-slate-900">
+                            <span className="text-sm font-medium text-slate-900">
                               {variant.option_values.join(" / ")}
                             </span>
                             <div className="flex items-center gap-2 mt-1">
-                              <span className="text-xs font-bold text-slate-700">
+                              <span className="text-xs font-semibold text-slate-700">
                                 {formatCurrency(variant.price ?? selectedProductForVariant.price, currency)}
                               </span>
                               {selectedProductForVariant.track_inventory && (
@@ -330,8 +330,8 @@ export default function ManualOrderForm({
                                 )}
                               </div>
                               <div>
-                                <p className="text-sm font-semibold text-slate-900">{product.name}</p>
-                                <span className="text-xs font-bold text-slate-500">
+                                <p className="text-sm font-medium text-slate-900">{product.name}</p>
+                                <span className="text-xs font-semibold text-slate-500">
                                   {product.has_variants ? "Múltiples variantes" : formatCurrency(product.price, currency)}
                                 </span>
                               </div>
@@ -366,7 +366,7 @@ export default function ManualOrderForm({
                 {!showProductSelector && (
                   <button
                     onClick={() => setShowProductSelector(true)}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-dashed border-slate-300 rounded-xl text-sm font-semibold text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-colors"
+                    className="inline-flex items-center gap-1.5 px-4 py-2 border border-dashed border-slate-300 rounded-xl text-sm font-medium text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
                     Buscar productos
@@ -381,11 +381,11 @@ export default function ManualOrderForm({
                       {item.product_image && <img src={item.product_image} alt="" className="w-full h-full object-cover" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-sm font-bold text-slate-900 truncate">{item.product_name}</p>
+                      <p className="text-sm font-semibold text-slate-900 truncate">{item.product_name}</p>
                       {item.variant_label && (
                         <p className="text-xs font-medium text-slate-500">{item.variant_label}</p>
                       )}
-                      <p className="text-xs text-brand-600 font-bold mt-0.5">
+                      <p className="text-xs text-brand-600 font-semibold mt-0.5">
                         {formatCurrency(item.price, currency)} c/u
                       </p>
                     </div>
@@ -398,7 +398,7 @@ export default function ManualOrderForm({
                         >
                           -
                         </button>
-                        <span className="w-8 text-center text-sm font-bold text-slate-900 text-sm">
+                        <span className="w-8 text-center text-sm font-semibold text-slate-900 text-sm">
                           {item.quantity}
                         </span>
                         <button
@@ -410,7 +410,7 @@ export default function ManualOrderForm({
                         </button>
                       </div>
                       <div className="w-24 text-right">
-                        <p className="text-sm font-bold text-slate-900">
+                        <p className="text-sm font-semibold text-slate-900">
                           {formatCurrency(item.price * item.quantity, currency)}
                         </p>
                       </div>
@@ -452,18 +452,18 @@ export default function ManualOrderForm({
 
             <div className="space-y-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Nombre *</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Nombre *</label>
                 <input
                   type="text"
                   value={customer.name}
                   onChange={(e) => handleUpdateCustomer("name", e.target.value)}
                   placeholder="Ej: Juan Pérez"
-                  className="w-full dash-input py-2 text-sm"
+                  className="w-full dash-input text-sm"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">WhatsApp *</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">WhatsApp *</label>
                 <PhoneInput
                   value={customer.phone_full}
                   onChange={(val) => handleUpdateCustomer("phone_full", val)}
@@ -472,24 +472,24 @@ export default function ManualOrderForm({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Dirección (Opcional)</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Dirección (Opcional)</label>
                 <textarea
                   value={customer.address}
                   onChange={(e) => handleUpdateCustomer("address", e.target.value)}
                   placeholder="Ciudad, Barrio, Calle..."
                   rows={2}
-                  className="w-full dash-input py-2 text-sm resize-none"
+                  className="w-full dash-input h-auto py-2 text-sm resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Notas internas (Opcional)</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1">Notas internas (Opcional)</label>
                 <textarea
                   value={customer.notes}
                   onChange={(e) => handleUpdateCustomer("notes", e.target.value)}
                   placeholder="Indicaciones especiales..."
                   rows={2}
-                  className="w-full dash-input py-2 text-sm resize-none bg-amber-50/30 focus:bg-amber-50/50"
+                  className="w-full dash-input h-auto py-2 text-sm resize-none bg-amber-50/30 focus:bg-amber-50/50"
                 />
               </div>
             </div>

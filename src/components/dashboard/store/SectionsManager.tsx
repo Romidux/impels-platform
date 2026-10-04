@@ -107,7 +107,7 @@ export default function SectionsManager({
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-medium text-slate-900">
               Orden de la portada
             </p>
             <p className="mt-1 text-sm leading-relaxed text-slate-600">
@@ -151,7 +151,7 @@ export default function SectionsManager({
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold text-slate-900">
+                  <p className="text-sm font-medium text-slate-900">
                     {SECTION_LABELS[item.key] || item.key}
                   </p>
                   <p className="mt-0.5 text-xs text-slate-500">

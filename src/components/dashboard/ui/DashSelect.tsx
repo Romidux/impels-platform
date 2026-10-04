@@ -82,7 +82,7 @@ export default function DashSelect({
   return (
     <div className={`space-y-1.5 w-full relative ${isOpen ? "z-50" : "z-10"}`} ref={containerRef}>
       {label && (
-        <label className="block text-[13px] font-bold text-slate-700">
+        <label className="block text-[13px] font-semibold text-slate-700">
           {label}
         </label>
       )}

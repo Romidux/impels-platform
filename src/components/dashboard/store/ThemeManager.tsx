@@ -116,7 +116,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
             <Sparkles className="h-4 w-4" />
           </div>
           <div>
-            <p className="text-sm font-semibold text-slate-900">
+            <p className="text-sm font-medium text-slate-900">
               Capa visual base
             </p>
             <p className="mt-1 text-sm leading-relaxed text-slate-600">
@@ -157,11 +157,11 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                 <div className={`h-24 ${templateOption.preview}`} />
                 <div className="space-y-2 p-4">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="font-display text-lg font-bold text-slate-900">
+                    <p className="font-display text-lg font-semibold text-slate-900">
                       {templateOption.name}
                     </p>
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.08em] ${!templateOption.available
+                      className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${!templateOption.available
                           ? "bg-amber-50 text-amber-700"
                           : "bg-emerald-50 text-emerald-700"
                         }`}
@@ -201,7 +201,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
             />
 
             <div>
-              <p className="text-sm font-semibold text-slate-900">
+              <p className="text-sm font-medium text-slate-900">
                 {primaryColor}
               </p>
               <p className="mt-1 text-sm text-slate-500">
@@ -211,7 +211,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
           </div>
 
           <div>
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+            <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-slate-400">
               Presets rapidos
             </p>
             <div className="flex flex-wrap gap-2">
@@ -264,7 +264,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                     }`}
                   />
                   <div className="text-center">
-                    <p className="text-sm font-bold text-slate-900">{label}</p>
+                    <p className="text-sm font-semibold text-slate-900">{label}</p>
                     <p className="text-xs text-slate-400">{sublabel}</p>
                   </div>
                   {isSelected && (

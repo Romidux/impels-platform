@@ -11,7 +11,7 @@ export default function CouponsLoading() {
       </div>
 
       {/* Coupons card */}
-      <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden">
+      <div className="dash-card overflow-hidden">
         <div className="px-6 py-4 border-b border-slate-100">
           <div className="h-5 w-24 bg-slate-200 rounded animate-pulse" />
         </div>

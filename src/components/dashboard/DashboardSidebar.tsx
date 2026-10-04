@@ -301,7 +301,7 @@ export default function DashboardSidebar({
 
             {/* Avatar */}
             <div className="w-7 h-7 rounded-full bg-brand-600 flex items-center justify-center flex-shrink-0 shadow-[0_1px_4px_rgba(74,95,240,0.25)]">
-              <span className="text-white text-xs font-semibold">
+              <span className="text-white text-xs font-medium">
                 {user.email?.charAt(0).toUpperCase()}
               </span>
             </div>

@@ -203,7 +203,7 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
                           {result.type === "customer" && <User className="w-4 h-4" />}
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-slate-900 group-hover:text-brand-700 truncate">
+                          <p className="text-sm font-medium text-slate-900 group-hover:text-brand-700 truncate">
                             {result.type === "product" && result.item.name}
                             {result.type === "order" && `${result.item.customer_name} (Pedido)`}
                             {result.type === "customer" && `${result.item.full_name} (Cliente)`}

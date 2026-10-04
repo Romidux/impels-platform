@@ -35,7 +35,7 @@ export function EmptyState({
       >
         {icon}
       </div>
-      <h3 className="font-display text-lg font-bold text-slate-900 mb-2">
+      <h3 className="font-display text-lg font-semibold text-slate-900 mb-2">
         {heading}
       </h3>
       <p className="text-sm text-slate-500 max-w-sm mx-auto mb-6">

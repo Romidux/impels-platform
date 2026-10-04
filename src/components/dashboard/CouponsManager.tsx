@@ -152,7 +152,7 @@ export default function CouponsManager({
         </div>
         <button
           onClick={() => handleOpenModal()}
-          className="inline-flex items-center justify-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-700 transition-colors shadow-apple-sm"
+          className="inline-flex items-center justify-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-xl text-sm font-medium hover:bg-brand-700 transition-colors shadow-apple-sm"
         >
           <Plus className="w-4 h-4" />
           Crear Cupón
@@ -161,11 +161,11 @@ export default function CouponsManager({
 
       {/* Grid */}
       {coupons.length === 0 ? (
-        <div className="bg-white border border-white/80 text-center py-20 rounded-3xl shadow-apple-sm">
+        <div className="bg-white border border-slate-200 text-center py-20 rounded-2xl shadow-apple-sm">
           <div className="w-16 h-16 bg-brand-50 text-brand-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
             <Ticket className="w-8 h-8" />
           </div>
-          <h3 className="text-lg font-bold text-slate-800">No hay cupones</h3>
+          <h3 className="text-lg font-semibold text-slate-800">No hay cupones</h3>
           <p className="text-slate-400 mt-1 max-w-sm mx-auto mb-6">
             Crea códigos de descuento para compartir en tus redes sociales y aumentar tus ventas.
           </p>
@@ -207,7 +207,7 @@ export default function CouponsManager({
                   ) : (
                     <span className="text-emerald-600">-{formatCurrency(coupon.value).replace(" Gs", "")}</span>
                   )}
-                  {coupon.type === "fixed" && <span className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-2">Gs</span>}
+                  {coupon.type === "fixed" && <span className="text-sm font-semibold text-slate-400 uppercase tracking-widest mt-2">Gs</span>}
                 </div>
 
                 <div className="space-y-1.5 mt-4">
@@ -227,7 +227,7 @@ export default function CouponsManager({
               <div className="border-t border-slate-100 mt-6 pt-4 flex gap-2">
                 <button
                   onClick={() => handleOpenModal(coupon)}
-                  className="flex-1 text-slate-600 hover:text-brand-600 text-sm font-semibold flex items-center justify-center gap-2 py-2 bg-slate-50 rounded-xl hover:bg-brand-50 transition-colors"
+                  className="flex-1 text-slate-600 hover:text-brand-600 text-sm font-medium flex items-center justify-center gap-2 py-2 bg-slate-50 rounded-xl hover:bg-brand-50 transition-colors"
                 >
                   <Pencil className="w-4 h-4" />
                   Editar
@@ -242,8 +242,8 @@ export default function CouponsManager({
       <Dialog.Root open={isModalOpen} onOpenChange={setIsModalOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0" />
-          <Dialog.Content className="fixed left-[50%] top-[50%] z-[110] w-full max-w-md translate-x-[-50%] translate-y-[-50%] bg-white p-6 sm:p-8 rounded-3xl shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
-            <Dialog.Title className="text-xl font-bold text-slate-900 mb-2">
+          <Dialog.Content className="fixed left-[50%] top-[50%] z-[110] w-full max-w-md translate-x-[-50%] translate-y-[-50%] bg-white p-6 sm:p-8 rounded-2xl shadow-xl data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]">
+            <Dialog.Title className="text-xl font-semibold text-slate-900 mb-2">
               {editingCoupon ? "Editar Código" : "Nuevo Cupón"}
             </Dialog.Title>
             <Dialog.Description className="text-slate-500 text-sm mb-6">
@@ -252,14 +252,14 @@ export default function CouponsManager({
 
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest mb-1.5 block">
+                <label className="text-xs font-semibold text-slate-700 uppercase tracking-widest mb-1.5 block">
                   Código *
                 </label>
                 <input
                   type="text"
                   value={form.code}
                   onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
-                  className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-slate-900 uppercase font-bold focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-colors"
+                  className="w-full bg-white border border-slate-200 rounded-lg px-4 py-3 text-slate-900 uppercase font-semibold focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-colors"
                   placeholder="INVIERNO20"
                   required
                 />
@@ -267,7 +267,7 @@ export default function CouponsManager({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-widest mb-1.5 block">
+                  <label className="text-xs font-semibold text-slate-700 uppercase tracking-widest mb-1.5 block">
                     Tipo
                   </label>
                   <select
@@ -280,7 +280,7 @@ export default function CouponsManager({
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-bold text-slate-700 uppercase tracking-widest mb-1.5 block">
+                  <label className="text-xs font-semibold text-slate-700 uppercase tracking-widest mb-1.5 block">
                     Valor *
                   </label>
                   <div className="relative">
@@ -300,7 +300,7 @@ export default function CouponsManager({
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest mb-1.5 block">
+                <label className="text-xs font-semibold text-slate-700 uppercase tracking-widest mb-1.5 block">
                   CANTIDAD MÁXIMA DE USOS GLOBALES (Opcional)
                 </label>
                 <input
@@ -314,7 +314,7 @@ export default function CouponsManager({
               </div>
 
               <div>
-                <label className="text-xs font-bold text-slate-700 uppercase tracking-widest mb-1.5 block">
+                <label className="text-xs font-semibold text-slate-700 uppercase tracking-widest mb-1.5 block">
                   Mínimo de Compra en Carrito Gs (Opcional)
                 </label>
                 <input
@@ -331,14 +331,14 @@ export default function CouponsManager({
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="flex-1 px-4 py-3 text-sm font-semibold text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors"
+                  className="flex-1 px-4 py-3 text-sm font-medium text-slate-600 bg-slate-100 rounded-xl hover:bg-slate-200 transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 px-5 py-2.5 text-sm font-semibold text-white bg-brand-600 rounded-xl hover:bg-brand-700 transition-colors shadow-apple-sm disabled:opacity-50 flex items-center justify-center gap-2"
+                  className="flex-1 px-5 py-2.5 text-sm font-medium text-white bg-brand-600 rounded-xl hover:bg-brand-700 transition-colors shadow-apple-sm disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                   {isSaving && <Loader2 className="w-4 h-4 animate-spin" />}
                   Guardar Cupón

@@ -103,7 +103,7 @@ export default function OrderStatusChanger({
         onClick={() => !loading && setOpen(!open)}
         disabled={loading}
         className={cn(
-          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold transition-colors cursor-pointer border",
+          "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer border",
           config.pill,
           loading && "opacity-60 cursor-not-allowed"
         )}

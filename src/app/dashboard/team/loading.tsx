@@ -9,7 +9,7 @@ export default function TeamLoading() {
         <div className="h-10 w-40 bg-brand-200 rounded-xl animate-pulse" />
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-100 overflow-hidden">
+      <div className="dash-card overflow-hidden">
         {[1, 2, 3].map((i) => (
           <div
             key={i}

@@ -60,7 +60,7 @@ export default function InlineStockEditor({
         title="Click para editar stock"
       >
         <span
-          className={`text-sm font-bold tabular-nums ${
+          className={`text-sm font-semibold tabular-nums ${
             currentStock <= 0
               ? "text-red-600"
               : currentStock <= 5
@@ -92,7 +92,7 @@ export default function InlineStockEditor({
         onKeyDown={handleKeyDown}
         autoFocus
         min={0}
-        className="w-14 h-7 text-center text-sm font-bold border border-brand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500/10 bg-white"
+        className="w-14 h-7 text-center text-sm font-semibold border border-brand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500/10 bg-white"
       />
       <button
         onClick={() => setValue(value + 1)}

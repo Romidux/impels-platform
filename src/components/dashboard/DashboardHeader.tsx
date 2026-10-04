@@ -38,10 +38,10 @@ export default function DashboardHeader({
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div className="hidden lg:block">
-            <span className="font-display font-bold text-base text-slate-800">
+            <span className="font-display font-semibold text-base text-slate-800">
               Impels
             </span>
-            <span className="text-brand-500 font-display font-bold text-base ml-0.5">
+            <span className="text-brand-500 font-display font-semibold text-base ml-0.5">
               Commerce
             </span>
           </div>
@@ -67,7 +67,7 @@ export default function DashboardHeader({
             className="flex items-center gap-2 hover:bg-white/60 px-2 py-1.5 rounded-xl transition-colors"
           >
             <div className="w-8 h-8 rounded-full gradient-brand flex items-center justify-center shadow-apple-sm">
-              <span className="text-white text-xs font-bold">
+              <span className="text-white text-xs font-semibold">
                 {user.email?.charAt(0).toUpperCase()}
               </span>
             </div>
@@ -85,7 +85,7 @@ export default function DashboardHeader({
                 className="fixed inset-0 z-10"
                 onClick={() => setMenuOpen(false)}
               />
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-apple-md border border-white/80 z-20 overflow-hidden animate-scale-in">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-apple-md border border-slate-200 z-20 overflow-hidden animate-scale-in">
                 <div className="p-3 border-b border-slate-100/60">
                   <p className="text-xs text-slate-500 truncate">
                     {user.email}

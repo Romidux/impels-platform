@@ -195,7 +195,7 @@ export default async function ProductsPage({
                           {/* Producto */}
                           <td className="px-6 py-4">
                             <Link href={editHref} className="flex items-center h-full">
-                              <span className="font-semibold text-sm text-slate-900 group-hover:text-brand-600 transition-colors">
+                              <span className="font-medium text-sm text-slate-900 group-hover:text-brand-600 transition-colors">
                                 {product.name}
                               </span>
                             </Link>
@@ -276,11 +276,11 @@ export default async function ProductsPage({
                     </div>
                     <div className="p-5 flex-1 flex flex-col">
                       <p className="text-xs text-slate-400 mb-1.5 font-medium">{product.category?.name || "Sin categoría"}</p>
-                      <h3 className="font-semibold text-sm text-slate-900 line-clamp-2 leading-snug mb-3 group-hover:text-brand-600 transition-colors">
+                      <h3 className="font-medium text-sm text-slate-900 line-clamp-2 leading-snug mb-3 group-hover:text-brand-600 transition-colors">
                         {product.name}
                       </h3>
                       <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between">
-                        <span className="font-semibold text-sm text-slate-900">
+                        <span className="font-medium text-sm text-slate-900">
                           {product.show_price ? formatCurrency(product.price, currency) : "Consultar"}
                         </span>
                         <ProductsActions productId={product.id} />

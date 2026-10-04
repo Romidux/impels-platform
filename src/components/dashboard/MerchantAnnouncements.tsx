@@ -40,7 +40,7 @@ export async function MerchantAnnouncements() {
                <Megaphone className="w-5 h-5" />}
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-sm mb-1">{ann.title}</h4>
+              <h4 className="font-medium text-sm mb-1">{ann.title}</h4>
               <p className="text-sm opacity-90 leading-relaxed">{ann.content}</p>
             </div>
           </div>

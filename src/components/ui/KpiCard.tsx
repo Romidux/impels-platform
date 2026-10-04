@@ -36,7 +36,7 @@ export function KpiCard({
         {badge ?? (trend && (
           <div
             className={cn(
-              "flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1 rounded-full max-w-[150px] truncate",
+              "flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full max-w-[150px] truncate",
               trend.positive
                 ? "bg-green-50 text-green-700"
                 : "bg-amber-50 text-amber-700"

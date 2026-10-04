@@ -89,7 +89,7 @@ function BulkActionModal({
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>
-              <h3 className="font-display text-lg font-bold text-slate-900">
+              <h3 className="font-display text-lg font-semibold text-slate-900">
                 {titles[action]}
               </h3>
               <p className="text-sm text-slate-400 mt-1">
@@ -107,7 +107,7 @@ function BulkActionModal({
           {/* Input (for set and adjust) */}
           {action !== "zero" && (
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-slate-900">
+              <label className="block text-sm font-medium text-slate-900">
                 {action === "set" ? "Nuevo stock" : "Cantidad a ajustar"}
               </label>
               <div className="flex items-center gap-2">
@@ -130,7 +130,7 @@ function BulkActionModal({
                         : parseInt(e.target.value) || 0
                     )
                   }
-                  className="flex-1 h-10 px-4 border border-slate-200 rounded-lg bg-white text-sm text-slate-900 text-center font-bold tabular-nums focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                  className="flex-1 h-10 px-4 border border-slate-200 rounded-lg bg-white text-sm text-slate-900 text-center font-semibold tabular-nums focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
                   autoFocus
                   min={action === "set" ? 0 : undefined}
                 />
@@ -161,7 +161,7 @@ function BulkActionModal({
             <div className="flex items-start gap-3 p-4 bg-red-50 border border-red-200 rounded-[14px]">
               <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-semibold text-red-800">
+                <p className="text-sm font-medium text-red-800">
                   ¿Estás seguro?
                 </p>
                 <p className="text-xs text-red-600 mt-0.5">
@@ -240,7 +240,7 @@ function VariantStockEditor({ variantId, currentStock }: { variantId: string; cu
   if (!editing) {
     return (
       <button onClick={() => setEditing(true)} className="group flex items-center gap-1.5 cursor-pointer" title="Editar stock">
-        <span className={`text-sm font-bold tabular-nums ${currentStock <= 0 ? "text-red-600" : currentStock <= 5 ? "text-amber-600" : "text-slate-900"}`}>{currentStock}</span>
+        <span className={`text-sm font-semibold tabular-nums ${currentStock <= 0 ? "text-red-600" : currentStock <= 5 ? "text-amber-600" : "text-slate-900"}`}>{currentStock}</span>
         <span className="text-[10px] text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity">editar</span>
       </button>
     );
@@ -249,7 +249,7 @@ function VariantStockEditor({ variantId, currentStock }: { variantId: string; cu
   return (
     <div className="flex items-center gap-1">
       <button onClick={() => setValue(Math.max(0, value - 1))} className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 flex items-center justify-center"><Minus className="w-3 h-3 text-slate-600" /></button>
-      <input type="number" value={value} onChange={(e) => setValue(Math.max(0, parseInt(e.target.value) || 0))} onKeyDown={(e) => { if (e.key === "Enter") handleSave(); if (e.key === "Escape") { setValue(currentStock); setEditing(false); }}} autoFocus min={0} className="w-14 h-7 text-center text-sm font-bold border border-brand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500/10 bg-white" />
+      <input type="number" value={value} onChange={(e) => setValue(Math.max(0, parseInt(e.target.value) || 0))} onKeyDown={(e) => { if (e.key === "Enter") handleSave(); if (e.key === "Escape") { setValue(currentStock); setEditing(false); }}} autoFocus min={0} className="w-14 h-7 text-center text-sm font-semibold border border-brand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500/10 bg-white" />
       <button onClick={() => setValue(value + 1)} className="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 flex items-center justify-center"><Plus className="w-3 h-3 text-slate-600" /></button>
       <button onClick={handleSave} disabled={saving} className="w-6 h-6 rounded-md bg-green-100 hover:bg-green-200 flex items-center justify-center disabled:opacity-50"><Check className="w-3 h-3 text-green-700" /></button>
       <button onClick={() => { setValue(currentStock); setEditing(false); }} className="w-6 h-6 rounded-md bg-red-50 hover:bg-red-100 flex items-center justify-center"><X className="w-3 h-3 text-red-500" /></button>
@@ -435,7 +435,7 @@ export default function InventoryTable({
                           </button>
                         )}
                         <div>
-                          <Link href={`/dashboard/products/${product.id}`} className="font-semibold text-sm text-slate-900 hover:text-brand-600 transition-colors">
+                          <Link href={`/dashboard/products/${product.id}`} className="font-medium text-sm text-slate-900 hover:text-brand-600 transition-colors">
                             {product.name}
                           </Link>
                           {hasExpandableVariants && (
@@ -454,7 +454,7 @@ export default function InventoryTable({
                     {/* Stock editor */}
                     <td className="px-4 py-3.5">
                       {hasExpandableVariants ? (
-                        <span className="text-sm font-bold tabular-nums text-slate-900">{product.stock_quantity}<span className="text-[10px] font-normal text-slate-400 ml-1">total</span></span>
+                        <span className="text-sm font-semibold tabular-nums text-slate-900">{product.stock_quantity}<span className="text-[10px] font-normal text-slate-400 ml-1">total</span></span>
                       ) : (
                         <InlineStockEditor productId={product.id} currentStock={product.stock_quantity} />
                       )}
@@ -529,7 +529,7 @@ export default function InventoryTable({
           <div className="bg-slate-900 text-white rounded-[16px] shadow-[0_16px_48px_rgba(0,0,0,0.24)] border border-white/10 px-5 py-3 flex items-center gap-4">
             {/* Selection count */}
             <div className="flex items-center gap-2 pr-4 border-r border-white/15">
-              <div className="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-xs font-bold">
+              <div className="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-xs font-semibold">
                 {selected.size}
               </div>
               <span className="text-sm font-medium whitespace-nowrap">

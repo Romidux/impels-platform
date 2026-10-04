@@ -110,7 +110,7 @@ export function PhoneInput({
           className="flex items-center gap-1 px-3 border border-r-0 border-slate-200 rounded-l-xl bg-slate-50 hover:bg-slate-100 transition-colors shrink-0"
         >
           <span className="text-base leading-none">{country.flag}</span>
-          <span className="text-xs font-semibold text-slate-500">+{country.prefix}</span>
+          <span className="text-xs font-medium text-slate-500">+{country.prefix}</span>
           <ChevronDown className="w-3 h-3 text-slate-400" />
         </button>
 

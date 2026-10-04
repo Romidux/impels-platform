@@ -103,7 +103,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
           />
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg max-h-[70vh] overflow-y-auto animate-slide-up">
             <div className="flex items-center justify-between p-4 border-b border-slate-100">
-              <h3 className="font-display font-bold text-base text-slate-900">
+              <h3 className="font-display font-semibold text-base text-slate-900">
                 Más opciones
               </h3>
               <button
@@ -119,7 +119,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
               <div className="px-3 pt-3 pb-1">
                 <button
                   onClick={() => { setMoreOpen(false); handleShare(); }}
-                  className="w-full flex items-center gap-3 px-4 py-3 bg-brand-50 text-brand-800 rounded-xl font-semibold text-sm transition-colors hover:bg-brand-100"
+                  className="w-full flex items-center gap-3 px-4 py-3 bg-brand-50 text-brand-800 rounded-xl font-medium text-sm transition-colors hover:bg-brand-100"
                 >
                   <Share2 className="w-5 h-5 flex-shrink-0" />
                   Compartir mi tienda
@@ -179,7 +179,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
           />
           <div className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-lg animate-slide-up">
             <div className="flex items-center justify-between p-4 border-b border-slate-100">
-              <h3 className="font-display font-bold text-base text-slate-900">
+              <h3 className="font-display font-semibold text-base text-slate-900">
                 Compartir tienda
               </h3>
               <button
@@ -200,7 +200,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
               <button
                 onClick={handleCopy}
                 className={cn(
-                  "w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm transition-colors",
+                  "w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-sm transition-colors",
                   copied
                     ? "bg-green-50 text-green-700 border border-green-200"
                     : "bg-brand-600 text-white hover:bg-brand-700"
@@ -217,7 +217,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => setShareOpen(false)}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
+                className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-sm border border-slate-200 text-slate-700 hover:bg-slate-50 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
                 Abrir tienda
@@ -242,7 +242,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                 )}
               >
                 <item.icon className={cn("w-5 h-5", active && "text-brand-600")} />
-                <span className={cn("text-[10px] font-medium", active && "font-bold")}>
+                <span className={cn("text-[10px] font-medium", active && "font-semibold")}>
                   {item.label}
                 </span>
                 {active && (
@@ -261,7 +261,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
             )}
           >
             <MoreHorizontal className="w-5 h-5" />
-            <span className={cn("text-[10px] font-medium", isMoreActive && "font-bold")}>
+            <span className={cn("text-[10px] font-medium", isMoreActive && "font-semibold")}>
               Más
             </span>
           </button>

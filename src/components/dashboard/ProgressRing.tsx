@@ -50,7 +50,7 @@ export function ProgressRing({
         />
       </svg>
       <div className="absolute inset-0 flex items-center justify-center">
-        <span className="text-xs font-bold text-slate-700">
+        <span className="text-xs font-semibold text-slate-700">
           {Math.round(normalizedProgress)}%
         </span>
       </div>
