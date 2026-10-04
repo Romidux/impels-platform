@@ -141,7 +141,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                   )}
                 >
                   <item.icon className="w-5 h-5" />
-                  <span className="text-[11px] font-medium leading-tight">
+                  <span className="text-2xs font-medium leading-tight">
                     {item.label}
                   </span>
                 </Link>
@@ -242,7 +242,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                 )}
               >
                 <item.icon className={cn("w-5 h-5", active && "text-brand-600")} />
-                <span className={cn("text-[10px] font-medium", active && "font-semibold")}>
+                <span className={cn("text-2xs font-medium", active && "font-semibold")}>
                   {item.label}
                 </span>
                 {active && (
@@ -261,7 +261,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
             )}
           >
             <MoreHorizontal className="w-5 h-5" />
-            <span className={cn("text-[10px] font-medium", isMoreActive && "font-semibold")}>
+            <span className={cn("text-2xs font-medium", isMoreActive && "font-semibold")}>
               Más
             </span>
           </button>

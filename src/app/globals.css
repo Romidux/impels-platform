@@ -24,6 +24,15 @@
   --color-brand-900: #263090;
   --color-brand-950: #161a55;
 
+  /* ── Escala tipográfica ──
+     El escalón que faltaba abajo de text-xs (12px). Sin él, cada vez que un
+     label necesitaba ser más chico que el cuerpo del texto se resolvía con un
+     text-[10px] o text-[11px] suelto: había 31 repartidos por el dashboard, con
+     dos tamaños distintos para la misma intención. dub define exactamente este
+     token con los mismos valores. */
+  --text-2xs: 0.625rem;              /* 10px */
+  --text-2xs--line-height: 0.875rem; /* 14px */
+
   /* ── Admin ── */
   --color-admin-sidebar: #0f172a;
   --color-admin-sidebar-hover: #1e293b;

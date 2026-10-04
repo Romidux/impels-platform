@@ -304,22 +304,22 @@ function ListView({
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-neutral-100 bg-neutral-50/50">
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-5 py-3 w-28">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wider px-5 py-3 w-28">
                   Pedido
                 </th>
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
                   Cliente
                 </th>
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3 hidden lg:table-cell">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3 hidden lg:table-cell">
                   Productos
                 </th>
-                <th className="text-right text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
+                <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
                   Total
                 </th>
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3">
                   Estado
                 </th>
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3 hidden md:table-cell">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wider px-4 py-3 hidden md:table-cell">
                   Fecha
                 </th>
                 <th className="px-4 py-3 w-20" />

@@ -161,7 +161,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                       {templateOption.name}
                     </p>
                     <span
-                      className={`rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] ${!templateOption.available
+                      className={`rounded-full px-2.5 py-1 text-2xs font-semibold uppercase tracking-[0.08em] ${!templateOption.available
                           ? "bg-amber-50 text-amber-700"
                           : "bg-emerald-50 text-emerald-700"
                         }`}
@@ -211,7 +211,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
           </div>
 
           <div>
-            <p className="mb-3 text-xs font-medium uppercase tracking-[0.14em] text-neutral-400">
+            <p className="mb-3 text-2xs font-medium uppercase tracking-[0.14em] text-neutral-400">
               Presets rapidos
             </p>
             <div className="flex flex-wrap gap-2">

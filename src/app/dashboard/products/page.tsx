@@ -143,25 +143,25 @@ export default async function ProductsPage({
                 <table className="w-full">
                   <thead className="sticky top-0 z-10">
                     <tr className="bg-neutral-50 border-b border-neutral-200">
-                      <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide pl-6 py-4 w-20">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide pl-6 py-4 w-20">
                         Imagen
                       </th>
-                      <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
                         Producto
                       </th>
-                      <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
                         Categoría
                       </th>
-                      <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
                         Precio
                       </th>
-                      <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
                         Stock
                       </th>
-                      <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
                         Visibilidad
                       </th>
-                      <th className="text-right text-xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-4">
+                      <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-4">
                         Acciones
                       </th>
                     </tr>

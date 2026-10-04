@@ -272,7 +272,7 @@ export default async function OrderDetailPage({
                 <div className="flex items-start gap-3 mt-4 pt-4 border-t border-neutral-100 text-sm">
                   <Package className="w-4 h-4 text-brand-600 flex-shrink-0" />
                   <div>
-                    <span className="text-xs text-neutral-500 block uppercase tracking-wider font-semibold">Entrega</span>
+                    <span className="text-2xs text-neutral-500 block uppercase tracking-wider font-semibold">Entrega</span>
                     <span className="text-neutral-800 font-medium">
                       {order.shipping_method}
                     </span>
@@ -283,7 +283,7 @@ export default async function OrderDetailPage({
                 <div className="flex items-start gap-3 text-sm">
                   <div className="w-4 h-4 text-brand-600 flex-shrink-0 flex items-center justify-center font-semibold">₲</div>
                   <div>
-                    <span className="text-xs text-neutral-500 block uppercase tracking-wider font-semibold">Pago</span>
+                    <span className="text-2xs text-neutral-500 block uppercase tracking-wider font-semibold">Pago</span>
                     <span className="text-neutral-800 font-medium">
                       {order.payment_method}
                     </span>

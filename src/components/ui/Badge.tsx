@@ -17,7 +17,7 @@ const badgeVariants = cva(
         expired: "bg-orange-50 text-orange-800 border-orange-200/60",
       },
       size: {
-        sm: "px-2 py-0.5 text-[11px]",
+        sm: "px-2 py-0.5 text-2xs",
         md: "px-2.5 py-1",
         lg: "px-3 py-1.5",
       },

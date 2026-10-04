@@ -775,7 +775,7 @@ export default function ProductForm({
               <>
                 {/* Stock mode */}
                 <div className="space-y-3">
-                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
+                  <p className="text-2xs font-medium text-neutral-500 uppercase tracking-wide">
                     Control de stock
                   </p>
                   <div className="grid grid-cols-2 gap-3">
@@ -808,7 +808,7 @@ export default function ProductForm({
 
                 {/* Option types */}
                 <div className="space-y-3">
-                  <p className="text-xs font-medium text-neutral-500 uppercase tracking-wide">
+                  <p className="text-2xs font-medium text-neutral-500 uppercase tracking-wide">
                     Atributos del producto
                   </p>
 
@@ -970,7 +970,7 @@ export default function ProductForm({
                 {combinations.length > 0 && (
                   <div className="border border-neutral-200 rounded-xl overflow-hidden overflow-x-auto no-scrollbar">
                     <div className="px-4 py-3 bg-neutral-50 border-b border-neutral-200 flex items-center justify-between">
-                      <span className="text-xs font-medium text-neutral-600 uppercase tracking-wide">
+                      <span className="text-2xs font-medium text-neutral-600 uppercase tracking-wide">
                         {combinations.length} combinación{combinations.length !== 1 ? "es" : ""}
                       </span>
                       {!form.manage_stock_by_variant && (
@@ -982,11 +982,11 @@ export default function ProductForm({
                     <table className="w-full text-sm">
                       <thead className="border-b border-neutral-200">
                         <tr className="bg-white">
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Combinación</th>
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Stock</th>
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Precio</th>
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">SKU</th>
-                          <th className="px-4 py-2.5 text-left text-xs font-semibold text-neutral-500 uppercase tracking-wide">Activo</th>
+                          <th className="px-4 py-2.5 text-left text-2xs font-semibold text-neutral-500 uppercase tracking-wide">Combinación</th>
+                          <th className="px-4 py-2.5 text-left text-2xs font-semibold text-neutral-500 uppercase tracking-wide">Stock</th>
+                          <th className="px-4 py-2.5 text-left text-2xs font-semibold text-neutral-500 uppercase tracking-wide">Precio</th>
+                          <th className="px-4 py-2.5 text-left text-2xs font-semibold text-neutral-500 uppercase tracking-wide">SKU</th>
+                          <th className="px-4 py-2.5 text-left text-2xs font-semibold text-neutral-500 uppercase tracking-wide">Activo</th>
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-neutral-100">

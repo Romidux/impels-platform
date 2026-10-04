@@ -194,7 +194,7 @@ export default async function CustomersPage({
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex justify-center">
-                        <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-neutral-100 text-[11px] font-semibold text-neutral-600 border border-neutral-200/50">
+                        <span className="inline-flex items-center justify-center min-w-[24px] h-6 px-2 rounded-full bg-neutral-100 text-2xs font-semibold text-neutral-600 border border-neutral-200/50">
                           {customer.orderCount}
                         </span>
                       </div>

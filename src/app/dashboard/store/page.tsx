@@ -148,7 +148,7 @@ export default async function StoreHubPage({
               <Globe className="h-5 w-5 text-neutral-500" />
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-neutral-400">
+              <p className="text-2xs font-medium uppercase tracking-[0.16em] text-neutral-400">
                 Enlace público
               </p>
               <p className="mt-0.5 truncate text-sm font-medium text-neutral-900">
@@ -183,7 +183,7 @@ export default async function StoreHubPage({
                     style={{ transition: "stroke-dashoffset 0.5s ease" }}
                   />
                 </svg>
-                <span className="absolute text-[11px] font-semibold text-neutral-700">
+                <span className="absolute text-2xs font-semibold text-neutral-700">
                   {progressPct}%
                 </span>
               </div>

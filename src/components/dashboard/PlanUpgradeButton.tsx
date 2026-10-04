@@ -49,7 +49,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
         <div className="space-y-5">
           {/* Precio */}
           <div className="bg-brand-50 border border-brand-100 rounded-2xl p-4 text-center">
-            <p className="text-xs font-medium uppercase tracking-widest text-brand-500 mb-1">
+            <p className="text-2xs font-medium uppercase tracking-widest text-brand-500 mb-1">
               Plan Pro
             </p>
             <p className="font-display text-3xl font-semibold text-neutral-900">
@@ -67,7 +67,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
               <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
                 <Building2 className="w-4 h-4 text-neutral-400 flex-shrink-0" />
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
+                  <p className="text-2xs font-medium uppercase tracking-wider text-neutral-400">
                     Banco
                   </p>
                   <p className="text-sm font-medium text-neutral-800">
@@ -78,7 +78,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
               <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
                 <CreditCard className="w-4 h-4 text-neutral-400 flex-shrink-0" />
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
+                  <p className="text-2xs font-medium uppercase tracking-wider text-neutral-400">
                     Cuenta / CBU
                   </p>
                   <p className="text-sm font-medium text-neutral-800">
@@ -89,7 +89,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
               <div className="flex items-center gap-3 p-3 bg-neutral-50 rounded-xl">
                 <CreditCard className="w-4 h-4 text-neutral-400 flex-shrink-0" />
                 <div>
-                  <p className="text-[11px] font-medium uppercase tracking-wider text-neutral-400">
+                  <p className="text-2xs font-medium uppercase tracking-wider text-neutral-400">
                     Titular
                   </p>
                   <p className="text-sm font-medium text-neutral-800">

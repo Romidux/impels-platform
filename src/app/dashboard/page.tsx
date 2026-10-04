@@ -247,7 +247,7 @@ export default async function DashboardPage() {
           {/* Settings Shortcuts */}
           <Card padding={false} className="overflow-hidden">
             <div className="px-5 py-3 border-b border-neutral-100/60">
-              <h3 className="text-[10px] font-medium uppercase tracking-widest text-neutral-400">
+              <h3 className="text-2xs font-medium uppercase tracking-widest text-neutral-400">
                 Ajustes rápidos
               </h3>
             </div>

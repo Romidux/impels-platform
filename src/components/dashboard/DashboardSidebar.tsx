@@ -210,7 +210,7 @@ export default function DashboardSidebar({
         {navGroups.map((group, groupIdx) => (
           <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-6")}>
             {group.label && (
-              <p className="px-3 pb-1.5 pt-0.5 text-[10px] font-medium uppercase tracking-[0.12em] text-neutral-400">
+              <p className="px-3 pb-1.5 pt-0.5 text-2xs font-medium uppercase tracking-[0.12em] text-neutral-400">
                 {group.label}
               </p>
             )}

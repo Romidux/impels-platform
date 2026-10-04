@@ -44,7 +44,7 @@ export function StatChart({
               className="relative flex-1 flex flex-col items-center justify-end group h-full"
             >
               {/* Tooltip */}
-              <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-900 text-white text-[10px] font-medium px-2 py-1 rounded shadow-lg whitespace-nowrap transition-opacity pointer-events-none z-10">
+              <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-900 text-white text-2xs font-medium px-2 py-1 rounded shadow-lg whitespace-nowrap transition-opacity pointer-events-none z-10">
                 {item.label}: {valueFormatter(item.value)}
               </div>
               
@@ -60,7 +60,7 @@ export function StatChart({
               </div>
 
               {/* X-axis Label */}
-              <div className="absolute -bottom-6 text-[10px] font-medium text-neutral-400 truncate w-full text-center">
+              <div className="absolute -bottom-6 text-2xs font-medium text-neutral-400 truncate w-full text-center">
                 {item.label}
               </div>
             </div>

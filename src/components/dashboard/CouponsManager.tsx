@@ -252,7 +252,7 @@ export default function CouponsManager({
 
             <form onSubmit={handleSave} className="space-y-4">
               <div>
-                <label className="text-xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
+                <label className="text-2xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
                   Código *
                 </label>
                 <input
@@ -267,7 +267,7 @@ export default function CouponsManager({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
+                  <label className="text-2xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
                     Tipo
                   </label>
                   <select
@@ -280,7 +280,7 @@ export default function CouponsManager({
                   </select>
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
+                  <label className="text-2xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
                     Valor *
                   </label>
                   <div className="relative">
@@ -300,7 +300,7 @@ export default function CouponsManager({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
+                <label className="text-2xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
                   CANTIDAD MÁXIMA DE USOS GLOBALES (Opcional)
                 </label>
                 <input
@@ -314,7 +314,7 @@ export default function CouponsManager({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
+                <label className="text-2xs font-semibold text-neutral-700 uppercase tracking-widest mb-1.5 block">
                   Mínimo de Compra en Carrito Gs (Opcional)
                 </label>
                 <input

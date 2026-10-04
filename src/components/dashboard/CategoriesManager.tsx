@@ -238,7 +238,7 @@ export default function CategoriesManager({
                 {category.name}
               </span>
               {!isSubcategory && subcategoryCount > 0 && (
-                <span className="ml-0.5 text-[11px] font-medium text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0 leading-none">
+                <span className="ml-0.5 text-2xs font-medium text-neutral-400 bg-neutral-100 px-2 py-0.5 rounded-full whitespace-nowrap flex-shrink-0 leading-none">
                   {subcategoryCount} sub
                 </span>
               )}
@@ -466,16 +466,16 @@ export default function CategoriesManager({
           <>
             {/* ── Table header ──────────────────────────────────────────── */}
             <div className={cn(GRID_COLS, "bg-neutral-50 border-b border-neutral-200")}>
-              <div className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide pl-6 py-4">
+              <div className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide pl-6 py-4">
                 Categoría
               </div>
-              <div className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+              <div className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
                 Productos
               </div>
-              <div className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
+              <div className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-6 py-4">
                 Visibilidad
               </div>
-              <div className="text-right text-xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-4">
+              <div className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-4">
                 Acciones
               </div>
             </div>

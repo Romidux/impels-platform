@@ -241,7 +241,7 @@ function VariantStockEditor({ variantId, currentStock }: { variantId: string; cu
     return (
       <button onClick={() => setEditing(true)} className="group flex items-center gap-1.5 cursor-pointer" title="Editar stock">
         <span className={`text-sm font-semibold tabular-nums ${currentStock <= 0 ? "text-red-600" : currentStock <= 5 ? "text-amber-600" : "text-neutral-900"}`}>{currentStock}</span>
-        <span className="text-[10px] text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity">editar</span>
+        <span className="text-2xs text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity">editar</span>
       </button>
     );
   }
@@ -367,25 +367,25 @@ export default function InventoryTable({
                   </label>
                 </th>
                 <th className="pl-2 py-4 w-14" />
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4">
                   Producto
                 </th>
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4 hidden sm:table-cell">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4 hidden sm:table-cell">
                   Categoría
                 </th>
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4">
                   Stock
                 </th>
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4 hidden md:table-cell w-36">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4 hidden md:table-cell w-36">
                   Nivel
                 </th>
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4 hidden lg:table-cell">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4 hidden lg:table-cell">
                   Valor
                 </th>
-                <th className="text-left text-xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4">
+                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-4">
                   Estado
                 </th>
-                <th className="text-right text-xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-4">
+                <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-4">
                   Acciones
                 </th>
               </tr>
@@ -439,12 +439,12 @@ export default function InventoryTable({
                             {product.name}
                           </Link>
                           {hasExpandableVariants && (
-                            <span className="ml-2 text-[10px] font-medium text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded-md cursor-pointer" onClick={() => toggleExpand(product.id)}>
+                            <span className="ml-2 text-2xs font-medium text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded-md cursor-pointer" onClick={() => toggleExpand(product.id)}>
                               {product.variants.length} variantes
                             </span>
                           )}
                           {product.has_variants && !product.manage_stock_by_variant && (
-                            <span className="ml-2 text-[10px] font-medium text-neutral-400 bg-neutral-50 px-1.5 py-0.5 rounded-md">Variantes</span>
+                            <span className="ml-2 text-2xs font-medium text-neutral-400 bg-neutral-50 px-1.5 py-0.5 rounded-md">Variantes</span>
                           )}
                         </div>
                       </div>
@@ -454,7 +454,7 @@ export default function InventoryTable({
                     {/* Stock editor */}
                     <td className="px-4 py-3.5">
                       {hasExpandableVariants ? (
-                        <span className="text-sm font-semibold tabular-nums text-neutral-900">{product.stock_quantity}<span className="text-[10px] font-normal text-neutral-400 ml-1">total</span></span>
+                        <span className="text-sm font-semibold tabular-nums text-neutral-900">{product.stock_quantity}<span className="text-2xs font-normal text-neutral-400 ml-1">total</span></span>
                       ) : (
                         <InlineStockEditor productId={product.id} currentStock={product.stock_quantity} />
                       )}
@@ -495,10 +495,10 @@ export default function InventoryTable({
                             <div className="w-1 h-4 bg-neutral-200 rounded-full" />
                             <div className="flex flex-wrap gap-1">
                               {v.label.split(" / ").map((val, i) => (
-                                <span key={i} className="inline-block bg-neutral-100 text-neutral-500 text-[11px] font-medium px-2 py-0.5 rounded-md">{val}</span>
+                                <span key={i} className="inline-block bg-neutral-100 text-neutral-500 text-2xs font-medium px-2 py-0.5 rounded-md">{val}</span>
                               ))}
                             </div>
-                            {v.sku && <span className="text-[10px] text-neutral-400 font-mono">{v.sku}</span>}
+                            {v.sku && <span className="text-2xs text-neutral-400 font-mono">{v.sku}</span>}
                             {!v.is_active && <Badge variant="neutral" size="sm">Inactivo</Badge>}
                           </div>
                         </td>

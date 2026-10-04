@@ -113,7 +113,7 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
       >
         <Search className="w-4 h-4 text-neutral-400 group-hover:text-neutral-600" />
         <span className="flex-1 text-left text-neutral-400">Buscar productos, órdenes, clientes...</span>
-        <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-medium bg-white text-neutral-400 border border-neutral-300 rounded shadow-sm">
+        <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-2xs font-medium bg-white text-neutral-400 border border-neutral-300 rounded shadow-sm">
           <span className="text-xs">CTRL</span>K
         </kbd>
       </button>
