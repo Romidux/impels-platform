@@ -116,16 +116,16 @@ Email: soporte@impelscommerce.com`,
 
 export default function TermsPage() {
   return (
-    <div style={{ background: "#fdf9f4", color: "#1c1c19" }} className="min-h-screen">
+    <div style={{ background: "#f7f8f7", color: "#141718" }} className="min-h-screen">
       {/* Header */}
       <div
         className="py-16 md:py-24"
-        style={{ background: "linear-gradient(160deg, #fdf9f4 60%, #f0ebff 100%)" }}
+        style={{ background: "linear-gradient(160deg, #f7f8f7 60%, #f0f9f4 100%)" }}
       >
         <div className="max-w-3xl mx-auto px-6 text-center">
           <div
             className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-6"
-            style={{ background: "linear-gradient(135deg, #0040df, #5f00e3)" }}
+            style={{ background: "linear-gradient(135deg, #1c7c54, #0b5f3a)" }}
           >
             <FileText className="w-7 h-7 text-white" />
           </div>
@@ -135,10 +135,10 @@ export default function TermsPage() {
           >
             Términos de Uso
           </h1>
-          <p className="text-lg" style={{ color: "#434656" }}>
+          <p className="text-lg" style={{ color: "#8b9196" }}>
             Última actualización: 19 de mayo de 2025
           </p>
-          <p className="mt-4 text-base leading-relaxed" style={{ color: "#434656" }}>
+          <p className="mt-4 text-base leading-relaxed" style={{ color: "#8b9196" }}>
             Estos términos regulan el uso de la plataforma Impels Commerce.
             Leelos con atención antes de usar el servicio.
           </p>
@@ -159,16 +159,16 @@ export default function TermsPage() {
               <div key={section.title}>
                 <h2
                   className="font-display text-xl font-bold mb-3"
-                  style={{ color: "#1c1c19" }}
+                  style={{ color: "#141718" }}
                 >
                   {section.title}
                 </h2>
                 <div
                   className="text-sm leading-relaxed space-y-2 whitespace-pre-line"
-                  style={{ color: "#434656" }}
+                  style={{ color: "#8b9196" }}
                   dangerouslySetInnerHTML={{
                     __html: section.content
-                      .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#1c1c19">$1</strong>')
+                      .replace(/\*\*(.*?)\*\*/g, '<strong style="color:#141718">$1</strong>')
                       .replace(/^- /gm, "• "),
                   }}
                 />
@@ -182,14 +182,14 @@ export default function TermsPage() {
           <Link
             href="/privacy"
             className="font-semibold transition-colors"
-            style={{ color: "#0040df" }}
+            style={{ color: "#1c7c54" }}
           >
             Política de Privacidad
           </Link>
           <Link
             href="/"
             className="inline-flex items-center gap-2 font-semibold transition-colors"
-            style={{ color: "#0040df" }}
+            style={{ color: "#1c7c54" }}
           >
             <Zap className="w-4 h-4" />
             Volver a Impels Commerce

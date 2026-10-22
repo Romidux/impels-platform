@@ -127,11 +127,11 @@ export function DeleteStoreButton({ storeId, storeName }: DeleteStoreButtonProps
 
             {/* Content */}
             <div className="px-6 py-5 space-y-4">
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-2">
-                <p className="text-sm text-slate-600 leading-relaxed">
-                  Se eliminarán <strong className="text-slate-900">permanentemente</strong>:
+              <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 space-y-2">
+                <p className="text-sm text-neutral-600 leading-relaxed">
+                  Se eliminarán <strong className="text-neutral-900">permanentemente</strong>:
                 </p>
-                <ul className="text-sm text-slate-500 space-y-1.5 ml-1">
+                <ul className="text-sm text-neutral-500 space-y-1.5 ml-1">
                   <li className="flex items-center gap-2">
                     <span className="w-1.5 h-1.5 rounded-full bg-red-400 flex-shrink-0" />
                     Todos los productos y sus imágenes
@@ -156,7 +156,7 @@ export function DeleteStoreButton({ storeId, storeName }: DeleteStoreButtonProps
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
+                <label className="block text-sm font-semibold text-neutral-700 mb-2">
                   Para confirmar, escribí{" "}
                   <span className="font-bold text-red-600 bg-red-50 px-1.5 py-0.5 rounded tracking-wide">
                     ELIMINAR {storeName}
@@ -174,9 +174,9 @@ export function DeleteStoreButton({ storeId, storeName }: DeleteStoreButtonProps
                     "focus:ring-2 focus:ring-red-200 focus:border-red-400",
                     isMatch
                       ? "border-red-300 bg-red-50/50 text-red-900 font-medium"
-                      : "border-slate-200 bg-white",
+                      : "border-neutral-200 bg-white",
                     "disabled:opacity-50 disabled:cursor-not-allowed",
-                    "placeholder:text-slate-300"
+                    "placeholder:text-neutral-300"
                   )}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" && isMatch) handleDelete();
@@ -188,12 +188,12 @@ export function DeleteStoreButton({ storeId, storeName }: DeleteStoreButtonProps
             </div>
 
             {/* Actions */}
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
+            <div className="px-6 py-4 bg-neutral-50 border-t border-neutral-100 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
                 disabled={isPending}
-                className="px-4 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-50"
+                className="px-4 py-2.5 text-sm font-semibold text-neutral-600 hover:text-neutral-800 hover:bg-neutral-100 rounded-lg transition-all disabled:opacity-50"
               >
                 Cancelar
               </button>
@@ -205,7 +205,7 @@ export function DeleteStoreButton({ storeId, storeName }: DeleteStoreButtonProps
                   "inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all",
                   isMatch && !isPending
                     ? "bg-red-600 text-white hover:bg-red-700 shadow-sm hover:shadow-md"
-                    : "bg-slate-200 text-slate-400 cursor-not-allowed"
+                    : "bg-neutral-200 text-neutral-400 cursor-not-allowed"
                 )}
               >
                 {isPending ? (

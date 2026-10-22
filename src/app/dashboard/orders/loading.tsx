@@ -1,6 +1,6 @@
 export default function OrdersLoading() {
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <div>
         <div className="h-8 w-32 bg-neutral-200 rounded-xl animate-pulse" />
         <div className="h-4 w-48 bg-neutral-100 rounded-lg animate-pulse mt-2" />

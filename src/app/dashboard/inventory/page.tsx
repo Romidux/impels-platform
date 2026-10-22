@@ -206,7 +206,7 @@ export default async function InventoryPage({
   });
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <PageHeader
         title="Inventario"
         subtitle={`${allProducts.length} productos con seguimiento de stock`}
@@ -278,7 +278,7 @@ export default async function InventoryPage({
 
       {/* ── Inventory Table ── */}
       {allProducts.length === 0 ? (
-        <div className="bg-white border border-neutral-200 rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="bg-white border border-neutral-200 rounded-2xl">
           <EmptyState
             icon={<Warehouse className="w-8 h-8 text-brand-600" />}
             heading="Sin seguimiento de inventario"
@@ -286,7 +286,7 @@ export default async function InventoryPage({
           />
         </div>
       ) : paginatedProducts.length === 0 ? (
-        <div className="bg-white border border-neutral-200 rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="bg-white border border-neutral-200 rounded-2xl">
           <EmptyState
             icon={<Package className="w-8 h-8 text-neutral-400" />}
             heading="Sin resultados"
@@ -303,7 +303,7 @@ export default async function InventoryPage({
 
           {/* ── Pagination ── */}
           {totalPages > 1 && (
-            <div className="bg-white border border-neutral-200 rounded-[16px] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-sm text-neutral-500 gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="bg-white border border-neutral-200 rounded-[16px] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-sm text-neutral-500 gap-3">
               <span>
                 Página {page} de {totalPages} ({totalCount} productos)
               </span>

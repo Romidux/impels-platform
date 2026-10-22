@@ -347,7 +347,7 @@ export default function InventoryTable({
 
   return (
     <>
-      <div className="bg-white border border-neutral-200 rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+      <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="sticky top-0 z-10">

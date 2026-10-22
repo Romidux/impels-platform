@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Package,
@@ -15,15 +15,9 @@ import {
   ExternalLink,
   LayoutGrid,
   Zap,
-  Bell,
-  LogOut,
-  User,
-  ChevronDown,
 } from "lucide-react";
 import { cn, getStoreUrl } from "@/lib/utils";
-import { Store, AuthUser } from "@/lib/types";
-import { createClient } from "@/lib/supabase/client";
-import { toast } from "sonner";
+import { Store } from "@/lib/types";
 
 interface NavChild {
   label: string;
@@ -106,22 +100,14 @@ const navGroups: NavGroup[] = [
   },
 ];
 
-export default function DashboardSidebar({
-  store,
-  user,
-}: {
-  store: Store;
-  user: AuthUser;
-}) {
+/* Ya no recibe `user`: el bloque de perfil se mudó al DashboardHeader. */
+export default function DashboardSidebar({ store }: { store: Store }) {
   const pathname = usePathname();
-  const router = useRouter();
   const storeUrl = getStoreUrl(store.slug);
   const [expanded, setExpanded] = useState({
     catalog: false,
     store: false,
   });
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
-  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const isItemActive = (item: NavItem) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href);
@@ -140,35 +126,21 @@ export default function DashboardSidebar({
     }));
   }, [pathname]);
 
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
-        setUserMenuOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
   const toggleExpandable = (key?: "catalog" | "store") => {
     if (!key) return;
     setExpanded((current) => ({ ...current, [key]: !current[key] }));
   };
 
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    toast.success("Sesión cerrada");
-    router.push("/login");
-    router.refresh();
-  };
-
   return (
-    <aside className="fixed left-0 top-0 bottom-0 z-40 hidden w-64 flex-col bg-white border-r border-neutral-200/60 md:flex">
+    /* Panel gris en el flujo, no un `fixed` con borde derecho. Al salir de
+       `fixed` desaparece el `md:ml-64` que compensaba su ancho en el layout:
+       ahora el sidebar ocupa su lugar en el flex y el ancho lo define él.
+       La separación con el contenido la da el gap del shell, no una línea. */
+    <aside className="my-3 ml-3 hidden h-[calc(100vh-1.5rem)] w-[232px] shrink-0 flex-col overflow-hidden rounded-2xl bg-neutral-50 md:flex">
       {/* Logo */}
       <div className="px-6 pt-5 pb-4">
         <Link href="/dashboard" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center shadow-[0_2px_8px_rgba(74,95,240,0.25)]">
+          <div className="w-8 h-8 rounded-xl bg-brand-600 flex items-center justify-center">
             <Zap className="w-4 h-4 text-white" />
           </div>
           <div>
@@ -186,7 +158,7 @@ export default function DashboardSidebar({
       <div className="px-4 pb-3 border-b border-neutral-200/60">
         <div className="flex items-center justify-between gap-2 px-2 py-1.5">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white border border-neutral-200 text-neutral-500 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-xl bg-white border border-neutral-200 text-neutral-500">
               <StoreIcon className="h-4 w-4" />
             </div>
             <p className="truncate text-sm font-medium leading-tight text-neutral-900">
@@ -197,7 +169,7 @@ export default function DashboardSidebar({
             href={storeUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-900"
+            className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-xl text-neutral-400 transition-colors hover:bg-white hover:text-neutral-900"
             title="Ver tienda"
           >
             <ExternalLink className="h-3.5 w-3.5" />
@@ -208,9 +180,13 @@ export default function DashboardSidebar({
       {/* Navigation */}
       <nav className="flex-1 space-y-0.5 overflow-y-auto px-3 py-3">
         {navGroups.map((group, groupIdx) => (
-          <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-6")}>
+          <section key={groupIdx} className={cn("space-y-0.5", groupIdx > 0 && "mt-3")}>
             {group.label && (
-              <p className="px-3 pb-1.5 pt-0.5 text-2xs font-medium uppercase tracking-[0.12em] text-neutral-400">
+              /* El label del grupo ya separa visualmente por sí mismo: no
+                 necesita padding propio arriba y abajo además del mt-3 de la
+                 sección. Tres grupos con 24px entre cada uno dejaban la
+                 navegación llena de huecos. */
+              <p className="px-3 pb-0.5 text-2xs font-semibold uppercase tracking-[0.12em] text-neutral-400">
                 {group.label}
               </p>
             )}
@@ -231,17 +207,23 @@ export default function DashboardSidebar({
                     href={item.href}
                     onClick={() => toggleExpandable(item.expandableKey)}
                     className={cn(
-                      "relative flex items-center gap-2.5 px-3 py-2 text-sm transition-all duration-150 rounded-xl",
+                      "relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-all duration-150",
                       active
-                        ? "bg-brand-50 text-brand-700 font-medium"
-                        : "font-normal text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900"
+                        ? "font-bold text-neutral-900"
+                        : "font-normal text-neutral-500 hover:bg-white hover:text-neutral-900"
                     )}
                   >
+                    {/* El activo se marca con una barra, no con una píldora de
+                        fondo: sobre un sidebar ya gris, un fondo verde claro casi
+                        no se distingue, y la barra lee desde el rabillo del ojo. */}
+                    {active && (
+                      <span className="absolute top-1/2 -left-1 h-5 w-[3px] -translate-y-1/2 rounded-full bg-brand-600" />
+                    )}
                     <div className="flex h-5 w-5 items-center justify-center">
                       <item.icon
                         className={cn(
                           "h-4 w-4 flex-shrink-0",
-                          active ? "text-brand-600" : "text-neutral-400"
+                          active ? "text-neutral-900" : "text-neutral-400"
                         )}
                       />
                     </div>
@@ -267,9 +249,8 @@ export default function DashboardSidebar({
                               key={child.href}
                               href={child.href}
                               className={cn(
-                                "relative flex items-center gap-2 rounded-xl px-3 py-1.5 text-sm text-neutral-500 transition-all duration-150 hover:bg-neutral-100 hover:text-neutral-900",
-                                isActive &&
-                                  "bg-brand-50 font-medium text-brand-700"
+                                "relative flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm text-neutral-500 transition-all duration-150 hover:bg-white hover:text-neutral-900",
+                                isActive && "font-bold text-neutral-900"
                               )}
                             >
                               <span className="truncate">{child.label}</span>
@@ -286,63 +267,14 @@ export default function DashboardSidebar({
         ))}
       </nav>
 
-      {/* User section */}
-      <div className="border-t border-neutral-200/60 px-3 py-3" ref={userMenuRef}>
-        <div className="relative">
-          <button
-            onClick={() => setUserMenuOpen(!userMenuOpen)}
-            className="flex items-center gap-3 w-full px-3 py-2 rounded-xl hover:bg-neutral-100 transition-colors"
-          >
-            {/* Notification bell */}
-            <div className="relative flex-shrink-0">
-              <Bell className="w-4 h-4 text-neutral-400" />
-              <span className="absolute -top-1 -right-1 w-2 h-2 rounded-full bg-brand-600 border-2 border-white" />
-            </div>
+      {/* El bloque de usuario (campana + avatar + email + logout) vivía acá
+          abajo. Se fue al DashboardHeader, que ahora existe y trae exactamente
+          lo mismo: tenerlo en los dos lugares mostraba el mismo avatar y el
+          mismo "Cerrar sesión" dos veces en pantalla.
 
-            {/* Avatar */}
-            <div className="w-7 h-7 rounded-full bg-brand-600 flex items-center justify-center flex-shrink-0 shadow-[0_1px_4px_rgba(74,95,240,0.25)]">
-              <span className="text-white text-xs font-medium">
-                {user.email?.charAt(0).toUpperCase()}
-              </span>
-            </div>
-
-            {/* Email */}
-            <p className="text-xs font-normal text-neutral-500 truncate flex-1 text-left">
-              {user.email}
-            </p>
-
-            <ChevronDown className={cn(
-              "w-3.5 h-3.5 text-neutral-400 flex-shrink-0 transition-transform",
-              userMenuOpen && "rotate-180"
-            )} />
-          </button>
-
-          {/* User dropdown */}
-          {userMenuOpen && (
-            <div className="absolute bottom-full left-0 right-0 mb-1.5 bg-white rounded-[14px] shadow-[0_8px_24px_rgba(0,0,0,0.10)] border border-neutral-200 z-50 overflow-hidden">
-              <div className="p-1.5">
-                <button
-                  onClick={() => {
-                    setUserMenuOpen(false);
-                    router.push("/dashboard/store/identity");
-                  }}
-                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-neutral-900 hover:bg-neutral-50 rounded-xl transition-colors"
-                >
-                  <User className="w-4 h-4 text-neutral-400" />
-                  Mi perfil
-                </button>
-                <button
-                  onClick={handleLogout}
-                  className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-xl transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Cerrar sesión
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+          Como efecto secundario, el sidebar dejó de desbordar: ese bloque era
+          lo que empujaba la navegación más allá del alto disponible y le metía
+          una barra de scroll propia. */}
     </aside>
   );
 }

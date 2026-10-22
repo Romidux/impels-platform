@@ -18,7 +18,7 @@ export function SetPlanButton({ storeId, currentPlan, storeName }: SetPlanButton
   const variant =
     currentPlan === "free"
       ? "bg-brand-600 hover:bg-brand-700 text-white"
-      : "bg-slate-100 hover:bg-slate-200 text-slate-700";
+      : "bg-neutral-100 hover:bg-neutral-200 text-neutral-700";
 
   const handleClick = async () => {
     const confirmed = window.confirm(

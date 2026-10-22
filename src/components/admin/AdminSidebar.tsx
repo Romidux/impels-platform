@@ -75,27 +75,27 @@ export default function AdminSidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-slate-900 flex flex-col z-40 hidden md:flex">
-      <div className="p-5 border-b border-slate-700/50">
+    <aside className="my-3 ml-3 hidden h-[calc(100vh-1.5rem)] w-[232px] shrink-0 flex-col overflow-hidden rounded-2xl bg-neutral-50 md:flex">
+      <div className="px-5 pb-3 pt-5">
         <Link href="/admin" className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-brand-600 flex items-center justify-center">
             <Shield className="w-4 h-4 text-white" />
           </div>
           <div>
-            <span className="font-display font-bold text-base text-white">
+            <span className="font-display font-bold text-base text-neutral-900">
               Impels
             </span>
-            <span className="text-indigo-400 font-display font-bold text-base ml-0.5">
+            <span className="text-brand-600 font-display font-bold text-base ml-0.5">
               Admin
             </span>
           </div>
         </Link>
       </div>
 
-      <nav className="flex-1 px-3 py-4 overflow-y-auto space-y-5">
+      <nav className="flex-1 space-y-3 overflow-y-auto px-3 py-3">
         {navGroups.map((group) => (
           <div key={group.title}>
-            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-3 mb-2">
+            <p className="px-3 pb-0.5 text-2xs font-semibold uppercase tracking-[0.12em] text-neutral-400">
               {group.title}
             </p>
             <div className="space-y-0.5">
@@ -107,34 +107,39 @@ export default function AdminSidebar() {
                   : false;
 
                 const itemClasses = cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all group",
+                  "group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-all",
                   isActive
-                    ? "bg-indigo-600 text-white shadow-sm"
+                    ? "font-bold text-neutral-900"
                     : item.disabled
-                    ? "text-slate-500/80 bg-slate-900/40 cursor-not-allowed"
-                    : "text-slate-400 hover:text-white hover:bg-slate-800"
+                    ? "text-neutral-300 cursor-not-allowed"
+                    : "text-neutral-500 hover:bg-white hover:text-neutral-900"
                 );
 
                 const content = (
                   <>
+                    {/* Misma marca de activo que el sidebar del dashboard: el
+                        admin dejó de ser un producto aparte. */}
+                    {isActive && (
+                      <span className="absolute top-1/2 -left-1 h-5 w-[3px] -translate-y-1/2 rounded-full bg-brand-600" />
+                    )}
                     <item.icon
                       className={cn(
                         "w-4 h-4 flex-shrink-0",
                         isActive
-                          ? "text-white"
+                          ? "text-neutral-900"
                           : item.disabled
-                          ? "text-slate-600"
-                          : "text-slate-500 group-hover:text-slate-300"
+                          ? "text-neutral-300"
+                          : "text-neutral-400 group-hover:text-neutral-900"
                       )}
                     />
                     <span className="flex-1">{item.label}</span>
                     {item.soon && !isActive && (
-                      <span className="rounded-full border border-slate-700 bg-slate-800 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
+                      <span className="rounded-md border border-neutral-200 bg-white px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-neutral-400">
                         Proximamente
                       </span>
                     )}
                     {isActive && (
-                      <ChevronRight className="w-3.5 h-3.5 ml-auto text-white/50" />
+                      <ChevronRight className="w-3.5 h-3.5 ml-auto text-neutral-400" />
                     )}
                   </>
                 );
@@ -162,16 +167,16 @@ export default function AdminSidebar() {
         ))}
       </nav>
 
-      <div className="p-4 border-t border-slate-700/50">
+      <div className="border-t border-neutral-200 p-3">
         <Link
           href="/dashboard"
-          className="flex items-center gap-2 w-full px-3 py-2 text-sm font-medium text-slate-400 hover:text-white hover:bg-slate-800 rounded-lg transition-colors"
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-neutral-500 transition-colors hover:bg-white hover:text-neutral-900"
         >
           <Zap className="w-4 h-4" />
           Ir al Dashboard
         </Link>
         <div className="px-3 py-2 mt-1">
-          <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">
+          <span className="text-2xs font-semibold uppercase tracking-[0.12em] text-neutral-400">
             Super Admin
           </span>
         </div>

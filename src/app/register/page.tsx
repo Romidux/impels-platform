@@ -138,10 +138,10 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-brand-950 to-neutral-950 flex items-center justify-center p-6">
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-500/15 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-700/15 rounded-full blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-md">
@@ -165,14 +165,14 @@ export default function RegisterPage() {
                 className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all ${
                   step >= s
                     ? "gradient-brand text-white"
-                    : "bg-white/10 text-gray-400"
+                    : "bg-white/10 text-neutral-400"
                 }`}
               >
                 {step > s ? <CheckCircle className="w-4 h-4" /> : s}
               </div>
               {s < 2 && (
                 <div
-                  className={`w-12 h-px transition-all ${step > s ? "bg-blue-500" : "bg-white/10"}`}
+                  className={`w-12 h-px transition-all ${step > s ? "bg-brand-600" : "bg-white/10"}`}
                 />
               )}
             </div>
@@ -185,9 +185,9 @@ export default function RegisterPage() {
               <h1 className="font-display text-3xl font-bold text-white mb-2">
                 Crea tu cuenta
               </h1>
-              <p className="text-gray-400 mb-6">
+              <p className="text-neutral-400 mb-6">
                 ¿Ya tienes cuenta?{" "}
-                <Link href="/login" className="text-blue-400 hover:text-blue-300 transition-colors font-medium">
+                <Link href="/login" className="text-brand-300 hover:text-brand-200 transition-colors font-medium">
                   Iniciar sesión
                 </Link>
               </p>
@@ -196,10 +196,10 @@ export default function RegisterPage() {
               <button
                 onClick={handleGoogleRegister}
                 disabled={googleLoading}
-                className="w-full flex items-center justify-center gap-3 bg-white text-gray-800 font-semibold py-3 rounded-xl hover:bg-gray-100 transition-all disabled:opacity-60 mb-6"
+                className="w-full flex items-center justify-center gap-3 bg-white text-neutral-800 font-semibold py-3 rounded-xl hover:bg-neutral-100 transition-all disabled:opacity-60 mb-6"
               >
                 {googleLoading ? (
-                  <div className="w-5 h-5 border-2 border-gray-400 border-t-gray-800 rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-neutral-400 border-t-neutral-800 rounded-full animate-spin" />
                 ) : (
                   <GoogleIcon />
                 )}
@@ -209,34 +209,34 @@ export default function RegisterPage() {
               {/* Divider */}
               <div className="flex items-center gap-3 mb-6">
                 <div className="flex-1 h-px bg-white/10" />
-                <span className="text-gray-500 text-sm">o con email</span>
+                <span className="text-neutral-500 text-sm">o con email</span>
                 <div className="flex-1 h-px bg-white/10" />
               </div>
 
               <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-neutral-300 mb-2">
                     Email
                   </label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                     <input
                       type="email"
                       value={form.email}
                       onChange={(e) => handleChange("email", e.target.value)}
                       placeholder="tu@email.com"
                       required
-                      className="w-full bg-white/5 border border-white/10 text-white placeholder:text-gray-500 rounded-xl pl-10 pr-4 py-3 outline-none focus:border-blue-500 transition-all"
+                      className="w-full bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 rounded-xl pl-10 pr-4 py-3 outline-none focus:border-brand-500 transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-neutral-300 mb-2">
                     Contraseña
                   </label>
                   <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                     <input
                       type={showPassword ? "text" : "password"}
                       value={form.password}
@@ -244,12 +244,12 @@ export default function RegisterPage() {
                       placeholder="Mínimo 8 caracteres"
                       required
                       minLength={8}
-                      className="w-full bg-white/5 border border-white/10 text-white placeholder:text-gray-500 rounded-xl pl-10 pr-12 py-3 outline-none focus:border-blue-500 transition-all"
+                      className="w-full bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 rounded-xl pl-10 pr-12 py-3 outline-none focus:border-brand-500 transition-all"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors"
+                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-200 transition-colors"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>
@@ -280,34 +280,34 @@ export default function RegisterPage() {
               <h1 className="font-display text-3xl font-bold text-white mb-2">
                 Nombra tu tienda
               </h1>
-              <p className="text-gray-400 mb-8">
+              <p className="text-neutral-400 mb-8">
                 Este será tu espacio en Impels Commerce.
               </p>
 
               <div className="space-y-5">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-neutral-300 mb-2">
                     Nombre de la tienda
                   </label>
                   <div className="relative">
-                    <Store className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Store className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                     <input
                       type="text"
                       value={form.storeName}
                       onChange={(e) => handleChange("storeName", e.target.value)}
                       placeholder="Ej: Mi Tienda Geek"
                       required
-                      className="w-full bg-white/5 border border-white/10 text-white placeholder:text-gray-500 rounded-xl pl-10 pr-4 py-3 outline-none focus:border-blue-500 transition-all"
+                      className="w-full bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 rounded-xl pl-10 pr-4 py-3 outline-none focus:border-brand-500 transition-all"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-neutral-300 mb-2">
                     URL de tu tienda
                   </label>
-                  <div className="flex rounded-xl overflow-hidden border border-white/10 focus-within:border-blue-500 transition-all">
-                    <span className="bg-white/5 text-gray-400 text-sm px-3 flex items-center border-r border-white/10 whitespace-nowrap">
+                  <div className="flex rounded-xl overflow-hidden border border-white/10 focus-within:border-brand-500 transition-all">
+                    <span className="bg-white/5 text-neutral-400 text-sm px-3 flex items-center border-r border-white/10 whitespace-nowrap">
                       impels-platform.vercel.app/store/
                     </span>
                     <input
@@ -316,13 +316,13 @@ export default function RegisterPage() {
                       onChange={(e) => handleChange("storeSlug", e.target.value)}
                       placeholder="mi-tienda"
                       required
-                      className="flex-1 bg-white/5 text-white placeholder:text-gray-500 px-3 py-3 outline-none text-sm"
+                      className="flex-1 bg-white/5 text-white placeholder:text-neutral-500 px-3 py-3 outline-none text-sm"
                     />
                   </div>
                   {form.storeSlug && (
-                    <p className="text-xs text-gray-500 mt-1.5">
+                    <p className="text-xs text-neutral-500 mt-1.5">
                       Tu tienda estará en:{" "}
-                      <span className="text-blue-400">impels-platform.vercel.app/store/{form.storeSlug}</span>
+                      <span className="text-brand-300">impels-platform.vercel.app/store/{form.storeSlug}</span>
                     </p>
                   )}
                 </div>
@@ -331,7 +331,7 @@ export default function RegisterPage() {
                   <button
                     type="button"
                     onClick={() => setStep(1)}
-                    className="flex-1 border border-white/10 text-gray-300 font-semibold py-3.5 rounded-xl hover:bg-white/5 transition-all"
+                    className="flex-1 border border-white/10 text-neutral-300 font-semibold py-3.5 rounded-xl hover:bg-white/5 transition-all"
                   >
                     Volver
                   </button>
@@ -355,13 +355,13 @@ export default function RegisterPage() {
           )}
         </div>
 
-        <p className="text-center text-xs text-gray-600 mt-6">
+        <p className="text-center text-xs text-neutral-600 mt-6">
           Al crear tu cuenta aceptas nuestros{" "}
-          <Link href="#" className="text-gray-400 hover:text-gray-200">
+          <Link href="#" className="text-neutral-400 hover:text-neutral-200">
             Términos de uso
           </Link>{" "}
           y{" "}
-          <Link href="#" className="text-gray-400 hover:text-gray-200">
+          <Link href="#" className="text-neutral-400 hover:text-neutral-200">
             Política de privacidad
           </Link>
         </p>

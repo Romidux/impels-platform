@@ -3,26 +3,61 @@
 /* ── Tailwind CSS ── */
 @import "tailwindcss";
 
-/* Tailwind v4 toma los tokens de @theme. tailwind.config.ts NO se carga sin una
-   directiva @config, por eso todo lo que viva solo en ese archivo no existe como
-   utilidad. Los tokens que deban generar clases (bg-brand-600, shadow-apple-sm,
-   rounded-xl...) van acá. */
+/* Este archivo es el ÚNICO lugar donde viven los tokens de diseño.
+
+   Tailwind v4 no lee un tailwind.config.js/ts salvo que haya una directiva
+   @config, y acá no la hay. Había un tailwind.config.ts en la raíz que definía
+   una paleta distinta y no tenía ningún efecto: se borró, justamente para que
+   nadie lo edite esperando que cambie algo.
+
+   Un token definido en @theme genera su clase (bg-brand-600, rounded-xl,
+   text-2xs) y además pisa el valor por defecto de Tailwind si usa el mismo
+   nombre — así es como se repintan de acá los 1195 usos de neutral-* y los 719
+   de rounded-* sin tocar un solo componente. */
 @theme {
   /* ── Marca ──
      Único punto donde se define el acento de toda la app. Cambiar estos 11
-     valores repinta dashboard, admin y storefront; no hay azules hardcodeados.
-     Alternativa evaluada (azul Apple): 600 = #0071E3, 700 = #005bc4. */
-  --color-brand-50: #f0f1ff;
-  --color-brand-100: #e4e6ff;
-  --color-brand-200: #ccd0ff;
-  --color-brand-300: #a5acff;
-  --color-brand-400: #7b84ff;
-  --color-brand-500: #5b6fff;
-  --color-brand-600: #4a5ff0;
-  --color-brand-700: #3a4ee0;
-  --color-brand-800: #2e3cb8;
-  --color-brand-900: #263090;
-  --color-brand-950: #161a55;
+     valores repinta dashboard, admin y marketing; no hay colores hardcodeados.
+
+     Verde bosque, no índigo. La escala de 11 pasos se mantiene para que los 410
+     usos existentes de brand-* sigan resolviendo sin tocar un solo componente:
+     los seis verdes del sistema caen en los escalones donde ya se los usaba.
+     600 es el botón primario y 700 su hover, por eso el par principal va ahí.
+     Blanco sobre 600 da ~4.9:1 — pasa AA para texto normal. */
+  --color-brand-50: #f0f9f4;
+  --color-brand-100: #dff3e6;  /* fondo de chips (5%, Completed) */
+  --color-brand-200: #b9e4cd;
+  --color-brand-300: #7ec8a3;  /* verde claro de gráficos */
+  --color-brand-400: #4aad82;
+  --color-brand-500: #2f9a68;  /* verde medio */
+  --color-brand-600: #1c7c54;  /* ← acento principal */
+  --color-brand-700: #166244;  /* ← hover del acento */
+  --color-brand-800: #0b5f3a;  /* verde oscuro de gráficos */
+  --color-brand-900: #0a4b2e;
+  --color-brand-950: #05301d;
+
+  /* ── Grises ──
+     Sobrescribe la rampa `neutral` de Tailwind. Mismo truco que los radios de
+     más abajo, y por la misma razón: repinta los 1195 usos de neutral-* desde
+     acá en vez de editarlos uno por uno.
+
+     Son grises con un matiz verdoso apenas perceptible, no los neutros puros de
+     Tailwind. Es lo que hace que el verde del acento no se lea como un color
+     pegado encima de una interfaz gris, sino como parte de la misma familia.
+
+     OJO: esto alcanza también al storefront, que tiene 44 usos de neutral-*
+     (el resto de sus grises son gray-*, rampa distinta, y no se tocan). */
+  --color-neutral-50: #f7f8f7;   /* fondo de los paneles */
+  --color-neutral-100: #f1f2f1;  /* hover sobre blanco */
+  --color-neutral-200: #ecedec;  /* bordes de tarjeta */
+  --color-neutral-300: #d9dbda;
+  --color-neutral-400: #a8adb2;
+  --color-neutral-500: #8b9196;  /* texto secundario */
+  --color-neutral-600: #6b7176;
+  --color-neutral-700: #4a4f53;
+  --color-neutral-800: #2b2f31;
+  --color-neutral-900: #141718;  /* texto principal */
+  --color-neutral-950: #0a0c0d;
 
   /* ── Escala tipográfica ──
      El escalón que faltaba abajo de text-xs (12px). Sin él, cada vez que un
@@ -33,11 +68,14 @@
   --text-2xs: 0.625rem;              /* 10px */
   --text-2xs--line-height: 0.875rem; /* 14px */
 
-  /* ── Admin ── */
-  --color-admin-sidebar: #0f172a;
-  --color-admin-sidebar-hover: #1e293b;
-  --color-admin-accent: #6366f1;
-  --color-admin-accent-hover: #4f46e5;
+  /* ── Admin ──
+     El admin deja de tener su propia identidad (sidebar azul marino + acento
+     índigo) y pasa a la misma paleta que el dashboard. Eran dos productos
+     distintos dentro de la misma app. */
+  --color-admin-sidebar: #f7f8f7;
+  --color-admin-sidebar-hover: #ffffff;
+  --color-admin-accent: #1c7c54;
+  --color-admin-accent-hover: #166244;
 
   /* ── Sombras de marca ──
      Una sola capa y neutra. Antes eran dos capas con tinte azul
@@ -55,46 +93,55 @@
      Los valores siguen la escala real de Tailwind (4/6/8/12) en vez de la que
      teníamos (6/8/10/14/16/20). Ajustar la escala acá baja el radio de los ~165
      usos de rounded-* de una sola vez, sin tocar cada llamada: rounded-lg, que
-     es el más usado, pasa de 10px a 8px, y rounded-xl de 14px a 12px. */
+     es el más usado, pasa de 10px a 8px, y rounded-xl de 14px a 12px.
+
+     xl y 2xl suben respecto de esa escala: xl es el radio de .dash-card (16px,
+     la tarjeta) y 2xl el de los paneles del shell (20px). */
   --radius-sm: 4px;
   --radius-md: 6px;
   --radius-lg: 8px;
-  --radius-xl: 12px;
-  --radius-2xl: 14px;
-  --radius-3xl: 18px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
 }
 
 @layer base {
   :root {
     /* Alias de gradiente (legacy) */
-    --brand-primary: #5b6fff;
-    --brand-secondary: #7c3aed;
-    --brand-gradient: linear-gradient(135deg, #5b6fff 0%, #7c3aed 100%);
+    --brand-primary: #1c7c54;
+    --brand-secondary: #0b5f3a;
+    --brand-gradient: linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%);
 
     /* ── Surface / Neutral ──
-       Espejo de la escala `neutral` de Tailwind: es la única familia de grises
-       del dashboard, para que estas clases y las utilidades digan siempre lo
-       mismo. Antes era `slate`, que tira a azul: con el acento índigo encima,
-       los grises, las sombras y el acento empujaban todos hacia el mismo lado y
-       la pantalla quedaba monocroma sin querer. En gris neutro, el índigo es lo
-       único con color y por eso se lee como acento. */
-    --color-surface-bg: #fafafa;     /* neutral-50  */
-    --color-surface-sidebar: #ffffff;
+       Espejo de la rampa `neutral` redefinida arriba: es la única familia de
+       grises del dashboard, para que estas variables y las utilidades digan
+       siempre lo mismo. Si cambiás una, cambiá la otra.
+
+       El fondo de la app es BLANCO y los paneles son grises encima — al revés
+       de como estaba (fondo gris, tarjetas blancas). Por eso surface-bg es
+       #ffffff y surface-muted carga el gris de panel. */
+    --color-surface-bg: #ffffff;     /* fondo de la app */
+    --color-surface-sidebar: #f7f8f7; /* neutral-50 — panel */
     --color-surface-card: #ffffff;
-    --color-surface-border: #e5e5e5; /* neutral-200 */
-    --color-surface-hover: #f5f5f5;  /* neutral-100 */
-    --color-surface-muted: #fafafa;  /* neutral-50  */
+    --color-surface-border: #ecedec; /* neutral-200 */
+    --color-surface-hover: #f1f2f1;  /* neutral-100 */
+    --color-surface-muted: #f7f8f7;  /* neutral-50  */
 
     /* ── Text ── */
-    --color-text-primary: #171717;   /* neutral-900 */
-    --color-text-secondary: #737373; /* neutral-500 */
-    --color-text-muted: #a3a3a3;     /* neutral-400 */
+    --color-text-primary: #141718;   /* neutral-900 */
+    --color-text-secondary: #8b9196; /* neutral-500 */
+    --color-text-muted: #a8adb2;     /* neutral-400 */
     --color-text-inverse: #ffffff;
 
-    /* ── Semantic ── */
-    --color-success-50: #f0fdf4;
-    --color-success-500: #22c55e;
-    --color-success-700: #15803d;
+    /* ── Semantic ──
+       success se alinea a la familia del acento. Con el acento en verde, el
+       #22c55e anterior era un segundo verde más brillante que no empataba con
+       nada: dos verdes distintos en pantalla se leen como un error, no como dos
+       significados. En este sistema "completado" y "marca" son el mismo verde,
+       igual que en la referencia. */
+    --color-success-50: #f0f9f4;
+    --color-success-500: #2f9a68;
+    --color-success-700: #166244;
     --color-warning-50: #fffbeb;
     --color-warning-500: #f59e0b;
     --color-warning-700: #b45309;
@@ -105,9 +152,13 @@
     --color-info-500: #3b82f6;
     --color-info-700: #1d4ed8;
 
-    /* ── Shadows (consumidas via var() por las clases de componente) ── */
-    --shadow-card-xs: 0 1px 2px rgba(0,0,0,0.04);
-    --shadow-card-sm: 0 2px 8px rgba(0,0,0,0.06);
+    /* ── Shadows (consumidas via var() por las clases de componente) ──
+       Las tarjetas ya no llevan sombra: la profundidad la da el borde de 1px y
+       el contraste del panel gris contra el fondo blanco. xs y sm quedan en
+       `none` en vez de borrarse, para no romper los var() que las consumen.
+       md y lg sobreviven para lo que sí flota: dropdowns y modales. */
+    --shadow-card-xs: none;
+    --shadow-card-sm: none;
     --shadow-card-md: 0 8px 24px rgba(0,0,0,0.08);
     --shadow-card-lg: 0 16px 40px rgba(0,0,0,0.10);
   }
@@ -125,7 +176,7 @@
   }
 
   body {
-    font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+    font-family: var(--font-inter), "Plus Jakarta Sans", system-ui, sans-serif;
     background-color: var(--color-surface-bg);
     color: var(--color-text-primary);
     min-height: 100vh;
@@ -133,12 +184,15 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* 600 y no 700: con 700 cada heading competía con el siguiente y la jerarquía
-     se construía solo con el tamaño. dub y midday no usan 700 en ningún lugar. */
+  /* 700, no 600. Revierte a propósito la decisión anterior (que buscaba que los
+     headings no compitieran entre sí): el sistema que estamos adoptando apoya
+     la jerarquía en el peso, no solo en el tamaño, y sus títulos son gruesos.
+     Si los títulos quedan pesados de más, acá se vuelve a 600 y listo. */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-outfit), "Outfit", system-ui, sans-serif;
-    font-weight: 600;
+    font-family: var(--font-outfit), "Plus Jakarta Sans", system-ui, sans-serif;
+    font-weight: 700;
     line-height: 1.2;
+    letter-spacing: -0.02em;
   }
 }
 
@@ -165,7 +219,7 @@
      anterior movía el contenido 1px en cada pasada del mouse sobre una grilla de
      KPIs, y esa flotación es de las cosas que más delatan una UI de plantilla. */
   .dash-card-hover:hover {
-    border-color: #d4d4d4; /* neutral-300 */
+    border-color: var(--color-neutral-300);
     box-shadow: var(--shadow-card-sm);
   }
 
@@ -187,7 +241,7 @@
 
   .dash-input:focus {
     border-color: var(--color-brand-500);
-    box-shadow: 0 0 0 3px rgba(91, 111, 255, 0.12);
+    box-shadow: 0 0 0 3px rgba(47, 154, 104, 0.15);
   }
 
   .dash-input::placeholder {
@@ -200,7 +254,7 @@
   .dash-select {
     appearance: none;
     -webkit-appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23737373' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238b9196' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.75rem center;
     padding-right: 2.25rem;
@@ -223,30 +277,45 @@
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
+  /* Los dos gradientes siguen vivos (login, register, onboarding, marketing),
+     así que se repintan en vez de borrarse. Pasan de índigo→violeta→rosa a un
+     degradado dentro de la misma familia verde: un gradiente que cambia de hue
+     es justo lo que hacía que la landing no pareciera del mismo producto que el
+     dashboard. */
   .gradient-text {
-    background: linear-gradient(135deg, #5b6fff 0%, #7c3aed 60%, #ec4899 100%);
+    background: linear-gradient(135deg, #2f9a68 0%, #1c7c54 55%, #0b5f3a 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .gradient-brand {
-    background: linear-gradient(135deg, #4a5ff0 0%, #6d28d9 100%);
+    background: linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%);
   }
 
-  .gradient-brand-soft {
-    background: linear-gradient(135deg, #f0f1ff 0%, #f5f3ff 100%);
-  }
+  /* ── Texturas del sistema ── */
 
-  .shimmer {
-    background: linear-gradient(
-      90deg,
-      #f0f0f0 25%,
-      #e0e0e0 50%,
-      #f0f0f0 75%
+  /* Rayado diagonal: barras sin dato en los gráficos y tramo "pendiente" del
+     gauge. Es lo que permite mostrar un hueco sin inventar un color para "nada". */
+  .hatch {
+    background-color: #fbfbfb;
+    background-image: repeating-linear-gradient(
+      45deg,
+      #e4e5e4 0 2.5px,
+      transparent 2.5px 7px
     );
-    background-size: 700px 100%;
-    animation: shimmer 2s linear infinite;
+  }
+
+  /* Fondo negro con humo verde, para la tarjeta destacada de una grilla. Cuatro
+     radiales en vez de un linear-gradient: un degradado recto se lee como
+     plantilla, estos se leen como una textura. */
+  .smoke {
+    background-color: #0e1110;
+    background-image:
+      radial-gradient(70% 90% at 18% 115%, rgba(47, 154, 104, 0.75), transparent 62%),
+      radial-gradient(55% 75% at 95% 8%, rgba(11, 95, 58, 0.8), transparent 60%),
+      radial-gradient(45% 65% at 65% 95%, rgba(126, 200, 163, 0.3), transparent 62%),
+      radial-gradient(90% 60% at 50% 50%, rgba(28, 124, 84, 0.22), transparent 70%);
   }
 
   /* ── Scrollbar ── */
@@ -256,16 +325,16 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #f5f5f5;
+    background: var(--color-neutral-100);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #d4d4d4;
+    background: var(--color-neutral-300);
     border-radius: 3px;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: #a3a3a3;
+    background: var(--color-neutral-400);
   }
 
   /* ── Focus ring ── */
@@ -274,17 +343,15 @@
     outline-offset: 2px;
   }
 
-  /* ── Glow shadows ── */
+  /* ── Glow shadows ──
+     Siguen en verde porque las usa la landing (13 usos), donde un halo de color
+     sí tiene lugar. En el dashboard no se usan: ahí la profundidad es el borde. */
   .shadow-glow {
-    box-shadow: 0 0 20px rgba(91, 111, 255, 0.3);
+    box-shadow: 0 0 20px rgba(28, 124, 84, 0.28);
   }
 
   .shadow-glow-lg {
-    box-shadow: 0 0 40px rgba(91, 111, 255, 0.4);
-  }
-
-  .shadow-brand-glow {
-    box-shadow: 0 0 24px rgba(91, 111, 255, 0.20);
+    box-shadow: 0 0 40px rgba(28, 124, 84, 0.35);
   }
 
   /* ── Animations ── */
@@ -312,13 +379,8 @@
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  @keyframes shimmer {
-    0%   { background-position: -700px 0; }
-    100% { background-position: 700px 0; }
-  }
-
   /* ── Font helpers ── */
   .font-display {
-    font-family: var(--font-outfit), "Outfit", system-ui, sans-serif;
+    font-family: var(--font-outfit), "Plus Jakarta Sans", system-ui, sans-serif;
   }
 }

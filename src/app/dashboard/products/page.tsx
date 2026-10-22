@@ -100,7 +100,7 @@ export default async function ProductsPage({
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <PageHeader
         title="Productos"
         subtitle={`${totalCount || 0} productos${!isPro ? ` / ${MAX_FREE_PRODUCTS} en plan gratis` : ""}`}
@@ -121,7 +121,7 @@ export default async function ProductsPage({
 
       {/* Products table */}
       {!products || products.length === 0 ? (
-        <div className="bg-white border border-neutral-200 rounded-[24px] shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="bg-white border border-neutral-200 rounded-2xl">
           <EmptyState
             icon={<Package className="w-8 h-8" />}
             heading="Sin productos todavía"
@@ -138,7 +138,7 @@ export default async function ProductsPage({
       ) : (
         <div className="space-y-4">
           {view === "list" ? (
-            <div className="bg-white border border-neutral-200 rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+            <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="sticky top-0 z-10">
@@ -294,7 +294,7 @@ export default async function ProductsPage({
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="bg-white border border-neutral-200 rounded-[16px] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-sm text-neutral-500 gap-3 shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+            <div className="bg-white border border-neutral-200 rounded-[16px] px-6 py-4 flex flex-col sm:flex-row items-center justify-between text-sm text-neutral-500 gap-3">
               <span>
                 Página {page} de {totalPages} ({totalCount} productos)
               </span>

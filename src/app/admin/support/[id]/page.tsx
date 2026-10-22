@@ -55,11 +55,11 @@ export default async function AdminTicketDetailPage({
   }
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10 max-w-4xl">
+    <div className="space-y-5 animate-fade-in pb-10 max-w-4xl">
       <div className="flex items-center gap-4 mb-2">
         <Link 
           href="/admin/support"
-          className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-slate-200 text-slate-500 hover:text-slate-900 transition-colors shadow-sm"
+          className="w-10 h-10 rounded-full flex items-center justify-center bg-white border border-neutral-200 text-neutral-500 hover:text-neutral-900 transition-colors shadow-sm"
         >
           <ArrowLeft className="w-5 h-5" />
         </Link>
@@ -73,35 +73,35 @@ export default async function AdminTicketDetailPage({
         
         {/* Main Conversation Thread */}
         <div className="md:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-slate-100">
-              <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
-                <Store className="w-5 h-5 text-slate-500" />
+          <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-4 pb-4 border-b border-neutral-100">
+              <div className="w-10 h-10 rounded-full bg-neutral-100 flex items-center justify-center">
+                <Store className="w-5 h-5 text-neutral-500" />
               </div>
               <div>
-                <p className="font-semibold text-slate-900 text-sm">{ticket.stores.name}</p>
-                <p className="text-xs text-slate-500 flex items-center gap-1">
+                <p className="font-semibold text-neutral-900 text-sm">{ticket.stores.name}</p>
+                <p className="text-xs text-neutral-500 flex items-center gap-1">
                   <Clock className="w-3 h-3" /> {new Date(ticket.created_at).toLocaleDateString('es-ES')}
                 </p>
               </div>
             </div>
-            <p className="text-slate-700 whitespace-pre-wrap text-sm leading-relaxed">
+            <p className="text-neutral-700 whitespace-pre-wrap text-sm leading-relaxed">
               {ticket.message}
             </p>
           </div>
 
-          <div className="bg-slate-50 rounded-2xl border border-indigo-100 overflow-hidden shadow-sm p-6">
-            <h3 className="font-bold text-slate-900 text-lg mb-4">Acciones de Resolución</h3>
+          <div className="bg-neutral-50 rounded-2xl border border-brand-100 overflow-hidden shadow-sm p-6">
+            <h3 className="font-bold text-neutral-900 text-lg mb-4">Acciones de Resolución</h3>
             
             <form action={resolveTicket} className="space-y-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5">Nota para el Comerciante (Opcional)</label>
+                <label className="block text-xs font-semibold text-neutral-700 mb-1.5">Nota para el Comerciante (Opcional)</label>
                 <textarea
                   name="adminNotes"
                   rows={4}
                   defaultValue={ticket.admin_notes || ""}
                   placeholder="Escribe la solución oficial aquí. El comerciante verá esto en su panel."
-                  className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all resize-none"
+                  className="w-full px-3 py-2 bg-white border border-neutral-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all resize-none"
                 ></textarea>
               </div>
               
@@ -120,7 +120,7 @@ export default async function AdminTicketDetailPage({
                   type="submit" 
                   name="action" 
                   value="resolve" 
-                  className="flex-1 justify-center bg-indigo-600 hover:bg-indigo-700 focus:ring-indigo-500 border-transparent text-white"
+                  className="flex-1 justify-center bg-brand-600 hover:bg-brand-700 focus:ring-brand-500 border-transparent text-white"
                   icon={<CheckCircle className="w-4 h-4" />}
                 >
                   {ticket.status === 'resolved' ? 'Actualizar Resolución' : 'Marcar como Resuelto'}
@@ -132,8 +132,8 @@ export default async function AdminTicketDetailPage({
 
         {/* Sidebar Info */}
         <div className="md:col-span-1 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Estado Actual</h4>
+          <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-5">
+            <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-4">Estado Actual</h4>
             <div className="mb-6">
               {ticket.status === 'open' ? (
                 <span className="inline-flex items-center px-2.5 py-1 rounded-md text-sm font-semibold bg-amber-50 text-amber-700 border border-amber-200 w-full justify-center">Pendiente / Abierto</span>
@@ -144,25 +144,25 @@ export default async function AdminTicketDetailPage({
               )}
             </div>
 
-            <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Datos del Cliente</h4>
+            <h4 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-4">Datos del Cliente</h4>
             <ul className="space-y-4 text-sm">
               <li className="flex flex-col gap-1">
-                <span className="text-slate-500 text-xs font-medium flex items-center gap-1.5"><Store className="w-3.5 h-3.5" /> Tienda</span>
-                <Link href={`/${ticket.stores.slug}`} target="_blank" className="text-indigo-600 hover:underline font-semibold">
+                <span className="text-neutral-500 text-xs font-medium flex items-center gap-1.5"><Store className="w-3.5 h-3.5" /> Tienda</span>
+                <Link href={`/${ticket.stores.slug}`} target="_blank" className="text-brand-600 hover:underline font-semibold">
                   {ticket.stores.name}
                 </Link>
               </li>
               {owner?.user?.email && (
                 <li className="flex flex-col gap-1">
-                  <span className="text-slate-500 text-xs font-medium flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Correo Dueño</span>
-                  <a href={`mailto:${owner.user.email}`} className="text-slate-900 truncate">
+                  <span className="text-neutral-500 text-xs font-medium flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Correo Dueño</span>
+                  <a href={`mailto:${owner.user.email}`} className="text-neutral-900 truncate">
                     {owner.user.email}
                   </a>
                 </li>
               )}
             </ul>
 
-            <div className="mt-6 pt-4 border-t border-slate-100">
+            <div className="mt-6 pt-4 border-t border-neutral-100">
               <Button asChild variant="secondary" className="w-full justify-center">
                 <Link href={`/admin/stores/${ticket.stores.owner_id}`}>
                   Ver Perfil de Tienda

@@ -90,11 +90,11 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-brand-950 to-neutral-950 flex items-center justify-center p-6">
       {/* Background blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/15 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500/15 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-brand-500/15 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-brand-700/15 rounded-full blur-3xl" />
       </div>
 
       <div className="relative w-full max-w-md">
@@ -115,9 +115,9 @@ function LoginForm() {
           <h1 className="font-display text-3xl font-bold text-white mb-2">
             Iniciar sesión
           </h1>
-          <p className="text-gray-400 mb-8">
+          <p className="text-neutral-400 mb-8">
             ¿No tienes cuenta?{" "}
-            <Link href="/register" className="text-blue-400 hover:text-blue-300 transition-colors font-medium">
+            <Link href="/register" className="text-brand-300 hover:text-brand-200 transition-colors font-medium">
               Crear cuenta gratis
             </Link>
           </p>
@@ -126,10 +126,10 @@ function LoginForm() {
           <button
             onClick={handleGoogleLogin}
             disabled={googleLoading}
-            className="w-full flex items-center justify-center gap-3 bg-white text-gray-800 font-semibold py-3 rounded-xl hover:bg-gray-100 transition-all disabled:opacity-60 mb-6"
+            className="w-full flex items-center justify-center gap-3 bg-white text-neutral-800 font-semibold py-3 rounded-xl hover:bg-neutral-100 transition-all disabled:opacity-60 mb-6"
           >
             {googleLoading ? (
-              <div className="w-5 h-5 border-2 border-gray-400 border-t-gray-800 rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-neutral-400 border-t-neutral-800 rounded-full animate-spin" />
             ) : (
               <GoogleIcon />
             )}
@@ -139,25 +139,25 @@ function LoginForm() {
           {/* Divider */}
           <div className="flex items-center gap-3 mb-6">
             <div className="flex-1 h-px bg-white/10" />
-            <span className="text-gray-500 text-sm">o con email</span>
+            <span className="text-neutral-500 text-sm">o con email</span>
             <div className="flex-1 h-px bg-white/10" />
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
             {/* Email */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-neutral-300 mb-2">
                 Email
               </label>
               <div className="relative">
-                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                 <input
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="tu@email.com"
                   required
-                  className="w-full bg-white/5 border border-white/10 text-white placeholder:text-gray-500 rounded-xl pl-10 pr-4 py-3 outline-none focus:border-blue-500 focus:bg-white/8 transition-all"
+                  className="w-full bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 rounded-xl pl-10 pr-4 py-3 outline-none focus:border-brand-500 focus:bg-white/8 transition-all"
                 />
               </div>
             </div>
@@ -165,27 +165,27 @@ function LoginForm() {
             {/* Password */}
             <div>
               <div className="flex justify-between mb-2">
-                <label className="text-sm font-medium text-gray-300">
+                <label className="text-sm font-medium text-neutral-300">
                   Contraseña
                 </label>
-                <Link href="/forgot-password" className="text-sm text-blue-400 hover:text-blue-300 transition-colors">
+                <Link href="/forgot-password" className="text-sm text-brand-300 hover:text-brand-200 transition-colors">
                   ¿Olvidaste tu contraseña?
                 </Link>
               </div>
               <div className="relative">
-                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400" />
                 <input
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Tu contraseña"
                   required
-                  className="w-full bg-white/5 border border-white/10 text-white placeholder:text-gray-500 rounded-xl pl-10 pr-12 py-3 outline-none focus:border-blue-500 focus:bg-white/8 transition-all"
+                  className="w-full bg-white/5 border border-white/10 text-white placeholder:text-neutral-500 rounded-xl pl-10 pr-12 py-3 outline-none focus:border-brand-500 focus:bg-white/8 transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-200 transition-colors"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-200 transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>

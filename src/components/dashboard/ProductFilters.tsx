@@ -263,7 +263,7 @@ export default function ProductFilters({
   return (
     <div className="space-y-3">
       {/* Toolbar */}
-      <div className="bg-white border border-neutral-200 rounded-[20px] p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center shadow-[0_1px_2px_rgba(0,0,0,0.04)]">
+      <div className="bg-white border border-neutral-200 rounded-[20px] p-4 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
         {/* Search */}
         <div className="relative flex-1 min-w-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-neutral-400 pointer-events-none" />

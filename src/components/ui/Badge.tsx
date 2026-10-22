@@ -2,19 +2,26 @@ import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const badgeVariants = cva(
-  "inline-flex items-center gap-1.5 text-xs font-medium rounded-full border",
+  "inline-flex items-center gap-1.5 rounded-md text-xs font-bold",
   {
     variants: {
       variant: {
-        success: "bg-emerald-50 text-emerald-800 border-emerald-200/60",
-        warning: "bg-amber-50 text-amber-800 border-amber-200/60",
-        error: "bg-red-50 text-red-800 border-red-200/60",
-        info: "bg-blue-50 text-blue-800 border-blue-200/60",
-        neutral: "bg-neutral-50 text-neutral-700 border-neutral-200/60",
-        brand: "bg-brand-50 text-brand-900 border-brand-200/60",
-        suspended: "bg-red-50 text-red-800 border-red-200/60",
-        trial: "bg-purple-50 text-purple-800 border-purple-200/60",
-        expired: "bg-orange-50 text-orange-800 border-orange-200/60",
+        /* Chips sin borde: el fondo tintado ya separa el chip del fondo, y el
+           borde sumaba una tercera línea en filas que ya tienen el borde de la
+           tarjeta y el separador de fila.
+
+           `success` y `brand` son el mismo verde a propósito — en este sistema
+           "completado" es la marca. `trial` sale de violeta y `expired` de
+           naranja: eran dos hues que no existían en ningún otro lado. */
+        success: "bg-brand-100 text-brand-800",
+        warning: "bg-[#fdf1da] text-[#b07d13]",
+        error: "bg-[#fde3e3] text-[#c0453f]",
+        info: "bg-neutral-100 text-neutral-700",
+        neutral: "bg-neutral-100 text-neutral-600",
+        brand: "bg-brand-100 text-brand-800",
+        suspended: "bg-[#fde3e3] text-[#c0453f]",
+        trial: "bg-brand-50 text-brand-700",
+        expired: "bg-[#fdf1da] text-[#b07d13]",
       },
       size: {
         sm: "px-2 py-0.5 text-2xs",
@@ -29,16 +36,18 @@ const badgeVariants = cva(
   }
 );
 
+/* Los puntos siguen la misma reducción de paleta que los fondos de arriba:
+   verde de marca, ámbar, rojo y gris. Sin azul, violeta ni naranja. */
 const dotColors: Record<string, string> = {
-  success: "bg-green-500",
-  warning: "bg-amber-500",
-  error: "bg-red-500",
-  info: "bg-blue-500",
+  success: "bg-brand-600",
+  warning: "bg-[#b07d13]",
+  error: "bg-[#c0453f]",
+  info: "bg-neutral-400",
   neutral: "bg-neutral-400",
-  brand: "bg-brand-500",
-  suspended: "bg-red-500",
-  trial: "bg-purple-500",
-  expired: "bg-orange-500",
+  brand: "bg-brand-600",
+  suspended: "bg-[#c0453f]",
+  trial: "bg-brand-400",
+  expired: "bg-[#b07d13]",
 };
 
 export interface BadgeProps

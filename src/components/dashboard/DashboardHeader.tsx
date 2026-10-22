@@ -30,41 +30,36 @@ export default function DashboardHeader({
   };
 
   return (
-    <header className="sticky top-0 z-50 h-14 bg-neutral-50 px-4 flex items-center justify-between">
-      {/* Left: Logo */}
-      <div className="flex-1 flex items-center min-w-0">
-        <Link href="/dashboard" className="flex items-center gap-2.5 shrink-0">
-          <div className="w-8 h-8 rounded-xl bg-brand-500 flex items-center justify-center shadow-apple-sm">
-            <Zap className="w-4 h-4 text-white" />
-          </div>
-          <div className="hidden lg:block">
-            <span className="font-display font-semibold text-base text-neutral-800">
-              Impels
-            </span>
-            <span className="text-brand-500 font-display font-semibold text-base ml-0.5">
-              Commerce
-            </span>
+    /* Panel gris propio, hermano del sidebar y del contenido. No es `sticky`:
+       en el shell nuevo el header no scrollea con la página, está fuera del
+       área que scrollea. */
+    <header className="flex shrink-0 items-center justify-between gap-4 rounded-2xl bg-neutral-50 px-4 py-3">
+      {/* Left: Logo — solo en mobile, donde no hay sidebar que lo muestre */}
+      <div className="flex min-w-0 items-center md:hidden">
+        <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-brand-600">
+            <Zap className="h-4 w-4 text-white" />
           </div>
         </Link>
       </div>
 
       {/* Center: Search */}
-      <div className="flex-1 max-w-xl px-4">
+      <div className="min-w-0 flex-1 md:max-w-sm">
         <GlobalSearch storeId={store.id} />
       </div>
 
       {/* Right: Actions */}
-      <div className="flex-1 flex items-center justify-end gap-2">
+      <div className="flex shrink-0 items-center justify-end gap-2">
         {/* Notifications */}
-        <button className="relative p-2 text-neutral-500 hover:text-neutral-700 hover:bg-white/60 rounded-xl transition-colors flex-shrink-0">
-          <Bell className="w-5 h-5" />
-          <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-brand-500 border-2 border-neutral-50"></span>
+        <button className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-500 transition-colors hover:text-neutral-900">
+          <Bell className="h-4 w-4" />
+          <span className="absolute top-1.5 right-1.5 h-2 w-2 rounded-full border-2 border-white bg-brand-600"></span>
         </button>
 
         <div className="relative ml-1">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 hover:bg-white/60 px-2 py-1.5 rounded-xl transition-colors"
+            className="flex items-center gap-2 rounded-xl px-2 py-1.5 transition-colors hover:bg-white"
           >
             <div className="w-8 h-8 rounded-full bg-brand-600 flex items-center justify-center">
               <span className="text-white text-xs font-semibold">

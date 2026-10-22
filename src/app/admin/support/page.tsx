@@ -15,14 +15,14 @@ export default async function AdminSupportPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
+    <div className="space-y-5 animate-fade-in pb-10">
       <PageHeader
         title="Bandeja de Soporte"
         subtitle={`Administra las solicitudes de ayuda de tus comerciantes. Total: ${tickets?.length || 0}`}
       />
 
       {!tickets || tickets.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm">
           <EmptyState
             icon={<HelpCircle className="w-8 h-8" />}
             heading="Bandeja limpia"
@@ -30,10 +30,10 @@ export default async function AdminSupportPage() {
           />
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
+        <div className="bg-white rounded-2xl border border-neutral-200 overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-medium">
+              <thead className="bg-neutral-50 border-b border-neutral-200 text-neutral-500 font-medium">
                 <tr>
                   <th className="px-5 py-4">Ticket</th>
                   <th className="px-5 py-4">Tienda</th>
@@ -42,17 +42,17 @@ export default async function AdminSupportPage() {
                   <th className="px-5 py-4 text-right">Acción</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-neutral-100">
                 {tickets.map((ticket) => (
-                  <tr key={ticket.id} className="hover:bg-slate-50/50 transition-colors group">
+                  <tr key={ticket.id} className="hover:bg-neutral-50/50 transition-colors group">
                     <td className="px-5 py-4">
-                      <div className="font-semibold text-slate-900 mb-0.5">{ticket.subject}</div>
-                      <div className="text-slate-500 text-xs line-clamp-1 max-w-sm">{ticket.message}</div>
+                      <div className="font-semibold text-neutral-900 mb-0.5">{ticket.subject}</div>
+                      <div className="text-neutral-500 text-xs line-clamp-1 max-w-sm">{ticket.message}</div>
                     </td>
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-2">
                         <Store className="w-4 h-4 text-brand-600" />
-                        <span className="font-medium text-slate-700">{ticket.stores?.name || 'Desconocida'}</span>
+                        <span className="font-medium text-neutral-700">{ticket.stores?.name || 'Desconocida'}</span>
                       </div>
                     </td>
                     <td className="px-5 py-4">
@@ -64,13 +64,13 @@ export default async function AdminSupportPage() {
                         <Badge variant="success">Resuelto</Badge>
                       )}
                     </td>
-                    <td className="px-5 py-4 text-slate-500 text-xs">
+                    <td className="px-5 py-4 text-neutral-500 text-xs">
                       {new Date(ticket.created_at).toLocaleString('es-ES')}
                     </td>
                     <td className="px-5 py-4 text-right">
                       <Link 
                         href={`/admin/support/${ticket.id}`}
-                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-slate-200 text-slate-400 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 transition-all"
+                        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-white border border-neutral-200 text-neutral-400 hover:text-brand-600 hover:border-brand-200 hover:bg-brand-50 transition-all"
                       >
                         <ChevronRight className="w-4 h-4" />
                       </Link>

@@ -39,11 +39,18 @@ export default async function AdminLayout({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    /* Mismo shell de tres paneles que /dashboard. El admin tenía su propia
+       estructura (sidebar fijo oscuro + main con ml-64) y su propia paleta;
+       eran dos productos distintos dentro de la misma app. */
+    <div className="flex min-h-screen w-full bg-white md:h-screen md:overflow-hidden">
       <AdminSidebar />
-      <div className="flex-1 flex flex-col min-w-0 md:ml-64">
+
+      <div className="flex min-w-0 flex-1 flex-col gap-3 p-3">
         <AdminTopbar user={authUser} />
-        <main className="flex-1 p-6 overflow-auto">{children}</main>
+
+        <main className="flex min-h-0 flex-1 flex-col rounded-2xl bg-neutral-50 p-4 md:overflow-y-auto md:p-6">
+          <div className="mx-auto w-full max-w-7xl">{children}</div>
+        </main>
       </div>
     </div>
   );

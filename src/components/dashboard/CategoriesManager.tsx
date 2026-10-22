@@ -473,7 +473,7 @@ export default function CategoriesManager({
         />
       )}
 
-      <div className="bg-white border border-neutral-200 rounded-[24px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+      <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
         {parentCategories.length === 0 && !adding ? (
           /* ── Empty state ────────────────────────────────────────────── */
           <EmptyState

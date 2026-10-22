@@ -22,15 +22,24 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-/* ── Design tokens (Kindred Commerce / Editorial Humanism) ───────── */
-// Surface:            #fdf9f4  (warm cream canvas)
-// Surface-low:        #f7f3ee  (slightly warmer for sections)
-// Surface-card:       #ffffff  (pure white cards pop against cream)
-// On-surface:         #1c1c19  (warm near-black)
-// On-surface-variant: #434656  (muted body text)
-// Primary:            #0040df → #5f00e3 (gradient CTA)
-// Tertiary amber:     #ffddb4  (soft amber highlight)
-// Shadow:             0 12px 32px -4px rgba(28,28,25,0.06)
+/* ── Paleta de la landing ─────────────────────────────────────────
+   Alineada al sistema del dashboard. Antes era una paleta propia ("crema
+   cálido" + CTA azul→violeta) que no compartía un solo valor con el resto del
+   producto: la landing y la app parecían de dos empresas distintas.
+
+   Los valores de acá son los mismos que los tokens de globals.css, escritos en
+   hex porque se usan en `style={{}}` y gradientes inline.
+
+   Surface:            #f7f8f7  (neutral-50)
+   Surface-low:        #f1f2f1  (neutral-100)
+   Surface-card:       #ffffff
+   On-surface:         #141718  (neutral-900)
+   On-surface-variant: #8b9196  (neutral-500)
+   Primary:            #1c7c54 → #0b5f3a  (brand-600 → brand-800)
+
+   NO TOCAR: #fc615d / #fdbc40 / #34c749 son los tres puntos de la ventana de
+   macOS en la maqueta de navegador, y los ámbar/rosa sueltos son acentos
+   decorativos de ilustración. */
 
 const ease = "easeOut" as const;
 
@@ -58,24 +67,24 @@ const features = [
     title: "Tienda lista en minutos",
     description:
       "Crea tu tienda, carga tus productos y empieza a vender. Sin código. Sin complicaciones.",
-    accent: "#dde1ff",
-    iconColor: "#0040df",
+    accent: "#dff3e6",
+    iconColor: "#1c7c54",
   },
   {
     icon: Package,
     title: "Catálogo potente",
     description:
       "Categorías, variantes de productos (talle, color), stock por variante. Todo lo que necesitás.",
-    accent: "#e9ddff",
-    iconColor: "#5f00e3",
+    accent: "#dff3e6",
+    iconColor: "#0b5f3a",
   },
   {
     icon: MessageCircle,
     title: "Checkout por WhatsApp",
     description:
       "El pedido llega directo a tu WhatsApp. Así como siempre vendiste, pero organizado.",
-    accent: "#dcfce7",
-    iconColor: "#16a34a",
+    accent: "#dff3e6",
+    iconColor: "#2f9a68",
   },
   {
     icon: Palette,
@@ -174,7 +183,7 @@ const testimonials = [
     name: "María García",
     role: "Tienda de ropa — Asunción",
     initials: "MG",
-    color: "#dde1ff",
+    color: "#dff3e6",
     content:
       "Antes perdía ventas porque mis clientes no sabían qué tenía disponible. Con Impels armé mi catálogo en una tarde y ahora comparto el link en mi estado de WhatsApp.",
   },
@@ -190,7 +199,7 @@ const testimonials = [
     name: "Ana Martínez",
     role: "Cosméticos artesanales — Encarnación",
     initials: "AM",
-    color: "#dcfce7",
+    color: "#dff3e6",
     content:
       "Mis clientes piden por WhatsApp como siempre, pero ahora queda todo registrado. No pierdo más pedidos y se ven lo profesional que es mi negocio.",
   },
@@ -207,13 +216,13 @@ const trustStats = [
 export default function HomePage() {
   return (
     <div
-      style={{ background: "#fdf9f4", color: "#1c1c19" }}
+      style={{ background: "#f7f8f7", color: "#141718" }}
       className="overflow-hidden"
     >
       {/* ── HERO ───────────────────────────────────────────────────── */}
       <section
         className="relative min-h-screen flex items-center pt-20 pb-16 overflow-hidden"
-        style={{ background: "linear-gradient(160deg, #fdf9f4 60%, #f0ebff 100%)" }}
+        style={{ background: "linear-gradient(160deg, #f7f8f7 60%, #f0f9f4 100%)" }}
       >
         {/* Decorative blobs */}
         <div
@@ -255,12 +264,12 @@ export default function HomePage() {
               <motion.h1
                 variants={staggerItem}
                 className="font-display text-5xl md:text-6xl xl:text-7xl font-black mb-6 leading-[1.05] tracking-tight"
-                style={{ color: "#1c1c19", letterSpacing: "-0.02em" }}
+                style={{ color: "#141718", letterSpacing: "-0.02em" }}
               >
                 Tu tienda online,{" "}
                 <span
                   style={{
-                    background: "linear-gradient(135deg, #0040df 0%, #5f00e3 100%)",
+                    background: "linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%)",
                     WebkitBackgroundClip: "text",
                     WebkitTextFillColor: "transparent",
                     backgroundClip: "text",
@@ -274,7 +283,7 @@ export default function HomePage() {
               <motion.p
                 variants={staggerItem}
                 className="text-lg md:text-xl leading-relaxed mb-8"
-                style={{ color: "#434656" }}
+                style={{ color: "#8b9196" }}
               >
                 Catálogo digital profesional con checkout optimizado para
                 WhatsApp. Sin conocimientos técnicos. Sin comisiones. Sin
@@ -290,7 +299,7 @@ export default function HomePage() {
                   href="/register"
                   className="group inline-flex items-center justify-center gap-2 text-white font-bold px-7 py-4 rounded-2xl text-base transition-all hover:scale-105"
                   style={{
-                    background: "linear-gradient(135deg, #0040df 0%, #5f00e3 100%)",
+                    background: "linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%)",
                     boxShadow: "0 8px 24px -4px rgba(0,64,223,0.35)",
                   }}
                 >
@@ -302,7 +311,7 @@ export default function HomePage() {
                   href="#how-it-works"
                   className="inline-flex items-center justify-center gap-2 font-semibold px-7 py-4 rounded-2xl text-base transition-all hover:bg-white/80"
                   style={{
-                    color: "#0040df",
+                    color: "#1c7c54",
                     background: "rgba(0,64,223,0.06)",
                   }}
                 >
@@ -323,7 +332,7 @@ export default function HomePage() {
                   <span
                     key={item}
                     className="text-sm px-3 py-1.5 rounded-full"
-                    style={{ background: "#f1ede8", color: "#434656" }}
+                    style={{ background: "#f1f2f1", color: "#8b9196" }}
                   >
                     {item}
                   </span>
@@ -349,7 +358,7 @@ export default function HomePage() {
                 {/* Browser chrome */}
                 <div
                   className="flex items-center gap-3 px-4 py-3"
-                  style={{ background: "#f1ede8" }}
+                  style={{ background: "#f1f2f1" }}
                 >
                   <div className="flex gap-1.5">
                     <div className="w-3 h-3 rounded-full" style={{ background: "#fc615d" }} />
@@ -358,21 +367,21 @@ export default function HomePage() {
                   </div>
                   <div
                     className="flex-1 rounded-lg px-3 py-1.5 text-xs"
-                    style={{ background: "#e6e2dd", color: "#747688" }}
+                    style={{ background: "#ecedec", color: "#8b9196" }}
                   >
                     impels.app/store/migeko-shop
                   </div>
                 </div>
 
                 {/* Store preview */}
-                <div className="p-5" style={{ background: "#fdf9f4" }}>
+                <div className="p-5" style={{ background: "#f7f8f7" }}>
                   {/* Store header */}
                   <div className="flex items-center justify-between mb-5">
                     <div className="flex items-center gap-3">
                       <div
                         className="w-10 h-10 rounded-xl flex items-center justify-center"
                         style={{
-                          background: "linear-gradient(135deg, #0040df, #5f00e3)",
+                          background: "linear-gradient(135deg, #1c7c54, #0b5f3a)",
                         }}
                       >
                         <Zap className="w-5 h-5 text-white" />
@@ -380,18 +389,18 @@ export default function HomePage() {
                       <div>
                         <div
                           className="h-3 w-20 rounded-full"
-                          style={{ background: "#e6e2dd" }}
+                          style={{ background: "#ecedec" }}
                         />
                         <div
                           className="h-2 w-14 rounded-full mt-1"
-                          style={{ background: "#f1ede8" }}
+                          style={{ background: "#f1f2f1" }}
                         />
                       </div>
                     </div>
                     <div
                       className="w-9 h-9 rounded-xl flex items-center justify-center"
                       style={{
-                        background: "linear-gradient(135deg, #0040df, #5f00e3)",
+                        background: "linear-gradient(135deg, #1c7c54, #0b5f3a)",
                       }}
                     >
                       <ShoppingCart className="w-4 h-4 text-white" />
@@ -407,10 +416,10 @@ export default function HomePage() {
                         style={
                           i === 0
                             ? {
-                                background: "linear-gradient(135deg, #0040df, #5f00e3)",
+                                background: "linear-gradient(135deg, #1c7c54, #0b5f3a)",
                                 color: "#fff",
                               }
-                            : { background: "#e6e2dd", color: "#434656" }
+                            : { background: "#ecedec", color: "#8b9196" }
                         }
                       >
                         {cat}
@@ -421,9 +430,9 @@ export default function HomePage() {
                   {/* Product grid */}
                   <div className="grid grid-cols-3 gap-3">
                     {[
-                      { bg: "linear-gradient(135deg, #dde1ff, #c4caff)", label: "Remera Basic", price: "85.000" },
+                      { bg: "linear-gradient(135deg, #dff3e6, #b9e4cd)", label: "Remera Basic", price: "85.000" },
                       { bg: "linear-gradient(135deg, #fce7f3, #fbb6ce)", label: "Vestido Flores", price: "140.000" },
-                      { bg: "linear-gradient(135deg, #dcfce7, #86efac)", label: "Short Sport", price: "95.000" },
+                      { bg: "linear-gradient(135deg, #dff3e6, #7ec8a3)", label: "Short Sport", price: "95.000" },
                     ].map((product) => (
                       <div key={product.label} className="rounded-xl overflow-hidden">
                         <div
@@ -438,11 +447,11 @@ export default function HomePage() {
                         <div className="pt-2 pb-1">
                           <div
                             className="text-xs font-semibold truncate"
-                            style={{ color: "#1c1c19" }}
+                            style={{ color: "#141718" }}
                           >
                             {product.label}
                           </div>
-                          <div className="text-xs font-bold" style={{ color: "#0040df" }}>
+                          <div className="text-xs font-bold" style={{ color: "#1c7c54" }}>
                             Gs {product.price}
                           </div>
                         </div>
@@ -454,7 +463,7 @@ export default function HomePage() {
                   <div className="mt-4 flex justify-center">
                     <div
                       className="flex items-center gap-2 text-white text-sm font-bold px-6 py-3 rounded-xl"
-                      style={{ background: "#16a34a" }}
+                      style={{ background: "#2f9a68" }}
                     >
                       <MessageCircle className="w-4 h-4" />
                       Pedir por WhatsApp
@@ -475,15 +484,15 @@ export default function HomePage() {
               >
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center text-lg"
-                  style={{ background: "#dcfce7" }}
+                  style={{ background: "#dff3e6" }}
                 >
                   🎉
                 </div>
                 <div>
-                  <div className="text-xs font-bold" style={{ color: "#1c1c19" }}>
+                  <div className="text-xs font-bold" style={{ color: "#141718" }}>
                     Nuevo pedido
                   </div>
-                  <div className="text-xs" style={{ color: "#434656" }}>
+                  <div className="text-xs" style={{ color: "#8b9196" }}>
                     2× Remera Basic
                   </div>
                 </div>
@@ -501,15 +510,15 @@ export default function HomePage() {
               >
                 <div
                   className="w-9 h-9 rounded-xl flex items-center justify-center"
-                  style={{ background: "#dde1ff" }}
+                  style={{ background: "#dff3e6" }}
                 >
-                  <BarChart3 className="w-4 h-4" style={{ color: "#0040df" }} />
+                  <BarChart3 className="w-4 h-4" style={{ color: "#1c7c54" }} />
                 </div>
                 <div>
-                  <div className="text-xs font-bold" style={{ color: "#1c1c19" }}>
+                  <div className="text-xs font-bold" style={{ color: "#141718" }}>
                     +32 pedidos hoy
                   </div>
-                  <div className="text-xs" style={{ color: "#434656" }}>
+                  <div className="text-xs" style={{ color: "#8b9196" }}>
                     Gs 1.240.000
                   </div>
                 </div>
@@ -520,7 +529,7 @@ export default function HomePage() {
       </section>
 
       {/* ── SOCIAL PROOF BAR ───────────────────────────────────────── */}
-      <section style={{ background: "#f7f3ee" }} className="py-10">
+      <section style={{ background: "#f1f2f1" }} className="py-10">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {trustStats.map((stat, i) => (
@@ -539,11 +548,11 @@ export default function HomePage() {
                 <div>
                   <div
                     className="font-display text-xl font-black leading-none"
-                    style={{ color: "#1c1c19" }}
+                    style={{ color: "#141718" }}
                   >
                     {stat.value}
                   </div>
-                  <div className="text-xs mt-0.5" style={{ color: "#747688" }}>
+                  <div className="text-xs mt-0.5" style={{ color: "#8b9196" }}>
                     {stat.label}
                   </div>
                 </div>
@@ -554,7 +563,7 @@ export default function HomePage() {
       </section>
 
       {/* ── HOW IT WORKS ───────────────────────────────────────────── */}
-      <section id="how-it-works" style={{ background: "#fdf9f4" }} className="py-24">
+      <section id="how-it-works" style={{ background: "#f7f8f7" }} className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div {...inView} className="text-center mb-16">
             <span
@@ -566,12 +575,12 @@ export default function HomePage() {
             </span>
             <h2
               className="font-display text-4xl md:text-5xl font-black mb-4 tracking-tight"
-              style={{ color: "#1c1c19", letterSpacing: "-0.02em" }}
+              style={{ color: "#141718", letterSpacing: "-0.02em" }}
             >
               De cero a vendiendo{" "}
               <span
                 style={{
-                  background: "linear-gradient(135deg, #0040df 0%, #5f00e3 100%)",
+                  background: "linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -580,7 +589,7 @@ export default function HomePage() {
                 en 4 pasos
               </span>
             </h2>
-            <p className="text-lg max-w-xl mx-auto" style={{ color: "#434656" }}>
+            <p className="text-lg max-w-xl mx-auto" style={{ color: "#8b9196" }}>
               Sin conocimientos técnicos. Sin complicaciones. Solo tu tienda,
               tus productos y tus ventas.
             </p>
@@ -605,7 +614,7 @@ export default function HomePage() {
                   <div
                     className="font-display text-4xl font-black mb-3 leading-none"
                     style={{
-                      background: "linear-gradient(135deg, #0040df 0%, #5f00e3 100%)",
+                      background: "linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%)",
                       WebkitBackgroundClip: "text",
                       WebkitTextFillColor: "transparent",
                       backgroundClip: "text",
@@ -616,17 +625,17 @@ export default function HomePage() {
                   </div>
                   <h3
                     className="font-display text-lg font-bold mb-2"
-                    style={{ color: "#1c1c19" }}
+                    style={{ color: "#141718" }}
                   >
                     {step.title}
                   </h3>
-                  <p className="text-sm leading-relaxed" style={{ color: "#434656" }}>
+                  <p className="text-sm leading-relaxed" style={{ color: "#8b9196" }}>
                     {step.description}
                   </p>
                 </div>
                 {i < steps.length - 1 && (
                   <div className="hidden lg:flex absolute top-1/2 -right-3 z-10 items-center justify-center w-6 h-6">
-                    <ChevronRight className="w-5 h-5" style={{ color: "#c4c5d9" }} />
+                    <ChevronRight className="w-5 h-5" style={{ color: "#d9dbda" }} />
                   </div>
                 )}
               </motion.div>
@@ -636,25 +645,25 @@ export default function HomePage() {
       </section>
 
       {/* ── FEATURES ───────────────────────────────────────────────── */}
-      <section style={{ background: "#f7f3ee" }} className="py-24">
+      <section style={{ background: "#f1f2f1" }} className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div {...inView} className="text-center mb-16">
             <span
               className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full mb-4"
-              style={{ background: "#e9ddff", color: "#5400cc" }}
+              style={{ background: "#dff3e6", color: "#0a4b2e" }}
             >
               <Zap className="w-3.5 h-3.5" />
               Todo lo que necesitás
             </span>
             <h2
               className="font-display text-4xl md:text-5xl font-black mb-4 tracking-tight"
-              style={{ color: "#1c1c19", letterSpacing: "-0.02em" }}
+              style={{ color: "#141718", letterSpacing: "-0.02em" }}
             >
               Funcionalidades que impulsan{" "}
               <br className="hidden md:block" />
               <span
                 style={{
-                  background: "linear-gradient(135deg, #0040df 0%, #5f00e3 100%)",
+                  background: "linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -685,11 +694,11 @@ export default function HomePage() {
                 </div>
                 <h3
                   className="font-display text-lg font-bold mb-2"
-                  style={{ color: "#1c1c19" }}
+                  style={{ color: "#141718" }}
                 >
                   {feature.title}
                 </h3>
-                <p className="text-sm leading-relaxed" style={{ color: "#434656" }}>
+                <p className="text-sm leading-relaxed" style={{ color: "#8b9196" }}>
                   {feature.description}
                 </p>
               </motion.div>
@@ -699,17 +708,17 @@ export default function HomePage() {
       </section>
 
       {/* ── TESTIMONIALS ───────────────────────────────────────────── */}
-      <section style={{ background: "#fdf9f4" }} className="py-24">
+      <section style={{ background: "#f7f8f7" }} className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div {...inView} className="text-center mb-16">
             <h2
               className="font-display text-4xl md:text-5xl font-black mb-4 tracking-tight"
-              style={{ color: "#1c1c19", letterSpacing: "-0.02em" }}
+              style={{ color: "#141718", letterSpacing: "-0.02em" }}
             >
               Lo que dicen los que ya{" "}
               <span
                 style={{
-                  background: "linear-gradient(135deg, #0040df 0%, #5f00e3 100%)",
+                  background: "linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -718,7 +727,7 @@ export default function HomePage() {
                 venden con Impels
               </span>
             </h2>
-            <p className="text-lg" style={{ color: "#434656" }}>
+            <p className="text-lg" style={{ color: "#8b9196" }}>
               Emprendedores reales. Resultados reales.
             </p>
           </motion.div>
@@ -748,7 +757,7 @@ export default function HomePage() {
 
                 <p
                   className="text-sm leading-relaxed mb-6"
-                  style={{ color: "#434656" }}
+                  style={{ color: "#8b9196" }}
                 >
                   &ldquo;{t.content}&rdquo;
                 </p>
@@ -756,15 +765,15 @@ export default function HomePage() {
                 <div className="flex items-center gap-3">
                   <div
                     className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
-                    style={{ background: t.color, color: "#1c1c19" }}
+                    style={{ background: t.color, color: "#141718" }}
                   >
                     {t.initials}
                   </div>
                   <div>
-                    <div className="text-sm font-bold" style={{ color: "#1c1c19" }}>
+                    <div className="text-sm font-bold" style={{ color: "#141718" }}>
                       {t.name}
                     </div>
-                    <div className="text-xs" style={{ color: "#747688" }}>
+                    <div className="text-xs" style={{ color: "#8b9196" }}>
                       {t.role}
                     </div>
                   </div>
@@ -776,23 +785,23 @@ export default function HomePage() {
       </section>
 
       {/* ── PRICING ────────────────────────────────────────────────── */}
-      <section id="pricing" style={{ background: "#f7f3ee" }} className="py-24">
+      <section id="pricing" style={{ background: "#f1f2f1" }} className="py-24">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div {...inView} className="text-center mb-16">
             <span
               className="inline-flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full mb-4"
-              style={{ background: "#dcfce7", color: "#15803d" }}
+              style={{ background: "#dff3e6", color: "#166244" }}
             >
               <Check className="w-3.5 h-3.5" />
               Precios transparentes
             </span>
             <h2
               className="font-display text-4xl md:text-5xl font-black mb-4 tracking-tight"
-              style={{ color: "#1c1c19", letterSpacing: "-0.02em" }}
+              style={{ color: "#141718", letterSpacing: "-0.02em" }}
             >
               Sin sorpresas. Sin comisiones.
             </h2>
-            <p className="text-lg" style={{ color: "#434656" }}>
+            <p className="text-lg" style={{ color: "#8b9196" }}>
               Elegí el plan que se ajuste a tu negocio. Cambiá cuando quieras.
             </p>
           </motion.div>
@@ -807,7 +816,7 @@ export default function HomePage() {
                 style={
                   plan.highlighted
                     ? {
-                        background: "linear-gradient(135deg, #0040df 0%, #5f00e3 100%)",
+                        background: "linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%)",
                         boxShadow: "0 24px 60px -8px rgba(0,64,223,0.4)",
                       }
                     : {
@@ -828,26 +837,26 @@ export default function HomePage() {
                 <div className="mb-6">
                   <h3
                     className="font-display text-2xl font-black mb-1"
-                    style={{ color: plan.highlighted ? "#ffffff" : "#1c1c19" }}
+                    style={{ color: plan.highlighted ? "#ffffff" : "#141718" }}
                   >
                     {plan.name}
                   </h3>
                   <p
                     className="text-sm mb-5"
-                    style={{ color: plan.highlighted ? "rgba(255,255,255,0.75)" : "#747688" }}
+                    style={{ color: plan.highlighted ? "rgba(255,255,255,0.75)" : "#8b9196" }}
                   >
                     {plan.description}
                   </p>
                   <div className="flex items-baseline gap-1">
                     <span
                       className="font-display text-5xl font-black"
-                      style={{ color: plan.highlighted ? "#ffffff" : "#1c1c19" }}
+                      style={{ color: plan.highlighted ? "#ffffff" : "#141718" }}
                     >
                       {plan.price}
                     </span>
                     <span
                       className="text-sm"
-                      style={{ color: plan.highlighted ? "rgba(255,255,255,0.65)" : "#747688" }}
+                      style={{ color: plan.highlighted ? "rgba(255,255,255,0.65)" : "#8b9196" }}
                     >
                       Gs / {plan.period}
                     </span>
@@ -859,11 +868,11 @@ export default function HomePage() {
                     <li key={feat} className="flex items-center gap-3">
                       <CheckCircle
                         className="w-4 h-4 flex-shrink-0"
-                        style={{ color: plan.highlighted ? "rgba(255,255,255,0.8)" : "#0040df" }}
+                        style={{ color: plan.highlighted ? "rgba(255,255,255,0.8)" : "#1c7c54" }}
                       />
                       <span
                         className="text-sm"
-                        style={{ color: plan.highlighted ? "rgba(255,255,255,0.9)" : "#434656" }}
+                        style={{ color: plan.highlighted ? "rgba(255,255,255,0.9)" : "#8b9196" }}
                       >
                         {feat}
                       </span>
@@ -878,11 +887,11 @@ export default function HomePage() {
                     plan.highlighted
                       ? {
                           background: "#ffffff",
-                          color: "#0040df",
+                          color: "#1c7c54",
                           boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
                         }
                       : {
-                          background: "linear-gradient(135deg, #0040df 0%, #5f00e3 100%)",
+                          background: "linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%)",
                           color: "#ffffff",
                           boxShadow: "0 8px 20px -4px rgba(0,64,223,0.3)",
                         }
@@ -899,7 +908,7 @@ export default function HomePage() {
       {/* ── FINAL CTA ──────────────────────────────────────────────── */}
       <section
         className="py-28 relative overflow-hidden"
-        style={{ background: "#0f0e1a" }}
+        style={{ background: "#0a0c0d" }}
       >
         {/* Background orbs */}
         <div
@@ -938,7 +947,7 @@ export default function HomePage() {
             href="/register"
             className="inline-flex items-center gap-3 font-bold px-10 py-5 rounded-2xl text-xl text-white transition-all hover:scale-105"
             style={{
-              background: "linear-gradient(135deg, #0040df 0%, #5f00e3 100%)",
+              background: "linear-gradient(135deg, #1c7c54 0%, #0b5f3a 100%)",
               boxShadow: "0 16px 40px -8px rgba(0,64,223,0.5)",
             }}
           >

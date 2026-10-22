@@ -118,14 +118,14 @@ export function ToggleStoreButton({
             {/* Body */}
             <div className="px-6 py-5 space-y-4">
               {disabledReason && (
-                <div className="text-sm text-slate-500 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3">
-                  <span className="font-semibold text-slate-700">Motivo anterior:</span>{" "}
+                <div className="text-sm text-neutral-500 bg-neutral-50 border border-neutral-200 rounded-xl px-4 py-3">
+                  <span className="font-semibold text-neutral-700">Motivo anterior:</span>{" "}
                   {disabledReason}
                 </div>
               )}
               <div>
-                <label className="block text-sm font-semibold text-slate-700 mb-2">
-                  Motivo de suspensión <span className="text-slate-400 font-normal">(opcional)</span>
+                <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                  Motivo de suspensión <span className="text-neutral-400 font-normal">(opcional)</span>
                 </label>
                 <input
                   ref={inputRef}
@@ -135,21 +135,21 @@ export function ToggleStoreButton({
                   placeholder="Ej: Pago vencido, violación de términos..."
                   disabled={isPending}
                   onKeyDown={(e) => e.key === "Enter" && handleSuspend()}
-                  className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all disabled:opacity-50"
+                  className="w-full px-4 py-3 rounded-xl border border-neutral-200 text-sm outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-100 transition-all disabled:opacity-50"
                 />
-                <p className="mt-1.5 text-xs text-slate-400">
+                <p className="mt-1.5 text-xs text-neutral-400">
                   Queda registrado en el historial de la tienda.
                 </p>
               </div>
             </div>
 
             {/* Actions */}
-            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
+            <div className="px-6 py-4 bg-neutral-50 border-t border-neutral-100 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
                 disabled={isPending}
-                className="px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100 rounded-lg transition-all disabled:opacity-50"
+                className="px-4 py-2.5 text-sm font-semibold text-neutral-600 hover:bg-neutral-100 rounded-lg transition-all disabled:opacity-50"
               >
                 Cancelar
               </button>

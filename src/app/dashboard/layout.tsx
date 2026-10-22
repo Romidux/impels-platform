@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getUser, getStore } from "@/lib/supabase/queries";
 import DashboardSidebar from "@/components/dashboard/DashboardSidebar";
+import DashboardHeader from "@/components/dashboard/DashboardHeader";
 import BottomNav from "@/components/dashboard/BottomNav";
 import OrderNotificationListener from "@/components/dashboard/OrderNotificationListener";
 
@@ -45,18 +46,29 @@ export default async function DashboardLayout({
     created_at: user.created_at,
   };
 
+  const typedStore = activeStore as import('@/lib/types').Store;
+
+  /* Shell de tres paneles: el fondo de la app es BLANCO y el sidebar, la barra
+     superior y el contenido son paneles grises redondeados apoyados encima. Al
+     revés de como estaba (fondo gris + tarjetas blancas).
+
+     En desktop la altura la fija el shell (h-screen) y scrollea solo el panel de
+     contenido, como una app de escritorio. En mobile se vuelve a scroll de
+     página normal: con h-screen, la barra del navegador móvil se come el alto y
+     el contenido queda cortado. */
   return (
-    <div className="min-h-screen bg-neutral-50 flex">
+    <div className="flex min-h-screen w-full bg-white md:h-screen md:overflow-hidden">
       <OrderNotificationListener storeId={activeStore.id} />
-      <DashboardSidebar
-        store={activeStore as import('@/lib/types').Store}
-        user={authUser}
-      />
-      <main className="flex-1 p-4 md:p-8 pb-20 md:pb-8 overflow-auto md:ml-64">
-        <div className="max-w-7xl mx-auto">
-          {children}
-        </div>
-      </main>
+      <DashboardSidebar store={typedStore} />
+
+      <div className="flex min-w-0 flex-1 flex-col gap-3 p-3 pb-20 md:pb-3">
+        <DashboardHeader user={authUser} store={typedStore} />
+
+        <main className="flex min-h-0 flex-1 flex-col rounded-2xl bg-neutral-50 p-4 md:overflow-y-auto md:p-6">
+          <div className="mx-auto w-full max-w-7xl">{children}</div>
+        </main>
+      </div>
+
       <BottomNav storeSlug={activeStore.slug} />
     </div>
   );

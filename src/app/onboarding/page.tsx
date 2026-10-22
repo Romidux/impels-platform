@@ -112,7 +112,7 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-blue-950 to-purple-950 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-neutral-950 via-brand-950 to-neutral-950 flex items-center justify-center p-6">
       {/* Background dots */}
       <div
         className="absolute inset-0 opacity-10"
@@ -129,7 +129,7 @@ export default function OnboardingPage() {
             <Zap className="w-6 h-6 text-white" />
           </div>
           <span className="text-white font-display font-bold text-2xl">
-            Impels<span className="text-blue-400">Commerce</span>
+            Impels<span className="text-brand-300">Commerce</span>
           </span>
         </div>
 
@@ -176,10 +176,10 @@ export default function OnboardingPage() {
         <div className="glass-dark rounded-3xl border border-white/10 p-8 shadow-2xl">
           {/* ── STEP 0: Store info ─────────────────────────────── */}
           {step === 0 && (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-5 animate-fade-in">
               <div>
-                <div className="w-12 h-12 rounded-2xl bg-blue-500/20 flex items-center justify-center mb-4">
-                  <Store className="w-6 h-6 text-blue-400" />
+                <div className="w-12 h-12 rounded-2xl bg-brand-500/20 flex items-center justify-center mb-4">
+                  <Store className="w-6 h-6 text-brand-300" />
                 </div>
                 <h1 className="font-display text-3xl font-black text-white mb-1">
                   ¡Creemos tu tienda!
@@ -199,7 +199,7 @@ export default function OnboardingPage() {
                     value={form.name}
                     onChange={(e) => handleChange("name", e.target.value)}
                     placeholder="Ej: Boutique Valentina"
-                    className="w-full bg-white/10 border border-white/15 text-white placeholder-white/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:bg-white/15 transition-all"
+                    className="w-full bg-white/10 border border-white/15 text-white placeholder-white/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-400 focus:bg-white/15 transition-all"
                     autoFocus
                   />
                 </div>
@@ -208,7 +208,7 @@ export default function OnboardingPage() {
                   <label className="block text-sm font-semibold text-white/70 mb-2">
                     URL de tu tienda
                   </label>
-                  <div className="flex rounded-xl overflow-hidden border border-white/15 focus-within:border-blue-400 transition-all">
+                  <div className="flex rounded-xl overflow-hidden border border-white/15 focus-within:border-brand-400 transition-all">
                     <span className="bg-white/5 text-white/40 text-sm px-3 flex items-center border-r border-white/10 whitespace-nowrap flex-shrink-0">
                       impels-platform.vercel.app/store/
                     </span>
@@ -231,7 +231,7 @@ export default function OnboardingPage() {
                     onChange={(e) => handleChange("description", e.target.value)}
                     placeholder="Describe brevemente tu tienda..."
                     rows={2}
-                    className="w-full bg-white/10 border border-white/15 text-white placeholder-white/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 focus:bg-white/15 transition-all resize-none"
+                    className="w-full bg-white/10 border border-white/15 text-white placeholder-white/30 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-400 focus:bg-white/15 transition-all resize-none"
                   />
                 </div>
 
@@ -242,14 +242,14 @@ export default function OnboardingPage() {
                   <select
                     value={form.currency}
                     onChange={(e) => handleChange("currency", e.target.value)}
-                    className="w-full bg-white/10 border border-white/15 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-400 transition-all"
+                    className="w-full bg-white/10 border border-white/15 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-brand-400 transition-all"
                   >
-                    <option value="Gs" className="bg-gray-900">Guaraníes (Gs) — Paraguay</option>
-                    <option value="ARS" className="bg-gray-900">Peso Argentino (ARS)</option>
-                    <option value="COP" className="bg-gray-900">Peso Colombiano (COP)</option>
-                    <option value="MXN" className="bg-gray-900">Peso Mexicano (MXN)</option>
-                    <option value="BRL" className="bg-gray-900">Real Brasileño (BRL)</option>
-                    <option value="USD" className="bg-gray-900">Dólar (USD)</option>
+                    <option value="Gs" className="bg-neutral-900">Guaraníes (Gs) — Paraguay</option>
+                    <option value="ARS" className="bg-neutral-900">Peso Argentino (ARS)</option>
+                    <option value="COP" className="bg-neutral-900">Peso Colombiano (COP)</option>
+                    <option value="MXN" className="bg-neutral-900">Peso Mexicano (MXN)</option>
+                    <option value="BRL" className="bg-neutral-900">Real Brasileño (BRL)</option>
+                    <option value="USD" className="bg-neutral-900">Dólar (USD)</option>
                   </select>
                 </div>
               </div>
@@ -272,7 +272,7 @@ export default function OnboardingPage() {
 
           {/* ── STEP 1: WhatsApp ───────────────────────────────── */}
           {step === 1 && (
-            <div className="space-y-6 animate-fade-in">
+            <div className="space-y-5 animate-fade-in">
               <div>
                 <div className="w-12 h-12 rounded-2xl bg-green-500/20 flex items-center justify-center mb-4">
                   <Phone className="w-6 h-6 text-green-400" />
@@ -346,7 +346,7 @@ export default function OnboardingPage() {
 
           {/* ── STEP 2: Success ────────────────────────────────── */}
           {step === 2 && (
-            <div className="text-center space-y-6 animate-fade-in py-4">
+            <div className="text-center space-y-5 animate-fade-in py-4">
               {/* Animated checkmark */}
               <div className="w-20 h-20 rounded-full bg-green-500/20 border-2 border-green-400 flex items-center justify-center mx-auto">
                 <Check className="w-9 h-9 text-green-400" />
@@ -357,7 +357,7 @@ export default function OnboardingPage() {
                   ¡Tu tienda está lista! 🎉
                 </h1>
                 <p className="text-white/60">
-                  <span className="text-blue-400 font-semibold">{form.name}</span>{" "}
+                  <span className="text-brand-300 font-semibold">{form.name}</span>{" "}
                   fue creada exitosamente. Ahora podés agregar tus productos.
                 </p>
               </div>
@@ -367,7 +367,7 @@ export default function OnboardingPage() {
                   Tu tienda pública
                 </p>
                 <div className="flex items-center gap-2">
-                  <div className="flex-1 bg-white/10 rounded-xl px-3 py-2 text-sm text-blue-300 font-mono truncate">
+                  <div className="flex-1 bg-white/10 rounded-xl px-3 py-2 text-sm text-brand-200 font-mono truncate">
                     impels-platform.vercel.app/store/{form.slug}
                   </div>
                 </div>

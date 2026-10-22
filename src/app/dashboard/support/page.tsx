@@ -48,7 +48,7 @@ export default async function SupportPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
+    <div className="space-y-5 animate-fade-in pb-10">
       <PageHeader
         title="Soporte y Ayuda"
         subtitle="¿Tienes un problema con tu tienda? Abre un ticket de soporte y te ayudaremos."

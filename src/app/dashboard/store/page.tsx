@@ -211,7 +211,7 @@ export default async function StoreHubPage({
               <Link
                 key={item.href}
                 href={item.href}
-                className="group flex items-center justify-between rounded-[24px] border border-neutral-200 bg-white px-4 py-4 shadow-sm transition-all hover:border-neutral-300 hover:shadow-md"
+                className="group flex items-center justify-between rounded-2xl border border-neutral-200 bg-white px-4 py-4 shadow-sm transition-all hover:border-neutral-300 hover:shadow-md"
               >
                 <div className="flex min-w-0 items-center gap-4">
                   <div

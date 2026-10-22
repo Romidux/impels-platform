@@ -54,7 +54,7 @@ export default function MarketingNav() {
           <div className="w-8 h-8 rounded-lg gradient-brand flex items-center justify-center shadow-glow group-hover:shadow-glow-lg transition-shadow">
             <Zap className="w-4 h-4 text-white" />
           </div>
-          <span className="font-display font-bold text-xl text-gray-900">
+          <span className="font-display font-bold text-xl text-neutral-900">
             Impels<span className="gradient-text">Commerce</span>
           </span>
         </Link>
@@ -65,7 +65,7 @@ export default function MarketingNav() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-gray-600 hover:text-blue-600 font-medium transition-colors text-sm"
+              className="text-neutral-600 hover:text-brand-600 font-medium transition-colors text-sm"
             >
               {link.label}
             </Link>
@@ -76,7 +76,7 @@ export default function MarketingNav() {
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/login"
-            className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors px-4 py-2"
+            className="text-sm font-medium text-neutral-700 hover:text-brand-600 transition-colors px-4 py-2"
           >
             Iniciar sesión
           </Link>
@@ -91,7 +91,7 @@ export default function MarketingNav() {
         {/* Mobile Menu Toggle */}
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+          className="md:hidden p-2 rounded-lg hover:bg-neutral-100 transition-colors"
           aria-label="Toggle menu"
         >
           {mobileOpen ? (
@@ -109,7 +109,7 @@ export default function MarketingNav() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-gray-100 bg-white/95 backdrop-blur-md"
+            className="md:hidden border-t border-neutral-100 bg-white/95 backdrop-blur-md"
           >
             <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-3">
               {navLinks.map((link) => (
@@ -117,15 +117,15 @@ export default function MarketingNav() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setMobileOpen(false)}
-                  className="text-gray-700 hover:text-blue-600 font-medium py-2 transition-colors"
+                  className="text-neutral-700 hover:text-brand-600 font-medium py-2 transition-colors"
                 >
                   {link.label}
                 </Link>
               ))}
-              <hr className="border-gray-100" />
+              <hr className="border-neutral-100" />
               <Link
                 href="/login"
-                className="text-gray-700 font-medium py-2"
+                className="text-neutral-700 font-medium py-2"
                 onClick={() => setMobileOpen(false)}
               >
                 Iniciar sesión

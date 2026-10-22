@@ -33,7 +33,7 @@ export default async function AdminAnnouncementsPage() {
   const safeAnnouncements = error ? [] : announcements;
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
+    <div className="space-y-5 animate-fade-in pb-10">
       <PageHeader
         title="Anuncios de Plataforma"
         subtitle="Publica comunicados, novedades o alertas para todos los comercios."
@@ -45,7 +45,7 @@ export default async function AdminAnnouncementsPage() {
       />
 
       {!safeAnnouncements || safeAnnouncements.length === 0 ? (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-10">
+        <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm p-10">
           <EmptyState
             icon={<Megaphone className="w-8 h-8" />}
             heading="Sin anuncios publicados"
@@ -58,25 +58,25 @@ export default async function AdminAnnouncementsPage() {
           />
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-neutral-200 shadow-sm overflow-hidden">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="py-3 px-5 text-sm font-semibold text-slate-600">Título</th>
-                <th className="py-3 px-5 text-sm font-semibold text-slate-600">Tipo</th>
-                <th className="py-3 px-5 text-sm font-semibold text-slate-600">Estado</th>
-                <th className="py-3 px-5 text-sm font-semibold text-slate-600">Fecha</th>
-                <th className="py-3 px-5 text-sm font-semibold text-slate-600 text-right">Acciones</th>
+              <tr className="bg-neutral-50 border-b border-neutral-200">
+                <th className="py-3 px-5 text-sm font-semibold text-neutral-600">Título</th>
+                <th className="py-3 px-5 text-sm font-semibold text-neutral-600">Tipo</th>
+                <th className="py-3 px-5 text-sm font-semibold text-neutral-600">Estado</th>
+                <th className="py-3 px-5 text-sm font-semibold text-neutral-600">Fecha</th>
+                <th className="py-3 px-5 text-sm font-semibold text-neutral-600 text-right">Acciones</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-neutral-100">
               {safeAnnouncements.map((ann) => (
-                <tr key={ann.id} className="hover:bg-slate-50/50 transition-colors group">
+                <tr key={ann.id} className="hover:bg-neutral-50/50 transition-colors group">
                   <td className="py-3 px-5">
-                    <p className="font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    <p className="font-semibold text-neutral-900 group-hover:text-brand-600 transition-colors">
                       {ann.title}
                     </p>
-                    <p className="text-xs text-slate-500 line-clamp-1 mt-0.5">
+                    <p className="text-xs text-neutral-500 line-clamp-1 mt-0.5">
                       {ann.content}
                     </p>
                   </td>
@@ -90,14 +90,14 @@ export default async function AdminAnnouncementsPage() {
                       {ann.is_published ? "Publicado" : "Borrador"}
                     </Badge>
                   </td>
-                  <td className="py-3 px-5 text-sm text-slate-500">
+                  <td className="py-3 px-5 text-sm text-neutral-500">
                     {new Date(ann.created_at).toLocaleDateString("es-ES")}
                   </td>
                   <td className="py-3 px-5 text-right space-x-2">
-                    <Button variant="ghost" size="sm" className="text-slate-400 hover:text-indigo-600 h-8 w-8 p-0">
+                    <Button variant="ghost" size="sm" className="text-neutral-400 hover:text-brand-600 h-8 w-8 p-0">
                       <Edit3 className="w-4 h-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" className="text-slate-400 hover:text-red-600 h-8 w-8 p-0">
+                    <Button variant="ghost" size="sm" className="text-neutral-400 hover:text-red-600 h-8 w-8 p-0">
                       <Trash2 className="w-4 h-4" />
                     </Button>
                   </td>

@@ -3,7 +3,7 @@ import { Zap, Instagram, Twitter, Facebook } from "lucide-react";
 
 export default function MarketingFooter() {
   return (
-    <footer className="bg-gray-950 text-gray-400">
+    <footer className="bg-neutral-950 text-neutral-400">
       <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
@@ -16,7 +16,7 @@ export default function MarketingFooter() {
                 Impels<span className="gradient-text">Commerce</span>
               </span>
             </Link>
-            <p className="text-gray-400 text-sm leading-relaxed max-w-xs">
+            <p className="text-neutral-400 text-sm leading-relaxed max-w-xs">
               La forma más fácil de crear tu tienda online. Pensado para
               emprendedores y pequeñas empresas de LATAM.
             </p>
@@ -91,11 +91,11 @@ export default function MarketingFooter() {
         </div>
 
         <div className="border-t border-white/5 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-neutral-600">
             © {new Date().getFullYear()} Impels Commerce. Todos los derechos
             reservados.
           </p>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-neutral-600">
             Hecho con ❤️ para emprendedores de LATAM
           </p>
         </div>

@@ -149,7 +149,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                   }
                   setTemplate(templateOption.id);
                 }}
-                className={`relative overflow-hidden rounded-[24px] border bg-white text-left transition-all ${isSelected
+                className={`relative overflow-hidden rounded-2xl border bg-white text-left transition-all ${isSelected
                     ? "border-brand-300 shadow-[0_12px_32px_rgba(37,99,235,0.14)]"
                     : `border-neutral-200 hover:border-neutral-300 ${templateOption.accent}`
                   } ${locked ? "opacity-75" : ""}`}

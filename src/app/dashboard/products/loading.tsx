@@ -3,7 +3,7 @@ const CATEGORY_WIDTHS = ["w-[40%]", "w-[55%]", "w-[35%]", "w-[50%]", "w-[42%]", 
 
 export default function ProductsLoading() {
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       {/* Header */}
       <div className="mt-2 sm:mt-4 mb-8">
         <div className="h-10 w-36 bg-neutral-200 rounded-[8px] animate-pulse" />
@@ -19,7 +19,7 @@ export default function ProductsLoading() {
       </div>
 
       {/* Table */}
-      <div className="bg-white border border-neutral-200 rounded-[24px] overflow-hidden">
+      <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
         {/* Header row */}
         <div className="bg-neutral-50 border-b border-neutral-200 px-6 py-4 flex items-center gap-6">
           <div className="w-12 h-3 bg-neutral-200 rounded-[8px] animate-pulse" />

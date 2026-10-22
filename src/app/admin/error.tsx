@@ -22,14 +22,14 @@ export default function AdminError({
       </div>
 
       <div className="text-center max-w-md">
-        <h2 className="text-xl font-bold text-slate-900 mb-2">
+        <h2 className="text-xl font-bold text-neutral-900 mb-2">
           Error en el panel de administración
         </h2>
-        <p className="text-slate-500 text-sm">
+        <p className="text-neutral-500 text-sm">
           Ocurrió un error inesperado. Podés intentar de nuevo o volver al resumen.
         </p>
         {error.digest && (
-          <p className="text-xs text-slate-400 mt-2 font-mono">
+          <p className="text-xs text-neutral-400 mt-2 font-mono">
             Ref: {error.digest}
           </p>
         )}
@@ -38,14 +38,14 @@ export default function AdminError({
       <div className="flex items-center gap-3">
         <button
           onClick={reset}
-          className="flex items-center gap-2 px-4 py-2.5 bg-indigo-600 text-white text-sm font-semibold rounded-xl hover:bg-indigo-700 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 bg-brand-600 text-white text-sm font-semibold rounded-xl hover:bg-brand-700 transition-colors"
         >
           <RotateCcw className="w-4 h-4" />
           Intentar de nuevo
         </button>
         <Link
           href="/admin"
-          className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 text-slate-700 text-sm font-semibold rounded-xl hover:bg-slate-200 transition-colors"
+          className="flex items-center gap-2 px-4 py-2.5 bg-neutral-100 text-neutral-700 text-sm font-semibold rounded-xl hover:bg-neutral-200 transition-colors"
         >
           <Home className="w-4 h-4" />
           Ir al resumen

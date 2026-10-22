@@ -57,7 +57,7 @@ export default async function AppsPage() {
   }
 
   return (
-    <div className="space-y-6 animate-fade-in pb-10">
+    <div className="space-y-5 animate-fade-in pb-10">
       <PageHeader
         title="Aplicaciones y Píxeles"
         subtitle="Conecta herramientas externas para medir tus visitas y potenciar tus ventas."

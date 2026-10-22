@@ -74,17 +74,20 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
   }
 
   return (
-    <header className="bg-white border-b border-slate-200 px-6 py-3.5 flex items-center justify-between sticky top-0 z-30">
+    /* Panel gris, hermano del sidebar y del contenido. Deja de ser `sticky`
+       con borde inferior: en este shell el header no scrollea con la página
+       porque está fuera del área que scrollea. */
+    <header className="flex shrink-0 items-center justify-between gap-4 rounded-2xl bg-neutral-50 px-4 py-3">
       <div className="flex items-center gap-1.5 text-sm">
         {breadcrumbs.map((bc, i) => (
           <div key={bc.href} className="flex items-center gap-1.5">
-            {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-slate-300" />}
+            {i > 0 && <ChevronRight className="w-3.5 h-3.5 text-neutral-300" />}
             {i === breadcrumbs.length - 1 ? (
-              <span className="font-semibold text-slate-900">{bc.label}</span>
+              <span className="font-semibold text-neutral-900">{bc.label}</span>
             ) : (
               <a
                 href={bc.href}
-                className="text-slate-400 hover:text-slate-600 transition-colors"
+                className="text-neutral-400 hover:text-neutral-600 transition-colors"
               >
                 {bc.label}
               </a>
@@ -96,11 +99,11 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
       <div className="flex items-center gap-3">
         <button
           onClick={() => setSearchOpen(true)}
-          className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-slate-50 hover:bg-slate-100 transition-colors rounded-lg text-sm text-slate-400 border border-slate-100 w-64 text-left"
+          className="hidden lg:flex items-center gap-2 px-3 py-1.5 bg-neutral-50 hover:bg-neutral-100 transition-colors rounded-lg text-sm text-neutral-400 border border-neutral-100 w-64 text-left"
         >
           <Search className="w-4 h-4" />
           <span className="flex-1">Buscar...</span>
-          <kbd className="text-[10px] bg-white border border-slate-200 rounded px-1.5 py-0.5 text-slate-400 font-mono">
+          <kbd className="text-[10px] bg-white border border-neutral-200 rounded px-1.5 py-0.5 text-neutral-400 font-mono">
             Ctrl K
           </kbd>
         </button>
@@ -108,43 +111,43 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
         {searchOpen && (
           <div className="fixed inset-0 z-50 flex items-start justify-center pt-[10vh]">
             <div
-              className="absolute inset-0 bg-slate-900/20 backdrop-blur-sm"
+              className="absolute inset-0 bg-neutral-900/20 backdrop-blur-sm"
               onClick={() => setSearchOpen(false)}
             />
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-slate-100 animate-scale-in mx-4">
-              <div className="flex items-center px-4 py-3 border-b border-slate-100 gap-3">
-                <Search className="w-5 h-5 text-slate-400" />
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-neutral-100 animate-scale-in mx-4">
+              <div className="flex items-center px-4 py-3 border-b border-neutral-100 gap-3">
+                <Search className="w-5 h-5 text-neutral-400" />
                 <input
                   type="text"
                   autoFocus
                   placeholder="Buscar tiendas o accesos rapidos del admin..."
-                  className="flex-1 bg-transparent border-none outline-none text-slate-900 placeholder:text-slate-400"
+                  className="flex-1 bg-transparent border-none outline-none text-neutral-900 placeholder:text-neutral-400"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
-                <kbd className="hidden sm:inline-block text-[10px] bg-slate-50 border border-slate-200 rounded px-1.5 py-0.5 text-slate-400 font-mono">
+                <kbd className="hidden sm:inline-block text-[10px] bg-neutral-50 border border-neutral-200 rounded px-1.5 py-0.5 text-neutral-400 font-mono">
                   ESC
                 </kbd>
               </div>
 
               <div className="p-2 max-h-[60vh] overflow-y-auto">
-                <div className="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-widest">
+                <div className="px-3 py-1.5 text-xs font-semibold text-neutral-400 uppercase tracking-widest">
                   Resultados sugeridos
                 </div>
 
                 <div className="mt-1 space-y-0.5">
                   <button
                     onClick={() => router.push("/admin/stores")}
-                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group"
                   >
-                    <div className="bg-indigo-50 text-indigo-600 p-1.5 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                    <div className="bg-brand-50 text-brand-600 p-1.5 rounded-lg group-hover:bg-brand-100 transition-colors">
                       <Store className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-700">
+                      <p className="text-sm font-semibold text-neutral-700">
                         Explorar todas las tiendas
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-neutral-500">
                         Modulo de gestion
                       </p>
                     </div>
@@ -152,16 +155,16 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
 
                   <button
                     onClick={() => router.push("/admin/billing")}
-                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group"
                   >
                     <div className="bg-emerald-50 text-emerald-600 p-1.5 rounded-lg group-hover:bg-emerald-100 transition-colors">
                       <CreditCard className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-700">
+                      <p className="text-sm font-semibold text-neutral-700">
                         Revisar facturacion
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-neutral-500">
                         Planes e ingresos de plataforma
                       </p>
                     </div>
@@ -169,16 +172,16 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
 
                   <button
                     onClick={() => router.push("/admin/support")}
-                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group"
                   >
                     <div className="bg-amber-50 text-amber-600 p-1.5 rounded-lg group-hover:bg-amber-100 transition-colors">
                       <LifeBuoy className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-700">
+                      <p className="text-sm font-semibold text-neutral-700">
                         Abrir soporte
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-neutral-500">
                         Tickets y seguimiento operativo
                       </p>
                     </div>
@@ -186,16 +189,16 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
 
                   <button
                     onClick={() => router.push("/admin/announcements")}
-                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 transition-colors group"
+                    className="w-full text-left flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-neutral-50 transition-colors group"
                   >
-                    <div className="bg-indigo-50 text-indigo-600 p-1.5 rounded-lg group-hover:bg-indigo-100 transition-colors">
+                    <div className="bg-brand-50 text-brand-600 p-1.5 rounded-lg group-hover:bg-brand-100 transition-colors">
                       <Megaphone className="w-4 h-4" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-slate-700">
+                      <p className="text-sm font-semibold text-neutral-700">
                         Gestionar anuncios
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p className="text-xs text-neutral-500">
                         Comunicados visibles para comercios
                       </p>
                     </div>
@@ -203,7 +206,7 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
                 </div>
               </div>
 
-              <div className="bg-slate-50 px-4 py-2.5 border-t border-slate-100 flex items-center gap-4 text-xs text-slate-500">
+              <div className="bg-neutral-50 px-4 py-2.5 border-t border-neutral-100 flex items-center gap-4 text-xs text-neutral-500">
                 <span className="flex items-center gap-1.5">
                   <kbd className="bg-white border shadow-sm rounded px-1.5 py-0.5">
                     ↑↓
@@ -221,22 +224,22 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
           </div>
         )}
 
-        <button className="relative p-2 rounded-lg hover:bg-slate-50 transition-colors text-slate-400">
+        <button className="relative p-2 rounded-lg hover:bg-neutral-50 transition-colors text-neutral-400">
           <Bell className="w-4.5 h-4.5" />
         </button>
 
         <div className="relative">
           <button
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex items-center gap-2 hover:bg-slate-50 pl-2 pr-3 py-1.5 rounded-lg transition-colors"
+            className="flex items-center gap-2 hover:bg-neutral-50 pl-2 pr-3 py-1.5 rounded-lg transition-colors"
           >
-            <div className="w-7 h-7 rounded-full bg-indigo-600 flex items-center justify-center">
+            <div className="w-7 h-7 rounded-full bg-brand-600 flex items-center justify-center">
               <span className="text-white text-xs font-bold">
                 {user.email?.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="hidden sm:block text-left">
-              <p className="text-xs font-medium text-slate-700 truncate max-w-[140px]">
+              <p className="text-xs font-medium text-neutral-700 truncate max-w-[140px]">
                 {user.email}
               </p>
             </div>
@@ -248,12 +251,12 @@ export default function AdminTopbar({ user }: { user: AuthUser }) {
                 className="fixed inset-0 z-10"
                 onClick={() => setMenuOpen(false)}
               />
-              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-slate-100 z-20 overflow-hidden animate-scale-in">
-                <div className="p-3 border-b border-slate-100">
-                  <p className="text-xs text-slate-500 truncate">
+              <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-xl shadow-lg border border-neutral-100 z-20 overflow-hidden animate-scale-in">
+                <div className="p-3 border-b border-neutral-100">
+                  <p className="text-xs text-neutral-500 truncate">
                     {user.email}
                   </p>
-                  <p className="text-[10px] text-indigo-500 font-semibold mt-0.5">
+                  <p className="text-[10px] text-brand-500 font-semibold mt-0.5">
                     Super Admin
                   </p>
                 </div>

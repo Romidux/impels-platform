@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
       dependía del tamaño de fuente, así que un Button md (40px) nunca alineaba
       con un .dash-input (42px) en la misma fila. Ahora md e input miden 40px. */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap",
+  "inline-flex items-center justify-center gap-2 font-semibold transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap",
   {
     variants: {
       variant: {
@@ -29,11 +29,15 @@ const buttonVariants = cva(
         brand:
           "bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 transition-colors",
       },
+      /* Píldora en todos los tamaños. El radio ya no escala con el botón: un
+         `rounded-full` da la misma forma a 32px y a 44px de alto, que es
+         justamente lo que hace que una fila de botones de distinto tamaño se
+         vea como un set y no como piezas sueltas. */
       size: {
-        sm: "h-8 px-3 text-xs rounded-md",
-        md: "h-10 px-4 text-sm rounded-lg",
-        lg: "h-11 px-5 text-sm rounded-lg",
-        icon: "size-10 rounded-lg",
+        sm: "h-8 px-3.5 text-xs rounded-full",
+        md: "h-10 px-4.5 text-sm rounded-full",
+        lg: "h-11 px-5 text-sm rounded-full",
+        icon: "size-10 rounded-full",
       },
     },
     defaultVariants: {

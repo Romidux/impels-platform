@@ -113,7 +113,7 @@ function getSignalColor(variant: "success" | "warning" | "error" | "info" | "neu
     case "info":
       return "bg-brand-500";
     default:
-      return "bg-slate-300";
+      return "bg-neutral-300";
   }
 }
 
@@ -183,8 +183,8 @@ export default async function AdminStoreDetailPage({
       label: "Pedidos totales",
       value: `${totalOrders}`,
       helper: totalOrders > 0 ? "Historico no cancelado" : "Sin pedidos registrados",
-      icon: <ShoppingCart className="w-4 h-4 text-indigo-600" />,
-      iconTone: "bg-indigo-50 text-indigo-700",
+      icon: <ShoppingCart className="w-4 h-4 text-brand-600" />,
+      iconTone: "bg-brand-50 text-brand-700",
     },
     {
       label: "Ventas acumuladas",
@@ -273,24 +273,24 @@ export default async function AdminStoreDetailPage({
       <div>
         <Link
           href="/admin/stores"
-          className="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-slate-600 transition-colors mb-4"
+          className="inline-flex items-center gap-1.5 text-sm text-neutral-400 hover:text-neutral-600 transition-colors mb-4"
         >
           <ArrowLeft className="w-4 h-4" />
           Volver a tiendas
         </Link>
 
-        <section className="overflow-hidden rounded-[30px] border border-slate-200 bg-gradient-to-br from-white via-white to-slate-50 shadow-sm">
+        <section className="overflow-hidden rounded-[30px] border border-neutral-200 bg-gradient-to-br from-white via-white to-neutral-50 shadow-sm">
           <div className="flex flex-col xl:flex-row xl:items-start xl:justify-between gap-6 p-6 lg:p-7">
             <div className="flex-1 min-w-0 space-y-5">
               <div className="flex items-start gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-[24px] border border-slate-200 bg-white shadow-sm flex-shrink-0">
-                  <span className="text-2xl font-semibold text-slate-700">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-neutral-200 bg-white shadow-sm flex-shrink-0">
+                  <span className="text-2xl font-semibold text-neutral-700">
                     {typedStore.name.charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="min-w-0">
                   <div className="flex items-center flex-wrap gap-2 sm:gap-3">
-                    <h1 className="font-display text-[28px] font-semibold leading-tight text-slate-950">
+                    <h1 className="font-display text-[28px] font-semibold leading-tight text-neutral-950">
                       {typedStore.name}
                     </h1>
                     <Badge variant={typedStore.is_active ? "success" : "error"} dot>
@@ -308,38 +308,38 @@ export default async function AdminStoreDetailPage({
                       </Badge>
                     )}
                   </div>
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-500">
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-neutral-500">
                     Ficha operativa para revisar estado, configuracion y actividad reciente de la tienda.
                   </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                <div className="rounded-2xl border border-neutral-200 bg-white/90 px-4 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
                     Propietario
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900 break-all">
+                  <p className="mt-1 text-sm font-semibold text-neutral-900 break-all">
                     {ownerEmail}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                <div className="rounded-2xl border border-neutral-200 bg-white/90 px-4 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
                     Creada
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
+                  <p className="mt-1 text-sm font-semibold text-neutral-900">
                     {formatShortDate(typedStore.created_at)}
                   </p>
                 </div>
-                <div className="rounded-2xl border border-slate-200 bg-white/90 px-4 py-3">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                <div className="rounded-2xl border border-neutral-200 bg-white/90 px-4 py-3">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
                     URL
                   </p>
                   <a
                     href={storeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-1 inline-flex max-w-full items-center gap-1 text-sm font-semibold text-indigo-600 hover:text-indigo-700 break-all"
+                    className="mt-1 inline-flex max-w-full items-center gap-1 text-sm font-semibold text-brand-600 hover:text-brand-700 break-all"
                   >
                     {typedStore.slug}
                     <ExternalLink className="w-3.5 h-3.5 flex-shrink-0" />
@@ -348,11 +348,11 @@ export default async function AdminStoreDetailPage({
               </div>
             </div>
 
-            <div className="xl:w-[320px] rounded-[24px] border border-slate-200 bg-white/85 p-4 shadow-sm">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+            <div className="xl:w-[320px] rounded-2xl border border-neutral-200 bg-white/85 p-4 shadow-sm">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
                 Acciones
               </p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-neutral-500">
                 Accesos y controles directos sobre esta tienda.
               </p>
               <div className="mt-4 flex flex-wrap gap-2">
@@ -380,17 +380,17 @@ export default async function AdminStoreDetailPage({
         {summaryCards.map((card) => (
           <div
             key={card.label}
-            className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm"
+            className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm"
           >
             <div className={`inline-flex rounded-2xl p-3 ${card.iconTone}`}>{card.icon}</div>
             <div className="mt-5">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
                 {card.label}
               </p>
-              <p className="mt-2 font-display text-[28px] font-semibold leading-tight text-slate-950">
+              <p className="mt-2 font-display text-[28px] font-semibold leading-tight text-neutral-950">
                 {card.value}
               </p>
-              <p className="mt-2 text-sm text-slate-500">{card.helper}</p>
+              <p className="mt-2 text-sm text-neutral-500">{card.helper}</p>
             </div>
           </div>
         ))}
@@ -404,7 +404,7 @@ export default async function AdminStoreDetailPage({
             icon: <ShieldAlert className="w-5 h-5 text-amber-500" />,
           }}
         >
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-neutral-100">
             {operationalItems.map((item, index) => (
               <div
                 key={item.label}
@@ -413,10 +413,10 @@ export default async function AdminStoreDetailPage({
                 } ${index === operationalItems.length - 1 ? "pb-0" : "pb-4"}`}
               >
                 <div className="min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
                     {item.label}
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-slate-900">
+                  <p className="mt-1 text-sm font-semibold text-neutral-900">
                     {item.value}
                   </p>
                 </div>
@@ -424,7 +424,7 @@ export default async function AdminStoreDetailPage({
                   <div
                     className={`h-2.5 w-2.5 rounded-full ${getSignalColor(item.variant)}`}
                   />
-                  <span className="text-sm font-medium text-slate-500">
+                  <span className="text-sm font-medium text-neutral-500">
                     {item.variant === "success"
                       ? "OK"
                       : item.variant === "warning"
@@ -456,8 +456,8 @@ export default async function AdminStoreDetailPage({
             </div>
           )}
 
-          <div className="mt-5 rounded-[22px] border border-slate-200 bg-slate-50/80 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+          <div className="mt-5 rounded-[22px] border border-neutral-200 bg-neutral-50/80 p-4">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
               Disponibilidad comercial
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
@@ -475,16 +475,16 @@ export default async function AdminStoreDetailPage({
           className="overflow-hidden"
           header={{
             title: "Configuracion disponible",
-            icon: <User className="w-5 h-5 text-indigo-600" />,
+            icon: <User className="w-5 h-5 text-brand-600" />,
           }}
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {configurationItems.map((item) => (
               <div
                 key={item.label}
-                className="rounded-[22px] border border-slate-200 bg-slate-50/70 p-4"
+                className="rounded-[22px] border border-neutral-200 bg-neutral-50/70 p-4"
               >
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
                   {item.label}
                 </p>
                 {item.href ? (
@@ -492,14 +492,14 @@ export default async function AdminStoreDetailPage({
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 inline-flex break-all text-sm font-semibold text-indigo-600 hover:text-indigo-700"
+                    className="mt-2 inline-flex break-all text-sm font-semibold text-brand-600 hover:text-brand-700"
                   >
                     {item.value}
                   </a>
                 ) : (
                   <p
                     className={`mt-2 break-all text-sm font-semibold ${
-                      item.muted ? "text-slate-500" : "text-slate-900"
+                      item.muted ? "text-neutral-500" : "text-neutral-900"
                     }`}
                   >
                     {item.value}
@@ -516,7 +516,7 @@ export default async function AdminStoreDetailPage({
         className="overflow-hidden"
         header={{
           title: "Actividad reciente",
-          icon: <ShoppingCart className="w-5 h-5 text-indigo-600" />,
+          icon: <ShoppingCart className="w-5 h-5 text-brand-600" />,
         }}
       >
         {allOrders.length === 0 ? (
@@ -526,24 +526,24 @@ export default async function AdminStoreDetailPage({
             description="Esta tienda todavia no tiene pedidos no cancelados para analizar."
           />
         ) : (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-neutral-100">
             {recentOrders.map((order) => {
               const statusMeta = getStatusMeta(order.status);
               const customerInitial = (order.customer_name || "C").charAt(0).toUpperCase();
               return (
                 <div
                   key={order.id}
-                  className="grid grid-cols-1 gap-3 px-6 py-4 transition-colors hover:bg-slate-50/80 sm:grid-cols-[minmax(0,1.45fr),auto,auto] sm:items-center"
+                  className="grid grid-cols-1 gap-3 px-6 py-4 transition-colors hover:bg-neutral-50/80 sm:grid-cols-[minmax(0,1.45fr),auto,auto] sm:items-center"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-slate-100 text-sm font-bold text-slate-600">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-2xl bg-neutral-100 text-sm font-bold text-neutral-600">
                       {customerInitial}
                     </div>
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-slate-900">
+                      <p className="truncate text-sm font-semibold text-neutral-900">
                         {order.customer_name || "Cliente sin nombre"}
                       </p>
-                      <p className="mt-1 text-xs text-slate-400">
+                      <p className="mt-1 text-xs text-neutral-400">
                         {formatShortDateTime(order.created_at)}
                       </p>
                     </div>
@@ -554,7 +554,7 @@ export default async function AdminStoreDetailPage({
                       {statusMeta.label}
                     </Badge>
                   </div>
-                  <span className="text-sm font-semibold text-slate-900 sm:justify-self-end">
+                  <span className="text-sm font-semibold text-neutral-900 sm:justify-self-end">
                     {formatCurrency(order.total || 0, settings?.currency || "Gs")}
                   </span>
                 </div>

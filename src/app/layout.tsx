@@ -1,18 +1,26 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Toaster } from "sonner";
-import { Inter, Outfit } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 
-const inter = Inter({
+/* Una sola familia para todo. Antes eran dos (Inter para cuerpo, Outfit para
+   títulos), lo que son dos descargas y dos personalidades tipográficas en la
+   misma pantalla.
+
+   Se expone en las DOS variables a propósito: hay 80 usos de .font-display y la
+   regla de headings de globals.css apunta a --font-outfit. Manteniendo los dos
+   nombres, ningún componente necesita cambiar — simplemente resuelven a la
+   misma fuente. Si algún día vuelve una segunda familia, se cambia solo acá. */
+const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["400", "500", "600", "700", "800"],
   variable: "--font-inter",
   display: "swap",
 });
 
-const outfit = Outfit({
+const jakartaDisplay = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800", "900"],
+  weight: ["600", "700", "800"],
   variable: "--font-outfit",
   display: "swap",
 });
@@ -53,7 +61,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.variable} ${outfit.variable} antialiased`}>
+      <body className={`${jakarta.variable} ${jakartaDisplay.variable} antialiased`}>
         {children}
         <Toaster 
           position="top-center" 

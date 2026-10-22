@@ -167,8 +167,8 @@ export default async function AdminOverviewPage() {
     {
       label: "Nuevas este mes",
       value: stats.new_stores_this_month,
-      icon: <StoreIcon className="w-5 h-5 text-indigo-600" />,
-      tone: "bg-indigo-50 text-indigo-700",
+      icon: <StoreIcon className="w-5 h-5 text-brand-600" />,
+      tone: "bg-brand-50 text-brand-700",
       helper:
         stats.new_stores_this_month > 0 ? "Altas recientes" : "Sin altas nuevas",
       href: "/admin/stores?segment=new&sort=newest",
@@ -190,7 +190,7 @@ export default async function AdminOverviewPage() {
 
   return (
     <div className="space-y-8 animate-fade-in">
-      <section className="rounded-[28px] border border-slate-200 bg-gradient-to-br from-white via-white to-slate-50 p-6 shadow-sm">
+      <section className="rounded-[28px] border border-neutral-200 bg-gradient-to-br from-white via-white to-neutral-50 p-6 shadow-sm">
         <PageHeader
           title="Operacion de tiendas"
           subtitle={`${stats.total_stores} tiendas analizadas y ${stats.platform_total_orders} pedidos no cancelados revisados.`}
@@ -202,19 +202,19 @@ export default async function AdminOverviewPage() {
             <Link
               key={card.label}
               href={card.href}
-              className="rounded-[24px] border border-slate-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+              className="rounded-2xl border border-neutral-200 bg-white p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
             >
               <div className={`inline-flex rounded-2xl p-3 ${card.tone}`}>
                 {card.icon}
               </div>
               <div className="mt-6">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-neutral-400">
                   {card.label}
                 </p>
-                <p className="mt-2 font-display text-3xl font-semibold text-slate-950">
+                <p className="mt-2 font-display text-3xl font-semibold text-neutral-950">
                   {card.value}
                 </p>
-                <p className="mt-2 text-sm text-slate-500">{card.helper}</p>
+                <p className="mt-2 text-sm text-neutral-500">{card.helper}</p>
               </div>
             </Link>
           ))}
@@ -235,20 +235,20 @@ export default async function AdminOverviewPage() {
               <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center mx-auto mb-3">
                 <ShoppingCart className="w-5 h-5 text-green-600" />
               </div>
-              <p className="text-sm font-medium text-slate-700">
+              <p className="text-sm font-medium text-neutral-700">
                 Sin alertas operativas
               </p>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-neutral-400 mt-1">
                 No hay tiendas para revisar con las reglas actuales.
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-slate-100">
+            <div className="divide-y divide-neutral-100">
               {alerts.map((alert) => (
                 <Link
                   key={alert.href}
                   href={alert.href}
-                  className="flex items-start gap-4 px-6 py-5 hover:bg-slate-50 transition-colors group"
+                  className="flex items-start gap-4 px-6 py-5 hover:bg-neutral-50 transition-colors group"
                 >
                   <div className="pt-0.5">
                     <Badge variant={alert.variant} size="sm">
@@ -260,14 +260,14 @@ export default async function AdminOverviewPage() {
                     </Badge>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-neutral-900">
                       {alert.title}
                     </p>
-                    <p className="text-sm text-slate-500 mt-1 leading-relaxed">
+                    <p className="text-sm text-neutral-500 mt-1 leading-relaxed">
                       {alert.description}
                     </p>
                   </div>
-                  <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-600 transition-colors flex-shrink-0 mt-1" />
+                  <ArrowRight className="w-4 h-4 text-neutral-300 group-hover:text-brand-600 transition-colors flex-shrink-0 mt-1" />
                 </Link>
               ))}
             </div>
@@ -280,11 +280,11 @@ export default async function AdminOverviewPage() {
             className="overflow-hidden"
             header={{
               title: "Tiendas nuevas",
-              icon: <Store className="w-5 h-5 text-indigo-600" />,
+              icon: <Store className="w-5 h-5 text-brand-600" />,
               action: (
                 <Link
                   href="/admin/stores?segment=new&sort=newest"
-                  className="text-xs text-indigo-600 hover:text-indigo-700 font-semibold flex items-center gap-1"
+                  className="text-xs text-brand-600 hover:text-brand-700 font-semibold flex items-center gap-1"
                 >
                   Ver todas
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -294,28 +294,28 @@ export default async function AdminOverviewPage() {
           >
             {recentNewStores.length === 0 ? (
               <div className="p-8 text-center">
-                <p className="text-sm text-slate-500 font-medium">
+                <p className="text-sm text-neutral-500 font-medium">
                   Sin altas nuevas este mes
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-neutral-100">
                 {recentNewStores.map((store) => (
                   <Link
                     key={store.id}
                     href={`/admin/stores/${store.id}`}
-                    className="flex items-center gap-3 px-6 py-4 hover:bg-slate-50 transition-colors group"
+                    className="flex items-center gap-3 px-6 py-4 hover:bg-neutral-50 transition-colors group"
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-bold text-slate-600">
+                    <div className="w-10 h-10 rounded-2xl bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-bold text-neutral-600">
                         {store.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-slate-900 truncate">
+                      <p className="font-semibold text-sm text-neutral-900 truncate">
                         {store.name}
                       </p>
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-xs text-neutral-400 mt-1">
                         {formatShortDate(store.created_at)}
                       </p>
                     </div>
@@ -342,7 +342,7 @@ export default async function AdminOverviewPage() {
               action: (
                 <Link
                   href="/admin/stores?activity=no-recent"
-                  className="text-xs text-indigo-600 hover:text-indigo-700 font-semibold flex items-center gap-1"
+                  className="text-xs text-brand-600 hover:text-brand-700 font-semibold flex items-center gap-1"
                 >
                   Ver todas
                   <ArrowRight className="w-3.5 h-3.5" />
@@ -352,28 +352,28 @@ export default async function AdminOverviewPage() {
           >
             {storesToReview.length === 0 ? (
               <div className="p-8 text-center">
-                <p className="text-sm text-slate-500 font-medium">
+                <p className="text-sm text-neutral-500 font-medium">
                   Sin tiendas detenidas
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-neutral-100">
                 {storesToReview.map((store) => (
                   <Link
                     key={store.id}
                     href={`/admin/stores/${store.id}`}
-                    className="flex items-center gap-3 px-6 py-4 hover:bg-slate-50 transition-colors group"
+                    className="flex items-center gap-3 px-6 py-4 hover:bg-neutral-50 transition-colors group"
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-slate-100 flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-bold text-slate-600">
+                    <div className="w-10 h-10 rounded-2xl bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                      <span className="text-sm font-bold text-neutral-600">
                         {store.name.charAt(0).toUpperCase()}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-semibold text-sm text-slate-900 truncate">
+                      <p className="font-semibold text-sm text-neutral-900 truncate">
                         {store.name}
                       </p>
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-xs text-neutral-400 mt-1">
                         {store.last_order_at
                           ? `Ultimo pedido ${formatShortDate(store.last_order_at)}`
                           : "Sin pedidos historicos"}
@@ -393,16 +393,16 @@ export default async function AdminOverviewPage() {
         </div>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500 shadow-sm">
-        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-slate-400">
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl border border-neutral-200 bg-white px-4 py-3 text-sm text-neutral-500 shadow-sm">
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400">
           Resumen rapido
         </span>
         <span>{stats.active_stores} activas</span>
-        <span className="text-slate-300">/</span>
+        <span className="text-neutral-300">/</span>
         <span>{stats.inactive_stores} inactivas</span>
-        <span className="text-slate-300">/</span>
+        <span className="text-neutral-300">/</span>
         <span>{stats.stores_without_orders} sin pedidos</span>
-        <span className="text-slate-300">/</span>
+        <span className="text-neutral-300">/</span>
         <span>
           {formatCurrency(stats.platform_total_revenue)} en ventas analizadas
         </span>

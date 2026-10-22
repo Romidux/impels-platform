@@ -20,7 +20,7 @@ export function StoreStudioMobilePreview({ slug }: { slug: string }) {
         </summary>
 
         <div className="border-t border-neutral-100 p-3">
-          <div className="overflow-hidden rounded-[24px] border border-neutral-200 bg-neutral-50">
+          <div className="overflow-hidden rounded-2xl border border-neutral-200 bg-neutral-50">
             <div className="flex items-center justify-center border-b border-neutral-200 bg-white px-4 py-3">
               <span className="rounded-full border border-neutral-200 bg-neutral-50 px-3 py-1 text-2xs font-medium uppercase tracking-[0.18em] text-neutral-500">
                 Preview mobile

@@ -21,7 +21,7 @@ export function StatChart({
   if (!data || data.length === 0) {
     return (
       <div
-        className="flex items-center justify-center text-sm text-neutral-400 bg-neutral-50 rounded-xl border border-neutral-100"
+        className="flex items-center justify-center rounded-xl border border-neutral-200 bg-neutral-50 text-sm text-neutral-400"
         style={{ height }}
       >
         Sin datos
@@ -41,26 +41,32 @@ export function StatChart({
           return (
             <div
               key={i}
-              className="relative flex-1 flex flex-col items-center justify-end group h-full"
+              className="group relative flex h-full flex-1 flex-col items-center justify-end"
             >
               {/* Tooltip */}
-              <div className="opacity-0 group-hover:opacity-100 absolute -top-8 left-1/2 -translate-x-1/2 bg-neutral-900 text-white text-2xs font-medium px-2 py-1 rounded shadow-lg whitespace-nowrap transition-opacity pointer-events-none z-10">
+              <div className="pointer-events-none absolute -top-8 left-1/2 z-10 -translate-x-1/2 rounded-md bg-white px-2 py-1 text-2xs font-bold whitespace-nowrap text-neutral-900 opacity-0 shadow-[0_2px_8px_rgba(20,23,24,0.14)] transition-opacity group-hover:opacity-100">
                 {item.label}: {valueFormatter(item.value)}
               </div>
-              
-              {/* Bar */}
+
+              {/* Barra. Píldora completa, no rounded-t: con el radio solo arriba
+                  la barra se lee como una columna pegada a un eje; con los dos
+                  extremos redondeados se lee como una marca, que es lo que hace
+                  que el gráfico no parezca el de una planilla.
+
+                  Las barras sin dato llevan el rayado diagonal en vez de un gris
+                  plano: un gris plano es un valor bajo, el rayado es "sin dato". */}
               <div
-                className="w-full bg-brand-100 hover:bg-brand-200 transition-colors rounded-t-lg relative overflow-hidden"
+                className={cn(
+                  "w-full max-w-[36px] rounded-full transition-colors",
+                  item.value === 0
+                    ? "hatch"
+                    : "bg-brand-600 group-hover:bg-brand-700"
+                )}
                 style={{ height: `${Math.max(heightPercent, 2)}%` }}
-              >
-                <div
-                  className="absolute bottom-0 w-full bg-brand-500 rounded-t-lg transition-all duration-500"
-                  style={{ height: "100%" }}
-                />
-              </div>
+              />
 
               {/* X-axis Label */}
-              <div className="absolute -bottom-6 text-2xs font-medium text-neutral-400 truncate w-full text-center">
+              <div className="absolute -bottom-6 w-full truncate text-center text-2xs font-semibold text-neutral-500">
                 {item.label}
               </div>
             </div>

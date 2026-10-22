@@ -42,7 +42,7 @@ export default async function AdminBillingPage() {
   ];
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <PageHeader
         title="Facturación y Planes"
         subtitle="Resumen de ingresos recurrentes (MRR) de la plataforma"
@@ -51,23 +51,23 @@ export default async function AdminBillingPage() {
       {/* KPIs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <KpiCard
-          icon={<DollarSign className="w-5 h-5 text-indigo-600" />}
+          icon={<DollarSign className="w-5 h-5 text-brand-600" />}
           label="MRR Estimado"
           value={formatCurrency(mrr)}
           trend={{ value: "+12.5% vs mes anterior", positive: true }}
         />
         <KpiCard
-          icon={<CreditCard className="w-5 h-5 text-indigo-600" />}
+          icon={<CreditCard className="w-5 h-5 text-brand-600" />}
           label="Suscripciones Pro"
           value={proStores.length}
         />
         <KpiCard
-          icon={<Users className="w-5 h-5 text-indigo-600" />}
+          icon={<Users className="w-5 h-5 text-brand-600" />}
           label="Cuentas Free"
           value={freeStores.length}
         />
         <KpiCard
-          icon={<TrendingUp className="w-5 h-5 text-indigo-600" />}
+          icon={<TrendingUp className="w-5 h-5 text-brand-600" />}
           label="ARPU"
           value={
             activeStores.length > 0
@@ -83,7 +83,7 @@ export default async function AdminBillingPage() {
           <Card
             header={{
               title: "Crecimiento del MRR",
-              icon: <TrendingUp className="w-5 h-5 text-indigo-600" />,
+              icon: <TrendingUp className="w-5 h-5 text-brand-600" />,
             }}
           >
             <div className="pt-4">
@@ -101,26 +101,26 @@ export default async function AdminBillingPage() {
             padding={false}
             header={{
               title: "Últimas suscripciones Pro",
-              icon: <CreditCard className="w-5 h-5 text-indigo-600" />,
+              icon: <CreditCard className="w-5 h-5 text-brand-600" />,
             }}
           >
             {proStores.length === 0 ? (
-              <div className="p-8 text-center text-slate-400 text-sm">
+              <div className="p-8 text-center text-neutral-400 text-sm">
                 No hay suscripciones Pro
               </div>
             ) : (
-              <div className="divide-y divide-slate-50">
+              <div className="divide-y divide-neutral-50">
                 {proStores.slice(0, 7).map((store) => (
                   <Link
                     key={store.id}
                     href={`/admin/stores/${store.id}`}
-                    className="flex items-center justify-between p-4 hover:bg-slate-50 transition-colors"
+                    className="flex items-center justify-between p-4 hover:bg-neutral-50 transition-colors"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-slate-900">
+                      <p className="text-sm font-semibold text-neutral-900">
                         {store.name}
                       </p>
-                      <p className="text-xs text-slate-500">{store.slug}</p>
+                      <p className="text-xs text-neutral-500">{store.slug}</p>
                     </div>
                     <Badge variant="brand" size="sm">
                       Pro
@@ -137,42 +137,42 @@ export default async function AdminBillingPage() {
       <Card
         header={{
           title: "Gestión de planes",
-          icon: <Settings2 className="w-5 h-5 text-indigo-600" />,
+          icon: <Settings2 className="w-5 h-5 text-brand-600" />,
         }}
         padding={false}
       >
         {!stores || stores.length === 0 ? (
-          <div className="p-8 text-center text-slate-400 text-sm">
+          <div className="p-8 text-center text-neutral-400 text-sm">
             No hay tiendas registradas
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100">
-                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                <tr className="border-b border-neutral-100">
+                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">
                     Tienda
                   </th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">
                     Estado
                   </th>
-                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider text-slate-400">
+                  <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider text-neutral-400">
                     Plan
                   </th>
                   <th className="px-5 py-3" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-50">
+              <tbody className="divide-y divide-neutral-50">
                 {stores.map((store) => (
-                  <tr key={store.id} className="hover:bg-slate-50 transition-colors">
+                  <tr key={store.id} className="hover:bg-neutral-50 transition-colors">
                     <td className="px-5 py-3.5">
                       <Link
                         href={`/admin/stores/${store.id}`}
-                        className="font-semibold text-slate-900 hover:text-brand-600 transition-colors"
+                        className="font-semibold text-neutral-900 hover:text-brand-600 transition-colors"
                       >
                         {store.name}
                       </Link>
-                      <p className="text-xs text-slate-400 mt-0.5">{store.slug}</p>
+                      <p className="text-xs text-neutral-400 mt-0.5">{store.slug}</p>
                     </td>
                     <td className="px-5 py-3.5">
                       <Badge

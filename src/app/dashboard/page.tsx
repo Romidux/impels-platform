@@ -3,9 +3,7 @@ import { getUser, getStore } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
 import { getStoreUrl } from "@/lib/utils";
 import {
-  Package,
   ShoppingCart,
-  DollarSign,
   TrendingUp,
   Tag,
   Eye,
@@ -13,7 +11,6 @@ import {
   Store,
   ArrowRight,
   Paintbrush,
-  AlertTriangle,
 } from "lucide-react";
 import Link from "next/link";
 import { KpiCard } from "@/components/ui/KpiCard";
@@ -96,7 +93,7 @@ export default async function DashboardPage() {
   const isOnboardingComplete = hasProducts && hasWhatsApp && hasTemplate;
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-5 animate-fade-in">
       <PageHeader
         title={`Hola, ${store.name}`}
         subtitle="Aquí está el resumen de tu tienda hoy."
@@ -115,32 +112,28 @@ export default async function DashboardPage() {
 
       {/* Main KPI Cards — REAL DATA */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* La primera va en verde sólido: es la métrica que el comerciante
+            viene a mirar, y una sola tarjeta destacada por grilla le da un
+            punto de entrada a la pantalla. */}
         <KpiCard
-          icon={<DollarSign className="w-5 h-5 text-brand-600" />}
+          highlight
           label="Ventas del mes"
           value={formatCurrency(monthlyRevenue)}
-          iconClassName="bg-brand-50"
           trend={monthlyRevenue > 0 ? { value: `${monthlyOrderCount} pedidos este mes`, positive: true } : undefined}
         />
         <KpiCard
-          icon={<ShoppingCart className="w-5 h-5 text-violet-600" />}
           label="Pedidos del mes"
           value={monthlyOrderCount}
-          iconClassName="bg-violet-50"
           trend={(todayOrdersCount || 0) > 0 ? { value: `${todayOrdersCount} pedidos hoy`, positive: true } : undefined}
         />
         <KpiCard
-          icon={<AlertTriangle className="w-5 h-5 text-amber-500" />}
           label="Pedidos pendientes"
           value={newOrdersCount || 0}
-          iconClassName="bg-amber-50"
           trend={(newOrdersCount || 0) > 0 ? { value: "Requieren atención", positive: false } : { value: "Todo al día ✓", positive: true }}
         />
         <KpiCard
-          icon={<Package className="w-5 h-5 text-emerald-600" />}
           label="Productos activos"
           value={productsCount || 0}
-          iconClassName="bg-emerald-50"
         />
       </div>
 

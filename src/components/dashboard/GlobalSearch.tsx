@@ -107,14 +107,19 @@ export default function GlobalSearch({ storeId }: { storeId: string }) {
   return (
     <>
       {/* Fake Search Bar Button */}
+      {/* Píldora blanca sobre el panel gris del header. El fondo invertido
+          respecto de antes (era gris sobre blanco) es lo que la hace legible
+          ahora que la barra entera es gris. */}
       <button
         onClick={() => setOpen(true)}
-        className="hidden md:flex items-center gap-2 px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-neutral-500 rounded-lg text-sm transition-all border border-neutral-200 hover:border-neutral-300 w-full group"
+        className="group hidden h-10 w-full items-center gap-2 rounded-full border border-neutral-200 bg-white px-3.5 text-sm text-neutral-500 transition-colors hover:border-neutral-300 md:flex"
       >
-        <Search className="w-4 h-4 text-neutral-400 group-hover:text-neutral-600" />
-        <span className="flex-1 text-left text-neutral-400">Buscar productos, órdenes, clientes...</span>
-        <kbd className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 text-2xs font-medium bg-white text-neutral-400 border border-neutral-300 rounded shadow-sm">
-          <span className="text-xs">CTRL</span>K
+        <Search className="h-4 w-4 shrink-0 text-neutral-400 group-hover:text-neutral-600" />
+        <span className="min-w-0 flex-1 truncate text-left text-neutral-400">
+          Buscar productos, órdenes, clientes...
+        </span>
+        <kbd className="hidden shrink-0 items-center gap-1 rounded-md bg-neutral-50 px-1.5 py-0.5 text-2xs font-semibold text-neutral-500 sm:inline-flex">
+          <span>CTRL</span>K
         </kbd>
       </button>
 
