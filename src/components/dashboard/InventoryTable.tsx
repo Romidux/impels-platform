@@ -385,7 +385,7 @@ export default function InventoryTable({
                 <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                   Estado
                 </th>
-                <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
+                <th className="w-px whitespace-nowrap text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
                   Acciones
                 </th>
               </tr>
@@ -476,7 +476,7 @@ export default function InventoryTable({
                       </Badge>
                     </td>
                     {/* Actions */}
-                    <td className="pr-6 py-3 text-right">
+                    <td className="w-px whitespace-nowrap pr-6 py-3 text-right">
                       <Link href={`/dashboard/products/${product.id}`} className="p-2 text-neutral-400 hover:text-brand-600 hover:bg-brand-50 rounded-lg transition-colors inline-flex" title="Editar producto">
                         <Edit className="w-4 h-4" />
                       </Link>
@@ -511,7 +511,7 @@ export default function InventoryTable({
                             {vOut ? "Sin stock" : vLow ? "Bajo" : "OK"}
                           </Badge>
                         </td>
-                        <td className="pr-6 py-2" />
+                        <td className="w-px whitespace-nowrap pr-6 py-2" />
                       </tr>
                     );
                   })}

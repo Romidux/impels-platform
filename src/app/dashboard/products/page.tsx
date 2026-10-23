@@ -161,7 +161,7 @@ export default async function ProductsPage({
                       <th className="hidden md:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                         Visibilidad
                       </th>
-                      <th className="text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
+                      <th className="w-px whitespace-nowrap text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
                         Acciones
                       </th>
                     </tr>
@@ -240,7 +240,7 @@ export default async function ProductsPage({
                             />
                           </td>
                           {/* Acciones */}
-                          <td className="pr-6 py-3">
+                          <td className="w-px whitespace-nowrap pr-6 py-3">
                             <ProductsActions productId={product.id} />
                           </td>
                         </tr>
