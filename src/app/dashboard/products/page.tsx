@@ -6,8 +6,6 @@ import {
   Plus,
   Package,
   ImageIcon,
-  Eye,
-  EyeOff,
   Star,
 } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
@@ -16,14 +14,13 @@ import ProductsActions from "@/components/dashboard/ProductsActions";
 import VisibilityDropdown from "@/components/dashboard/VisibilityDropdown";
 import { PageHeader } from "@/components/ui/PageHeader";
 import ProductFilters from "@/components/dashboard/ProductFilters";
-import { Badge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { Button } from "@/components/ui/Button";
 
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ search?: string; category?: string; visibility?: string; featured?: string; page?: string; view?: string; sort?: string }>;
+  searchParams: Promise<{ search?: string; category?: string; visibility?: string; featured?: string; page?: string; sort?: string }>;
 }) {
   const user = await getUser();
   if (!user) redirect("/login");
@@ -35,10 +32,9 @@ export default async function ProductsPage({
 
   const params = await searchParams;
   const { search, category, visibility, featured } = params;
-  const view = params.view || "list";
   const sort = params.sort || "";
   const page = parseInt(params.page || "1");
-  const pageSize = view === "grid" ? 16 : 15;
+  const pageSize = 15;
 
   // Build sort
   const sortMap: Record<string, { column: string; ascending: boolean }> = {
@@ -97,7 +93,7 @@ export default async function ProductsPage({
 
   // Build query string helper
   const buildUrl = (newParams: Record<string, string>) => {
-    const merged = { search: search || "", category: category || "", visibility: visibility || "", featured: featured || "", sort: sort || "", view, page: "1", ...newParams };
+    const merged = { search: search || "", category: category || "", visibility: visibility || "", featured: featured || "", sort: sort || "", page: "1", ...newParams };
     const qs = Object.entries(merged)
       .filter(([, v]) => v)
       .map(([k, v]) => `${k}=${encodeURIComponent(v)}`)
@@ -119,7 +115,6 @@ export default async function ProductsPage({
         currentCategory={category || ""}
         currentVisibility={visibility || ""}
         currentFeatured={featured || ""}
-        currentView={view || "list"}
         currentSort={sort}
         products={(products as any[]) || []}
         currency={currency}
@@ -144,191 +139,135 @@ export default async function ProductsPage({
         </div>
       ) : (
         <div className="space-y-4">
-          {view === "list" ? (
-            <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="sticky top-0 z-10">
-                    <tr className="bg-neutral-50 border-b border-neutral-200">
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide pl-6 py-3 w-20">
-                        Imagen
-                      </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
-                        Producto
-                      </th>
-                      <th className="hidden lg:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
-                        Categoría
-                      </th>
-                      <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
-                        Precio
-                      </th>
-                      <th className="hidden sm:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
-                        Stock
-                      </th>
-                      <th className="hidden md:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
-                        Visibilidad
-                      </th>
-                      <th className="w-px whitespace-nowrap text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
-                        Acciones
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-neutral-50">
-                    {(products as Product[]).map((product) => {
-                      const primaryImage = product.images?.find(
-                        (img) => img.is_primary
-                      );
-                      const editHref = `/dashboard/products/${product.id}`;
-                      return (
-                        <tr key={product.id} className="hover:bg-neutral-50 transition-colors duration-100 group cursor-pointer">
-                          {/* Imagen */}
-                          <td className="pl-6 py-3 w-20">
-                            <Link href={editHref} className="flex items-center h-full">
-                              <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-neutral-50 flex-shrink-0">
-                                {primaryImage ? (
-                                  <img
-                                    src={primaryImage.url}
-                                    alt={product.name}
-                                    className="w-full h-full object-cover"
-                                  />
-                                ) : (
-                                  <div className="w-full h-full flex items-center justify-center">
-                                    <ImageIcon className="w-5 h-5 text-neutral-300" />
-                                  </div>
-                                )}
-                                {/* Marca de destacado. Negra como el badge
-                                    "Destacado" del storefront, no verde: el verde
-                                    en esta misma fila ya significa "Visible". */}
-                                {product.is_featured && (
-                                  <span
-                                    title="Destacado"
-                                    className="absolute bottom-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 text-white ring-1 ring-white"
-                                  >
-                                    <Star className="h-2.5 w-2.5 fill-current" />
-                                  </span>
-                                )}
-                              </div>
-                            </Link>
-                          </td>
-                          {/* Producto */}
-                          <td className="px-4 py-3">
-                            <Link href={editHref} className="flex items-center h-full">
-                              <span className="font-medium text-sm text-neutral-900 group-hover:text-brand-600 transition-colors">
-                                {product.name}
-                              </span>
-                            </Link>
-                          </td>
-                          {/* Categoría */}
-                          <td className="hidden lg:table-cell px-4 py-3">
-                            <Link href={editHref} className="flex items-center h-full">
-                              <span className="text-sm text-neutral-400">
-                                {product.category?.name || "—"}
-                              </span>
-                            </Link>
-                          </td>
-                          {/* Precio */}
-                          <td className="px-4 py-3">
-                            <Link href={editHref} className="flex items-center h-full">
-                              <span className="text-sm font-medium text-neutral-900 whitespace-nowrap">
-                                {product.show_price && product.price > 0
-                                  ? formatCurrency(product.price, currency)
-                                  : "—"}
-                              </span>
-                            </Link>
-                          </td>
-                          {/* Stock */}
-                          <td className="hidden sm:table-cell px-4 py-3">
-                            <Link href={editHref} className="flex items-center h-full">
-                              <span className="text-sm text-neutral-500">
-                                {product.has_variants
-                                  ? "Variantes"
-                                  : product.track_inventory
-                                    ? product.stock_quantity
-                                    : product.stock_status === "available"
-                                      ? "Disponible"
-                                      : "Sin stock"}
-                              </span>
-                            </Link>
-                          </td>
-                          {/* Visibilidad */}
-                          <td className="hidden md:table-cell px-4 py-3">
-                            <VisibilityDropdown
-                              productId={product.id}
-                              currentVisibility={product.visibility}
-                            />
-                          </td>
-                          {/* Acciones */}
-                          <td className="w-px whitespace-nowrap pr-6 py-3">
-                            <ProductsActions
-                              productId={product.id}
-                              productName={product.name}
-                              productSlug={product.slug}
-                              storeSlug={store.slug}
-                              isFeatured={product.is_featured}
-                            />
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+          <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="sticky top-0 z-10">
+                  <tr className="bg-neutral-50 border-b border-neutral-200">
+                    <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide pl-6 py-3 w-20">
+                      Imagen
+                    </th>
+                    <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
+                      Producto
+                    </th>
+                    <th className="hidden lg:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
+                      Categoría
+                    </th>
+                    <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
+                      Precio
+                    </th>
+                    <th className="hidden sm:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
+                      Stock
+                    </th>
+                    <th className="hidden md:table-cell text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
+                      Visibilidad
+                    </th>
+                    <th className="w-px whitespace-nowrap text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-neutral-50">
+                  {(products as Product[]).map((product) => {
+                    const primaryImage = product.images?.find(
+                      (img) => img.is_primary
+                    );
+                    const editHref = `/dashboard/products/${product.id}`;
+                    return (
+                      <tr key={product.id} className="hover:bg-neutral-50 transition-colors duration-100 group cursor-pointer">
+                        {/* Imagen */}
+                        <td className="pl-6 py-3 w-20">
+                          <Link href={editHref} className="flex items-center h-full">
+                            <div className="relative w-12 h-12 rounded-lg overflow-hidden bg-neutral-50 flex-shrink-0">
+                              {primaryImage ? (
+                                <img
+                                  src={primaryImage.url}
+                                  alt={product.name}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center">
+                                  <ImageIcon className="w-5 h-5 text-neutral-300" />
+                                </div>
+                              )}
+                              {/* Marca de destacado. Negra como el badge
+                                  "Destacado" del storefront, no verde: el verde
+                                  en esta misma fila ya significa "Visible". */}
+                              {product.is_featured && (
+                                <span
+                                  title="Destacado"
+                                  className="absolute bottom-0.5 right-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 text-white ring-1 ring-white"
+                                >
+                                  <Star className="h-2.5 w-2.5 fill-current" />
+                                </span>
+                              )}
+                            </div>
+                          </Link>
+                        </td>
+                        {/* Producto */}
+                        <td className="px-4 py-3">
+                          <Link href={editHref} className="flex items-center h-full">
+                            <span className="font-medium text-sm text-neutral-900 group-hover:text-brand-600 transition-colors">
+                              {product.name}
+                            </span>
+                          </Link>
+                        </td>
+                        {/* Categoría */}
+                        <td className="hidden lg:table-cell px-4 py-3">
+                          <Link href={editHref} className="flex items-center h-full">
+                            <span className="text-sm text-neutral-400">
+                              {product.category?.name || "—"}
+                            </span>
+                          </Link>
+                        </td>
+                        {/* Precio */}
+                        <td className="px-4 py-3">
+                          <Link href={editHref} className="flex items-center h-full">
+                            <span className="text-sm font-medium text-neutral-900 whitespace-nowrap">
+                              {product.show_price && product.price > 0
+                                ? formatCurrency(product.price, currency)
+                                : "—"}
+                            </span>
+                          </Link>
+                        </td>
+                        {/* Stock */}
+                        <td className="hidden sm:table-cell px-4 py-3">
+                          <Link href={editHref} className="flex items-center h-full">
+                            <span className="text-sm text-neutral-500">
+                              {product.has_variants
+                                ? "Variantes"
+                                : product.track_inventory
+                                  ? product.stock_quantity
+                                  : product.stock_status === "available"
+                                    ? "Disponible"
+                                    : "Sin stock"}
+                            </span>
+                          </Link>
+                        </td>
+                        {/* Visibilidad */}
+                        <td className="hidden md:table-cell px-4 py-3">
+                          <VisibilityDropdown
+                            productId={product.id}
+                            currentVisibility={product.visibility}
+                          />
+                        </td>
+                        {/* Acciones */}
+                        <td className="w-px whitespace-nowrap pr-6 py-3">
+                          <ProductsActions
+                            productId={product.id}
+                            productName={product.name}
+                            productSlug={product.slug}
+                            storeSlug={store.slug}
+                            isFeatured={product.is_featured}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
-          ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {(products as Product[]).map((product) => {
-                const primaryImage = product.images?.find((img) => img.is_primary);
-                return (
-                  <div key={product.id} className="bg-white border border-neutral-200 rounded-[20px] flex flex-col group overflow-hidden hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] transition-shadow duration-200">
-                    <div className="relative aspect-square bg-neutral-50 border-b border-neutral-50">
-                      {primaryImage ? (
-                        <img
-                          src={primaryImage.url}
-                          alt={product.name}
-                          className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Package className="w-8 h-8 text-neutral-300" />
-                        </div>
-                      )}
-                      <div className="absolute top-2 right-2 flex flex-col gap-1">
-                        <Badge variant={product.visibility === "visible" ? "info" : "neutral"} className="shadow-sm backdrop-blur-md bg-white/90">
-                          {product.visibility === "visible" ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                        </Badge>
-                      </div>
-                      {/* En la grilla hay lugar para la palabra, así que acá va
-                          el mismo badge que ve el cliente en la tienda. */}
-                      {product.is_featured && (
-                        <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-md bg-neutral-900 px-2 py-0.5 text-2xs font-medium uppercase tracking-[0.12em] text-white shadow-sm">
-                          <Star className="h-2.5 w-2.5 fill-current" />
-                          Destacado
-                        </span>
-                      )}
-                    </div>
-                    <div className="p-5 flex-1 flex flex-col">
-                      <p className="text-xs text-neutral-400 mb-1.5 font-medium">{product.category?.name || "Sin categoría"}</p>
-                      <h3 className="font-medium text-sm text-neutral-900 line-clamp-2 leading-snug mb-3 group-hover:text-brand-600 transition-colors">
-                        {product.name}
-                      </h3>
-                      <div className="mt-auto pt-4 border-t border-neutral-50 flex items-center justify-between">
-                        <span className="font-medium text-sm text-neutral-900">
-                          {product.show_price ? formatCurrency(product.price, currency) : "Consultar"}
-                        </span>
-                        <ProductsActions
-                              productId={product.id}
-                              productName={product.name}
-                              productSlug={product.slug}
-                              storeSlug={store.slug}
-                              isFeatured={product.is_featured}
-                            />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          </div>
 
           {/* Pagination */}
           {totalPages > 1 && (

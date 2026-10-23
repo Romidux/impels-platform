@@ -7,8 +7,6 @@ import {
   ChevronDown,
   Download,
   Plus,
-  LayoutList,
-  LayoutGrid,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -163,7 +161,6 @@ export default function ProductFilters({
   currentCategory,
   currentVisibility,
   currentFeatured,
-  currentView,
   currentSort,
   products,
   currency,
@@ -174,7 +171,6 @@ export default function ProductFilters({
   currentCategory: string;
   currentVisibility: string;
   currentFeatured: string;
-  currentView: string;
   currentSort: string;
   products: ProductForExport[];
   currency: string;
@@ -198,23 +194,18 @@ export default function ProductFilters({
       } else {
         params.delete(key);
       }
-      // Always preserve view (or update if key === "view")
-      if (key !== "view") {
-        if (currentView) params.set("view", currentView);
-      }
       // Reset to page 1 on filter change
       params.delete("page");
       router.push(`/dashboard/products?${params.toString()}`);
     },
-    [router, searchParams, currentView]
+    [router, searchParams]
   );
 
   const clearAllFilters = useCallback(() => {
     const params = new URLSearchParams();
-    if (currentView) params.set("view", currentView);
     router.push(`/dashboard/products?${params.toString()}`);
     setSearchValue("");
-  }, [router, currentView]);
+  }, [router]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
@@ -362,36 +353,6 @@ export default function ProductFilters({
               Nuevo
             </Link>
           )}
-
-          {/* View toggle — segmented control */}
-          <div className="hidden sm:flex items-center rounded-lg bg-neutral-50 p-0.5 border border-neutral-200 shrink-0">
-            <button
-              type="button"
-              onClick={() => updateFilter("view", "list")}
-              title="Vista de lista"
-              className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-[8px] transition-all duration-150",
-                currentView === "list"
-                  ? "bg-white text-neutral-900 shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
-                  : "text-neutral-400 hover:text-neutral-900"
-              )}
-            >
-              <LayoutList className="w-4 h-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => updateFilter("view", "grid")}
-              title="Vista de cuadrícula"
-              className={cn(
-                "flex h-8 w-8 items-center justify-center rounded-[8px] transition-all duration-150",
-                currentView === "grid"
-                  ? "bg-white text-neutral-900 shadow-[0_1px_3px_rgba(0,0,0,0.10)]"
-                  : "text-neutral-400 hover:text-neutral-900"
-              )}
-            >
-              <LayoutGrid className="w-4 h-4" />
-            </button>
-          </div>
         </div>
       </div>
 
