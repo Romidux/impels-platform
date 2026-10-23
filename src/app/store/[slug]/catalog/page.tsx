@@ -6,6 +6,11 @@ import Link from "next/link";
 import { Product } from "@/lib/types";
 import TemplateDispatcher from "@/components/storefront/TemplateDispatcher";
 import { getStoreBySlug, getStoreCategories } from "@/lib/queries/store";
+import { CatalogPagination } from "@/components/storefront/shared/CatalogPagination";
+
+/* 24 por página: con el tope de 10 productos del plan gratis, esas tiendas
+   nunca ven una segunda página. Las tiendas con catálogo grande sí. */
+const CATALOG_PAGE_SIZE = 24;
 
 export const revalidate = 60; // ISR: revalidate every 60 seconds
 
@@ -14,7 +19,12 @@ export default async function CatalogPage({
   searchParams,
 }: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ category?: string; search?: string; sort?: string }>;
+  searchParams: Promise<{
+    category?: string;
+    search?: string;
+    sort?: string;
+    page?: string;
+  }>;
 }) {
   const { slug } = await params;
   const sp = await searchParams;
@@ -39,7 +49,8 @@ export default async function CatalogPage({
   let query = supabase
     .from("products")
     .select(
-      "*, images:product_images(url, is_primary), category:categories(name)"
+      "*, images:product_images(url, is_primary), category:categories(name)",
+      { count: "exact" }
     )
     .eq("store_id", store.id)
     .eq("visibility", "visible");
@@ -66,7 +77,32 @@ export default async function CatalogPage({
       query = query.order("created_at", { ascending: false });
   }
 
-  const { data: products } = await query;
+  // Antes la consulta traía TODOS los productos visibles de la tienda, con
+  // todas sus columnas y sin tope. Con 20 productos no se notaba; con 500 era
+  // el techo de escalabilidad del storefront.
+  const page = Math.max(1, Number(sp.page) || 1);
+  const desde = (page - 1) * CATALOG_PAGE_SIZE;
+
+  const { data: products, count: totalCount } = await query.range(
+    desde,
+    desde + CATALOG_PAGE_SIZE - 1
+  );
+
+  const total = totalCount ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / CATALOG_PAGE_SIZE));
+
+  // La paginación tiene que arrastrar los filtros: sin esto, pasar a la página
+  // 2 estando filtrado por una categoría devuelve la página 2 del catálogo
+  // entero.
+  const hrefDePagina = (n: number) => {
+    const params = new URLSearchParams();
+    if (sp.category) params.set("category", sp.category);
+    if (sp.search) params.set("search", sp.search);
+    if (sp.sort) params.set("sort", sp.sort);
+    if (n > 1) params.set("page", String(n));
+    const qs = params.toString();
+    return `/store/${slug}/catalog${qs ? `?${qs}` : ""}`;
+  };
 
   // Use TemplateDispatcher to render the correct UI
   // If dispatcher returns null, we use the shared/legacy UI as fallback
@@ -79,6 +115,9 @@ export default async function CatalogPage({
         settings={settings}
         categories={categories || []}
         allProducts={(products as Product[]) || []}
+        page={page}
+        totalPages={totalPages}
+        totalCount={total}
       />
     );
   }
@@ -182,7 +221,7 @@ export default async function CatalogPage({
                   : "Catálogo completo"}
             </h1>
             <span className="text-sm text-gray-400">
-              {products?.length || 0} productos
+              {total} {total === 1 ? "producto" : "productos"}
             </span>
           </div>
 
@@ -212,6 +251,13 @@ export default async function CatalogPage({
               ))}
             </div>
           )}
+
+          <CatalogPagination
+            page={page}
+            totalPages={totalPages}
+            hrefFor={hrefDePagina}
+            primaryColor={primaryColor}
+          />
         </div>
       </div>
     </div>

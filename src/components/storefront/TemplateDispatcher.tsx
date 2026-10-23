@@ -25,6 +25,10 @@ interface TemplateDispatcherProps {
   featuredProducts?: Product[];
   recentProducts?: Product[];
   allProducts?: Product[]; // For catalog page
+  /* Paginación del catálogo: la calcula el server component. */
+  page?: number;
+  totalPages?: number;
+  totalCount?: number;
   children?: React.ReactNode;
   type: "layout" | "page" | "catalog";
 }
@@ -38,6 +42,9 @@ export default function TemplateDispatcher({
   featuredProducts = [],
   recentProducts = [],
   allProducts = [],
+  page = 1,
+  totalPages = 1,
+  totalCount,
   children,
   type,
 }: TemplateDispatcherProps) {
@@ -114,6 +121,9 @@ export default function TemplateDispatcher({
             settings={settings}
             categories={categories}
             initialProducts={allProducts}
+            page={page}
+            totalPages={totalPages}
+            totalCount={totalCount}
           />
         );
       // Modern and Brand reuse Minimal catalog until bespoke versions ship
@@ -126,6 +136,9 @@ export default function TemplateDispatcher({
             settings={settings}
             categories={categories}
             initialProducts={allProducts}
+            page={page}
+            totalPages={totalPages}
+            totalCount={totalCount}
           />
         );
     }

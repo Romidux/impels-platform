@@ -8,12 +8,17 @@ import MinimalFiltersDrawer from "./MinimalFiltersDrawer";
 import MinimalCatalogGrid from "./MinimalCatalogGrid";
 import MinimalCatalogProductCard from "./MinimalCatalogProductCard";
 import MinimalEmptyState from "./MinimalEmptyState";
+import { CatalogPagination } from "../shared/CatalogPagination";
 
 interface MinimalCatalogPageClientProps {
   store: Store;
   settings?: StoreSettings;
   categories: Category[];
   initialProducts: Product[];
+  /* `initialProducts` ahora es UNA página, no el catálogo entero. */
+  page?: number;
+  totalPages?: number;
+  totalCount?: number;
 }
 
 export default function MinimalCatalogPageClient({
@@ -21,6 +26,9 @@ export default function MinimalCatalogPageClient({
   settings,
   categories,
   initialProducts,
+  page = 1,
+  totalPages = 1,
+  totalCount,
 }: MinimalCatalogPageClientProps) {
   const router = useRouter();
   const pathname = usePathname();
@@ -47,7 +55,7 @@ export default function MinimalCatalogPageClient({
   // Handle URL updates
   const updateParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     Object.entries(updates).forEach(([key, value]) => {
       if (value === null) {
         params.delete(key);
@@ -56,7 +64,20 @@ export default function MinimalCatalogPageClient({
       }
     });
 
+    // Cambiar un filtro vuelve a la página 1: la página 3 del resultado
+    // anterior casi nunca existe en el nuevo.
+    params.delete("page");
+
     router.push(`${pathname}?${params.toString()}`, { scroll: false });
+  };
+
+  // Link real por página, para que cada una sea una URL indexable.
+  const hrefDePagina = (n: number) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (n > 1) params.set("page", String(n));
+    else params.delete("page");
+    const qs = params.toString();
+    return `${pathname}${qs ? `?${qs}` : ""}`;
   };
 
   return (
@@ -65,7 +86,9 @@ export default function MinimalCatalogPageClient({
         
         {/* Header Section */}
         <MinimalCatalogToolbar
-          totalCount={initialProducts.length}
+          /* El total de la tienda, no el de la página: antes decía "24
+             productos" cuando había 300. */
+          totalCount={totalCount ?? initialProducts.length}
           onOpenFilters={() => setIsFilterDrawerOpen(true)}
           sort={activeSort}
           onSortChange={(val) => updateParams({ sort: val || null })}
@@ -91,6 +114,13 @@ export default function MinimalCatalogPageClient({
                     />
                   ))}
                 </MinimalCatalogGrid>
+
+                <CatalogPagination
+                  page={page}
+                  totalPages={totalPages}
+                  hrefFor={hrefDePagina}
+                  primaryColor={primaryColor}
+                />
               </div>
             )}
         </main>
