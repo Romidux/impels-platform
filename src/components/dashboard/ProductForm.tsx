@@ -749,6 +749,179 @@ export default function ProductForm({
           </section>
 
           {/* 3. Variantes */}
+          {/* 3. Precio y stock
+              Antes eran dos secciones en la columna lateral, lejos de las
+              variantes que las contradicen: el precio de venta competía con la
+              columna Precio de la tabla de variantes, y el stock general con la
+              columna Stock. Juntas y al lado de Variantes, la relación se ve.
+
+              El selector de modo de stock vivía dentro de Variantes, o sea que
+              el control que decide si el campo de stock general sirve estaba en
+              otra columna que el campo. Ahora está pegado a él. */}
+          <section className="dash-card p-7 space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="font-display text-base font-semibold text-neutral-900 flex items-center gap-2">
+                <DollarSign className="w-4 h-4 text-brand-500" />
+                Precio y stock
+              </h2>
+              {stockBadge && (
+                <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${stockBadge.color}`}>
+                  {stockBadge.label}
+                </span>
+              )}
+            </div>
+
+            {/* En la columna ancha los dos precios entran lado a lado. */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div className="space-y-1.5">
+              <label className="block text-sm font-medium text-neutral-700">
+                Precio de venta
+              </label>
+              <div className="flex rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
+                <span className="text-neutral-500 text-sm px-3 flex items-center border-r border-neutral-200 font-mono bg-neutral-100/50">
+                  {currency}
+                </span>
+                <input
+                  type="number"
+                  value={form.price}
+                  onChange={(e) => handleChange("price", e.target.value)}
+                  placeholder="0"
+                  min="0"
+                  className="flex-1 px-3 py-2.5 text-sm bg-transparent focus:outline-none"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label className="block text-sm font-medium text-neutral-700">
+                  Precio anterior
+                  <span className="text-neutral-400 font-normal ml-1">(opcional)</span>
+                </label>
+                {discountPct && (
+                  <span className="text-xs font-semibold bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full">
+                    -{discountPct}%
+                  </span>
+                )}
+              </div>
+              <div className="flex rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
+                <span className="text-neutral-500 text-sm px-3 flex items-center border-r border-neutral-200 font-mono bg-neutral-100/50">
+                  {currency}
+                </span>
+                <input
+                  type="number"
+                  value={form.compare_at_price}
+                  onChange={(e) => handleChange("compare_at_price", e.target.value)}
+                  placeholder="0"
+                  min="0"
+                  className="flex-1 px-3 py-2.5 text-sm bg-transparent focus:outline-none"
+                />
+              </div>
+              <p className="text-xs text-neutral-400">
+                Se mostrará tachado para indicar descuento
+              </p>
+            </div>
+
+            </div>
+
+            <label className="flex items-center gap-3 cursor-pointer pt-1">
+              <Toggle
+                checked={form.show_price}
+                onToggle={() => handleChange("show_price", !form.show_price)}
+              />
+              <span className="text-sm font-medium text-neutral-700">
+                {form.show_price ? "Precio visible" : "Precio oculto (Consultar)"}
+              </span>
+            </label>
+
+            <div className="h-px bg-neutral-200" />
+
+            <label className="flex items-start gap-3 cursor-pointer">
+              <Toggle
+                checked={form.track_inventory}
+                onToggle={() => handleChange("track_inventory", !form.track_inventory)}
+              />
+              <div>
+                <span className="text-sm font-medium text-neutral-700 block">
+                  Controlar inventario exacto
+                </span>
+                <span className="text-xs text-neutral-500">
+                  Lleva la cuenta de unidades disponibles
+                </span>
+              </div>
+            </label>
+
+            {/* Antes esto eran dos botones grandes, "Stock general" y "Stock por
+                variante", al mismo nivel que el toggle de variantes y adentro de
+                otra sección. Son el mismo interruptor: o el stock es uno solo, o
+                es por combinación. Como casilla secundaria queda claro que es un
+                detalle del modo con variantes, y está al lado del campo que
+                hace aparecer o desaparecer. */}
+            {form.track_inventory && form.has_variants && (
+              <label className="flex items-start gap-3 cursor-pointer animate-fade-in">
+                <Toggle
+                  checked={form.manage_stock_by_variant}
+                  onToggle={() =>
+                    handleChange(
+                      "manage_stock_by_variant",
+                      !form.manage_stock_by_variant
+                    )
+                  }
+                />
+                <div>
+                  <span className="text-sm font-medium text-neutral-700 block">
+                    Llevar el stock por cada combinación
+                  </span>
+                  <span className="text-xs text-neutral-500">
+                    Cada variante tiene sus propias unidades, en vez de un stock
+                    compartido
+                  </span>
+                </div>
+              </label>
+            )}
+
+            {form.track_inventory && (!form.has_variants || !form.manage_stock_by_variant) && (
+              <div className="space-y-4 animate-fade-in pl-4 border-l-2 border-brand-100">
+                <div>
+                  <label className="block text-sm font-medium text-neutral-700 mb-1.5">
+                    Unidades disponibles
+                  </label>
+                  <input
+                    type="number"
+                    value={form.stock_quantity}
+                    onChange={(e) => handleChange("stock_quantity", e.target.value)}
+                    placeholder="Ej: 15"
+                    min="0"
+                    className="w-full bg-white border border-neutral-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
+                  />
+                </div>
+
+                <label className="flex items-start gap-3 cursor-pointer">
+                  <Toggle
+                    checked={form.allow_backorder}
+                    onToggle={() => handleChange("allow_backorder", !form.allow_backorder)}
+                  />
+                  <div>
+                    <span className="text-sm font-medium text-neutral-700 block">
+                      Permitir ventas sin stock
+                    </span>
+                    <span className="text-xs text-neutral-500">
+                      Los clientes podrán comprar aunque llegue a 0
+                    </span>
+                  </div>
+                </label>
+              </div>
+            )}
+
+            {form.has_variants && form.track_inventory && (
+              <div className="animate-fade-in p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-xs flex gap-2">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                <span>
+                  Con variantes activas, la disponibilidad se calcula por el stock de cada combinación.
+                </span>
+              </div>
+            )}
+          </section>
           <section className="dash-card p-7 space-y-6">
             <h2 className="font-display text-base font-semibold text-neutral-900 flex items-center gap-2">
               <Tag className="w-4 h-4 text-brand-500" />
@@ -772,38 +945,6 @@ export default function ProductForm({
 
             {form.has_variants && (
               <>
-                {/* Stock mode */}
-                <div className="space-y-3">
-                  <p className="text-2xs font-medium text-neutral-500 uppercase tracking-wide">
-                    Control de stock
-                  </p>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => handleChange("manage_stock_by_variant", false)}
-                      className={`p-3.5 rounded-xl border-2 text-left transition-all ${
-                        !form.manage_stock_by_variant
-                          ? "border-brand-500 bg-brand-50"
-                          : "border-neutral-200 hover:border-neutral-300 bg-white"
-                      }`}
-                    >
-                      <span className="block text-sm font-semibold text-neutral-900">Stock general</span>
-                      <span className="text-xs text-neutral-500 leading-relaxed">Un solo stock para todo</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleChange("manage_stock_by_variant", true)}
-                      className={`p-3.5 rounded-xl border-2 text-left transition-all ${
-                        form.manage_stock_by_variant
-                          ? "border-brand-500 bg-brand-50"
-                          : "border-neutral-200 hover:border-neutral-300 bg-white"
-                      }`}
-                    >
-                      <span className="block text-sm font-semibold text-neutral-900">Stock por variante</span>
-                      <span className="text-xs text-neutral-500 leading-relaxed">Individual por combinación</span>
-                    </button>
-                  </div>
-                </div>
 
                 {/* Option types */}
                 <div className="space-y-3">
@@ -1060,143 +1201,7 @@ export default function ProductForm({
         {/* ── RIGHT COLUMN ─────────────────────────────────────────────────── */}
         <div className="space-y-5 lg:sticky lg:top-8 h-fit">
 
-          {/* A. Precio */}
-          <section className="dash-card p-6 space-y-5">
-            <h2 className="font-display text-base font-semibold text-neutral-900 flex items-center gap-2">
-              <DollarSign className="w-4 h-4 text-brand-500" />
-              Precio
-            </h2>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-neutral-700">
-                Precio de venta
-              </label>
-              <div className="flex rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
-                <span className="text-neutral-500 text-sm px-3 flex items-center border-r border-neutral-200 font-mono bg-neutral-100/50">
-                  {currency}
-                </span>
-                <input
-                  type="number"
-                  value={form.price}
-                  onChange={(e) => handleChange("price", e.target.value)}
-                  placeholder="0"
-                  min="0"
-                  className="flex-1 px-3 py-2.5 text-sm bg-transparent focus:outline-none"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="block text-sm font-medium text-neutral-700">
-                  Precio anterior
-                  <span className="text-neutral-400 font-normal ml-1">(opcional)</span>
-                </label>
-                {discountPct && (
-                  <span className="text-xs font-semibold bg-red-50 text-red-600 border border-red-200 px-2 py-0.5 rounded-full">
-                    -{discountPct}%
-                  </span>
-                )}
-              </div>
-              <div className="flex rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
-                <span className="text-neutral-500 text-sm px-3 flex items-center border-r border-neutral-200 font-mono bg-neutral-100/50">
-                  {currency}
-                </span>
-                <input
-                  type="number"
-                  value={form.compare_at_price}
-                  onChange={(e) => handleChange("compare_at_price", e.target.value)}
-                  placeholder="0"
-                  min="0"
-                  className="flex-1 px-3 py-2.5 text-sm bg-transparent focus:outline-none"
-                />
-              </div>
-              <p className="text-xs text-neutral-400">
-                Se mostrará tachado para indicar descuento
-              </p>
-            </div>
-
-            <label className="flex items-center gap-3 cursor-pointer pt-1">
-              <Toggle
-                checked={form.show_price}
-                onToggle={() => handleChange("show_price", !form.show_price)}
-              />
-              <span className="text-sm font-medium text-neutral-700">
-                {form.show_price ? "Precio visible" : "Precio oculto (Consultar)"}
-              </span>
-            </label>
-          </section>
-
-          {/* B. Inventario */}
-          <section className="dash-card p-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="font-display text-base font-semibold text-neutral-900">
-                Inventario
-              </h2>
-              {stockBadge && (
-                <span className={`text-xs font-medium px-2.5 py-1 rounded-full border ${stockBadge.color}`}>
-                  {stockBadge.label}
-                </span>
-              )}
-            </div>
-
-            <label className="flex items-start gap-3 cursor-pointer">
-              <Toggle
-                checked={form.track_inventory}
-                onToggle={() => handleChange("track_inventory", !form.track_inventory)}
-              />
-              <div>
-                <span className="text-sm font-medium text-neutral-700 block">
-                  Controlar inventario exacto
-                </span>
-                <span className="text-xs text-neutral-500">
-                  Lleva la cuenta de unidades disponibles
-                </span>
-              </div>
-            </label>
-
-            {form.track_inventory && (!form.has_variants || !form.manage_stock_by_variant) && (
-              <div className="space-y-4 animate-fade-in pl-4 border-l-2 border-brand-100">
-                <div>
-                  <label className="block text-sm font-medium text-neutral-700 mb-1.5">
-                    Unidades disponibles
-                  </label>
-                  <input
-                    type="number"
-                    value={form.stock_quantity}
-                    onChange={(e) => handleChange("stock_quantity", e.target.value)}
-                    placeholder="Ej: 15"
-                    min="0"
-                    className="w-full bg-white border border-neutral-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all"
-                  />
-                </div>
-
-                <label className="flex items-start gap-3 cursor-pointer">
-                  <Toggle
-                    checked={form.allow_backorder}
-                    onToggle={() => handleChange("allow_backorder", !form.allow_backorder)}
-                  />
-                  <div>
-                    <span className="text-sm font-medium text-neutral-700 block">
-                      Permitir ventas sin stock
-                    </span>
-                    <span className="text-xs text-neutral-500">
-                      Los clientes podrán comprar aunque llegue a 0
-                    </span>
-                  </div>
-                </label>
-              </div>
-            )}
-
-            {form.has_variants && form.track_inventory && (
-              <div className="animate-fade-in p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-xs flex gap-2">
-                <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                <span>
-                  Con variantes activas, la disponibilidad se calcula por el stock de cada combinación.
-                </span>
-              </div>
-            )}
-          </section>
 
           {/* C. Organización */}
           <section className="dash-card p-6 space-y-5">
