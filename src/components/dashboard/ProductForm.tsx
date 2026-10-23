@@ -774,8 +774,13 @@ export default function ProductForm({
             {/* En la columna ancha los dos precios entran lado a lado. */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-1.5">
+              {/* Con variantes, este campo deja de ser "el precio" y pasa a ser
+                  el que heredan las combinaciones sin precio propio. Es
+                  literalmente lo que hace el guardado:
+                  price: parseFloat(c.price) || parseFloat(form.price) || 0
+                  Sin decirlo, quedaban dos campos de precio compitiendo. */}
               <label className="block text-sm font-medium text-neutral-700">
-                Precio de venta
+                {form.has_variants ? "Precio base" : "Precio de venta"}
               </label>
               <div className="flex rounded-xl overflow-hidden border border-neutral-200 bg-neutral-50 focus-within:border-brand-500 focus-within:ring-2 focus-within:ring-brand-500/10 transition-all">
                 <span className="text-neutral-500 text-sm px-3 flex items-center border-r border-neutral-200 font-mono bg-neutral-100/50">
@@ -790,6 +795,11 @@ export default function ProductForm({
                   className="flex-1 px-3 py-2.5 text-sm bg-transparent focus:outline-none"
                 />
               </div>
+              {form.has_variants && (
+                <p className="text-xs text-neutral-400 animate-fade-in">
+                  Se usa en las variantes que no tengan precio propio
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5">
