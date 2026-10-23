@@ -241,7 +241,13 @@ export default async function ProductsPage({
                           </td>
                           {/* Acciones */}
                           <td className="w-px whitespace-nowrap pr-6 py-3">
-                            <ProductsActions productId={product.id} />
+                            <ProductsActions
+                              productId={product.id}
+                              productName={product.name}
+                              productSlug={product.slug}
+                              storeSlug={store.slug}
+                              isFeatured={product.is_featured}
+                            />
                           </td>
                         </tr>
                       );
@@ -283,7 +289,13 @@ export default async function ProductsPage({
                         <span className="font-medium text-sm text-neutral-900">
                           {product.show_price ? formatCurrency(product.price, currency) : "Consultar"}
                         </span>
-                        <ProductsActions productId={product.id} />
+                        <ProductsActions
+                              productId={product.id}
+                              productName={product.name}
+                              productSlug={product.slug}
+                              storeSlug={store.slug}
+                              isFeatured={product.is_featured}
+                            />
                       </div>
                     </div>
                   </div>
