@@ -18,7 +18,6 @@ import {
   Eye,
   EyeOff,
   AlertTriangle,
-  CheckCircle2,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -1266,39 +1265,18 @@ export default function ProductForm({
             </div>
           </section>
 
-          {/* D. Visibilidad */}
+          {/* D. Publicación
+              Antes esta sección se llamaba "Visibilidad" y repetía, con un
+              selector Activo/Oculto, exactamente el mismo campo `visibility`
+              que el chip del encabezado. Dos controles para un solo dato en la
+              misma pantalla. Queda el del encabezado, que está al lado de
+              Guardar: publicar es una decisión del momento de guardar.
+
+              El destacado vivía acá adentro y necesitaba casa propia. */}
           <section className="dash-card p-6 space-y-4">
             <h2 className="font-display text-base font-semibold text-neutral-900">
-              Visibilidad
+              Publicación
             </h2>
-
-            {/* Pill toggle: Visible / Oculto */}
-            <div className="grid grid-cols-2 gap-2 p-1 bg-neutral-100 rounded-xl">
-              <button
-                type="button"
-                onClick={() => handleChange("visibility", "visible")}
-                className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-all ${
-                  form.visibility === "visible"
-                    ? "bg-white shadow-sm text-emerald-700"
-                    : "text-neutral-500 hover:text-neutral-700"
-                }`}
-              >
-                <CheckCircle2 className={`w-3.5 h-3.5 ${form.visibility === "visible" ? "text-emerald-500" : "text-neutral-300"}`} />
-                Activo
-              </button>
-              <button
-                type="button"
-                onClick={() => handleChange("visibility", "hidden")}
-                className={`flex items-center justify-center gap-1.5 py-2 rounded-lg text-sm font-medium transition-all ${
-                  form.visibility === "hidden"
-                    ? "bg-white shadow-sm text-neutral-700"
-                    : "text-neutral-500 hover:text-neutral-700"
-                }`}
-              >
-                <EyeOff className={`w-3.5 h-3.5 ${form.visibility === "hidden" ? "text-neutral-500" : "text-neutral-300"}`} />
-                Oculto
-              </button>
-            </div>
 
             <label className="flex items-center gap-3 cursor-pointer">
               <Toggle
