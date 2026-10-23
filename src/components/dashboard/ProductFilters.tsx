@@ -46,6 +46,14 @@ const VISIBILITY_OPTIONS = [
   { value: "hidden", label: "Oculto" },
 ] as const;
 
+/* La home de la tienda muestra los productos con is_featured, pero hasta ahora
+   no había forma de ver esa misma lista desde el panel. */
+const FEATURED_OPTIONS = [
+  { value: "", label: "Todos" },
+  { value: "1", label: "Destacados" },
+  { value: "0", label: "No destacados" },
+] as const;
+
 // --- Dropdown Button Component ---
 function FilterDropdown({
   label,
@@ -154,6 +162,7 @@ export default function ProductFilters({
   currentSearch,
   currentCategory,
   currentVisibility,
+  currentFeatured,
   currentView,
   currentSort,
   products,
@@ -164,6 +173,7 @@ export default function ProductFilters({
   currentSearch: string;
   currentCategory: string;
   currentVisibility: string;
+  currentFeatured: string;
   currentView: string;
   currentSort: string;
   products: ProductForExport[];
@@ -245,6 +255,13 @@ export default function ProductFilters({
       value: currentVisibility,
     });
   }
+  if (currentFeatured) {
+    activeFilters.push({
+      key: "featured",
+      label: currentFeatured === "1" ? "Destacados" : "No destacados",
+      value: currentFeatured,
+    });
+  }
   if (currentSort) {
     const sortLabel =
       SORT_OPTIONS.find((o) => o.value === currentSort)?.label || currentSort;
@@ -299,6 +316,13 @@ export default function ProductFilters({
             value={currentVisibility}
             options={[...VISIBILITY_OPTIONS]}
             onChange={(v) => updateFilter("visibility", v)}
+          />
+
+          <FilterDropdown
+            label="Destacados"
+            value={currentFeatured}
+            options={[...FEATURED_OPTIONS]}
+            onChange={(v) => updateFilter("featured", v)}
           />
 
           <FilterDropdown
