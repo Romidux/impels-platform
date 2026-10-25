@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getUser, getStore } from "@/lib/supabase/queries";
 import { redirect } from "next/navigation";
-import { getStoreUrl } from "@/lib/utils";
+import { getStoreUrl, formatCurrency } from "@/lib/utils";
 import {
   ShoppingCart,
   TrendingUp,
@@ -81,13 +81,10 @@ export default async function DashboardPage() {
   const monthlyRevenue = monthlyOrders?.reduce((sum, order) => sum + (order.total || 0), 0) || 0;
   const monthlyOrderCount = monthlyOrders?.length || 0;
 
-  const formatCurrency = (value: number) => {
-    const currency = settings?.currency || "Gs";
-    return `${value.toLocaleString("es-PY")} ${currency}`;
-  };
-
   // Setup completeness
   const hasProducts = (productsCount || 0) > 0;
+  const currency = settings?.currency || "Gs";
+
   const hasWhatsApp = !!settings?.whatsapp_number;
   const hasTemplate = !!settings?.template;
   const isOnboardingComplete = hasProducts && hasWhatsApp && hasTemplate;
@@ -118,7 +115,7 @@ export default async function DashboardPage() {
         <KpiCard
           highlight
           label="Ventas del mes"
-          value={formatCurrency(monthlyRevenue)}
+          value={formatCurrency(monthlyRevenue, currency)}
           trend={monthlyRevenue > 0 ? { value: `${monthlyOrderCount} pedidos este mes`, positive: true } : undefined}
         />
         <KpiCard
@@ -198,7 +195,7 @@ export default async function DashboardPage() {
                         <OrderStatusBadge status={order.status as OrderStatus} />
                       </td>
                       <td className="py-4 px-6 text-sm font-semibold text-neutral-800 text-right">
-                        {formatCurrency(order.total || 0)}
+                        {formatCurrency(order.total || 0, currency)}
                       </td>
                     </tr>
                   ))}

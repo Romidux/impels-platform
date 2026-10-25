@@ -9,6 +9,7 @@ import { CreditCard, DollarSign, TrendingUp, Users, Settings2 } from "lucide-rea
 import Link from "next/link";
 import { SetPlanButton } from "./SetPlanButton";
 import { PRO_PLAN_PRICE_PYG } from "@/lib/plan";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function AdminBillingPage() {
   const supabase = await createClient();
@@ -28,9 +29,6 @@ export default async function AdminBillingPage() {
   const freeStores = activeStores.filter((s) => s.plan === "free");
 
   const mrr = proStores.length * PRO_PLAN_PRICE_PYG;
-
-  const formatCurrency = (value: number) =>
-    `₲ ${value.toLocaleString("es-PY")}`;
 
   const chartData = [
     { label: "Ene", value: mrr * 0.5 },
