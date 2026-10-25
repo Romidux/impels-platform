@@ -202,7 +202,7 @@ export default function BottomNav({ storeSlug }: BottomNavProps) {
                 className={cn(
                   "w-full flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-sm transition-colors",
                   copied
-                    ? "bg-green-50 text-green-700 border border-green-200"
+                    ? "bg-brand-50 text-brand-700 border border-brand-200"
                     : "bg-brand-600 text-white hover:bg-brand-700"
                 )}
               >

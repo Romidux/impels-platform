@@ -109,7 +109,7 @@ export default function HomepageManager({
       <Card
         header={{
           title: "Hero principal",
-          icon: <Type className="h-5 w-5 text-emerald-600" />,
+          icon: <Type className="h-5 w-5 text-brand-600" />,
         }}
       >
         <div className="space-y-4">
@@ -131,7 +131,7 @@ export default function HomepageManager({
       <Card
         header={{
           title: "Banner promocional",
-          icon: <Image className="h-5 w-5 text-violet-600" />,
+          icon: <Image className="h-5 w-5 text-brand-600" />,
         }}
       >
         <div className="space-y-4">

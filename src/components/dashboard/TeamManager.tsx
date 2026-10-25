@@ -9,9 +9,9 @@ import { Store, StoreMember, UserRole } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 
 const ROLE_CONFIG: Record<UserRole, { label: string; icon: React.ElementType; color: string }> = {
-  owner: { label: "Propietario", icon: Crown, color: "text-yellow-600 bg-yellow-50" },
+  owner: { label: "Propietario", icon: Crown, color: "text-amber-600 bg-amber-50" },
   admin: { label: "Admin", icon: Shield, color: "text-brand-600 bg-brand-50" },
-  editor: { label: "Editor", icon: Pencil, color: "text-green-600 bg-green-50" },
+  editor: { label: "Editor", icon: Pencil, color: "text-brand-600 bg-brand-50" },
 };
 
 export default function TeamManager({
@@ -165,7 +165,7 @@ export default function TeamManager({
             <p className="font-medium text-sm text-neutral-900">Tú</p>
             <p className="text-xs text-neutral-400">Propietario de la tienda</p>
           </div>
-          <span className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full text-yellow-600 bg-yellow-50">
+          <span className="flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full text-amber-600 bg-amber-50">
             <Crown className="w-3.5 h-3.5" />
             Propietario
           </span>

@@ -70,7 +70,7 @@ export default function VisibilityDropdown({
         className={cn(
           "inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium transition-colors cursor-pointer border",
           value === "visible"
-            ? "bg-emerald-50 text-emerald-700 border-emerald-700/15 hover:bg-emerald-50"
+            ? "bg-brand-50 text-brand-700 border-brand-700/15 hover:bg-brand-50"
             : "bg-neutral-50 text-neutral-400 border-neutral-200 hover:bg-neutral-200"
         )}
       >
@@ -91,7 +91,7 @@ export default function VisibilityDropdown({
             >
               {opt.label}
               {opt.value === value && (
-                <Check className="w-3.5 h-3.5 text-emerald-700" />
+                <Check className="w-3.5 h-3.5 text-brand-700" />
               )}
             </button>
           ))}

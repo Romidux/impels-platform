@@ -130,7 +130,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
       <Card
         header={{
           title: "Template base",
-          icon: <Layers className="h-5 w-5 text-emerald-600" />,
+          icon: <Layers className="h-5 w-5 text-brand-600" />,
         }}
       >
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
@@ -163,7 +163,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                     <span
                       className={`rounded-full px-2.5 py-1 text-2xs font-semibold uppercase tracking-[0.08em] ${!templateOption.available
                           ? "bg-amber-50 text-amber-700"
-                          : "bg-emerald-50 text-emerald-700"
+                          : "bg-brand-50 text-brand-700"
                         }`}
                     >
                       {templateOption.tier}
@@ -175,7 +175,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
                 </div>
 
                 {isSelected && (
-                  <div className="absolute left-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white text-emerald-600 shadow-sm">
+                  <div className="absolute left-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm">
                     <Check className="h-4 w-4" />
                   </div>
                 )}
@@ -188,7 +188,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
       <Card
         header={{
           title: "Color principal",
-          icon: <Palette className="h-5 w-5 text-violet-600" />,
+          icon: <Palette className="h-5 w-5 text-brand-600" />,
         }}
       >
         <div className="space-y-5">
@@ -235,7 +235,7 @@ export default function ThemeManager({ store, settings }: ThemeManagerProps) {
       <Card
         header={{
           title: "Formato de imagen de producto",
-          icon: <ImageIcon className="h-5 w-5 text-rose-600" />,
+          icon: <ImageIcon className="h-5 w-5 text-red-600" />,
         }}
       >
         <div className="space-y-3">

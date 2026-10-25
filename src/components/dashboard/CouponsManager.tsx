@@ -225,7 +225,7 @@ export default function CouponsManager({
                 <button
                   onClick={() => toggleStatus(coupon)}
                   className={`p-2 rounded-full transition-colors ${
-                    coupon.is_active ? "text-green-600 bg-green-50 hover:bg-green-100" : "text-neutral-400 bg-neutral-100 hover:bg-neutral-200"
+                    coupon.is_active ? "text-brand-600 bg-brand-50 hover:bg-brand-100" : "text-neutral-400 bg-neutral-100 hover:bg-neutral-200"
                   }`}
                   title={coupon.is_active ? "Desactivar" : "Activar"}
                 >
@@ -238,7 +238,7 @@ export default function CouponsManager({
                   {coupon.type === "percentage" ? (
                     <span className="text-brand-600">-{coupon.value}%</span>
                   ) : (
-                    <span className="text-emerald-600">-{formatCurrency(coupon.value).replace(" Gs", "")}</span>
+                    <span className="text-brand-600">-{formatCurrency(coupon.value).replace(" Gs", "")}</span>
                   )}
                   {coupon.type === "fixed" && <span className="text-sm font-semibold text-neutral-400 uppercase tracking-widest mt-2">Gs</span>}
                 </div>

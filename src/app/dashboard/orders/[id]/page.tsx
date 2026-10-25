@@ -191,7 +191,7 @@ export default async function OrderDetailPage({
                 <span>{formatCurrency(order.subtotal, currency)}</span>
               </div>
               {order.discount_amount && order.discount_amount > 0 && (
-                <div className="flex justify-between text-sm text-green-600 font-medium">
+                <div className="flex justify-between text-sm text-brand-600 font-medium">
                   <span>Descuento {order.coupon_code ? `(${order.coupon_code})` : ""}</span>
                   <span>-{formatCurrency(order.discount_amount, currency)}</span>
                 </div>
@@ -298,7 +298,7 @@ export default async function OrderDetailPage({
                 href={whatsappLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full py-2.5 bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 rounded-xl text-sm font-medium transition-all"
+                className="flex items-center justify-center gap-2 w-full py-2.5 bg-brand-50 text-brand-700 hover:bg-brand-100 border border-brand-200 rounded-xl text-sm font-medium transition-all"
               >
                 <MessageCircle className="w-4 h-4" />
                 Contactar por WhatsApp

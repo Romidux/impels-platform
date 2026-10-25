@@ -103,9 +103,9 @@ export default function InlineStockEditor({
       <button
         onClick={handleSave}
         disabled={isPending}
-        className="w-6 h-6 rounded-md bg-green-100 hover:bg-green-200 flex items-center justify-center transition-colors disabled:opacity-50"
+        className="w-6 h-6 rounded-md bg-brand-100 hover:bg-brand-200 flex items-center justify-center transition-colors disabled:opacity-50"
       >
-        <Check className="w-3 h-3 text-green-700" />
+        <Check className="w-3 h-3 text-brand-700" />
       </button>
       <button
         onClick={() => {

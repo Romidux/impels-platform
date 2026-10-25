@@ -146,7 +146,7 @@ export default function FooterSocialManager({
       <Card
         header={{
           title: "Redes sociales",
-          icon: <Globe className="h-5 w-5 text-emerald-600" />,
+          icon: <Globe className="h-5 w-5 text-brand-600" />,
         }}
       >
         <div className="space-y-4">
@@ -167,7 +167,7 @@ export default function FooterSocialManager({
       <Card
         header={{
           title: "Textos del footer",
-          icon: <Globe className="h-5 w-5 text-violet-600" />,
+          icon: <Globe className="h-5 w-5 text-brand-600" />,
         }}
       >
         <div className="space-y-4">

@@ -114,7 +114,7 @@ export default async function SupportPage() {
                       ) : ticket.status === 'in_progress' ? (
                         <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-brand-50 text-brand-600 border border-brand-100">En Proceso</span>
                       ) : (
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-50 text-green-600 border border-green-100">Resuelto</span>
+                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-brand-50 text-brand-600 border border-brand-100">Resuelto</span>
                       )}
                     </div>
                     <p className="text-sm text-neutral-600 line-clamp-2">{ticket.message}</p>

@@ -23,10 +23,10 @@ export async function MerchantAnnouncements() {
         const isSuccess = ann.type === 'success';
         const isError = ann.type === 'error';
         
-        const bgColor = isWarning ? "bg-amber-50" : isSuccess ? "bg-green-50" : isError ? "bg-red-50" : "bg-brand-50";
-        const borderColor = isWarning ? "border-amber-200" : isSuccess ? "border-green-200" : isError ? "border-red-200" : "border-brand-200";
-        const textColor = isWarning ? "text-amber-900" : isSuccess ? "text-green-900" : isError ? "text-red-900" : "text-brand-900";
-        const iconColor = isWarning ? "text-amber-600" : isSuccess ? "text-green-600" : isError ? "text-red-600" : "text-brand-600";
+        const bgColor = isWarning ? "bg-amber-50" : isSuccess ? "bg-brand-50" : isError ? "bg-red-50" : "bg-brand-50";
+        const borderColor = isWarning ? "border-amber-200" : isSuccess ? "border-brand-200" : isError ? "border-red-200" : "border-brand-200";
+        const textColor = isWarning ? "text-amber-900" : isSuccess ? "text-brand-900" : isError ? "text-red-900" : "text-brand-900";
+        const iconColor = isWarning ? "text-amber-600" : isSuccess ? "text-brand-600" : isError ? "text-red-600" : "text-brand-600";
         
         return (
           <div

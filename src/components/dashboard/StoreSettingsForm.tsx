@@ -260,7 +260,7 @@ export default function StoreSettingsForm({
         <Card
           header={{
             title: "Identidad de la tienda",
-            icon: <Store className="h-5 w-5 text-emerald-600" />,
+            icon: <Store className="h-5 w-5 text-brand-600" />,
           }}
         >
           <div className="space-y-4">
@@ -300,7 +300,7 @@ export default function StoreSettingsForm({
           <Card
             header={{
               title: "Contacto y pedidos",
-              icon: <Phone className="h-5 w-5 text-emerald-600" />,
+              icon: <Phone className="h-5 w-5 text-brand-600" />,
             }}
           >
             <div className="space-y-4">

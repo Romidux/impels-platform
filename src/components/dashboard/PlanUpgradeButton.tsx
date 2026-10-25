@@ -119,7 +119,7 @@ export function PlanUpgradeButton({ storeName }: PlanUpgradeButtonProps) {
                 className="flex items-center gap-1.5 text-xs font-medium text-neutral-300 hover:text-white transition-colors flex-shrink-0"
               >
                 {copied ? (
-                  <Check className="w-3.5 h-3.5 text-green-400" />
+                  <Check className="w-3.5 h-3.5 text-brand-400" />
                 ) : (
                   <Copy className="w-3.5 h-3.5" />
                 )}

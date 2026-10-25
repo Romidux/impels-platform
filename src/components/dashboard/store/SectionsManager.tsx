@@ -120,7 +120,7 @@ export default function SectionsManager({
       <Card
         header={{
           title: "Bloques visibles",
-          icon: <Layers className="h-5 w-5 text-emerald-600" />,
+          icon: <Layers className="h-5 w-5 text-brand-600" />,
           action: <span className="text-xs text-neutral-400">Usa las flechas para ordenar</span>,
         }}
       >

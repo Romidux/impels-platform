@@ -281,14 +281,14 @@ export default function CategoriesManager({
             className={cn(
               "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border",
               category.is_active
-                ? "bg-emerald-50 text-emerald-700 border-emerald-700/15"
+                ? "bg-brand-50 text-brand-700 border-brand-700/15"
                 : "bg-neutral-50 text-neutral-400 border-neutral-200"
             )}
           >
             <span
               className={cn(
                 "w-1.5 h-1.5 rounded-full flex-shrink-0",
-                category.is_active ? "bg-emerald-500" : "bg-neutral-300"
+                category.is_active ? "bg-brand-500" : "bg-neutral-300"
               )}
             />
             {category.is_active ? "Activa" : "Inactiva"}
@@ -307,7 +307,7 @@ export default function CategoriesManager({
                   }}
                   disabled={saving}
                   title="Guardar"
-                  className="p-2 rounded-[8px] text-emerald-700 hover:bg-emerald-50 transition-colors duration-150 disabled:opacity-50"
+                  className="p-2 rounded-[8px] text-brand-700 hover:bg-brand-50 transition-colors duration-150 disabled:opacity-50"
                 >
                   <Check className="w-4 h-4" />
                 </button>

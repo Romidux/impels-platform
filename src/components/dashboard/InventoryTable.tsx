@@ -251,7 +251,7 @@ function VariantStockEditor({ variantId, currentStock }: { variantId: string; cu
       <button onClick={() => setValue(Math.max(0, value - 1))} className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center"><Minus className="w-3 h-3 text-neutral-600" /></button>
       <input type="number" value={value} onChange={(e) => setValue(Math.max(0, parseInt(e.target.value) || 0))} onKeyDown={(e) => { if (e.key === "Enter") handleSave(); if (e.key === "Escape") { setValue(currentStock); setEditing(false); }}} autoFocus min={0} className="w-14 h-7 text-center text-sm font-semibold border border-brand-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-500/10 bg-white" />
       <button onClick={() => setValue(value + 1)} className="w-6 h-6 rounded-md bg-neutral-100 hover:bg-neutral-200 flex items-center justify-center"><Plus className="w-3 h-3 text-neutral-600" /></button>
-      <button onClick={handleSave} disabled={saving} className="w-6 h-6 rounded-md bg-green-100 hover:bg-green-200 flex items-center justify-center disabled:opacity-50"><Check className="w-3 h-3 text-green-700" /></button>
+      <button onClick={handleSave} disabled={saving} className="w-6 h-6 rounded-md bg-brand-100 hover:bg-brand-200 flex items-center justify-center disabled:opacity-50"><Check className="w-3 h-3 text-brand-700" /></button>
       <button onClick={() => { setValue(currentStock); setEditing(false); }} className="w-6 h-6 rounded-md bg-red-50 hover:bg-red-100 flex items-center justify-center"><X className="w-3 h-3 text-red-500" /></button>
     </div>
   );
@@ -396,7 +396,7 @@ export default function InventoryTable({
                 const isOut = product.stock_quantity <= 0;
                 const stockValue = (product.stock_quantity || 0) * (product.price || 0);
                 const stockPct = Math.min(((product.stock_quantity || 0) / maxStock) * 100, 100);
-                const barColor = isOut ? "bg-red-400" : isLow ? "bg-amber-400" : "bg-emerald-400";
+                const barColor = isOut ? "bg-red-400" : isLow ? "bg-amber-400" : "bg-brand-400";
                 const isSelected = selected.has(product.id);
                 const hasExpandableVariants = product.has_variants && product.manage_stock_by_variant && product.variants.length > 0;
                 const isExpanded = expandedRows.has(product.id);

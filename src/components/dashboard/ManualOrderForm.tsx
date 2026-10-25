@@ -296,7 +296,7 @@ export default function ManualOrderForm({
                                 {formatCurrency(variant.price ?? selectedProductForVariant.price, currency)}
                               </span>
                               {selectedProductForVariant.track_inventory && (
-                                <span className={`text-2xs px-1.5 py-0.5 rounded-full ${vOut ? "bg-red-100 text-red-600" : "bg-green-100 text-green-700"}`}>
+                                <span className={`text-2xs px-1.5 py-0.5 rounded-full ${vOut ? "bg-red-100 text-red-600" : "bg-brand-100 text-brand-700"}`}>
                                   Stock: {vStock}
                                 </span>
                               )}
@@ -335,7 +335,7 @@ export default function ManualOrderForm({
                             </div>
                             <div className="flex flex-col items-end">
                               {product.track_inventory && !product.has_variants && (
-                                <span className={`text-2xs px-1.5 py-0.5 rounded-full ${out ? "bg-red-100 text-red-600" : "bg-green-100 text-green-700"}`}>
+                                <span className={`text-2xs px-1.5 py-0.5 rounded-full ${out ? "bg-red-100 text-red-600" : "bg-brand-100 text-brand-700"}`}>
                                   Stock: {product.stock_quantity}
                                 </span>
                               )}

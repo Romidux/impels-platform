@@ -29,8 +29,8 @@ const STATUS_CONFIG: Record<
   },
   delivered: {
     label: "Entregado",
-    pill: "bg-emerald-50 text-emerald-800 border-emerald-200/60 hover:bg-emerald-100",
-    dot: "bg-emerald-500",
+    pill: "bg-brand-50 text-brand-800 border-brand-200/60 hover:bg-brand-100",
+    dot: "bg-brand-500",
   },
   cancelled: {
     label: "Cancelado",

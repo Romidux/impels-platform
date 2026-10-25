@@ -75,8 +75,8 @@ export default async function StoreHubPage({
       description: "Plantilla base y color principal",
       href: "/dashboard/store/appearance",
       icon: Palette,
-      color: "text-violet-600",
-      bg: "bg-violet-50",
+      color: "text-brand-600",
+      bg: "bg-brand-50",
       done: Boolean(settings?.template && settings?.primary_color),
       detail: settings?.template ? templateLabel : "Sin configurar",
     },
@@ -85,8 +85,8 @@ export default async function StoreHubPage({
       description: "Hero, banner y mensaje principal",
       href: "/dashboard/store/home",
       icon: Home,
-      color: "text-emerald-600",
-      bg: "bg-emerald-50",
+      color: "text-brand-600",
+      bg: "bg-brand-50",
       done: heroReady && hasHeroImage,
       detail: heroReady ? (settings?.hero_title || "Título listo") : "Falta el mensaje principal",
     },
@@ -105,8 +105,8 @@ export default async function StoreHubPage({
       description: "WhatsApp, pagos, envíos y redes",
       href: "/dashboard/store/sales",
       icon: Phone,
-      color: "text-rose-600",
-      bg: "bg-rose-50",
+      color: "text-red-600",
+      bg: "bg-red-50",
       done: hasWhatsApp && hasPayments,
       detail: hasWhatsApp ? "WhatsApp configurado" : "Falta WhatsApp",
     },
@@ -231,7 +231,7 @@ export default async function StoreHubPage({
 
                 <div className="flex flex-shrink-0 items-center gap-3">
                   {item.done ? (
-                    <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+                    <CheckCircle2 className="h-4 w-4 text-brand-500" />
                   ) : (
                     <AlertCircle className="h-4 w-4 text-amber-400" />
                   )}

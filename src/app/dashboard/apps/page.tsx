@@ -77,8 +77,8 @@ export default async function AppsPage() {
                 Rastrea eventos de Facebook e Instagram (PageViews, AddToCart, Purchase) automáticamente en toda tu tienda.
               </p>
               {metaPixel ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-50 text-brand-700 text-xs font-medium">
+                  <div className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></div>
                   Conectado
                 </span>
               ) : (
@@ -121,8 +121,8 @@ export default async function AppsPage() {
                 Mide de dónde vienen tus visitantes y cuál es tu tasa de conversión con informes detallados de Google.
               </p>
               {googleAnalytics ? (
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-green-50 text-green-700 text-xs font-medium">
-                  <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div>
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-brand-50 text-brand-700 text-xs font-medium">
+                  <div className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse"></div>
                   Conectado
                 </span>
               ) : (

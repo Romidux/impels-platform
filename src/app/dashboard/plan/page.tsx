@@ -80,11 +80,11 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
             <div
               key={plan.slug}
               className={`dash-card p-6 relative ${
-                isCurrent ? "border-green-400 border-2" : ""
+                isCurrent ? "border-brand-400 border-2" : ""
               }`}
             >
               {isCurrent && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-green-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand-500 text-white text-xs font-semibold px-3 py-1 rounded-full">
                   Plan actual
                 </div>
               )}
@@ -107,7 +107,7 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
                     key={feature}
                     className="flex items-center gap-2 text-sm text-neutral-600"
                   >
-                    <Check className="w-4 h-4 text-green-500 flex-shrink-0" />
+                    <Check className="w-4 h-4 text-brand-500 flex-shrink-0" />
                     {feature}
                   </li>
                 ))}
@@ -116,7 +116,7 @@ export default async function PlanPage({ searchParams }: PlanPageProps) {
                 <PlanUpgradeButton storeName={store.name} />
               )}
               {plan.slug === "pro" && isCurrent && (
-                <div className="mt-5 w-full text-center text-sm font-medium text-green-600 py-2.5">
+                <div className="mt-5 w-full text-center text-sm font-medium text-brand-600 py-2.5">
                   ✓ Activo
                 </div>
               )}

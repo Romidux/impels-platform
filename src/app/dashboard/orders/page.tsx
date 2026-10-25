@@ -134,13 +134,13 @@ export default async function OrdersPage({
       label: "Entregados hoy",
       value: String(deliveredTodayCount || 0),
       icon: <CheckCircle2 className="w-5 h-5" />,
-      color: "text-emerald-600 bg-emerald-50",
+      color: "text-brand-600 bg-brand-50",
     },
     {
       label: "Ingresos totales",
       value: formatCurrency(totalRevenue, currency),
       icon: <TrendingUp className="w-5 h-5" />,
-      color: "text-purple-600 bg-purple-50",
+      color: "text-brand-600 bg-brand-50",
     },
   ];
 
@@ -342,7 +342,7 @@ function ListView({
                             href={whatsappLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-green-500 hover:text-green-700 transition-colors"
+                            className="text-brand-500 hover:text-brand-700 transition-colors"
                             title="Contactar por WhatsApp"
                           >
                             <MessageCircle className="w-4 h-4" />
@@ -424,7 +424,7 @@ function ListView({
                         href={whatsappLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-green-500 hover:text-green-700 transition-colors"
+                        className="text-brand-500 hover:text-brand-700 transition-colors"
                       >
                         <MessageCircle className="w-4 h-4" />
                       </a>

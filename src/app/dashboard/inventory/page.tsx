@@ -249,8 +249,8 @@ export default async function InventoryPage({
           }
         />
         <KpiCard
-          icon={<DollarSign className="w-5 h-5 text-emerald-600" />}
-          iconClassName="bg-emerald-50"
+          icon={<DollarSign className="w-5 h-5 text-brand-600" />}
+          iconClassName="bg-brand-50"
           label="Valor del inventario"
           value={formatCurrency(inventoryValue, currency)}
         />

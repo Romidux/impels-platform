@@ -92,7 +92,7 @@ export function SetupWizard({
                 key={step.id} 
                 className={`flex gap-4 p-4 rounded-xl border transition-all duration-200 ${
                   step.isDone 
-                    ? "border-green-100 bg-green-50/50" 
+                    ? "border-brand-100 bg-brand-50/50" 
                     : idx === activeStepIdx 
                     ? "border-brand-200 bg-brand-50/30 shadow-sm ring-1 ring-brand-100" 
                     : "border-neutral-100 opacity-60 grayscale"
@@ -100,7 +100,7 @@ export function SetupWizard({
               >
                 <div className={`mt-0.5 w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-all duration-200 ${
                   step.isDone 
-                    ? "bg-green-500 text-white" 
+                    ? "bg-brand-500 text-white" 
                     : idx === activeStepIdx 
                     ? "bg-brand-100 text-brand-600" 
                     : "bg-neutral-100 text-neutral-400"
@@ -109,7 +109,7 @@ export function SetupWizard({
                 </div>
                 
                 <div className="flex-1">
-                  <h3 className={`font-medium text-sm ${step.isDone ? "text-green-900" : "text-neutral-900"}`}>
+                  <h3 className={`font-medium text-sm ${step.isDone ? "text-brand-900" : "text-neutral-900"}`}>
                     {step.title}
                   </h3>
                   <p className="text-sm text-neutral-500 mt-1 mb-3">

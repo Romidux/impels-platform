@@ -470,7 +470,7 @@ export default function ProductForm({
     ? { label: "Sin stock", color: "bg-red-50 text-red-600 border-red-200" }
     : stockQty < 10
     ? { label: "Poco stock", color: "bg-amber-50 text-amber-600 border-amber-200" }
-    : { label: "En stock", color: "bg-emerald-50 text-emerald-600 border-emerald-200" };
+    : { label: "En stock", color: "bg-brand-50 text-brand-600 border-brand-200" };
 
   const discountPct =
     form.compare_at_price && form.price &&
@@ -526,7 +526,7 @@ export default function ProductForm({
               }
               className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                 form.visibility === "visible"
-                  ? "bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100"
+                  ? "bg-brand-50 text-brand-700 border-brand-200 hover:bg-brand-100"
                   : "bg-neutral-100 text-neutral-500 border-neutral-200 hover:bg-neutral-200"
               }`}
             >
