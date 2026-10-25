@@ -86,7 +86,7 @@ function FilterDropdown({
         type="button"
         onClick={() => setOpen(!open)}
         className={cn(
-          "inline-flex items-center gap-1.5 h-10 px-4 text-sm font-medium rounded-lg transition-colors whitespace-nowrap border-0",
+          "inline-flex items-center gap-1.5 h-10 px-4 text-sm font-medium rounded-full transition-colors whitespace-nowrap border-0",
           hasValue
             ? "bg-brand-50 text-brand-600 hover:bg-brand-100"
             : "bg-neutral-50 text-neutral-900 hover:bg-neutral-200"
@@ -280,7 +280,7 @@ export default function ProductFilters({
             value={searchValue}
             onChange={handleSearchChange}
             placeholder="Buscar productos..."
-            className="w-full h-10 pl-9 pr-8 border border-neutral-200 rounded-lg bg-white text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all duration-200"
+            className="w-full h-10 pl-9 pr-8 border border-neutral-200 rounded-full bg-white text-sm text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 transition-all duration-200"
           />
           {searchValue && (
             <button
@@ -330,7 +330,7 @@ export default function ProductFilters({
           <button
             type="button"
             onClick={() => exportToCSV(products, currency)}
-            className="inline-flex items-center gap-1.5 h-10 px-4 text-sm font-medium rounded-lg bg-neutral-50 text-neutral-500 hover:bg-neutral-200 transition-colors whitespace-nowrap border-0"
+            className="inline-flex items-center gap-1.5 h-10 px-4 text-sm font-medium rounded-full bg-neutral-50 text-neutral-500 hover:bg-neutral-200 transition-colors whitespace-nowrap border-0"
           >
             <Download className="w-3.5 h-3.5" />
             Exportar
@@ -340,14 +340,14 @@ export default function ProductFilters({
           {atLimit ? (
             <Link
               href="/dashboard/plan"
-              className="inline-flex items-center gap-1.5 h-10 px-5 text-sm font-medium rounded-lg bg-brand-600 text-white hover:bg-brand-500 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 h-10 px-5 text-sm font-medium rounded-full bg-brand-600 text-white hover:bg-brand-500 transition-colors whitespace-nowrap"
             >
               Upgrade
             </Link>
           ) : (
             <Link
               href="/dashboard/products/new"
-              className="inline-flex items-center gap-1.5 h-10 px-5 text-sm font-medium rounded-lg bg-brand-600 text-white hover:bg-brand-500 transition-colors whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 h-10 px-5 text-sm font-medium rounded-full bg-brand-600 text-white hover:bg-brand-500 transition-colors whitespace-nowrap"
             >
               <Plus className="w-4 h-4" />
               Nuevo

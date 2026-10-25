@@ -279,7 +279,7 @@ export default async function ProductsPage({
                 {page > 1 && (
                   <Link
                     href={buildUrl({ page: String(page - 1) })}
-                    className="px-4 py-2 rounded-lg border border-neutral-200 text-xs font-medium text-neutral-900 hover:bg-neutral-50 transition-colors"
+                    className="px-4 py-2 rounded-full border border-neutral-200 text-xs font-medium text-neutral-900 hover:bg-neutral-50 transition-colors"
                   >
                     ← Anterior
                   </Link>
@@ -287,7 +287,7 @@ export default async function ProductsPage({
                 {page < totalPages && (
                   <Link
                     href={buildUrl({ page: String(page + 1) })}
-                    className="px-4 py-2 rounded-lg border border-neutral-200 text-xs font-medium text-neutral-900 hover:bg-neutral-50 transition-colors"
+                    className="px-4 py-2 rounded-full border border-neutral-200 text-xs font-medium text-neutral-900 hover:bg-neutral-50 transition-colors"
                   >
                     Siguiente →
                   </Link>
