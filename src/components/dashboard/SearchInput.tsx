@@ -38,7 +38,7 @@ export function SearchInput({
         placeholder={placeholder}
         aria-label={placeholder}
         className={cn(
-          "dash-input pl-9",
+          "dash-input rounded-full pl-9",
           value ? "pr-9" : "pr-3.5",
           pending && "opacity-70"
         )}
