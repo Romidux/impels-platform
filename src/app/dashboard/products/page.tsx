@@ -34,7 +34,14 @@ export default async function ProductsPage({
   const { search, category, visibility, featured } = params;
   const sort = params.sort || "";
   const page = parseInt(params.page || "1");
-  const pageSize = 15;
+  /* 50 y no 15: con el tope de 10 productos del plan gratis, y con la mayoría
+     de las tiendas por debajo de 50, casi nadie llega a tener una segunda
+     página. El tope igual tiene que existir — sin él, una tienda con miles de
+     productos colgaría el panel.
+
+     Sale barato porque las miniaturas cargan en diferido: el navegador pide
+     solo las que entran en pantalla, no las 50. */
+  const pageSize = 50;
 
   // Build sort
   const sortMap: Record<string, { column: string; ascending: boolean }> = {
@@ -183,6 +190,8 @@ export default async function ProductsPage({
                                 <img
                                   src={primaryImage.url}
                                   alt={product.name}
+                                  loading="lazy"
+                                  decoding="async"
                                   className="w-full h-full object-cover"
                                 />
                               ) : (
