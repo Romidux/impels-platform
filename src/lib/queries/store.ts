@@ -26,7 +26,10 @@ export const getStoreCategories = cache(async (storeId: string, parentOnly = fal
     .select("*")
     .eq("store_id", storeId)
     .eq("is_active", true)
-    .order("sort_order");
+    // Mismo desempate que en el dashboard: sin él, dos categorías con el mismo
+    // `sort_order` se le muestran al cliente en un orden distinto cada vez.
+    .order("sort_order")
+    .order("created_at");
 
   if (parentOnly) {
     query = query.is("parent_id", null);
