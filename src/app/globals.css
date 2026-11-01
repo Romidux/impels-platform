@@ -355,12 +355,28 @@
   }
 
   /* ── Animations ── */
+
+  /* El fill-mode es `backwards`, no `both`.
+
+     Con `both` el estado final del keyframe queda aplicado para siempre, y eso
+     incluye el `transform`. Un elemento con transform —aunque el keyframe
+     termine en `translateY(0)` o incluso en `none`, porque al interpolar
+     transforms el valor calculado termina siendo una matriz identidad igual—
+     pasa a ser el marco de referencia de sus hijos `position: fixed`: dejan de
+     anclarse a la ventana y se anclan a él. Como casi toda pantalla del
+     dashboard envuelve su contenido en `.animate-fade-in`, la barra de acciones
+     masivas de Inventario se dibujaba al fondo del contenido, 137px por debajo
+     del borde visible, y no se veía nunca.
+
+     `backwards` mantiene el estado inicial antes de arrancar —para lo que hacía
+     falta el fill— y suelta el elemento al terminar, que es cuando vuelve a no
+     tener transform. */
   .animate-fade-in {
-    animation: fadeIn 0.4s ease-out both;
+    animation: fadeIn 0.4s ease-out backwards;
   }
 
   .animate-slide-up {
-    animation: slideUp 0.5s ease-out both;
+    animation: slideUp 0.5s ease-out backwards;
   }
 
   .animate-delay-100 { animation-delay: 100ms; }
