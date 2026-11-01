@@ -1209,10 +1209,12 @@ export default function ProductForm({
         </div>
 
         {/* ── RIGHT COLUMN ─────────────────────────────────────────────────── */}
-        <div className="space-y-5 lg:sticky lg:top-8 h-fit">
-
-
-
+        {/* Esta columna era `lg:sticky lg:top-8`. El panel de contenido del
+            dashboard scrollea por dentro (md:overflow-y-auto en el layout), así
+            que una columna sticky más alta que ese panel se clava arriba y lo
+            que queda abajo — la tarjeta de Publicación, con el toggle de
+            Destacado — no se alcanza nunca. Scrollea junto al formulario. */}
+        <div className="space-y-5">
           {/* C. Organización */}
           <section className="dash-card p-6 space-y-5">
             <h2 className="font-display text-base font-semibold text-neutral-900 flex items-center gap-2">
