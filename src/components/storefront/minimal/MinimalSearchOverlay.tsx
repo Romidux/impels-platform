@@ -50,7 +50,7 @@ export default function MinimalSearchOverlay({
       setIsLoading(true);
       const { data } = await supabase
         .from("products")
-        .select("*, images:product_images(url, is_primary)")
+        .select("*, images:product_images(url, is_primary), variant_combinations:product_variant_combinations(stock)")
         .eq("visibility", "visible")
         .ilike("name", `%${query}%`)
         .limit(5);

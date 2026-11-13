@@ -49,7 +49,7 @@ export default async function CatalogPage({
   let query = supabase
     .from("products")
     .select(
-      "*, images:product_images(url, is_primary), category:categories(name)",
+      "*, images:product_images(url, is_primary), category:categories(name), variant_combinations:product_variant_combinations(stock)",
       { count: "exact" }
     )
     .eq("store_id", store.id)
