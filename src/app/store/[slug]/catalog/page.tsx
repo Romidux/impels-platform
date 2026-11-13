@@ -120,6 +120,10 @@ export default async function CatalogPage({
     return `/store/${slug}/catalog${qs ? `?${qs}` : ""}`;
   };
 
+  const nombreDeCategoria = sp.category
+    ? allCategories?.find((c) => c.id === sp.category)?.name
+    : undefined;
+
   // Use TemplateDispatcher to render the correct UI
   // If dispatcher returns null, we use the shared/legacy UI as fallback
   if (template === "minimal") {
@@ -130,6 +134,7 @@ export default async function CatalogPage({
         store={store}
         settings={settings}
         categories={categories || []}
+        categoryName={nombreDeCategoria}
         allProducts={(products as Product[]) || []}
         page={page}
         totalPages={totalPages}
