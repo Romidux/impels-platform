@@ -22,6 +22,8 @@ interface TemplateDispatcherProps {
   settings?: StoreSettings;
   branding?: StoreBranding;
   categories?: Category[];
+  /* Nombre de la categoría activa del catálogo, resuelto en el server. */
+  categoryName?: string;
   featuredProducts?: Product[];
   recentProducts?: Product[];
   allProducts?: Product[]; // For catalog page
@@ -39,6 +41,7 @@ export default function TemplateDispatcher({
   settings,
   branding,
   categories = [],
+  categoryName,
   featuredProducts = [],
   recentProducts = [],
   allProducts = [],
@@ -120,6 +123,7 @@ export default function TemplateDispatcher({
             store={store}
             settings={settings}
             categories={categories}
+            categoryName={categoryName}
             initialProducts={allProducts}
             page={page}
             totalPages={totalPages}
@@ -135,6 +139,7 @@ export default function TemplateDispatcher({
             store={store}
             settings={settings}
             categories={categories}
+            categoryName={categoryName}
             initialProducts={allProducts}
             page={page}
             totalPages={totalPages}

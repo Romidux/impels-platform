@@ -14,6 +14,9 @@ interface MinimalCatalogPageClientProps {
   store: Store;
   settings?: StoreSettings;
   categories: Category[];
+  /* El nombre ya resuelto de la categoría activa. `categories` solo trae las
+     categorías padre, así que una subcategoría no se puede resolver acá. */
+  categoryName?: string;
   initialProducts: Product[];
   /* `initialProducts` ahora es UNA página, no el catálogo entero. */
   page?: number;
@@ -25,6 +28,7 @@ export default function MinimalCatalogPageClient({
   store,
   settings,
   categories,
+  categoryName,
   initialProducts,
   page = 1,
   totalPages = 1,
@@ -49,8 +53,12 @@ export default function MinimalCatalogPageClient({
   const activeCategoryName = useMemo(() => {
     if (activeSearch) return `Resultados para "${activeSearch}"`;
     if (!activeCategoryId) return "Colección Completa";
-    return categories.find((c) => c.id === activeCategoryId)?.name || "Categoría";
-  }, [activeCategoryId, categories, activeSearch]);
+    return (
+      categoryName ||
+      categories.find((c) => c.id === activeCategoryId)?.name ||
+      "Categoría"
+    );
+  }, [activeCategoryId, categories, categoryName, activeSearch]);
 
   // Handle URL updates
   const updateParams = (updates: Record<string, string | null>) => {
