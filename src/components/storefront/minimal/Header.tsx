@@ -183,6 +183,7 @@ export default function Header({ store, settings, categories = [] }: HeaderProps
         isOpen={searchOpen} 
         onClose={() => setSearchOpen(false)} 
         storeSlug={store.slug} 
+        storeId={store.id}
         currency={currency}
       />
 
