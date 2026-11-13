@@ -72,3 +72,36 @@ COMMENT ON TABLE public.admin_actions_log IS
   'Historial de acciones del super admin. Sin políticas RLS a propósito: '
   'solo se accede con el cliente de service_role desde el servidor. '
   'No agregar políticas para `authenticated` sin restringir a super admin.';
+
+
+-- ── 3. ELIMINAR LA SOBRECARGA VIEJA DEL CHECKOUT ────────────────
+-- `create_order_and_deduct_stock` existe DOS veces en la base:
+--
+--   · la de supabase/schema.sql, con 9 parámetros, sin cupón y sin
+--     vincular el pedido a un registro de `customers`;
+--   · la de la migración 008, con 15 parámetros, que es la que usa la app
+--     (src/lib/hooks/useCheckoutLogic.ts y ManualOrderForm.tsx).
+--
+-- En Postgres conviven como sobrecargas: la migración 008 hizo DROP de una
+-- firma de 14 parámetros que no era la vieja, así que nunca la eliminó.
+-- Verificado contra la base: las dos responden.
+--
+-- La vieja es alcanzable por cualquiera con la clave pública y crea pedidos
+-- sin cliente asociado y sin contar el uso del cupón. Ningún endurecimiento
+-- futuro de la versión buena la alcanza. Se elimina.
+--
+-- Comprobado antes de borrar: la app nunca la llama. El checkout del
+-- storefront manda p_payment_method, p_shipping_method y p_coupon_code, y el
+-- pedido manual manda p_phone_country_code; ambos resuelven a la de 15.
+
+DROP FUNCTION IF EXISTS public.create_order_and_deduct_stock(
+  UUID,     -- p_store_id
+  TEXT,     -- p_customer_name
+  TEXT,     -- p_customer_phone
+  TEXT,     -- p_customer_email
+  TEXT,     -- p_customer_address
+  TEXT,     -- p_customer_notes
+  JSONB,    -- p_items
+  NUMERIC,  -- p_subtotal
+  NUMERIC   -- p_total
+);
