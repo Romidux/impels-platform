@@ -39,8 +39,11 @@ export default async function CatalogPage({
   const currency = settings?.currency || "Gs";
   const template = settings?.template || "modern";
 
-  // Fetch categories (cached)
-  const categories = await getStoreCategories(store.id, true);
+  // Fetch categories (cached). Traemos el árbol completo: los filtros siguen
+  // listando solo las categorías padre, pero necesitamos las hijas para que
+  // filtrar por una categoría padre incluya los productos de sus subcategorías.
+  const allCategories = await getStoreCategories(store.id);
+  const categories = (allCategories || []).filter((c) => !c.parent_id);
 
   // Build product query (not cached — depends on search params)
   const supabase = await createClient();
@@ -49,14 +52,27 @@ export default async function CatalogPage({
   let query = supabase
     .from("products")
     .select(
-      "*, images:product_images(url, is_primary), category:categories(name)",
+      "*, images:product_images(url, is_primary), category:categories(name), variant_combinations:product_variant_combinations(stock)",
       { count: "exact" }
     )
     .eq("store_id", store.id)
     .eq("visibility", "visible");
 
   if (sp.category) {
-    query = query.eq("category_id", sp.category);
+    /* Una categoría padre no tiene productos propios: los suyos cuelgan de sus
+       subcategorías. Filtrar por id exacto devolvía siempre vacío al elegirla. */
+    const idsDeCategoria = [sp.category];
+    for (let i = 0; i < idsDeCategoria.length; i++) {
+      for (const cat of allCategories || []) {
+        if (cat.parent_id === idsDeCategoria[i] && !idsDeCategoria.includes(cat.id)) {
+          idsDeCategoria.push(cat.id);
+        }
+      }
+    }
+    query =
+      idsDeCategoria.length > 1
+        ? query.in("category_id", idsDeCategoria)
+        : query.eq("category_id", sp.category);
   }
   if (sp.search) {
     query = query.ilike("name", `%${sp.search}%`);
@@ -104,6 +120,10 @@ export default async function CatalogPage({
     return `/store/${slug}/catalog${qs ? `?${qs}` : ""}`;
   };
 
+  const nombreDeCategoria = sp.category
+    ? allCategories?.find((c) => c.id === sp.category)?.name
+    : undefined;
+
   // Use TemplateDispatcher to render the correct UI
   // If dispatcher returns null, we use the shared/legacy UI as fallback
   if (template === "minimal") {
@@ -114,6 +134,7 @@ export default async function CatalogPage({
         store={store}
         settings={settings}
         categories={categories || []}
+        categoryName={nombreDeCategoria}
         allProducts={(products as Product[]) || []}
         page={page}
         totalPages={totalPages}
@@ -214,7 +235,7 @@ export default async function CatalogPage({
           <div className="flex items-center justify-between mb-6">
             <h1 className="font-display text-2xl font-bold text-gray-900">
               {sp.category
-                ? categories?.find((c) => c.id === sp.category)?.name ||
+                ? allCategories?.find((c) => c.id === sp.category)?.name ||
                   "Productos"
                 : sp.search
                   ? `Resultados para "${sp.search}"`

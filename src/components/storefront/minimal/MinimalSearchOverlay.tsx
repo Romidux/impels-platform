@@ -13,6 +13,9 @@ interface MinimalSearchOverlayProps {
   isOpen: boolean;
   onClose: () => void;
   storeSlug: string;
+  /* Sin esto la búsqueda recorre la tabla `products` entera y devuelve
+     productos de otras tiendas de la plataforma. */
+  storeId: string;
   currency: string;
 }
 
@@ -20,6 +23,7 @@ export default function MinimalSearchOverlay({
   isOpen,
   onClose,
   storeSlug,
+  storeId,
   currency,
 }: MinimalSearchOverlayProps) {
   const [query, setQuery] = useState("");
@@ -50,7 +54,8 @@ export default function MinimalSearchOverlay({
       setIsLoading(true);
       const { data } = await supabase
         .from("products")
-        .select("*, images:product_images(url, is_primary)")
+        .select("*, images:product_images(url, is_primary), variant_combinations:product_variant_combinations(stock)")
+        .eq("store_id", storeId)
         .eq("visibility", "visible")
         .ilike("name", `%${query}%`)
         .limit(5);
@@ -60,7 +65,7 @@ export default function MinimalSearchOverlay({
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [query, supabase]);
+  }, [query, supabase, storeId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

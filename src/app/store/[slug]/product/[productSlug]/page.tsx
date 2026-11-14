@@ -77,7 +77,7 @@ export default async function ProductPage({
   // Fetch related products
   const { data: related } = await supabase
     .from("products")
-    .select("*, images:product_images(url, is_primary), category:categories(name)")
+    .select("*, images:product_images(url, is_primary), category:categories(name), variant_combinations:product_variant_combinations(stock)")
     .eq("store_id", store.id)
     .eq("visibility", "visible")
     .eq("category_id", product.category_id || "")
