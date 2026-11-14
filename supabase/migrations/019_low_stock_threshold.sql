@@ -1,5 +1,5 @@
 -- ================================================================
--- MIGRATION 017: Umbral de stock bajo configurable
+-- MIGRATION 019: Umbral de stock bajo configurable
 -- ================================================================
 -- El dashboard de Inventario consideraba "stock bajo" todo producto con 5
 -- unidades o menos, un número escrito a mano en cinco lugares del código. Para
