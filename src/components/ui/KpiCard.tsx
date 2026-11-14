@@ -37,6 +37,18 @@ export function KpiCard({
   className,
   highlight = false,
 }: KpiCardProps) {
+  /* El número baja de cuerpo cuando es largo, en vez de cortarse.
+     El tamaño fijo de 2.375rem más `truncate` dejaba "1.533.000 Gs" como
+     "1.533.00…": 242px de texto en una caja de 207px. En guaraníes no es un
+     caso raro, son todos los importes. */
+  const texto = String(value);
+  const tamañoValor =
+    texto.length > 14
+      ? "text-2xl"
+      : texto.length > 10
+        ? "text-3xl"
+        : "text-[2.375rem]";
+
   const content = (
     <>
       <div className="flex items-start justify-between gap-2">
@@ -61,8 +73,10 @@ export function KpiCard({
       </div>
 
       <div
+        title={texto}
         className={cn(
-          "mt-5 truncate text-[2.375rem] leading-none font-extrabold tracking-tight",
+          "mt-5 truncate leading-none font-extrabold tracking-tight",
+          tamañoValor,
           highlight ? "text-white" : "text-neutral-900"
         )}
       >

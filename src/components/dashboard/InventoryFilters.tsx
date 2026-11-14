@@ -19,6 +19,7 @@ interface InventoryProductForExport {
   name: string;
   price: number;
   stock_quantity: number;
+  tracked: boolean;
   category?: { name: string } | null;
 }
 
@@ -27,6 +28,9 @@ const STATUS_OPTIONS = [
   { value: "ok", label: "En stock" },
   { value: "low", label: "Stock bajo" },
   { value: "out", label: "Sin stock" },
+  // Productos que no llevan cuenta de stock. Antes no aparecían en la pantalla
+  // y no había forma de encontrarlos ni de saber que existían.
+  { value: "untracked", label: "Sin seguimiento" },
 ] as const;
 
 const SORT_OPTIONS = [
@@ -114,14 +118,22 @@ function FilterDropdown({
 }
 
 // --- Export CSV ---
-function exportInventoryCSV(products: InventoryProductForExport[], currency: string) {
+/* Todo campo de texto va entre comillas y con las comillas internas duplicadas.
+   Antes solo se escapaba el nombre: una categoría con coma —"Ropa, accesorios"—
+   partía la fila en dos columnas y corría todo el resto. */
+const campo = (valor: string) => `"${valor.replace(/"/g, '""')}"`;
+
+function exportInventoryCSV(products: InventoryProductForExport[]) {
   const headers = ["Nombre", "Categoría", "Stock", "Precio unit.", "Valor stock"];
+  /* Un producto sin seguimiento no tiene stock 0: no tiene stock. Escribir un
+     cero en la planilla haría que sumara mal cualquier total que armes con
+     ella. */
   const rows = products.map((p) => [
-    `"${p.name.replace(/"/g, '""')}"`,
-    p.category?.name || "Sin categoría",
-    p.stock_quantity,
+    campo(p.name),
+    campo(p.category?.name || "Sin categoría"),
+    p.tracked ? p.stock_quantity : campo("Sin seguimiento"),
     p.price,
-    p.stock_quantity * p.price,
+    p.tracked ? p.stock_quantity * p.price : "",
   ]);
 
   const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
@@ -142,7 +154,6 @@ export default function InventoryFilters({
   currentStatus,
   currentSort,
   products,
-  currency,
 }: {
   categories: Category[];
   currentSearch: string;
@@ -150,7 +161,6 @@ export default function InventoryFilters({
   currentStatus: string;
   currentSort: string;
   products: InventoryProductForExport[];
-  currency: string;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -271,7 +281,7 @@ export default function InventoryFilters({
           {/* Export */}
           <button
             type="button"
-            onClick={() => exportInventoryCSV(products, currency)}
+            onClick={() => exportInventoryCSV(products)}
             className="inline-flex items-center gap-1.5 h-10 px-4 text-sm font-medium rounded-full bg-neutral-50 text-neutral-500 hover:bg-neutral-200 transition-colors whitespace-nowrap border-0"
           >
             <Download className="w-3.5 h-3.5" />

@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import InlineStockEditor from "@/components/dashboard/InlineStockEditor";
+import StartTrackingButton from "@/components/dashboard/StartTrackingButton";
 import { formatCurrency } from "@/lib/utils";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
@@ -33,7 +34,15 @@ export interface InventoryProduct {
   id: string;
   name: string;
   slug: string;
+  /** Stock real: suma de las variantes cuando el producto maneja stock por
+   *  variante, `stock_quantity` en el resto. Es el que mira la tienda. */
+  stock: number;
+  /** Campo crudo de la fila. Solo lo usa el editor en línea, que únicamente se
+   *  muestra en productos sin stock por variante. */
   stock_quantity: number;
+  /** Si el producto lleva cuenta de stock (`track_inventory`). Cuando no, no
+   *  tiene stock que mostrar, editar ni sumar: se vende siempre. */
+  tracked: boolean;
   has_variants: boolean;
   manage_stock_by_variant: boolean;
   price: number;
@@ -44,8 +53,11 @@ export interface InventoryProduct {
 
 interface InventoryTableProps {
   products: InventoryProduct[];
-  maxStock: number;
   currency: string;
+  /** Unidades o menos para considerar un producto en stock bajo. Lo elige la
+   *  tienda (`store_settings.low_stock_threshold`); antes era un 5 escrito a
+   *  mano acá adentro y en la page. */
+  lowStockThreshold: number;
 }
 
 // ── Bulk Action Modal ──
@@ -210,7 +222,7 @@ function BulkActionModal({
 }
 
 // ── Variant Inline Stock Editor ──
-function VariantStockEditor({ variantId, currentStock }: { variantId: string; currentStock: number }) {
+function VariantStockEditor({ variantId, currentStock, lowStockThreshold }: { variantId: string; currentStock: number; lowStockThreshold: number }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(currentStock);
@@ -240,7 +252,7 @@ function VariantStockEditor({ variantId, currentStock }: { variantId: string; cu
   if (!editing) {
     return (
       <button onClick={() => setEditing(true)} className="group flex items-center gap-1.5 cursor-pointer" title="Editar stock">
-        <span className={`text-sm font-semibold tabular-nums ${currentStock <= 0 ? "text-red-600" : currentStock <= 5 ? "text-amber-600" : "text-neutral-900"}`}>{currentStock}</span>
+        <span className={`text-sm font-semibold tabular-nums ${currentStock <= 0 ? "text-red-600" : currentStock <= lowStockThreshold ? "text-amber-600" : "text-neutral-900"}`}>{currentStock}</span>
         <span className="text-2xs text-neutral-400 opacity-0 group-hover:opacity-100 transition-opacity">editar</span>
       </button>
     );
@@ -260,8 +272,8 @@ function VariantStockEditor({ variantId, currentStock }: { variantId: string; cu
 // ── Main Table Component ──
 export default function InventoryTable({
   products,
-  maxStock,
   currency,
+  lowStockThreshold,
 }: InventoryTableProps) {
   const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -290,11 +302,16 @@ export default function InventoryTable({
     });
   };
 
+  /* Las acciones masivas escriben stock, así que solo alcanzan a los productos
+     que llevan cuenta. Seleccionar uno sin seguimiento sería elegir algo sobre
+     lo que la acción no puede hacer nada. */
+  const seleccionables = products.filter((p) => p.tracked);
+
   const toggleSelectAll = () => {
-    if (selected.size === products.length) {
+    if (selected.size === seleccionables.length) {
       setSelected(new Set());
     } else {
-      setSelected(new Set(products.map((p) => p.id)));
+      setSelected(new Set(seleccionables.map((p) => p.id)));
     }
   };
 
@@ -302,8 +319,10 @@ export default function InventoryTable({
     setSelected(new Set());
   };
 
-  const isAllSelected = products.length > 0 && selected.size === products.length;
-  const isSomeSelected = selected.size > 0 && selected.size < products.length;
+  const isAllSelected =
+    seleccionables.length > 0 && selected.size === seleccionables.length;
+  const isSomeSelected =
+    selected.size > 0 && selected.size < seleccionables.length;
 
   // ── Bulk action handler ──
   const handleBulkAction = async (value?: number) => {
@@ -333,7 +352,23 @@ export default function InventoryTable({
         zero: `${data.updated} productos marcados sin stock`,
       };
 
-      toast.success(actionLabels[bulkAction]);
+      /* El servidor omite los productos con stock por variante en Establecer y
+         Ajustar: su stock es la suma de las variantes y no hay forma de
+         repartir un número entre ellas. Decirlo, en vez de dejar creer que se
+         aplicó a todo lo seleccionado. */
+      const omitidos = (data.skipped as number) || 0;
+      const aviso =
+        omitidos > 0
+          ? ` · ${omitidos} con stock por variante quedaron sin tocar`
+          : "";
+
+      if (data.updated === 0 && omitidos > 0) {
+        toast.warning(
+          `No se cambió nada: ${omitidos === 1 ? "el producto seleccionado maneja" : "los productos seleccionados manejan"} stock por variante. Editá cada variante desde la fila.`
+        );
+      } else {
+        toast.success(actionLabels[bulkAction] + aviso);
+      }
       setBulkAction(null);
       clearSelection();
 
@@ -347,10 +382,17 @@ export default function InventoryTable({
 
   return (
     <>
-      <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden">
+      <div className="dash-card overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="sticky top-0 z-10">
+            {/* El `sticky top-0` que había acá no hacía nada y se sacó: el
+                encabezado se iba con el scroll igual. El scroll vertical lo
+                tiene el panel del dashboard, pero este contenedor es
+                `overflow-x-auto` — y eso lo vuelve un contenedor de scroll
+                propio, sin alto limitado, así que nunca scrollea y el sticky
+                nunca se activa. Que quede fijo de verdad es reestructurar de
+                dónde cuelga el scroll, no una clase. */}
+            <thead>
               <tr className="bg-neutral-50 border-b border-neutral-200">
                 {/* Checkbox header */}
                 <th className="pl-5 py-3 w-12">
@@ -376,14 +418,8 @@ export default function InventoryTable({
                 <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
                   Stock
                 </th>
-                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3 hidden md:table-cell w-36">
-                  Nivel
-                </th>
                 <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3 hidden lg:table-cell">
                   Valor
-                </th>
-                <th className="text-left text-2xs font-medium text-neutral-400 uppercase tracking-wide px-4 py-3">
-                  Estado
                 </th>
                 <th className="w-px whitespace-nowrap text-right text-2xs font-medium text-neutral-400 uppercase tracking-wide pr-6 py-3">
                   Acciones
@@ -392,11 +428,9 @@ export default function InventoryTable({
             </thead>
             <tbody className="divide-y divide-neutral-50">
               {products.map((product) => {
-                const isLow = product.stock_quantity > 0 && product.stock_quantity <= 5;
-                const isOut = product.stock_quantity <= 0;
-                const stockValue = (product.stock_quantity || 0) * (product.price || 0);
-                const stockPct = Math.min(((product.stock_quantity || 0) / maxStock) * 100, 100);
-                const barColor = isOut ? "bg-red-400" : isLow ? "bg-amber-400" : "bg-brand-400";
+                const isLow = product.stock > 0 && product.stock <= lowStockThreshold;
+                const isOut = product.stock <= 0;
+                const stockValue = product.stock * (product.price || 0);
                 const isSelected = selected.has(product.id);
                 const hasExpandableVariants = product.has_variants && product.manage_stock_by_variant && product.variants.length > 0;
                 const isExpanded = expandedRows.has(product.id);
@@ -413,7 +447,14 @@ export default function InventoryTable({
                     {/* Checkbox */}
                     <td className="pl-5 py-3 w-12">
                       <label className="flex items-center justify-center cursor-pointer">
-                        <input type="checkbox" checked={isSelected} onChange={() => toggleSelect(product.id)} className="w-4 h-4 rounded-md border-neutral-300 text-brand-600 focus:ring-brand-500/10 focus:ring-offset-0 cursor-pointer accent-brand-600" />
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          disabled={!product.tracked}
+                          title={product.tracked ? undefined : "Este producto no lleva cuenta de stock"}
+                          onChange={() => toggleSelect(product.id)}
+                          className="w-4 h-4 rounded-md border-neutral-300 text-brand-600 focus:ring-brand-500/10 focus:ring-offset-0 cursor-pointer accent-brand-600 disabled:cursor-not-allowed disabled:opacity-30"
+                        />
                       </label>
                     </td>
                     {/* Image */}
@@ -438,10 +479,17 @@ export default function InventoryTable({
                           <Link href={`/dashboard/products/${product.id}`} className="font-medium text-sm text-neutral-900 hover:text-brand-600 transition-colors">
                             {product.name}
                           </Link>
+                          {/* Era un <span> con onClick: no se llegaba con el
+                              teclado ni lo anunciaba un lector de pantalla. */}
                           {hasExpandableVariants && (
-                            <span className="ml-2 text-2xs font-medium text-brand-600 bg-brand-50 px-1.5 py-0.5 rounded-md cursor-pointer" onClick={() => toggleExpand(product.id)}>
+                            <button
+                              type="button"
+                              onClick={() => toggleExpand(product.id)}
+                              aria-expanded={isExpanded}
+                              className="ml-2 text-2xs font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 px-1.5 py-0.5 rounded-md transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/40"
+                            >
                               {product.variants.length} variantes
-                            </span>
+                            </button>
                           )}
                           {product.has_variants && !product.manage_stock_by_variant && (
                             <span className="ml-2 text-2xs font-medium text-neutral-400 bg-neutral-50 px-1.5 py-0.5 rounded-md">Variantes</span>
@@ -451,29 +499,55 @@ export default function InventoryTable({
                     </td>
                     {/* Category */}
                     <td className="px-4 py-3 hidden sm:table-cell"><span className="text-sm text-neutral-400">{product.categoryName || "—"}</span></td>
-                    {/* Stock editor */}
+                    {/* Stock — número y estado en una sola celda.
+                        Eran tres columnas (Stock, Nivel, Estado) diciendo lo
+                        mismo: el número coloreado, una barra coloreada y un
+                        badge coloreado. Ahora el número solo; la palabra
+                        aparece únicamente cuando hay algo que hacer, y el "OK"
+                        verde desapareció: pintaba de color justo las filas que
+                        no necesitan atención. */}
                     <td className="px-4 py-3">
-                      {hasExpandableVariants ? (
-                        <span className="text-sm font-semibold tabular-nums text-neutral-900">{product.stock_quantity}<span className="text-2xs font-normal text-neutral-400 ml-1">total</span></span>
+                      {!product.tracked ? (
+                        /* Sin seguimiento no es stock cero: en este código
+                           significa stock infinito, el producto se vende
+                           siempre. Va en gris, sin número inventado, y con la
+                           forma de empezar a contarlo al lado. */
+                        <div className="flex items-center gap-2">
+                          <span className="text-2xs text-neutral-400 whitespace-nowrap">
+                            Sin seguimiento
+                          </span>
+                          <StartTrackingButton
+                            productId={product.id}
+                            productName={product.name}
+                            currentStock={product.stock}
+                          />
+                        </div>
                       ) : (
-                        <InlineStockEditor productId={product.id} currentStock={product.stock_quantity} />
-                      )}
-                    </td>
-                    {/* Stock bar */}
-                    <td className="px-4 py-3 hidden md:table-cell w-36">
-                      <div className="flex-1 h-2 bg-neutral-50 rounded-full overflow-hidden">
-                        <div className={`h-full rounded-full transition-all duration-500 ${barColor}`} style={{ width: `${stockPct}%` }} />
+                      <div className="flex items-baseline gap-2">
+                        {hasExpandableVariants ? (
+                          /* "total" es de verdad la suma de las variantes. */
+                          <span className={cn("text-sm font-semibold tabular-nums", isOut ? "text-red-600" : isLow ? "text-amber-600" : "text-neutral-900")}>
+                            {product.stock}
+                            <span className="text-2xs font-normal text-neutral-400 ml-1">total</span>
+                          </span>
+                        ) : (
+                          <InlineStockEditor productId={product.id} currentStock={product.stock_quantity} lowStockThreshold={lowStockThreshold} />
+                        )}
+                        {(isOut || isLow) && (
+                          <span className={cn("text-2xs font-medium whitespace-nowrap", isOut ? "text-red-600" : "text-amber-600")}>
+                            {isOut ? "Agotado" : "Bajo"}
+                          </span>
+                        )}
                       </div>
+                      )}
                     </td>
                     {/* Value */}
                     <td className="px-4 py-3 hidden lg:table-cell">
-                      <span className="text-sm font-medium text-neutral-900 tabular-nums whitespace-nowrap">{formatCurrency(stockValue, currency)}</span>
-                    </td>
-                    {/* Status badge */}
-                    <td className="px-4 py-3">
-                      <Badge variant={isOut ? "error" : isLow ? "warning" : "success"} dot>
-                        {isOut ? "Sin stock" : isLow ? "Bajo" : "OK"}
-                      </Badge>
+                      {product.tracked ? (
+                        <span className="text-sm font-medium text-neutral-900 tabular-nums whitespace-nowrap">{formatCurrency(stockValue, currency)}</span>
+                      ) : (
+                        <span className="text-sm text-neutral-300">—</span>
+                      )}
                     </td>
                     {/* Actions */}
                     <td className="w-px whitespace-nowrap pr-6 py-3 text-right">
@@ -485,7 +559,7 @@ export default function InventoryTable({
                   {/* ── Variant sub-rows ── */}
                   {hasExpandableVariants && isExpanded && product.variants.map((v) => {
                     const vOut = v.stock <= 0;
-                    const vLow = v.stock > 0 && v.stock <= 5;
+                    const vLow = v.stock > 0 && v.stock <= lowStockThreshold;
                     return (
                       <tr key={v.id} className="bg-neutral-50 border-t border-neutral-100 animate-fade-in">
                         <td className="pl-5 py-2 w-12" />
@@ -503,14 +577,17 @@ export default function InventoryTable({
                           </div>
                         </td>
                         <td className="px-4 py-2 hidden sm:table-cell" />
-                        <td className="px-4 py-2"><VariantStockEditor variantId={v.id} currentStock={v.stock} /></td>
-                        <td className="px-4 py-2 hidden md:table-cell w-36" />
-                        <td className="px-4 py-2 hidden lg:table-cell" />
                         <td className="px-4 py-2">
-                          <Badge variant={vOut ? "error" : vLow ? "warning" : "success"} dot size="sm">
-                            {vOut ? "Sin stock" : vLow ? "Bajo" : "OK"}
-                          </Badge>
+                          <div className="flex items-baseline gap-2">
+                            <VariantStockEditor variantId={v.id} currentStock={v.stock} lowStockThreshold={lowStockThreshold} />
+                            {(vOut || vLow) && (
+                              <span className={cn("text-2xs font-medium whitespace-nowrap", vOut ? "text-red-600" : "text-amber-600")}>
+                                {vOut ? "Agotado" : "Bajo"}
+                              </span>
+                            )}
+                          </div>
                         </td>
+                        <td className="px-4 py-2 hidden lg:table-cell" />
                         <td className="w-px whitespace-nowrap pr-6 py-2" />
                       </tr>
                     );
@@ -523,16 +600,22 @@ export default function InventoryTable({
         </div>
       </div>
 
-      {/* ── Floating Bulk Actions Bar ── */}
+      {/* ── Floating Bulk Actions Bar ──────────────────────────────────────
+          El centrado va con flex y no con `left-1/2 -translate-x-1/2`: la
+          animación `slideUp` escribe `transform` con fill-mode both y pisaba al
+          `-translate-x-1/2` de Tailwind, así que la barra quedaba corrida media
+          barra a la derecha. En mobile sube por encima del BottomNav y los
+          botones quedan solo con ícono: con los textos medía 586px y no entra
+          en un teléfono. */}
       {selected.size > 0 && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 animate-slide-up">
-          <div className="bg-neutral-900 text-white rounded-[16px] shadow-[0_16px_48px_rgba(0,0,0,0.24)] border border-white/10 px-5 py-3 flex items-center gap-4">
+        <div className="fixed inset-x-0 bottom-24 md:bottom-6 z-40 flex justify-center px-4 pointer-events-none">
+          <div className="pointer-events-auto animate-slide-up bg-neutral-900 text-white rounded-[16px] shadow-[0_16px_48px_rgba(0,0,0,0.24)] border border-white/10 px-4 sm:px-5 py-3 flex items-center gap-3 sm:gap-4 max-w-full">
             {/* Selection count */}
-            <div className="flex items-center gap-2 pr-4 border-r border-white/15">
-              <div className="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-xs font-semibold">
+            <div className="flex items-center gap-2 pr-3 sm:pr-4 border-r border-white/15">
+              <div className="w-6 h-6 rounded-full bg-brand-600 flex items-center justify-center text-xs font-semibold flex-shrink-0">
                 {selected.size}
               </div>
-              <span className="text-sm font-medium whitespace-nowrap">
+              <span className="hidden sm:inline text-sm font-medium whitespace-nowrap">
                 seleccionado{selected.size !== 1 ? "s" : ""}
               </span>
             </div>
@@ -541,31 +624,34 @@ export default function InventoryTable({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setBulkAction("adjust")}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-white/10 hover:bg-white/20 transition-colors whitespace-nowrap"
+                title="Ajustar stock"
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 text-sm font-medium rounded-lg bg-white/10 hover:bg-white/20 transition-colors whitespace-nowrap"
               >
                 <Plus className="w-3.5 h-3.5" />
-                Ajustar
+                <span className="hidden sm:inline">Ajustar</span>
               </button>
               <button
                 onClick={() => setBulkAction("set")}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-white/10 hover:bg-white/20 transition-colors whitespace-nowrap"
+                title="Establecer stock"
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 text-sm font-medium rounded-lg bg-white/10 hover:bg-white/20 transition-colors whitespace-nowrap"
               >
                 <Package className="w-3.5 h-3.5" />
-                Establecer
+                <span className="hidden sm:inline">Establecer</span>
               </button>
               <button
                 onClick={() => setBulkAction("zero")}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium rounded-lg bg-red-500/80 hover:bg-red-500 transition-colors whitespace-nowrap"
+                title="Marcar sin stock"
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 text-sm font-medium rounded-lg bg-red-500/80 hover:bg-red-500 transition-colors whitespace-nowrap"
               >
                 <AlertTriangle className="w-3.5 h-3.5" />
-                Sin stock
+                <span className="hidden sm:inline">Sin stock</span>
               </button>
             </div>
 
             {/* Close */}
             <button
               onClick={clearSelection}
-              className="p-1.5 hover:bg-white/10 rounded-[8px] transition-colors ml-1"
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors flex-shrink-0"
               title="Deseleccionar todo"
             >
               <X className="w-4 h-4 text-white/60" />

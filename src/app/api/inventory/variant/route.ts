@@ -65,7 +65,29 @@ export async function POST(request: NextRequest) {
 
     if (updateError) throw updateError;
 
-    return NextResponse.json({ success: true, stock: newStock });
+    /* Dejar `products.stock_quantity` al día con la suma de las variantes.
+       La tienda no lo usa para estos productos — `checkIsOutOfStock` suma las
+       variantes — pero el inventario lo mostraba como "total" y se quedaba
+       congelado en un valor viejo apenas se editaba una variante. */
+    const productId = (variant as { product_id: string }).product_id;
+    const { data: hermanas } = await supabase
+      .from("product_variant_combinations")
+      .select("stock")
+      .eq("product_id", productId);
+
+    const total = (hermanas || []).reduce(
+      (suma, v) => suma + ((v as { stock: number | null }).stock || 0),
+      0
+    );
+
+    const { error: totalError } = await supabase
+      .from("products")
+      .update({ stock_quantity: total })
+      .eq("id", productId);
+
+    if (totalError) throw totalError;
+
+    return NextResponse.json({ success: true, stock: newStock, total });
   } catch (error) {
     console.error("Variant stock update error:", error);
     return NextResponse.json(

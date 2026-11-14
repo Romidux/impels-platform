@@ -22,7 +22,12 @@ export default async function CategoriesPage() {
       .from("categories")
       .select("*")
       .eq("store_id", store.id)
-      .order("sort_order"),
+      // Desempate por fecha: con `sort_order` repetido — y lo estaba, porque
+      // antes se asignaba con un contador global y nadie podía corregirlo —
+      // Postgres devuelve las filas empatadas en el orden que quiera, así que
+      // la lista cambiaba sola entre una carga y otra.
+      .order("sort_order")
+      .order("created_at"),
     supabase
       .from("products")
       .select("category_id")

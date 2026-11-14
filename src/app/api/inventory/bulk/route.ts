@@ -47,7 +47,7 @@ export async function POST(request: NextRequest) {
     // Verify all products belong to this store and have track_inventory enabled
     const { data: products, error: fetchError } = await supabase
       .from("products")
-      .select("id, stock_quantity")
+      .select("id, stock_quantity, has_variants, manage_stock_by_variant")
       .eq("store_id", store.id)
       .eq("track_inventory", true)
       .in("id", productIds);
@@ -66,32 +66,66 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const validIds = products.map((p) => p.id);
+    /* Los productos que manejan stock por variante no tienen un stock propio:
+       el suyo es la suma de las variantes, y es lo que mira la tienda. Antes
+       estas acciones les escribían `stock_quantity` igual — o sea, marcabas
+       "sin stock" un producto, la fila se ponía en rojo y la tienda lo seguía
+       vendiendo porque las variantes no se habían tocado.
+
+       "Sin stock" sí tiene sentido para ellos (todo a cero, sin ambigüedad) y
+       se aplica a cada variante. "Establecer" y "Ajustar" no: no hay forma de
+       repartir un número entre variantes sin inventar. Esos se omiten y la
+       respuesta dice cuántos, para poder avisarlo. */
+    const porVariante = products.filter(
+      (p) =>
+        (p as { has_variants?: boolean }).has_variants &&
+        (p as { manage_stock_by_variant?: boolean }).manage_stock_by_variant
+    );
+    const porVarianteIds = porVariante.map((p) => p.id);
+    const simples = products.filter((p) => !porVarianteIds.includes(p.id));
+    const simpleIds = simples.map((p) => p.id);
+
     let updatedCount = 0;
+    let skippedCount = 0;
 
     if (action === "zero") {
-      // Set all selected to 0
+      const todosIds = products.map((p) => p.id);
       const { error } = await supabase
         .from("products")
         .update({ stock_quantity: 0 })
-        .in("id", validIds);
+        .in("id", todosIds);
 
       if (error) throw error;
-      updatedCount = validIds.length;
+
+      if (porVarianteIds.length > 0) {
+        const { error: variantError } = await supabase
+          .from("product_variant_combinations")
+          .update({ stock: 0 })
+          .in("product_id", porVarianteIds);
+
+        if (variantError) throw variantError;
+      }
+
+      updatedCount = todosIds.length;
     } else if (action === "set" && typeof value === "number") {
-      // Set all selected to a specific value
       const newValue = Math.max(0, value);
-      const { error } = await supabase
-        .from("products")
-        .update({ stock_quantity: newValue })
-        .in("id", validIds);
+      skippedCount = porVarianteIds.length;
 
-      if (error) throw error;
-      updatedCount = validIds.length;
+      if (simpleIds.length > 0) {
+        const { error } = await supabase
+          .from("products")
+          .update({ stock_quantity: newValue })
+          .in("id", simpleIds);
+
+        if (error) throw error;
+      }
+
+      updatedCount = simpleIds.length;
     } else if (action === "adjust" && typeof value === "number") {
-      // Adjust each product's stock by the given delta
-      // We need to update each individually to respect current values
-      for (const product of products) {
+      skippedCount = porVarianteIds.length;
+
+      // Uno por uno: cada producto parte de su propio stock actual.
+      for (const product of simples) {
         const newQty = Math.max(0, (product.stock_quantity || 0) + value);
         const { error } = await supabase
           .from("products")
@@ -111,6 +145,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       updated: updatedCount,
+      skipped: skippedCount,
     });
   } catch (error) {
     console.error("Bulk stock update error:", error);

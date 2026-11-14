@@ -9,9 +9,13 @@ import { Check, X, Minus, Plus } from "lucide-react";
 export default function InlineStockEditor({
   productId,
   currentStock,
+  /** Unidades o menos para pintar el número en ámbar. Lo elige la tienda; el
+   *  respaldo en 5 es el valor que estaba escrito a mano. */
+  lowStockThreshold = 5,
 }: {
   productId: string;
   currentStock: number;
+  lowStockThreshold?: number;
 }) {
   const router = useRouter();
   const [editing, setEditing] = useState(false);
@@ -63,7 +67,7 @@ export default function InlineStockEditor({
           className={`text-sm font-semibold tabular-nums ${
             currentStock <= 0
               ? "text-red-600"
-              : currentStock <= 5
+              : currentStock <= lowStockThreshold
               ? "text-amber-600"
               : "text-neutral-900"
           }`}
